@@ -1,0 +1,102 @@
+# Dependencias
+/vendor/
+/node_modules/
+
+# Variables de entorno
+.env
+.env.backup
+.env.production
+.env.*.local
+
+# Archivos compilados
+/public/hot
+/public/storage
+/public/build
+/storage/*.key
+
+# Cache y logs
+/bootstrap/cache/
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+
+# Uploads de usuarios
+/storage/app/public/
+/public/uploads/
+
+# Base de datos
+*.sql
+*.sqlite
+*.sql.gz
+*.dump
+*.bak
+database/database.sqlite
+
+# Testing
+/coverage/
+.phpunit.result.cache
+phpunit.xml
+
+# IDEs
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# NPM / Build
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Imágenes y videos subidos
+/storage/app/uploads/
+/public/images/uploads/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# Otros
+/auth.json
+composer.lock
+.php-cs-fixer.cache
+.phpactor.json
+# Imágenes y videos (carpetas típicas de Laravel)
+/public/images/
+/public/img/
+/public/uploads/
+/public/media/
+/storage/app/public/images/
+/storage/app/public/uploads/
+/storage/app/public/media/
+
+# Extensiones de imágenes
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.svg
+*.ico
+*.bmp
+*.tiff
+
+# Videos
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.mpeg
+
+# Audio
+*.mp3
+*.wav
+*.ogg
