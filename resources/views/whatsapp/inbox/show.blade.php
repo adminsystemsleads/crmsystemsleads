@@ -12,23 +12,58 @@
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
 
       {{-- Panel izquierdo --}}
-      <div class="bg-white shadow-sm sm:rounded-lg p-5 md:col-span-1">
-        <div class="text-sm text-gray-600">Cuenta</div>
-        <div class="font-semibold">{{ $conversation->account->name ?? '-' }}</div>
+      <div class="bg-white shadow-sm sm:rounded-lg p-5 md:col-span-1 space-y-4">
 
-        <div class="mt-4 text-sm text-gray-600">Teléfono</div>
-        <div class="font-semibold">{{ $conversation->contact_phone }}</div>
+        {{-- Contacto --}}
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Contacto</p>
+          <p class="text-sm font-semibold text-gray-900">{{ $conversation->contact_name ?? '—' }}</p>
+          <p class="text-xs text-gray-500">{{ $conversation->contact_phone }}</p>
+        </div>
 
-        <div class="mt-4 text-sm text-gray-600">Deal actual</div>
-        @if($currentDeal)
-          <a class="text-indigo-600 hover:underline font-semibold"
-             href="{{ route('deals.edit', [$currentDeal->pipeline_id, $currentDeal->id]) }}">
-            {{ $currentDeal->title }}
-          </a>
-          <div class="text-xs text-gray-500 mt-1">Estado: {{ $currentDeal->status }}</div>
-        @else
-          <div class="text-sm text-gray-500">Aún no enlazado.</div>
-        @endif
+        {{-- Cuenta WhatsApp --}}
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Cuenta</p>
+          <p class="text-sm text-gray-700">{{ $conversation->account->name ?? '—' }}</p>
+        </div>
+
+        {{-- Estado --}}
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Estado</p>
+          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
+              {{ $conversation->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+            {{ $conversation->status === 'open' ? 'Abierta' : 'Cerrada' }}
+          </span>
+        </div>
+
+        {{-- Negociación vinculada --}}
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-400 mb-1">Negociación</p>
+          @if($currentDeal)
+            <a href="{{ route('deals.edit', [$currentDeal->pipeline_id, $currentDeal->id]) }}"
+               class="flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 hover:bg-indigo-100 transition group">
+              <svg class="size-4 shrink-0 text-indigo-400 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-indigo-700 truncate">{{ $currentDeal->title }}</p>
+                <p class="text-[11px] text-indigo-400">
+                  {{ ucfirst($currentDeal->status) }}
+                  @if($currentDeal->amount)
+                    · {{ number_format($currentDeal->amount, 2) }} {{ $currentDeal->currency }}
+                  @endif
+                </p>
+              </div>
+              <svg class="size-4 shrink-0 text-indigo-300 ml-auto group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          @else
+            <p class="text-sm text-gray-400 italic">Sin negociación vinculada.</p>
+          @endif
+        </div>
+
       </div>
 
       {{-- Chat --}}

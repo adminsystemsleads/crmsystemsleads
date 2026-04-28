@@ -219,6 +219,23 @@
                                 @click="tab = 'activity'">
                             Actividad
                         </button>
+                        <button type="button"
+                                class="pb-2 border-b-2 flex items-center gap-1"
+                                :class="tab === 'whatsapp'
+                                    ? 'border-green-600 text-green-600 font-semibold'
+                                    : 'border-transparent text-gray-500'"
+                                @click="tab = 'whatsapp'">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            WhatsApp
+                            @if($whatsappConversations->isNotEmpty())
+                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-green-100 text-green-700 text-[10px] font-semibold px-1.5">
+                                    {{ $whatsappConversations->count() }}
+                                </span>
+                            @endif
+                        </button>
                     </div>
 
                     {{-- === Comentarios === --}}
@@ -302,6 +319,60 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    {{-- === WhatsApp Conversaciones === --}}
+                    <div x-show="tab === 'whatsapp'" x-cloak>
+                        @if($whatsappConversations->isEmpty())
+                            <div class="flex flex-col items-center justify-center py-8 text-center text-gray-400">
+                                <svg class="size-10 mb-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                <p class="text-sm">No hay conversaciones de WhatsApp vinculadas.</p>
+                                <p class="text-xs mt-1">Se vinculan automáticamente cuando llega un mensaje.</p>
+                            </div>
+                        @else
+                            <ul class="space-y-2">
+                                @foreach($whatsappConversations as $conv)
+                                    <li class="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-3">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
+                                                    {{ $conv->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600' }}">
+                                                    {{ $conv->status === 'open' ? 'Abierta' : 'Cerrada' }}
+                                                </span>
+                                                <span class="text-sm font-medium text-gray-900 truncate">
+                                                    {{ $conv->contact_name ?? $conv->contact_phone }}
+                                                </span>
+                                            </div>
+                                            <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-2">
+                                                <span>{{ $conv->contact_phone }}</span>
+                                                @if($conv->account)
+                                                    <span class="text-gray-300">•</span>
+                                                    <span>{{ $conv->account->name }}</span>
+                                                @endif
+                                                @if($conv->last_message_at)
+                                                    <span class="text-gray-300">•</span>
+                                                    <span>{{ $conv->last_message_at->diffForHumans() }}</span>
+                                                @endif
+                                            </div>
+                                            @if($conv->last_message_preview)
+                                                <p class="mt-1 text-xs text-gray-500 truncate italic">{{ $conv->last_message_preview }}</p>
+                                            @endif
+                                        </div>
+                                        <a href="{{ route('whatsapp.inbox.show', $conv) }}"
+                                           class="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 transition">
+                                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                            </svg>
+                                            Abrir chat
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
                     </div>
 
                     {{-- ====== HISTORIAL COMBINADO (COMENTARIOS + ACTIVIDADES) ====== --}}

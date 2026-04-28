@@ -208,15 +208,17 @@ class DealController extends Controller
             ? $team->allUsers()->sortBy('name')->values()
             : collect();
 
-        // Cargar relaciones para comentarios y actividades
+        // Cargar relaciones para comentarios, actividades y conversaciones WA
         $deal->load([
             'contact',
             'comments.user',
             'activities.user',
+            'whatsappConversations.account',
         ]);
 
-        $comments   = $deal->comments;
-        $activities = $deal->activities;
+        $comments              = $deal->comments;
+        $activities            = $deal->activities;
+        $whatsappConversations = $deal->whatsappConversations;
 
         return view('deals.edit', compact(
             'pipeline',
@@ -225,7 +227,8 @@ class DealController extends Controller
             'contacts',
             'teamMembers',
             'comments',
-            'activities'
+            'activities',
+            'whatsappConversations'
         ));
     }
 
