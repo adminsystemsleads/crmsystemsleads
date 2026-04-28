@@ -19,7 +19,7 @@
   <body class="font-sans antialiased">
     <x-banner />
 
-    <div class="min-h-screen bg-gray-100 sm:ms-64">
+    <div class="min-h-screen bg-gray-100 lg:ms-64">
       @livewire('navigation-menu')
 
       @if (isset($header))
