@@ -1,41 +1,51 @@
 {{-- Sidebar responsive: fija en desktop, drawer en mobile --}}
 @php
-  $teamName = (Laravel\Jetstream\Jetstream::hasTeamFeatures() && Auth::user()?->currentTeam?->name)
-    ? Auth::user()->currentTeam->name
+  $team = Auth::user()->currentTeam;
+
+  $teamName = (Laravel\Jetstream\Jetstream::hasTeamFeatures() && $team?->name)
+    ? $team->name
     : config('app.name', 'Laravel');
+
+  $isAdmin = $team && Auth::user()->hasTeamRole($team, 'admin');
 
   $links = [
     [
+      'key'    => 'perfil_unidad',
       'name'   => __('Mi Perfil de Unidad'),
       'route'  => 'perfil-unidad.edit',
       'active' => request()->routeIs('perfil-unidad.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1118.88 6.196 7 7 0 015.12 17.804zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
     ],
     [
+      'key'    => 'finanzas',
       'name'   => __('Mis Finanzas'),
       'route'  => 'finanzas.index',
       'active' => request()->routeIs('finanzas.index'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v5h6v-5c0-1.657-1.343-3-3-3zM4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
     ],
     [
+      'key'    => 'pagos',
       'name'   => __('Pagos'),
       'route'  => 'pagos',
       'active' => request()->routeIs('pagos'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2m4-5l-2 2m0 0l-2-2m2 2V3"/></svg>',
     ],
     [
+      'key'    => 'transparencia_ia',
       'name'   => __('Transparencia IA'),
       'route'  => 'transparencia.ia.index',
       'active' => request()->routeIs('transparencia.ia.index'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
     ],
     [
+      'key'    => 'crm',
       'name'   => __('CRM'),
       'route'  => 'pipelines.index',
       'active' => request()->routeIs('pipelines.*') || request()->routeIs('deals.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
     ],
     [
+      'key'    => 'whatsapp_inbox',
       'name'   => __('WhatsApp'),
       'route'  => 'whatsapp.inbox.index',
       'active' => request()->routeIs('whatsapp.inbox.*'),
@@ -73,7 +83,6 @@
         <div class="size-8 rounded-full bg-indigo-500 ring-2 ring-indigo-100 shrink-0"></div>
         <span class="text-sm font-semibold tracking-wide truncate text-gray-900">{{ $teamName }}</span>
       </a>
-      {{-- Botón cerrar (solo mobile) --}}
       <button @click="open = false"
               class="lg:hidden p-1.5 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
               aria-label="Cerrar menú">
@@ -83,70 +92,80 @@
       </button>
     </div>
 
-    {{-- Navegación principal --}}
+    {{-- Navegación --}}
     <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
 
-      {{-- Admin --}}
-      @if (Auth::user()->hasTeamRole(Auth::user()->currentTeam, 'admin'))
+      {{-- Sección Admin --}}
+      @if ($isAdmin)
         <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Administración</p>
 
-        <a href="{{ route('gastos.import.create') }}"
-           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                  {{ request()->routeIs('gastos.import.create') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-          <svg class="size-5 shrink-0 {{ request()->routeIs('gastos.import.create') ? 'text-indigo-500' : 'text-gray-400' }}"
-               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-          </svg>
-          <span class="truncate">Importar Reporte</span>
-        </a>
+        @if ($team->moduleEnabled('gastos_import'))
+          <a href="{{ route('gastos.import.create') }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('gastos.import.create') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('gastos.import.create') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            <span class="truncate">Importar Reporte</span>
+          </a>
+        @endif
 
-        <a href="{{ route('gastos.index') }}"
-           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                  {{ request()->routeIs('gastos.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-          <svg class="size-5 shrink-0 {{ request()->routeIs('gastos.index') ? 'text-indigo-500' : 'text-gray-400' }}"
-               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
-          </svg>
-          <span class="truncate">Lista Gastos</span>
-        </a>
+        @if ($team->moduleEnabled('gastos'))
+          <a href="{{ route('gastos.index') }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('gastos.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('gastos.index') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="truncate">Lista Gastos</span>
+          </a>
+        @endif
 
-        <a href="{{ route('team.perfiles.index') }}"
-           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                  {{ request()->routeIs('team.perfiles.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-          <svg class="size-5 shrink-0 {{ request()->routeIs('team.perfiles.index') ? 'text-indigo-500' : 'text-gray-400' }}"
-               xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4.5 19.5a7.5 7.5 0 0 1 15 0"/>
-          </svg>
-          <span class="truncate">Perfiles</span>
-        </a>
+        @if ($team->moduleEnabled('perfiles'))
+          <a href="{{ route('team.perfiles.index') }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('team.perfiles.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('team.perfiles.index') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4.5 19.5a7.5 7.5 0 0 1 15 0"/>
+            </svg>
+            <span class="truncate">Perfiles</span>
+          </a>
+        @endif
 
-        <a href="{{ route('categorias.index') }}"
-           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                  {{ request()->routeIs('categorias.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-          <svg class="size-5 shrink-0 {{ request()->routeIs('categorias.index') ? 'text-indigo-500' : 'text-gray-400' }}"
-               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-          </svg>
-          <span class="truncate">Categorías de Pago</span>
-        </a>
+        @if ($team->moduleEnabled('categorias'))
+          <a href="{{ route('categorias.index') }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('categorias.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('categorias.index') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+            <span class="truncate">Categorías de Pago</span>
+          </a>
+        @endif
 
-        <a href="{{ route('whatsapp.accounts.index') }}"
-           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                  {{ request()->routeIs('whatsapp.accounts.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-          <svg class="size-5 shrink-0 {{ request()->routeIs('whatsapp.accounts.*') ? 'text-indigo-500' : 'text-gray-400' }}"
-               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 18h.01M8 21h8a2 2 0 002-2v-1a5 5 0 00-10 0v1a2 2 0 002 2zM12 3a4 4 0 100 8 4 4 0 000-8z"/>
-          </svg>
-          <span class="truncate">WhatsApp Cuentas</span>
-        </a>
+        @if ($team->moduleEnabled('whatsapp_cuentas'))
+          <a href="{{ route('whatsapp.accounts.index') }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('whatsapp.accounts.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('whatsapp.accounts.*') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 18h.01M8 21h8a2 2 0 002-2v-1a5 5 0 00-10 0v1a2 2 0 002 2zM12 3a4 4 0 100 8 4 4 0 000-8z"/>
+            </svg>
+            <span class="truncate">WhatsApp Cuentas</span>
+          </a>
+        @endif
 
-        @php $teamId = Auth::user()?->currentTeam?->id; @endphp
+        @php $teamId = $team?->id; @endphp
         @if ($teamId)
           <a href="{{ route('team.license.form', ['team' => $teamId]) }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
@@ -158,20 +177,34 @@
             </svg>
             <span class="truncate">Licencia</span>
           </a>
+
+          <a href="{{ route('team.modules.edit', ['team' => $teamId]) }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('team.modules.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('team.modules.*') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span class="truncate">Módulos</span>
+          </a>
         @endif
 
         <div class="my-2 border-t border-gray-100"></div>
         <p class="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">General</p>
       @endif
 
-      {{-- Menú general --}}
+      {{-- Menú general (filtrado por módulos) --}}
       @foreach ($links as $link)
-        <a href="{{ route($link['route']) }}"
-           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                  {{ $link['active'] ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-          <span class="{{ $link['active'] ? 'text-indigo-500' : 'text-gray-400' }}">{!! $link['icon'] !!}</span>
-          <span class="truncate">{{ $link['name'] }}</span>
-        </a>
+        @if ($team->moduleEnabled($link['key']))
+          <a href="{{ route($link['route']) }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ $link['active'] ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <span class="{{ $link['active'] ? 'text-indigo-500' : 'text-gray-400' }}">{!! $link['icon'] !!}</span>
+            <span class="truncate">{{ $link['name'] }}</span>
+          </a>
+        @endif
       @endforeach
 
     </nav>

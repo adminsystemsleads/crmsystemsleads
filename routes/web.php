@@ -17,6 +17,7 @@ use App\Http\Controllers\DealActivityController;
 use App\Http\Controllers\WhatsappAccountController;
 use App\Http\Controllers\WhatsappInboxController;
 use App\Http\Controllers\WhatsappWebhookController;
+use App\Http\Controllers\TeamModulesController;
 
 
 Route::get('/', function () {
@@ -71,6 +72,10 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     // Kanban de negociaciones por pipeline
     Route::get('/pipelines/{pipeline}/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban');
     
+    // Módulos activos por equipo
+    Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit');
+    Route::put('/teams/{team}/modules', [TeamModulesController::class, 'update'])->name('team.modules.update');
+
     // Formulario / estado de licencia
     Route::get('/teams/{team}/licencia', [TeamLicenseController::class, 'show'])
         ->name('team.license.form');

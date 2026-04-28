@@ -21,7 +21,29 @@ class Team extends JetstreamTeam
     protected $fillable = [
         'name',
         'personal_team',
+        'settings',
     ];
+
+    // Modules enabled by default when no settings exist yet
+    protected array $defaultModules = [
+        'crm'              => true,
+        'whatsapp_inbox'   => true,
+        'whatsapp_cuentas' => true,
+        'finanzas'         => false,
+        'pagos'            => false,
+        'transparencia_ia' => false,
+        'perfil_unidad'    => false,
+        'gastos'           => false,
+        'gastos_import'    => false,
+        'perfiles'         => false,
+        'categorias'       => false,
+    ];
+
+    public function moduleEnabled(string $module): bool
+    {
+        $modules = ($this->settings ?? [])['modules'] ?? [];
+        return $modules[$module] ?? ($this->defaultModules[$module] ?? false);
+    }
 
     /**
      * The event map for the model.
@@ -43,6 +65,7 @@ class Team extends JetstreamTeam
     {
         return [
             'personal_team' => 'boolean',
+            'settings'      => 'array',
         ];
     }
 
