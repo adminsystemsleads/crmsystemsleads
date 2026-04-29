@@ -16,7 +16,7 @@
     </div>
   </x-slot>
 
-  <div class="py-6 px-4 sm:px-6 lg:px-8 {{ $contact ? 'max-w-5xl' : 'max-w-2xl' }} mx-auto">
+  <div class="py-6 px-4 sm:px-6 lg:px-8 {{ $contact ? 'max-w-7xl' : 'max-w-2xl' }} mx-auto">
 
     @if(session('status'))
       <div class="mb-5 flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
@@ -27,12 +27,12 @@
       </div>
     @endif
 
-    <div class="{{ $contact ? 'grid grid-cols-1 lg:grid-cols-3 gap-6' : '' }}">
+    <div class="{{ $contact ? 'grid grid-cols-1 lg:grid-cols-5 gap-6' : '' }}">
 
       {{-- ══════════════════════════════
            COLUMNA IZQUIERDA – Formulario
            ══════════════════════════════ --}}
-      <div class="{{ $contact ? 'lg:col-span-2' : '' }}">
+      <div class="{{ $contact ? 'lg:col-span-3' : '' }}">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
           {{-- Avatar / cabecera --}}
@@ -190,7 +190,7 @@
       {{-- ══════════════════════════════
            COLUMNA DERECHA – Info lateral
            ══════════════════════════════ --}}
-      <div class="space-y-4">
+      <div class="lg:col-span-2 space-y-4">
 
         {{-- Negocios vinculados --}}
         @if($contact)

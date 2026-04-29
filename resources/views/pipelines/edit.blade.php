@@ -38,6 +38,21 @@
                         <span class="ml-2 text-sm text-gray-700">Pipeline activo</span>
                     </div>
 
+                    <div class="mb-6 flex items-start gap-3 p-3 rounded-lg bg-indigo-50 border border-indigo-100">
+                        <input type="checkbox" name="show_in_nav" value="1"
+                               id="show_in_nav"
+                               class="mt-0.5 rounded border-gray-300 text-indigo-600"
+                               {{ $pipeline->show_in_nav ? 'checked' : '' }}>
+                        <div>
+                            <label for="show_in_nav" class="text-sm font-medium text-gray-800 cursor-pointer">
+                                Mostrar en menú lateral como acceso rápido
+                            </label>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                Los usuarios con permiso de ver este pipeline podrán acceder al Kanban directamente desde la barra lateral.
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="flex justify-end">
                         <button type="submit"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">

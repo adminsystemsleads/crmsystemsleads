@@ -15,12 +15,14 @@ class Pipeline extends Model
         'description',
         'is_default',
         'is_active',
+        'show_in_nav',
         'sort_order',
     ];
 
     protected $casts = [
-        'is_default' => 'boolean',
-        'is_active'  => 'boolean',
+        'is_default'  => 'boolean',
+        'is_active'   => 'boolean',
+        'show_in_nav' => 'boolean',
     ];
 
     public function team()

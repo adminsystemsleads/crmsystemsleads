@@ -8,6 +8,16 @@
 
   $isAdmin = $team && Auth::user()->hasTeamRole($team, 'admin');
 
+  // Pipelines marcados como acceso rápido que el usuario puede ver
+  $navPipelines = $team
+    ? \App\Models\Pipeline::where('team_id', $team->id)
+        ->where('show_in_nav', true)
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->get()
+        ->filter(fn($p) => $p->userCan(Auth::user(), 'view'))
+    : collect();
+
   $links = [
     [
       'key'    => 'perfil_unidad',
@@ -211,6 +221,25 @@
             <span class="{{ $link['active'] ? 'text-indigo-500' : 'text-gray-400' }}">{!! $link['icon'] !!}</span>
             <span class="truncate">{{ $link['name'] }}</span>
           </a>
+
+          {{-- Accesos rápidos al Kanban bajo el módulo CRM --}}
+          @if ($link['key'] === 'crm' && $navPipelines->isNotEmpty())
+            @foreach ($navPipelines as $navPipeline)
+              @php
+                $kanbanActive = request()->routeIs('pipelines.kanban') && request()->route('pipeline')?->id === $navPipeline->id;
+              @endphp
+              <a href="{{ route('pipelines.kanban', $navPipeline) }}"
+                 class="flex items-center gap-3 rounded-lg pl-9 pr-3 py-1.5 text-sm transition select-none
+                        {{ $kanbanActive ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100' }}">
+                <svg class="size-3.5 shrink-0 {{ $kanbanActive ? 'text-indigo-400' : 'text-gray-400' }}"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                </svg>
+                <span class="truncate text-xs">{{ $navPipeline->name }}</span>
+              </a>
+            @endforeach
+          @endif
         @endif
       @endforeach
 

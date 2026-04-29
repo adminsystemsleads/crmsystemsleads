@@ -90,12 +90,14 @@ class PipelineController extends Controller
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_active'   => 'nullable|boolean',
+            'show_in_nav' => 'nullable|boolean',
         ]);
 
         $pipeline->update([
             'name'        => $data['name'],
             'description' => $data['description'] ?? null,
             'is_active'   => $request->boolean('is_active'),
+            'show_in_nav' => $request->boolean('show_in_nav'),
         ]);
 
         return redirect()->route('pipelines.index')
