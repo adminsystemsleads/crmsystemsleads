@@ -229,12 +229,15 @@
                 $kanbanActive = request()->routeIs('pipelines.kanban') && request()->route('pipeline')?->id === $navPipeline->id;
               @endphp
               <a href="{{ route('pipelines.kanban', $navPipeline) }}"
-                 class="flex items-center gap-3 rounded-lg pl-9 pr-3 py-1.5 text-sm transition select-none
-                        {{ $kanbanActive ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100' }}">
-                <svg class="size-3.5 shrink-0 {{ $kanbanActive ? 'text-indigo-400' : 'text-gray-400' }}"
-                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                 class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
+                        {{ $kanbanActive ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="shrink-0 {{ $kanbanActive ? 'text-indigo-400' : 'text-gray-400' }}"
+                     style="width:12px;height:12px;min-width:12px;">
+                  <rect x="3" y="3" width="5" height="14" rx="1"/>
+                  <rect x="10" y="3" width="5" height="9" rx="1"/>
+                  <rect x="17" y="3" width="5" height="11" rx="1"/>
                 </svg>
                 <span class="truncate text-xs">{{ $navPipeline->name }}</span>
               </a>
