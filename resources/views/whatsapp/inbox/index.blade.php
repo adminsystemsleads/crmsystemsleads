@@ -1,62 +1,106 @@
 <x-app-layout>
-  <x-slot name="header">
-    <div class="flex items-center justify-between">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">WhatsApp – Inbox</h2>
-      <a href="{{ route('whatsapp.accounts.index') }}" class="text-sm text-indigo-600 hover:underline">
-        Administrar cuentas →
+
+@php
+  $avatarColors = ['bg-green-100 text-green-700','bg-blue-100 text-blue-700','bg-purple-100 text-purple-700',
+                   'bg-amber-100 text-amber-700','bg-rose-100 text-rose-700','bg-teal-100 text-teal-700'];
+  function waAvatarIdx(string $name, array $colors): string {
+      return $colors[abs(crc32($name)) % count($colors)];
+  }
+@endphp
+
+<div class="flex overflow-hidden bg-white" style="height:100vh;">
+
+  {{-- PANEL IZQUIERDO – Lista --}}
+  <div class="w-[300px] shrink-0 flex flex-col border-r border-gray-200">
+
+    <div class="h-14 px-4 flex items-center justify-between border-b border-gray-100 bg-white">
+      <span class="text-sm font-semibold text-gray-900">Conversaciones</span>
+      <a href="{{ route('whatsapp.accounts.index') }}"
+         class="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
+        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Cuentas
       </a>
     </div>
-  </x-slot>
 
-  <div class="py-8">
-    <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-
-      <div class="mb-4 flex items-center gap-3">
-        <form method="GET" action="{{ route('whatsapp.inbox.index') }}" class="flex items-center gap-2">
-          <select name="account_id" class="border-gray-300 rounded-md shadow-sm text-sm">
-            <option value="">Todas las cuentas</option>
-            @foreach($accounts as $a)
-              <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
-                {{ $a->name }}
-              </option>
-            @endforeach
-          </select>
-          <button class="px-3 py-2 bg-gray-900 text-white rounded-md text-sm">Filtrar</button>
-        </form>
-      </div>
-
-      <div class="bg-white shadow-sm sm:rounded-lg p-0 overflow-hidden">
-        @forelse($conversations as $c)
-          <a href="{{ route('whatsapp.inbox.show', $c) }}"
-             class="block px-5 py-4 border-b hover:bg-gray-50">
-            <div class="flex justify-between items-center">
-              <div>
-                <div class="font-semibold text-gray-800">
-                  {{ $c->contact_name ?? $c->contact_phone ?? 'Sin nombre' }}
-                  <span class="text-xs text-gray-500 ml-2">{{ $c->contact_phone }}</span>
-                </div>
-                <div class="text-sm text-gray-600 mt-1">
-                  {{ $c->last_message_preview ?? '—' }}
-                </div>
-                <div class="text-xs text-gray-400 mt-1">
-                  {{ $c->account->name ?? '-' }}
-                </div>
-              </div>
-
-              <div class="text-xs text-gray-500">
-                {{ $c->last_message_at ? $c->last_message_at->format('d/m H:i') : '' }}
-              </div>
-            </div>
-          </a>
-        @empty
-          <div class="p-6 text-sm text-gray-500">No hay conversaciones todavía.</div>
-        @endforelse
-      </div>
-
-      <div class="mt-4">
-        {{ $conversations->withQueryString()->links() }}
-      </div>
-
+    <div class="px-3 py-2 border-b border-gray-100 bg-white">
+      <form method="GET" action="{{ route('whatsapp.inbox.index') }}">
+        <select name="account_id" onchange="this.form.submit()"
+                class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
+          <option value="">Todas las cuentas</option>
+          @foreach($accounts as $a)
+            <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
+              {{ $a->name }}
+            </option>
+          @endforeach
+        </select>
+      </form>
     </div>
+
+    <div class="flex border-b border-gray-100 bg-white shrink-0">
+      @foreach(['all' => 'Todo', 'open' => 'Abierto', 'closed' => 'Cerrado'] as $val => $label)
+        <a href="{{ route('whatsapp.inbox.index') }}?status={{ $val }}{{ $accountId ? '&account_id='.$accountId : '' }}"
+           class="flex-1 py-2 text-center text-xs font-medium transition
+                  {{ $status === $val ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700' }}">
+          {{ $label }}
+        </a>
+      @endforeach
+    </div>
+
+    <div class="overflow-y-auto flex-1 bg-white">
+      @forelse($conversations as $c)
+        @php
+          $cName = $c->contact_name ?? $c->contact_phone ?? '?';
+          $cInit = strtoupper(mb_substr($cName,0,1) . (mb_substr($cName,1,1) ?: ''));
+          $cAva  = waAvatarIdx($cName, $avatarColors);
+          $time  = $c->last_message_at
+            ? ($c->last_message_at->isToday() ? $c->last_message_at->format('H:i') : $c->last_message_at->format('d/m'))
+            : '';
+        @endphp
+        <a href="{{ route('whatsapp.inbox.show', $c) }}"
+           class="flex items-center gap-3 px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition border-l-[3px] border-l-transparent">
+          <div class="size-10 rounded-full flex items-center justify-center shrink-0 text-sm font-semibold {{ $cAva }}">
+            {{ $cInit }}
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-sm font-semibold text-gray-900 truncate">{{ $cName }}</span>
+              <span class="text-[10px] text-gray-400 shrink-0">{{ $time }}</span>
+            </div>
+            <p class="text-xs text-gray-500 truncate mt-0.5">{{ $c->last_message_preview ?? '—' }}</p>
+          </div>
+          @if($c->status === 'open')
+            <span class="size-2 rounded-full bg-green-400 shrink-0"></span>
+          @endif
+        </a>
+      @empty
+        <div class="p-8 text-center">
+          <svg class="size-10 mx-auto text-gray-200 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          <p class="text-sm text-gray-400">No hay conversaciones.</p>
+        </div>
+      @endforelse
+    </div>
+
   </div>
+
+  {{-- PANEL CENTRAL – Estado vacío --}}
+  <div class="flex-1 flex flex-col items-center justify-center bg-gray-50 text-center px-8">
+    <div class="size-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+      <svg class="size-8 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+      </svg>
+    </div>
+    <h3 class="text-sm font-semibold text-gray-700 mb-1">Selecciona una conversación</h3>
+    <p class="text-xs text-gray-400">Elige una conversación de la lista para ver los mensajes.</p>
+  </div>
+
+</div>
+
 </x-app-layout>

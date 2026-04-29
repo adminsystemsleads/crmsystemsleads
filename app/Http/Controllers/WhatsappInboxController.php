@@ -40,41 +40,71 @@ class WhatsappInboxController extends Controller
 
 
 
+    protected function sidebarConversations(int $teamId, ?string $accountId, string $status = 'all'): \Illuminate\Database\Eloquent\Collection
+    {
+        $q = WhatsappConversation::where('team_id', $teamId)
+            ->with('account')
+            ->orderByDesc('last_message_at')
+            ->limit(60);
+
+        if ($accountId) {
+            $q->where('whatsapp_account_id', $accountId);
+        }
+        if ($status === 'open') {
+            $q->where('status', 'open');
+        } elseif ($status === 'closed') {
+            $q->where('status', 'closed');
+        }
+
+        return $q->get();
+    }
+
     public function index(Request $request)
     {
-        $team = $this->currentTeam();
-
+        $team      = $this->currentTeam();
         $accountId = $request->query('account_id');
+        $status    = $request->query('status', 'all');
 
         $accounts = WhatsappAccount::where('team_id', $team->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        $conversationsQuery = WhatsappConversation::where('team_id', $team->id)
-            ->with('account')
-            ->orderByDesc('last_message_at');
+        $conversations = $this->sidebarConversations($team->id, $accountId, $status);
 
-        if ($accountId) {
-            $conversationsQuery->where('whatsapp_account_id', $accountId);
+        // Redirect to first conversation so the user lands in the 3-panel view
+        if ($conversations->isNotEmpty() && !$request->expectsJson()) {
+            return redirect()->route('whatsapp.inbox.show', $conversations->first())
+                ->withInput($request->only('account_id', 'status'));
         }
 
-        $conversations = $conversationsQuery->paginate(20);
-
-        return view('whatsapp.inbox.index', compact('accounts', 'conversations', 'accountId'));
+        return view('whatsapp.inbox.index', compact('accounts', 'conversations', 'accountId', 'status'));
     }
 
-    public function show(WhatsappConversation $conversation)
+    public function show(WhatsappConversation $conversation, Request $request)
     {
         $team = $this->currentTeam();
         abort_unless($conversation->team_id === $team->id, 404);
 
-        $conversation->load(['account', 'messages.sentBy', 'deals.contact']);
+        $conversation->load(['account', 'messages.sentBy', 'deals']);
 
-        // Deal actual (último enlazado)
-        $currentDeal = $conversation->deals()->orderByDesc('whatsapp_conversation_deals.created_at')->first();
+        $currentDeal = $conversation->deals()
+            ->orderByDesc('whatsapp_conversation_deals.created_at')
+            ->first();
 
-        return view('whatsapp.inbox.show', compact('conversation', 'currentDeal'));
+        $accountId = $request->query('account_id');
+        $status    = $request->query('status', 'all');
+
+        $accounts = WhatsappAccount::where('team_id', $team->id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        $conversations = $this->sidebarConversations($team->id, $accountId, $status);
+
+        return view('whatsapp.inbox.show', compact(
+            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status'
+        ));
     }
 
     public function send(Request $request, WhatsappConversation $conversation, WhatsappCloudService $wa)
