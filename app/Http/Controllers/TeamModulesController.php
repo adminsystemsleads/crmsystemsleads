@@ -10,6 +10,7 @@ class TeamModulesController extends Controller
 {
     private array $allModules = [
         ['key' => 'crm',              'label' => 'CRM / Pipelines',          'desc' => 'Gestión de negocios y embudos de venta', 'admin_only' => false],
+        ['key' => 'contactos',        'label' => 'Contactos',                'desc' => 'Directorio de contactos y clientes potenciales', 'admin_only' => false],
         ['key' => 'whatsapp_inbox',   'label' => 'WhatsApp',                 'desc' => 'Bandeja de entrada de conversaciones',   'admin_only' => false],
         ['key' => 'whatsapp_cuentas', 'label' => 'WhatsApp Cuentas (Admin)', 'desc' => 'Gestión de cuentas y números conectados', 'admin_only' => true],
         ['key' => 'finanzas',         'label' => 'Mis Finanzas',             'desc' => 'Resumen financiero de la unidad',         'admin_only' => false],

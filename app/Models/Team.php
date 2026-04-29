@@ -27,6 +27,7 @@ class Team extends JetstreamTeam
     // Modules enabled by default when no settings exist yet
     protected array $defaultModules = [
         'crm'              => true,
+        'contactos'        => true,
         'whatsapp_inbox'   => true,
         'whatsapp_cuentas' => true,
         'finanzas'         => false,
