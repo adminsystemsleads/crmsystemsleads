@@ -11,25 +11,39 @@
   $avatarCls = waAvatar($convName, $avatarColors);
 @endphp
 
-<div class="flex overflow-hidden bg-white" style="height:100vh;">
+<div class="flex flex-col bg-white" style="height:100vh;">
+
+  {{-- ════ BARRA SUPERIOR ════ --}}
+  <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4">
+    {{-- Espacio para el hamburger del nav en pantallas pequeñas --}}
+    <div class="w-8 lg:hidden shrink-0"></div>
+    <svg class="size-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.855L.057 23.882a.5.5 0 00.611.61l6.102-1.6A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.944 9.944 0 01-5.073-1.386l-.363-.215-3.764.987.999-3.671-.236-.375A9.955 9.955 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+    </svg>
+    <span class="text-sm font-semibold text-gray-900">WhatsApp</span>
+    <a href="{{ route('whatsapp.accounts.index') }}"
+       class="ml-auto text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
+      <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+      Cuentas
+    </a>
+  </div>
+
+  {{-- ════ TRES PANELES ════ --}}
+  <div class="flex flex-1 overflow-hidden">
 
   {{-- ════════════════════════════════════════
        PANEL IZQUIERDO – Lista de conversaciones
        ════════════════════════════════════════ --}}
-  <div class="w-[300px] shrink-0 flex flex-col border-r border-gray-200">
+  <div class="w-72 shrink-0 flex flex-col border-r border-gray-200">
 
     {{-- Cabecera --}}
-    <div class="h-14 px-4 flex items-center justify-between border-b border-gray-100 bg-white">
-      <span class="text-sm font-semibold text-gray-900">Conversaciones</span>
-      <a href="{{ route('whatsapp.accounts.index') }}"
-         class="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
-        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-        </svg>
-        Cuentas
-      </a>
+    <div class="h-12 px-3 flex items-center border-b border-gray-100 bg-gray-50">
+      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">Conversaciones</span>
     </div>
 
     {{-- Filtro de cuenta --}}
@@ -277,9 +291,11 @@
       @endif
     </div>
 
-  </div>
+  </div>{{-- fin panel derecho --}}
 
-</div>
+  </div>{{-- fin tres paneles --}}
+
+</div>{{-- fin layout principal --}}
 
 <script>
 (function () {
