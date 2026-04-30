@@ -484,8 +484,49 @@
     });
   }).catch(() => { /* polling cubre el caso sin WebSocket */ });
 
-  document.getElementById('sendForm')?.addEventListener('submit', () => {
-    setTimeout(() => { if (input) { input.value = ''; input.style.height = 'auto'; } scrollBottom(); }, 50);
+  // ── ENVÍO AJAX — sin recargar página ────────────────────────────────────
+  const sendForm   = document.getElementById('sendForm');
+  const sendBtn    = sendForm?.querySelector('button[type=submit]');
+  const sendUrl    = sendForm?.action;
+  const csrfToken  = document.querySelector('meta[name="csrf-token"]')?.content
+                  || sendForm?.querySelector('input[name=_token]')?.value;
+
+  sendForm?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const text = input?.value?.trim();
+    if (!text) return;
+
+    // Deshabilitar botón mientras envía
+    if (sendBtn) sendBtn.disabled = true;
+
+    try {
+      const res = await fetch(sendUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ message: text }),
+      });
+
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const msg = await res.json();
+
+      // Limpiar input
+      if (input) { input.value = ''; input.style.height = 'auto'; }
+
+      // Mostrar mensaje en pantalla inmediatamente
+      addMessageToDom(msg);
+
+    } catch (err) {
+      console.error('Send error:', err);
+      alert('No se pudo enviar el mensaje. Intenta de nuevo.');
+    } finally {
+      if (sendBtn) sendBtn.disabled = false;
+      input?.focus();
+    }
   });
 })();
 </script>

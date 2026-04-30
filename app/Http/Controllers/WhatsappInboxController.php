@@ -187,6 +187,19 @@ class WhatsappInboxController extends Controller
             'last_message_preview' => mb_substr($data['message'], 0, 180),
         ]);
 
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'ok'         => true,
+                'id'         => $message->id,
+                'message_id' => $message->message_id,
+                'direction'  => 'outbound',
+                'type'       => 'text',
+                'body'       => $message->body,
+                'created_at' => $message->created_at?->toIso8601String(),
+                'sent_by'    => ['name' => Auth::user()->name],
+            ]);
+        }
+
         return back()->with('status', 'Mensaje enviado.');
     }
 }
