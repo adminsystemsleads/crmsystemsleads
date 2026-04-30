@@ -89,6 +89,7 @@ class WhatsappInboxController extends Controller
         $conversation->load(['account', 'messages.sentBy', 'deals']);
 
         $currentDeal = $conversation->deals()
+            ->with(['pipeline', 'stage'])
             ->orderByDesc('whatsapp_conversation_deals.created_at')
             ->first();
 
@@ -135,15 +136,38 @@ class WhatsappInboxController extends Controller
 
         $contactName = $conversation->contact_name ?? $conversation->contact_phone ?? 'WhatsApp';
         $title = $data['title'] ?: $contactName . ' - WhatsApp';
+        $phone = $conversation->contact_phone ?? $conversation->wa_id;
+
+        // Buscar contacto existente por teléfono en el team
+        $contact = $phone
+            ? \App\Models\Contact::where('team_id', $team->id)
+                ->where('phone', 'like', '%' . ltrim($phone, '+'))
+                ->first()
+            : null;
+
+        // Si no existe, crear uno nuevo
+        if (!$contact && $phone) {
+            $nameParts = explode(' ', trim($conversation->contact_name ?? ''), 2);
+            $contact = \App\Models\Contact::create([
+                'team_id'    => $team->id,
+                'owner_id'   => Auth::id(),
+                'first_name' => $nameParts[0] ?? $phone,
+                'last_name'  => $nameParts[1] ?? '',
+                'name'       => $conversation->contact_name ?? $phone,
+                'phone'      => $phone,
+                'status'     => 'new',
+                'source'     => 'whatsapp',
+            ]);
+        }
 
         $deal = \App\Models\Deal::create([
             'team_id'        => $team->id,
-            'owner_id'       => $team->owner_id,
+            'owner_id'       => Auth::id(),
             'pipeline_id'    => $pipeline->id,
             'stage_id'       => $firstStage->id,
-            'contact_id'     => null,
-            'wa_id'          => $conversation->wa_id ?? $conversation->contact_phone,
-            'responsible_id' => null,
+            'contact_id'     => $contact?->id,
+            'wa_id'          => $conversation->wa_id ?? $phone,
+            'responsible_id' => Auth::id(),
             'title'          => $title,
             'amount'         => null,
             'currency'       => 'PEN',
