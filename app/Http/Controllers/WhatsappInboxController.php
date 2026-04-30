@@ -100,11 +100,64 @@ class WhatsappInboxController extends Controller
             ->orderBy('name')
             ->get();
 
+        $pipelines = \App\Models\Pipeline::where('team_id', $team->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
         $conversations = $this->sidebarConversations($team->id, $accountId, $status);
 
         return view('whatsapp.inbox.show', compact(
-            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status'
+            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status', 'pipelines'
         ));
+    }
+
+    public function createDeal(Request $request, WhatsappConversation $conversation)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        $data = $request->validate([
+            'pipeline_id' => 'required|integer|exists:pipelines,id',
+            'title'       => 'nullable|string|max:255',
+        ]);
+
+        // Verificar que el pipeline pertenece al team
+        $pipeline = \App\Models\Pipeline::where('id', $data['pipeline_id'])
+            ->where('team_id', $team->id)
+            ->firstOrFail();
+
+        $firstStage = \App\Models\PipelineStage::where('pipeline_id', $pipeline->id)
+            ->orderBy('sort_order')
+            ->first();
+
+        abort_unless($firstStage, 422, 'El pipeline no tiene fases.');
+
+        $contactName = $conversation->contact_name ?? $conversation->contact_phone ?? 'WhatsApp';
+        $title = $data['title'] ?: $contactName . ' - WhatsApp';
+
+        $deal = \App\Models\Deal::create([
+            'team_id'        => $team->id,
+            'owner_id'       => $team->owner_id,
+            'pipeline_id'    => $pipeline->id,
+            'stage_id'       => $firstStage->id,
+            'contact_id'     => null,
+            'wa_id'          => $conversation->wa_id ?? $conversation->contact_phone,
+            'responsible_id' => null,
+            'title'          => $title,
+            'amount'         => null,
+            'currency'       => 'PEN',
+            'status'         => 'open',
+            'description'    => 'Negociación creada desde WhatsApp inbox.',
+        ]);
+
+        $conversation->deals()->attach($deal->id, [
+            'started_at' => now(),
+            'ended_at'   => null,
+        ]);
+
+        return redirect()->route('whatsapp.inbox.show', $conversation)
+            ->with('deal_created', $deal->id);
     }
 
     public function sidebarPoll(Request $request)

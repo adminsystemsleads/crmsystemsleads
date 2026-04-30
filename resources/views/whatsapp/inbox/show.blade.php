@@ -290,9 +290,61 @@
           </div>
         </a>
       @else
-        <div class="rounded-xl border border-dashed border-gray-200 p-4 text-center">
-          <p class="text-xs text-gray-400">Sin negociación vinculada.</p>
-          <p class="text-[10px] text-gray-300 mt-0.5">Se crea automáticamente al recibir el primer mensaje.</p>
+        <div x-data="{ open: false }" class="space-y-2">
+          {{-- Estado vacío + botón --}}
+          <div class="rounded-xl border border-dashed border-gray-200 p-3 text-center">
+            <p class="text-xs text-gray-400 mb-2">Sin negociación vinculada.</p>
+            <button @click="open = !open"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+              <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Crear negociación
+            </button>
+          </div>
+
+          {{-- Formulario desplegable --}}
+          <div x-show="open" x-transition class="rounded-xl border border-indigo-100 bg-indigo-50 p-3 space-y-2">
+            <form method="POST" action="{{ route('whatsapp.inbox.deal.create', $conversation) }}">
+              @csrf
+
+              <div>
+                <label class="block text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">
+                  Pipeline
+                </label>
+                <select name="pipeline_id" required
+                        class="w-full text-xs rounded-lg border-gray-200 bg-white py-1.5 text-gray-800">
+                  <option value="">Selecciona un pipeline…</option>
+                  @foreach($pipelines as $pl)
+                    <option value="{{ $pl->id }}"
+                      {{ $conversation->account?->pipeline_id == $pl->id ? 'selected' : '' }}>
+                      {{ $pl->name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">
+                  Título (opcional)
+                </label>
+                <input type="text" name="title"
+                       placeholder="{{ ($conversation->contact_name ?? $conversation->contact_phone ?? 'WhatsApp') . ' - WhatsApp' }}"
+                       class="w-full text-xs rounded-lg border-gray-200 bg-white py-1.5 text-gray-800 placeholder-gray-400">
+              </div>
+
+              <div class="flex gap-2 pt-1">
+                <button type="submit"
+                        class="flex-1 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+                  Crear
+                </button>
+                <button type="button" @click="open = false"
+                        class="flex-1 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       @endif
     </div>
