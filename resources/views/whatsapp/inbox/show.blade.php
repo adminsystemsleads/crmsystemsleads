@@ -271,15 +271,19 @@
           </p>
 
           {{-- Pipeline / Fase --}}
-          @if($currentDeal->pipeline || $currentDeal->stage)
+          @php
+            $dealPipeline = optional($currentDeal->pipeline);
+            $dealStage    = is_object($currentDeal->stage) ? $currentDeal->stage : null;
+          @endphp
+          @if($dealPipeline->name || $dealStage)
             <div class="flex items-center gap-1 mb-2">
               <svg class="size-3 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
               </svg>
               <span class="text-[11px] text-gray-500 truncate">
-                {{ $currentDeal->pipeline?->name }}
-                @if($currentDeal->stage)
-                  <span class="text-gray-300 mx-0.5">›</span>{{ $currentDeal->stage->name }}
+                {{ $dealPipeline->name }}
+                @if($dealStage)
+                  <span class="text-gray-300 mx-0.5">›</span>{{ $dealStage->name }}
                 @endif
               </span>
             </div>
