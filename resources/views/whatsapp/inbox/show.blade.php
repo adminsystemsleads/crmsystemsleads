@@ -73,7 +73,7 @@
     </div>
 
     {{-- Lista scrollable --}}
-    <div class="overflow-y-auto flex-1 bg-white">
+    <div id="sidebarList" class="overflow-y-auto flex-1 bg-white">
       @forelse($conversations as $c)
         @php
           $cName = $c->contact_name ?? $c->contact_phone ?? '?';
@@ -84,7 +84,10 @@
             ? ($c->last_message_at->isToday() ? $c->last_message_at->format('H:i') : $c->last_message_at->format('d/m'))
             : '';
         @endphp
-        <a href="{{ route('whatsapp.inbox.show', $c) }}{{ $accountId ? '?account_id='.$accountId : '' }}"
+        <a id="sidebar-conv-{{ $c->id }}"
+           href="{{ route('whatsapp.inbox.show', $c) }}{{ $accountId ? '?account_id='.$accountId : '' }}"
+           data-conv-id="{{ $c->id }}"
+           data-last-ts="{{ $c->last_message_at?->timestamp ?? 0 }}"
            class="flex items-center gap-3 px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition
                   {{ $isActive ? 'bg-indigo-50 border-l-[3px] border-l-indigo-500' : 'border-l-[3px] border-l-transparent' }}">
           {{-- Avatar --}}
@@ -94,17 +97,20 @@
           {{-- Texto --}}
           <div class="min-w-0 flex-1">
             <div class="flex items-center justify-between gap-1">
-              <span class="text-sm font-semibold text-gray-900 truncate {{ $isActive ? 'text-indigo-700' : '' }}">
+              <span class="sidebar-name text-sm font-semibold text-gray-900 truncate {{ $isActive ? 'text-indigo-700' : '' }}">
                 {{ $cName }}
               </span>
-              <span class="text-[10px] text-gray-400 shrink-0">{{ $time }}</span>
+              <span class="sidebar-time text-[10px] text-gray-400 shrink-0">{{ $time }}</span>
             </div>
-            <p class="text-xs text-gray-500 truncate mt-0.5">{{ $c->last_message_preview ?? '—' }}</p>
+            <p class="sidebar-preview text-xs text-gray-500 truncate mt-0.5">{{ $c->last_message_preview ?? '—' }}</p>
           </div>
-          {{-- Indicador open --}}
-          @if($c->status === 'open')
-            <span class="size-2 rounded-full bg-green-400 shrink-0"></span>
-          @endif
+          {{-- Puntos: notificación (azul) + estado open (verde) --}}
+          <div class="flex flex-col items-center gap-1 shrink-0">
+            <span class="unread-dot hidden size-2.5 rounded-full bg-blue-500"></span>
+            @if($c->status === 'open')
+              <span class="size-2 rounded-full bg-green-400"></span>
+            @endif
+          </div>
         </a>
       @empty
         <div class="p-6 text-center text-sm text-gray-400">No hay conversaciones.</div>
@@ -299,8 +305,10 @@
 
 <script>
 (function () {
-  const conversationId = @json($conversation->id);
-  const pollUrl        = @json(route('whatsapp.inbox.messages', $conversation));
+  const conversationId  = @json($conversation->id);
+  const pollUrl         = @json(route('whatsapp.inbox.messages', $conversation));
+  const sidebarPollUrl  = @json(route('whatsapp.sidebar.poll'))
+                        + '?{{ http_build_query(array_filter(['account_id' => $accountId, 'status' => $status !== 'all' ? $status : null])) }}';
   const chatBox = document.getElementById('chatBox');
   const input   = document.getElementById('msgInput');
 
@@ -388,7 +396,7 @@
     scrollBottom();
   }
 
-  // ── POLLING — siempre activo, cada 4 segundos ──────────────────────────
+  // ── POLLING mensajes — conversación activa, cada 4s ────────────────────
   async function poll() {
     try {
       const res = await fetch(pollUrl + '?after=' + lastDbId, {
@@ -400,6 +408,47 @@
     } catch (_) {}
   }
   setInterval(poll, 4000);
+
+  // ── POLLING sidebar — actualiza preview y notificaciones, cada 6s ──────
+  function formatSidebarTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts * 1000);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    const pad = n => String(n).padStart(2, '0');
+    return isToday
+      ? pad(d.getHours()) + ':' + pad(d.getMinutes())
+      : pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
+  }
+
+  async function pollSidebar() {
+    try {
+      const res = await fetch(sidebarPollUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+      if (!res.ok) return;
+      const convs = await res.json();
+      convs.forEach(c => {
+        const el = document.getElementById('sidebar-conv-' + c.id);
+        if (!el) return;
+        const prevTs = parseInt(el.dataset.lastTs || '0', 10);
+        const newTs  = c.last_message_at || 0;
+        // Actualizar preview y hora siempre
+        const previewEl = el.querySelector('.sidebar-preview');
+        const timeEl    = el.querySelector('.sidebar-time');
+        if (previewEl && c.last_message_preview) previewEl.textContent = c.last_message_preview;
+        if (timeEl && newTs) timeEl.textContent = formatSidebarTime(newTs);
+        // Mostrar punto azul si hay mensaje nuevo y NO es la conversación activa
+        if (newTs > prevTs && c.id !== conversationId) {
+          const dot = el.querySelector('.unread-dot');
+          if (dot) dot.classList.remove('hidden');
+          el.dataset.lastTs = newTs;
+          // Mover al tope del sidebar
+          const list = document.getElementById('sidebarList');
+          if (list && el.parentNode === list) list.prepend(el);
+        }
+      });
+    } catch (_) {}
+  }
+  setInterval(pollSidebar, 6000);
 
   // ── WEBSOCKET (Reverb/Echo) — si está disponible mejora a tiempo real ──
   async function fetchMessage(dbId) {

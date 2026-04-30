@@ -107,6 +107,25 @@ class WhatsappInboxController extends Controller
         ));
     }
 
+    public function sidebarPoll(Request $request)
+    {
+        $team      = $this->currentTeam();
+        $accountId = $request->query('account_id');
+        $status    = $request->query('status', 'all');
+
+        $conversations = $this->sidebarConversations($team->id, $accountId, $status)
+            ->map(fn($c) => [
+                'id'                   => $c->id,
+                'contact_name'         => $c->contact_name,
+                'contact_phone'        => $c->contact_phone,
+                'last_message_preview' => $c->last_message_preview,
+                'last_message_at'      => $c->last_message_at?->timestamp ?? 0,
+                'status'               => $c->status,
+            ]);
+
+        return response()->json($conversations);
+    }
+
     public function newMessages(WhatsappConversation $conversation, Request $request)
     {
         $team = $this->currentTeam();
