@@ -375,8 +375,8 @@
     const d = document.createElement('div'); d.className='whitespace-pre-line'; d.innerHTML=escapeHtml(msg.body||''); bubble.appendChild(d);
   }
 
-  function addMessageToDom(msg) {
-    if (hasDbId(msg.id)) return; // ya está en pantalla
+  function addMessageToDom(msg, tempId) {
+    if (msg.id && hasDbId(msg.id)) return; // ya está en pantalla
     const isOut = msg.direction === 'outbound';
     const wrap  = document.createElement('div');
     wrap.className = 'flex ' + (isOut ? 'justify-end' : 'justify-start');
@@ -385,6 +385,7 @@
       (isOut ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-white text-gray-900 rounded-bl-sm');
     if (msg.message_id) bubble.dataset.messageId = msg.message_id;
     if (msg.id)         bubble.dataset.dbId       = String(msg.id);
+    if (tempId)         bubble.dataset.tempId     = tempId;
     renderContent(bubble, msg, isOut);
     const meta = document.createElement('div');
     meta.className = 'text-[10px] opacity-60 mt-1 flex items-center gap-1 ' + (isOut ? 'justify-end' : '');
@@ -392,7 +393,7 @@
     bubble.appendChild(meta);
     wrap.appendChild(bubble);
     chatBox.appendChild(wrap);
-    if (msg.id > lastDbId) lastDbId = msg.id;
+    if (msg.id && msg.id > lastDbId) lastDbId = msg.id;
     scrollBottom();
   }
 
@@ -496,8 +497,18 @@
     const text = input?.value?.trim();
     if (!text) return;
 
-    // Deshabilitar botón mientras envía
     if (sendBtn) sendBtn.disabled = true;
+
+    // Optimista: mostrar el mensaje en pantalla de inmediato
+    const tempId = 'temp-' + Date.now();
+    const tempMsg = {
+      id: null, _tempId: tempId,
+      direction: 'outbound', type: 'text', body: text,
+      created_at: new Date().toISOString(),
+      sent_by: { name: '' },
+    };
+    addMessageToDom(tempMsg, tempId);
+    if (input) { input.value = ''; input.style.height = 'auto'; }
 
     try {
       const res = await fetch(sendUrl, {
@@ -511,18 +522,21 @@
         body: JSON.stringify({ message: text }),
       });
 
-      if (!res.ok) throw new Error('Error ' + res.status);
-      const msg = await res.json();
-
-      // Limpiar input
-      if (input) { input.value = ''; input.style.height = 'auto'; }
-
-      // Mostrar mensaje en pantalla inmediatamente
-      addMessageToDom(msg);
-
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const msg = await res.json();
+        // Reemplazar burbuja temporal con la real (tiene id de DB)
+        const tempEl = chatBox.querySelector(`[data-temp-id="${tempId}"]`);
+        if (tempEl && msg.id) {
+          tempEl.dataset.dbId   = String(msg.id);
+          if (msg.message_id) tempEl.dataset.messageId = msg.message_id;
+          delete tempEl.dataset.tempId;
+          if (msg.id > lastDbId) lastDbId = msg.id;
+        }
+      }
+      // Si devuelve redirect/HTML el mensaje igual fue enviado — el polling lo confirmará
     } catch (err) {
-      console.error('Send error:', err);
-      alert('No se pudo enviar el mensaje. Intenta de nuevo.');
+      console.warn('Send response error (message may have been sent):', err.message);
     } finally {
       if (sendBtn) sendBtn.disabled = false;
       input?.focus();
