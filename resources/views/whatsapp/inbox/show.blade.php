@@ -300,13 +300,20 @@
 <script>
 (function () {
   const conversationId = @json($conversation->id);
+  const pollUrl        = @json(route('whatsapp.inbox.messages', $conversation));
   const chatBox = document.getElementById('chatBox');
   const input   = document.getElementById('msgInput');
+
+  // Último ID renderizado (inicializado con el último mensaje ya en pantalla)
+  let lastDbId = 0;
+  chatBox.querySelectorAll('[data-db-id]').forEach(el => {
+    const id = parseInt(el.dataset.dbId, 10);
+    if (id > lastDbId) lastDbId = id;
+  });
 
   function scrollBottom() { chatBox.scrollTop = chatBox.scrollHeight; }
   scrollBottom();
 
-  // Auto-resize textarea
   if (input) {
     input.addEventListener('input', function () {
       this.style.height = 'auto';
@@ -334,12 +341,12 @@
            String(dt.getMinutes()).padStart(2,'0');
   }
 
+  function hasDbId(id) { return !!chatBox.querySelector(`[data-db-id="${id}"]`); }
   function hasMessageId(mid) { return mid && !!chatBox.querySelector(`[data-message-id="${CSS.escape(mid)}"]`); }
 
   function renderContent(bubble, msg, isOut) {
     const type = msg.type || 'text';
     const cls = isOut ? 'text-white underline' : 'text-indigo-700 underline';
-
     if (type === 'image' && msg.public_url) {
       if (msg.caption) { const d = document.createElement('div'); d.className='whitespace-pre-line mb-1.5 text-xs'; d.textContent=msg.caption; bubble.appendChild(d); }
       const img = document.createElement('img'); img.src=msg.public_url; img.alt='imagen'; img.className='rounded-lg max-w-full h-auto'; bubble.appendChild(img); return;
@@ -361,34 +368,47 @@
   }
 
   function addMessageToDom(msg) {
+    if (hasDbId(msg.id)) return; // ya está en pantalla
     const isOut = msg.direction === 'outbound';
     const wrap  = document.createElement('div');
     wrap.className = 'flex ' + (isOut ? 'justify-end' : 'justify-start');
-
     const bubble = document.createElement('div');
     bubble.className = 'max-w-[70%] rounded-2xl px-3 py-2 text-sm shadow-sm ' +
       (isOut ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-white text-gray-900 rounded-bl-sm');
     if (msg.message_id) bubble.dataset.messageId = msg.message_id;
-    if (msg.id)         bubble.dataset.dbId       = msg.id;
-
+    if (msg.id)         bubble.dataset.dbId       = String(msg.id);
     renderContent(bubble, msg, isOut);
-
     const meta = document.createElement('div');
     meta.className = 'text-[10px] opacity-60 mt-1 flex items-center gap-1 ' + (isOut ? 'justify-end' : '');
     meta.textContent = formatDate(msg.created_at) + (isOut && msg.sent_by?.name ? ' · ' + msg.sent_by.name : '');
     bubble.appendChild(meta);
     wrap.appendChild(bubble);
     chatBox.appendChild(wrap);
+    if (msg.id > lastDbId) lastDbId = msg.id;
     scrollBottom();
   }
 
+  // ── POLLING — siempre activo, cada 4 segundos ──────────────────────────
+  async function poll() {
+    try {
+      const res = await fetch(pollUrl + '?after=' + lastDbId, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (!res.ok) return;
+      const msgs = await res.json();
+      msgs.forEach(addMessageToDom);
+    } catch (_) {}
+  }
+  setInterval(poll, 4000);
+
+  // ── WEBSOCKET (Reverb/Echo) — si está disponible mejora a tiempo real ──
   async function fetchMessage(dbId) {
     const res = await fetch(@json(url('/whatsapp/messages')) + '/' + dbId, { headers: {'X-Requested-With':'XMLHttpRequest'} });
     if (!res.ok) throw new Error(res.status);
     return res.json();
   }
 
-  function waitForEcho(timeout = 15000) {
+  function waitForEcho(timeout = 10000) {
     return new Promise((resolve, reject) => {
       const start = Date.now();
       const t = setInterval(() => {
@@ -400,23 +420,20 @@
 
   waitForEcho().then(Echo => {
     Echo.private(`whatsapp.conversation.${conversationId}`).listen('.WhatsappMessageReceived', async e => {
-      const dbId = e?.message_id || e?.message?.id || e?.id || null;
+      const dbId = e?.id || e?.message?.id || null;
       const fallback = e?.message ?? e;
       try {
         if (dbId) {
           const msg = await fetchMessage(dbId);
-          if (msg.message_id && hasMessageId(msg.message_id)) return;
           addMessageToDom(msg);
         } else {
-          if (fallback?.message_id && hasMessageId(fallback.message_id)) return;
           addMessageToDom(fallback);
         }
       } catch (err) {
-        console.warn('Realtime error:', err.message);
         if (fallback) addMessageToDom(fallback);
       }
     });
-  }).catch(err => console.warn('Echo disabled:', err.message));
+  }).catch(() => { /* polling cubre el caso sin WebSocket */ });
 
   document.getElementById('sendForm')?.addEventListener('submit', () => {
     setTimeout(() => { if (input) { input.value = ''; input.style.height = 'auto'; } scrollBottom(); }, 50);

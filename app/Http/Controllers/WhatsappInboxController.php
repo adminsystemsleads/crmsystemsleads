@@ -107,6 +107,36 @@ class WhatsappInboxController extends Controller
         ));
     }
 
+    public function newMessages(WhatsappConversation $conversation, Request $request)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        $afterId = (int) $request->query('after', 0);
+
+        $messages = $conversation->messages()
+            ->with('sentBy')
+            ->when($afterId, fn($q) => $q->where('id', '>', $afterId))
+            ->orderBy('id')
+            ->limit(30)
+            ->get()
+            ->map(fn($m) => [
+                'id'              => $m->id,
+                'message_id'      => $m->message_id,
+                'direction'       => $m->direction,
+                'type'            => $m->type,
+                'body'            => $m->body,
+                'caption'         => $m->caption,
+                'public_url'      => $m->public_url,
+                'mime_type'       => $m->mime_type,
+                'filename'        => $m->filename,
+                'created_at'      => $m->created_at?->toIso8601String(),
+                'sent_by'         => $m->sentBy ? ['name' => $m->sentBy->name] : null,
+            ]);
+
+        return response()->json($messages);
+    }
+
     public function send(Request $request, WhatsappConversation $conversation, WhatsappCloudService $wa)
     {
         $team = $this->currentTeam();

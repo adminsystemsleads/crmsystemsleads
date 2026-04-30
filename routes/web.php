@@ -124,6 +124,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/whatsapp/inbox', [WhatsappInboxController::class, 'index'])->name('whatsapp.inbox.index');
     Route::get('/whatsapp/inbox/{conversation}', [WhatsappInboxController::class, 'show'])->name('whatsapp.inbox.show');
     Route::post('/whatsapp/inbox/{conversation}/send', [WhatsappInboxController::class, 'send'])->name('whatsapp.inbox.send');
+    Route::get('/whatsapp/inbox/{conversation}/messages', [WhatsappInboxController::class, 'newMessages'])->name('whatsapp.inbox.messages');
 
 
     Route::resource('contacts', ContactController::class)->only(['index','create','store','edit','update','destroy']);
