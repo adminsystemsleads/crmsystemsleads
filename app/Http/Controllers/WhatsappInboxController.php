@@ -86,7 +86,7 @@ class WhatsappInboxController extends Controller
         $team = $this->currentTeam();
         abort_unless($conversation->team_id === $team->id, 404);
 
-        $conversation->load(['account', 'messages.sentBy', 'deals']);
+        $conversation->load(['account.aiAssistant', 'messages.sentBy', 'deals']);
 
         $currentDeal = $conversation->deals()
             ->with(['pipeline', 'stage'])
@@ -108,8 +108,10 @@ class WhatsappInboxController extends Controller
 
         $conversations = $this->sidebarConversations($team->id, $accountId, $status);
 
+        $aiAssistant = $conversation->account?->aiAssistant;
+
         return view('whatsapp.inbox.show', compact(
-            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status', 'pipelines'
+            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status', 'pipelines', 'aiAssistant'
         ));
     }
 

@@ -137,6 +137,15 @@
           {{ $conversation->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
         {{ $conversation->status === 'open' ? 'Abierta' : 'Cerrada' }}
       </span>
+      @if(isset($aiAssistant) && $aiAssistant?->is_active)
+        <span id="aiBadge" title="Asistente IA activo ({{ $aiAssistant->model }})"
+              class="ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-violet-100 text-violet-700 shrink-0">
+          <span class="size-1.5 rounded-full bg-violet-500 animate-pulse inline-block"></span>
+          IA
+        </span>
+      @else
+        <span id="aiBadge" class="hidden"></span>
+      @endif
       <span id="chatHeaderAccount" class="ml-auto text-xs text-gray-400 hidden lg:block">{{ $conversation->account?->name ?? '' }}</span>
     </div>
 

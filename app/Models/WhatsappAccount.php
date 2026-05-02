@@ -36,4 +36,9 @@ class WhatsappAccount extends Model
     {
         return $this->hasMany(WhatsappConversation::class, 'whatsapp_account_id');
     }
+
+    public function aiAssistant()
+    {
+        return $this->hasOne(WhatsappAiAssistant::class, 'whatsapp_account_id');
+    }
 }

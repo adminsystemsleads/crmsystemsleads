@@ -118,6 +118,11 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::put('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'update'])->name('whatsapp.accounts.update');
     Route::delete('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'destroy'])->name('whatsapp.accounts.destroy');
 
+    // AI Assistant per account
+    Route::get('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'edit'])->name('whatsapp.ai.edit');
+    Route::put('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'update'])->name('whatsapp.ai.update');
+    Route::delete('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'destroy'])->name('whatsapp.ai.destroy');
+
     
 
     // Inbox

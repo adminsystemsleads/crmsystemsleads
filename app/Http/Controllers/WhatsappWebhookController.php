@@ -213,6 +213,11 @@ class WhatsappWebhookController extends Controller
 
             // 5) Enlazar / crear deal
             $this->attachOrCreateDeal($account, $conversation, $contactName);
+
+            // 6) AI auto-reply (solo mensajes de texto entrantes)
+            if ($type === 'text') {
+                $this->dispatchAiReply($account, $conversation, $message);
+            }
         }
 
         return response()->json(['ok' => true]);
@@ -351,10 +356,25 @@ class WhatsappWebhookController extends Controller
 }
    
 
-   protected function writeToLog1($data, $title = 'DEBUG')
-{
-    Log::channel('single')->info($title, [
-        'data' => $data
-    ]);
-}
+    protected function dispatchAiReply(
+        WhatsappAccount $account,
+        WhatsappConversation $conversation,
+        WhatsappMessage $message
+    ): void {
+        $assistant = \App\Models\WhatsappAiAssistant::where('whatsapp_account_id', $account->id)
+            ->where('is_active', true)
+            ->first();
+
+        if (!$assistant) return;
+
+        \App\Jobs\ProcessWhatsappAiReply::dispatch($conversation->id, $assistant->id)
+            ->delay(now()->addSeconds(2)); // pequeño delay para que el mensaje ya esté guardado
+    }
+
+    protected function writeToLog1($data, $title = 'DEBUG')
+    {
+        Log::channel('single')->info($title, [
+            'data' => $data
+        ]);
+    }
 }
