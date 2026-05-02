@@ -16,8 +16,8 @@
   {{-- ════ BARRA SUPERIOR ════ --}}
   <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4">
     {{-- Botón hamburger – solo visible en mobile cuando el panel container ya está montado --}}
-    <button onclick="window.dispatchEvent(new CustomEvent('mobile-panel',{detail:'sidebar'}))"
-            class="lg:hidden shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Ver conversaciones">
+    <button onclick="setMobilePanel('sidebar')"
+            class="wa-mobile-btn shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Ver conversaciones">
       <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
@@ -39,13 +39,12 @@
   </div>
 
   {{-- ════ TRES PANELES ════ --}}
-  <div class="flex flex-1 overflow-hidden" x-data="{ mp: 'chat' }" @mobile-panel.window="mp = $event.detail" id="panelContainer">
+  <div class="flex flex-1 overflow-hidden" id="panelContainer" data-mp="chat">
 
   {{-- ════════════════════════════════════════
        PANEL IZQUIERDO – Lista de conversaciones
        ════════════════════════════════════════ --}}
-  <div :class="mp === 'sidebar' ? 'flex' : 'hidden md:flex'"
-       class="flex-col w-full md:w-72 shrink-0 border-r border-gray-200">
+  <div id="leftPanel" class="shrink-0 border-r border-gray-200">
 
     {{-- Cabecera --}}
     <div class="h-12 px-3 flex items-center border-b border-gray-100 bg-gray-50">
@@ -128,13 +127,12 @@
   {{-- ════════════════════════════════════════
        PANEL CENTRAL – Chat
        ════════════════════════════════════════ --}}
-  <div :class="mp === 'chat' ? 'flex' : 'hidden md:flex'"
-       class="flex-col flex-1 min-w-0 bg-gray-50">
+  <div id="centerPanel" class="min-w-0 bg-gray-50">
 
     {{-- Cabecera del chat --}}
     <div id="chatHeader" class="h-14 px-3 md:px-4 flex items-center gap-2 md:gap-3 border-b border-gray-200 bg-white shrink-0">
       {{-- Botón volver al sidebar (solo mobile) --}}
-      <button @click="mp = 'sidebar'" class="md:hidden shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Conversaciones">
+      <button onclick="setMobilePanel('sidebar')" class="wa-mobile-btn shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Conversaciones">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -162,7 +160,7 @@
       @endif
       <span id="chatHeaderAccount" class="hidden lg:block text-xs text-gray-400">{{ $conversation->account?->name ?? '' }}</span>
       {{-- Botón detalles contacto (solo mobile) --}}
-      <button @click="mp = 'info'" class="ml-auto md:hidden shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Detalles del contacto">
+      <button onclick="setMobilePanel('info')" class="wa-mobile-btn ml-auto shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Detalles del contacto">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
         </svg>
@@ -265,13 +263,11 @@
   {{-- ════════════════════════════════════════
        PANEL DERECHO – Detalles del contacto
        ════════════════════════════════════════ --}}
-  <div id="rightPanel"
-       :class="mp === 'info' ? 'flex' : 'hidden md:flex'"
-       class="flex-col w-full md:w-[280px] shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
+  <div id="rightPanel" class="shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
 
     {{-- Header --}}
     <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
-      <button @click="mp = 'chat'" class="md:hidden shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
+      <button onclick="setMobilePanel('chat')" class="wa-mobile-btn shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -438,7 +434,28 @@
 
 </div>{{-- fin layout principal --}}
 
+<style>
+/* ── Responsive WhatsApp inbox ───────────────────────────────────── */
+@media (min-width: 768px) {
+  #leftPanel   { display: flex; flex-direction: column; width: 18rem; flex-shrink: 0; }
+  #centerPanel { display: flex; flex-direction: column; flex: 1 1 0%; }
+  #rightPanel  { display: flex; flex-direction: column; width: 280px; flex-shrink: 0; }
+  .wa-mobile-btn { display: none !important; }
+}
+@media (max-width: 767px) {
+  #leftPanel, #centerPanel, #rightPanel { display: none; }
+  #panelContainer[data-mp="sidebar"] #leftPanel   { display: flex; flex-direction: column; width: 100%; }
+  #panelContainer[data-mp="chat"]    #centerPanel { display: flex; flex-direction: column; flex: 1 1 0%; }
+  #panelContainer[data-mp="info"]    #rightPanel  { display: flex; flex-direction: column; width: 100%; }
+}
+</style>
+
 <script>
+function setMobilePanel(panel) {
+  const c = document.getElementById('panelContainer');
+  if (c) c.dataset.mp = panel;
+}
+
 (function () {
   // ── Estado mutable (cambia al switchear conversación) ──────────────────────
   let conversationId = @json($conversation->id);
@@ -828,7 +845,7 @@
       history.pushState({ convId: data.id }, '', pageUrl);
 
       // En mobile: cambiar al panel de chat
-      window.dispatchEvent(new CustomEvent('mobile-panel', { detail: 'chat' }));
+      setMobilePanel('chat');
     } catch (err) {
       console.warn('switchConversation error:', err);
       chatBox.innerHTML = '<div class="flex items-center justify-center py-8 text-red-400 text-sm">Error al cargar conversación.</div>';
@@ -933,8 +950,8 @@
 
     return `
       <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
-        <button onclick="window.dispatchEvent(new CustomEvent('mobile-panel',{detail:'chat'}))"
-                class="md:hidden shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
+        <button onclick="setMobilePanel('chat')"
+                class="wa-mobile-btn shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
