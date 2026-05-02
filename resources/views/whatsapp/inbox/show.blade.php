@@ -187,28 +187,46 @@
 
     {{-- Formulario de envío --}}
     <div class="border-t border-gray-200 bg-white px-4 py-3 shrink-0">
-      @if(session('status'))
-        <div class="mb-2 text-xs text-green-600">{{ session('status') }}</div>
-      @endif
+      {{-- Preview archivo seleccionado --}}
+      <div id="filePreview" class="hidden mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-50 border border-indigo-100 text-xs text-indigo-700">
+        <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+        </svg>
+        <span id="filePreviewName" class="truncate flex-1"></span>
+        <button type="button" id="fileClear" class="shrink-0 text-indigo-400 hover:text-red-500">✕</button>
+      </div>
+
       <form id="sendForm" method="POST" action="{{ route('whatsapp.inbox.send', $conversation) }}"
-            class="flex items-end gap-2">
+            class="flex items-end gap-2" enctype="multipart/form-data">
         @csrf
+        <input type="file" id="mediaInput" name="media" class="hidden"
+               accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/3gpp">
+
+        {{-- Botón adjuntar --}}
+        <button type="button" id="attachBtn"
+                class="shrink-0 p-2 rounded-xl text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                title="Adjuntar imagen o video">
+          <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+          </svg>
+        </button>
+
         <textarea id="msgInput" name="message" rows="1"
                   class="flex-1 resize-none rounded-xl border-gray-200 bg-gray-50 text-sm px-3 py-2 focus:ring-indigo-400 focus:border-indigo-400"
                   placeholder="Escribe un mensaje..."
                   style="min-height:40px;max-height:120px;"
-                  autocomplete="off">{{ old('message') }}</textarea>
-        <button type="submit"
-                class="shrink-0 p-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                  autocomplete="off"></textarea>
+
+        <button type="submit" id="sendBtn"
+                class="shrink-0 p-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition disabled:opacity-50">
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
           </svg>
         </button>
       </form>
-      @error('message')
-        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-      @enderror
+      <p class="mt-1 text-[10px] text-gray-400">Imágenes: JPG, PNG, GIF, WEBP · Videos: MP4 (máx. 16 MB)</p>
     </div>
 
   </div>
@@ -532,58 +550,98 @@
     });
   }).catch(() => { /* polling cubre el caso sin WebSocket */ });
 
-  // ── ENVÍO AJAX — sin recargar página ────────────────────────────────────
-  const sendForm   = document.getElementById('sendForm');
-  const sendBtn    = sendForm?.querySelector('button[type=submit]');
-  const sendUrl    = sendForm?.action;
-  const csrfToken  = document.querySelector('meta[name="csrf-token"]')?.content
-                  || sendForm?.querySelector('input[name=_token]')?.value;
+  // ── ADJUNTAR ARCHIVO ─────────────────────────────────────────────────────
+  const sendForm    = document.getElementById('sendForm');
+  const sendBtn     = document.getElementById('sendBtn');
+  const attachBtn   = document.getElementById('attachBtn');
+  const mediaInput  = document.getElementById('mediaInput');
+  const filePreview = document.getElementById('filePreview');
+  const filePreviewName = document.getElementById('filePreviewName');
+  const fileClear   = document.getElementById('fileClear');
+  const sendUrl     = sendForm?.action;
+  const csrfToken   = document.querySelector('meta[name="csrf-token"]')?.content;
 
+  attachBtn?.addEventListener('click', () => mediaInput?.click());
+
+  mediaInput?.addEventListener('change', () => {
+    const file = mediaInput.files[0];
+    if (!file) return;
+    const maxMB = file.type.startsWith('video/') ? 16 : 5;
+    if (file.size > maxMB * 1024 * 1024) {
+      alert(`El archivo supera el límite de ${maxMB} MB.`);
+      mediaInput.value = '';
+      return;
+    }
+    filePreviewName.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(1) + ' MB)';
+    filePreview.classList.remove('hidden');
+  });
+
+  fileClear?.addEventListener('click', () => {
+    mediaInput.value = '';
+    filePreview.classList.add('hidden');
+    filePreviewName.textContent = '';
+  });
+
+  // ── ENVÍO AJAX ────────────────────────────────────────────────────────────
   sendForm?.addEventListener('submit', async function (e) {
     e.preventDefault();
     const text = input?.value?.trim();
-    if (!text) return;
+    const hasFile = mediaInput?.files?.length > 0;
+    if (!text && !hasFile) return;
 
     if (sendBtn) sendBtn.disabled = true;
 
-    // Optimista: mostrar el mensaje en pantalla de inmediato
+    // Burbuja optimista
     const tempId = 'temp-' + Date.now();
     const tempMsg = {
       id: null, _tempId: tempId,
-      direction: 'outbound', type: 'text', body: text,
+      direction: 'outbound',
+      type: hasFile ? (mediaInput.files[0].type.startsWith('video/') ? 'video' : 'image') : 'text',
+      body: text || (hasFile ? '[' + (mediaInput.files[0].type.startsWith('video/') ? 'video' : 'imagen') + ']' : ''),
+      public_url: hasFile ? URL.createObjectURL(mediaInput.files[0]) : null,
+      mime_type:  hasFile ? mediaInput.files[0].type : null,
       created_at: new Date().toISOString(),
       sent_by: { name: '' },
     };
     addMessageToDom(tempMsg, tempId);
     if (input) { input.value = ''; input.style.height = 'auto'; }
 
+    // Construir FormData (soporta texto + archivo)
+    const formData = new FormData();
+    formData.append('_token', csrfToken);
+    if (text) formData.append('message', text);
+    if (hasFile) formData.append('media', mediaInput.files[0]);
+
     try {
       const res = await fetch(sendUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': csrfToken,
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ message: text }),
+        body: formData,
       });
+
+      // Limpiar preview de archivo
+      if (hasFile) {
+        mediaInput.value = '';
+        filePreview.classList.add('hidden');
+        filePreviewName.textContent = '';
+      }
 
       const contentType = res.headers.get('content-type') || '';
       if (contentType.includes('application/json')) {
         const msg = await res.json();
-        // Reemplazar burbuja temporal con la real (tiene id de DB)
         const tempEl = chatBox.querySelector(`[data-temp-id="${tempId}"]`);
         if (tempEl && msg.id) {
-          tempEl.dataset.dbId   = String(msg.id);
+          tempEl.dataset.dbId = String(msg.id);
           if (msg.message_id) tempEl.dataset.messageId = msg.message_id;
           delete tempEl.dataset.tempId;
           if (msg.id > lastDbId) lastDbId = msg.id;
         }
       }
-      // Si devuelve redirect/HTML el mensaje igual fue enviado — el polling lo confirmará
     } catch (err) {
-      console.warn('Send response error (message may have been sent):', err.message);
+      console.warn('Send error:', err.message);
     } finally {
       if (sendBtn) sendBtn.disabled = false;
       input?.focus();

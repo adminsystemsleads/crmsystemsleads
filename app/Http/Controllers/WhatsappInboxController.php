@@ -238,30 +238,64 @@ class WhatsappInboxController extends Controller
         $team = $this->currentTeam();
         abort_unless($conversation->team_id === $team->id, 404);
 
-        $data = $request->validate([
-            'message' => 'required|string|max:4000',
-        ]);
+        $hasFile = $request->hasFile('media');
+
+        $request->validate(array_filter([
+            'message' => $hasFile ? 'nullable|string|max:4000' : 'required|string|max:4000',
+            'media'   => $hasFile ? 'required|file|mimes:jpeg,jpg,png,gif,webp,mp4,3gp|max:16384' : null,
+        ]));
 
         $account = $conversation->account;
+        $msgType = 'text';
+        $msgBody = $request->input('message', '');
+        $publicUrl   = null;
+        $storagePath = null;
+        $mimeType    = null;
+        $filename    = null;
 
-        $res = $wa->sendText($account, $conversation->contact_phone, $data['message']);
+        if ($hasFile) {
+            $file     = $request->file('media');
+            $mimeType = $file->getMimeType();
+            $filename = $file->getClientOriginalName();
+            $msgType  = str_starts_with($mimeType, 'video/') ? 'video' : 'image';
+            $caption  = $msgBody ?: null;
+
+            // 1) Subir a Meta
+            $mediaId = $wa->uploadMedia($account, $file->getRealPath(), $mimeType, $filename);
+
+            // 2) Enviar por WhatsApp
+            $res = $wa->sendMedia($account, $conversation->contact_phone, $msgType, $mediaId, $caption);
+
+            // 3) Guardar copia local en storage/public
+            $path = "whatsapp/{$team->id}/conversations/{$conversation->id}/" . uniqid() . '_' . $filename;
+            \Illuminate\Support\Facades\Storage::disk('public')->put($path, file_get_contents($file->getRealPath()));
+            $storagePath = $path;
+            $publicUrl   = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            $msgBody     = '[' . ($msgType === 'video' ? 'video' : 'imagen') . ']';
+        } else {
+            $res = $wa->sendText($account, $conversation->contact_phone, $msgBody);
+        }
 
         $metaMessageId = $res['messages'][0]['id'] ?? null;
 
-        WhatsappMessage::create([
-            'team_id' => $team->id,
-            'whatsapp_conversation_id' => $conversation->id,
-            'direction' => 'outbound',
-            'message_id' => $metaMessageId,
-            'type' => 'text',
-            'body' => $data['message'],
-            'raw_payload' => $res,
-            'sent_by_user_id' => Auth::id(),
+        $message = WhatsappMessage::create([
+            'team_id'                 => $team->id,
+            'whatsapp_conversation_id'=> $conversation->id,
+            'direction'               => 'outbound',
+            'message_id'              => $metaMessageId,
+            'type'                    => $msgType,
+            'body'                    => $msgBody,
+            'mime_type'               => $mimeType,
+            'filename'                => $filename,
+            'storage_path'            => $storagePath,
+            'public_url'              => $publicUrl,
+            'raw_payload'             => json_encode($res),
+            'sent_by_user_id'         => Auth::id(),
         ]);
 
         $conversation->update([
-            'last_message_at' => now(),
-            'last_message_preview' => mb_substr($data['message'], 0, 180),
+            'last_message_at'      => now(),
+            'last_message_preview' => mb_substr($msgBody, 0, 180),
         ]);
 
         if ($request->expectsJson() || $request->ajax()) {
@@ -270,8 +304,11 @@ class WhatsappInboxController extends Controller
                 'id'         => $message->id,
                 'message_id' => $message->message_id,
                 'direction'  => 'outbound',
-                'type'       => 'text',
+                'type'       => $message->type,
                 'body'       => $message->body,
+                'public_url' => $message->public_url,
+                'mime_type'  => $message->mime_type,
+                'filename'   => $message->filename,
                 'created_at' => $message->created_at?->toIso8601String(),
                 'sent_by'    => ['name' => Auth::user()->name],
             ]);
