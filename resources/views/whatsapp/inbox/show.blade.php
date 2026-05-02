@@ -296,7 +296,8 @@
           </svg>
           <div>
             <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
-            <p id="aiToggleLabel" class="text-[10px] font-semibold mt-0.5 {{ $conversation->ai_active ? 'text-green-600' : 'text-red-500' }}">
+            <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5 {{ $conversation->ai_active ? 'text-green-600' : 'text-red-500' }}">
+              <span id="aiToggleDot" class="size-2 rounded-full inline-block {{ $conversation->ai_active ? 'bg-green-500 animate-pulse' : 'bg-red-400' }}"></span>
               {{ $conversation->ai_active ? 'Activo' : 'Pausado' }}
             </p>
           </div>
@@ -830,7 +831,7 @@
             </svg>
             <div>
               <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
-              <p id="aiToggleLabel" class="text-[10px] font-semibold mt-0.5 ${aiActive ? 'text-green-600' : 'text-red-500'}">${aiActive ? 'Activo' : 'Pausado'}</p>
+              <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5 ${aiActive ? 'text-green-600' : 'text-red-500'}"><span id="aiToggleDot" class="size-2 rounded-full inline-block ${aiActive ? 'bg-green-500 animate-pulse' : 'bg-red-400'}"></span>${aiActive ? 'Activo' : 'Pausado'}</p>
             </div>
           </div>
           <button id="aiToggleBtn"
@@ -960,8 +961,11 @@
       (active ? 'translate-x-6' : 'translate-x-1');
     const label = document.getElementById('aiToggleLabel');
     if (label) {
-      label.textContent = active ? 'Activo' : 'Pausado';
-      label.className = 'text-[10px] font-semibold mt-0.5 ' + (active ? 'text-green-600' : 'text-red-500');
+      label.className = 'flex items-center gap-1 text-[10px] font-semibold mt-0.5 ' + (active ? 'text-green-600' : 'text-red-500');
+      const dot = document.getElementById('aiToggleDot');
+      if (dot) dot.className = 'size-2 rounded-full inline-block ' + (active ? 'bg-green-500 animate-pulse' : 'bg-red-400');
+      const textNode = label.childNodes[label.childNodes.length - 1];
+      if (textNode) textNode.textContent = active ? 'Activo' : 'Pausado';
     }
     const svgIcon = document.querySelector('#aiToggleSection svg');
     if (svgIcon) svgIcon.className = 'size-4 ' + (active ? 'text-green-500' : 'text-red-400');
