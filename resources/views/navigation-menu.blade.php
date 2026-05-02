@@ -51,7 +51,7 @@
       'key'    => 'crm',
       'name'   => __('CRM'),
       'route'  => 'pipelines.index',
-      'active' => request()->routeIs('pipelines.*') || request()->routeIs('deals.*'),
+      'active' => request()->routeIs('pipelines.*') || request()->routeIs('deals.*') || request()->routeIs('products.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
     ],
     [
@@ -221,6 +221,20 @@
             <span class="{{ $link['active'] ? 'text-indigo-500' : 'text-gray-400' }}">{!! $link['icon'] !!}</span>
             <span class="truncate">{{ $link['name'] }}</span>
           </a>
+
+          {{-- Catálogo de productos bajo CRM --}}
+          @if ($link['key'] === 'crm')
+            <a href="{{ route('products.index') }}"
+               class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
+                      {{ request()->routeIs('products.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+              <svg class="shrink-0 {{ request()->routeIs('products.*') ? 'text-indigo-400' : 'text-gray-400' }}"
+                   style="width:12px;height:12px;min-width:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+              </svg>
+              <span class="truncate text-xs">Productos</span>
+            </a>
+          @endif
 
           {{-- Accesos rápidos al Kanban bajo el módulo CRM --}}
           @if ($link['key'] === 'crm' && $navPipelines->isNotEmpty())

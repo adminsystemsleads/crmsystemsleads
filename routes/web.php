@@ -19,6 +19,8 @@ use App\Http\Controllers\WhatsappInboxController;
 use App\Http\Controllers\WhatsappWebhookController;
 use App\Http\Controllers\TeamModulesController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DealProductController;
 
 
 Route::get('/', function () {
@@ -57,6 +59,17 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
 
     // 🔹 mover negociación entre fases desde el Kanban
     Route::post('/pipelines/{pipeline}/deals/{deal}/move', [DealController::class, 'move'])->name('deals.move');
+
+    // Productos en negociaciones
+    Route::post('/pipelines/{pipeline}/deals/{deal}/products', [DealProductController::class, 'store'])->name('deals.products.store');
+    Route::delete('/pipelines/{pipeline}/deals/{deal}/products/{dealProduct}', [DealProductController::class, 'destroy'])->name('deals.products.destroy');
+    Route::get('/products/search', [DealProductController::class, 'productSearch'])->name('products.search');
+
+    // Catálogo de productos
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 
      Route::get('/pipelines', [PipelineController::class, 'index'])->name('pipelines.index');
     Route::get('/pipelines/create', [PipelineController::class, 'create'])->name('pipelines.create');

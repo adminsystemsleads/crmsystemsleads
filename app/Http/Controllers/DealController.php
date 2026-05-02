@@ -214,11 +214,18 @@ class DealController extends Controller
             'comments.user',
             'activities.user',
             'whatsappConversations.account',
+            'dealProducts',
         ]);
 
         $comments              = $deal->comments;
         $activities            = $deal->activities;
         $whatsappConversations = $deal->whatsappConversations;
+        $dealProducts          = $deal->dealProducts;
+
+        $catalogProducts = \App\Models\Product::where('team_id', $team->id ?? $deal->team_id)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'price', 'unit', 'currency']);
 
         return view('deals.edit', compact(
             'pipeline',
@@ -228,7 +235,9 @@ class DealController extends Controller
             'teamMembers',
             'comments',
             'activities',
-            'whatsappConversations'
+            'whatsappConversations',
+            'dealProducts',
+            'catalogProducts'
         ));
     }
 

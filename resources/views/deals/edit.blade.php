@@ -459,6 +459,164 @@
                 </div>
 
             </div>
+
+            {{-- ====== SECCIÓN PRODUCTOS ====== --}}
+            <div class="mt-6 bg-white shadow-sm sm:rounded-lg p-6"
+                 x-data="{
+                   addOpen: false,
+                   selId: '', selName: '', selPrice: 0, selUnit: 'unidad',
+                   qty: 1, price: 0, disc: 0, unit: 'unidad',
+                   get subtotal() { return (this.qty * this.price * (1 - this.disc/100)).toFixed(2); },
+                   pickProduct(id, name, price, unit) {
+                     this.selId = id; this.selName = name;
+                     this.price = price; this.unit = unit;
+                   }
+                 }">
+
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold text-gray-900">Productos / Servicios</h3>
+                <button type="button" @click="addOpen = !addOpen"
+                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  Agregar producto
+                </button>
+              </div>
+
+              {{-- Formulario agregar --}}
+              <div x-show="addOpen" x-transition class="mb-5 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+                <form method="POST" action="{{ route('deals.products.store', [$pipeline, $deal]) }}" class="space-y-3">
+                  @csrf
+                  <input type="hidden" name="product_id" :value="selId">
+
+                  {{-- Buscar del catálogo --}}
+                  @if($catalogProducts->isNotEmpty())
+                  <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Seleccionar del catálogo (opcional)</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-36 overflow-y-auto pr-1">
+                      @foreach($catalogProducts as $cp)
+                        <button type="button"
+                                @click="pickProduct({{ $cp->id }}, @js($cp->name), {{ $cp->price }}, @js($cp->unit))"
+                                :class="selId == {{ $cp->id }} ? 'ring-2 ring-indigo-500 bg-white' : 'bg-white hover:bg-indigo-50'"
+                                class="text-left rounded-lg border border-gray-200 px-3 py-2 transition">
+                          <p class="text-xs font-semibold text-gray-800 truncate">{{ $cp->name }}</p>
+                          <p class="text-[10px] text-gray-500">{{ $cp->unit }} · {{ $cp->currency }} {{ number_format($cp->price,2) }}</p>
+                        </button>
+                      @endforeach
+                    </div>
+                  </div>
+                  @endif
+
+                  {{-- Nombre --}}
+                  <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre *</label>
+                    <input type="text" name="name" required maxlength="255"
+                           :value="selName" placeholder="Nombre del producto o servicio"
+                           class="w-full rounded-lg border-gray-200 text-sm py-1.5 bg-white">
+                  </div>
+
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">Unidad</label>
+                      <input type="text" name="unit" maxlength="50" :value="unit"
+                             class="w-full rounded-lg border-gray-200 text-sm py-1.5 bg-white">
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">Cantidad *</label>
+                      <input type="number" name="quantity" required min="0.01" step="0.01"
+                             x-model="qty"
+                             class="w-full rounded-lg border-gray-200 text-sm py-1.5 bg-white">
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">Precio unit. *</label>
+                      <input type="number" name="unit_price" required min="0" step="0.01"
+                             x-model="price"
+                             class="w-full rounded-lg border-gray-200 text-sm py-1.5 bg-white">
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">Descuento %</label>
+                      <input type="number" name="discount" min="0" max="100" step="0.01"
+                             x-model="disc"
+                             class="w-full rounded-lg border-gray-200 text-sm py-1.5 bg-white">
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-semibold text-gray-700">
+                      Total: <span class="text-indigo-700" x-text="'{{ $deal->currency }} ' + subtotal"></span>
+                    </p>
+                    <div class="flex gap-2">
+                      <button type="submit"
+                              class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+                        Agregar
+                      </button>
+                      <button type="button" @click="addOpen = false"
+                              class="px-4 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-medium hover:bg-gray-200 transition">
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              {{-- Tabla de productos --}}
+              @if($dealProducts->isNotEmpty())
+              <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                      <th class="px-4 py-2 text-left text-xs font-semibold text-gray-500">Producto</th>
+                      <th class="px-4 py-2 text-right text-xs font-semibold text-gray-500">Unidad</th>
+                      <th class="px-4 py-2 text-right text-xs font-semibold text-gray-500">Cant.</th>
+                      <th class="px-4 py-2 text-right text-xs font-semibold text-gray-500">P. Unit.</th>
+                      <th class="px-4 py-2 text-right text-xs font-semibold text-gray-500">Desc.%</th>
+                      <th class="px-4 py-2 text-right text-xs font-semibold text-gray-500">Total</th>
+                      <th class="px-4 py-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-100">
+                    @foreach($dealProducts as $dp)
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-4 py-2 font-medium text-gray-900">{{ $dp->name }}</td>
+                      <td class="px-4 py-2 text-right text-gray-500 text-xs">{{ $dp->unit }}</td>
+                      <td class="px-4 py-2 text-right text-gray-700">{{ $dp->quantity }}</td>
+                      <td class="px-4 py-2 text-right text-gray-700">{{ number_format($dp->unit_price, 2) }}</td>
+                      <td class="px-4 py-2 text-right text-gray-500">{{ $dp->discount > 0 ? $dp->discount.'%' : '—' }}</td>
+                      <td class="px-4 py-2 text-right font-semibold text-gray-900">
+                        {{ $deal->currency }} {{ number_format($dp->total, 2) }}
+                      </td>
+                      <td class="px-4 py-2 text-right">
+                        <form method="POST"
+                              action="{{ route('deals.products.destroy', [$pipeline, $deal, $dp]) }}"
+                              onsubmit="return confirm('¿Eliminar línea?')">
+                          @csrf @method('DELETE')
+                          <button type="submit" class="text-xs text-red-500 hover:text-red-700">✕</button>
+                        </form>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                  <tfoot>
+                    <tr class="bg-gray-50 border-t-2 border-gray-200">
+                      <td colspan="5" class="px-4 py-2 text-right text-sm font-bold text-gray-700">Total negociación</td>
+                      <td class="px-4 py-2 text-right text-sm font-bold text-indigo-700">
+                        {{ $deal->currency }} {{ number_format($dealProducts->sum('total'), 2) }}
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              @else
+                <div class="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
+                  Sin productos agregados. Haz clic en "Agregar producto" para comenzar.
+                </div>
+              @endif
+
+            </div>
+            {{-- FIN SECCIÓN PRODUCTOS --}}
+
         </div>
     </div>
 

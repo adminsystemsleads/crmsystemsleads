@@ -85,4 +85,17 @@ public function whatsappConversations()
     )->withTimestamps();
 }
 
+public function dealProducts()
+{
+    return $this->hasMany(DealProduct::class)->orderBy('id');
+}
+
+public function recalculateAmount(): void
+{
+    $total = $this->dealProducts()->sum('total');
+    $this->timestamps = false;
+    $this->update(['amount' => $total]);
+    $this->timestamps = true;
+}
+
 }
