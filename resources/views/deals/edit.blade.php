@@ -200,9 +200,28 @@
                 </div>
 
                 {{-- ====== COLUMNA DERECHA: COMENTARIOS / ACTIVIDAD + HISTORIAL ====== --}}
-                <div class="bg-white shadow-sm sm:rounded-lg p-4" x-data="{ tab: 'comments' }">
+                <div class="bg-white shadow-sm sm:rounded-lg p-4"
+                     x-data="{ tab: '{{ $whatsappConversations->isNotEmpty() ? 'whatsapp' : 'comments' }}' }">
                     {{-- Tabs --}}
                     <div class="border-b mb-3 flex space-x-4 text-sm">
+                        {{-- WhatsApp primero --}}
+                        <button type="button"
+                                class="pb-2 border-b-2 flex items-center gap-1"
+                                :class="tab === 'whatsapp'
+                                    ? 'border-green-600 text-green-600 font-semibold'
+                                    : 'border-transparent text-gray-500'"
+                                @click="tab = 'whatsapp'">
+                            <svg class="size-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/>
+                                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.855L.057 23.882a.5.5 0 00.611.61l6.102-1.6A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.944 9.944 0 01-5.073-1.386l-.363-.215-3.764.987.999-3.671-.236-.375A9.955 9.955 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                            </svg>
+                            WhatsApp
+                            @if($whatsappConversations->isNotEmpty())
+                                <span class="inline-flex items-center justify-center rounded-full bg-green-100 text-green-700 text-[10px] font-semibold px-1.5">
+                                    {{ $whatsappConversations->count() }}
+                                </span>
+                            @endif
+                        </button>
                         <button type="button"
                                 class="pb-2 border-b-2"
                                 :class="tab === 'comments'
@@ -218,23 +237,6 @@
                                     : 'border-transparent text-gray-500'"
                                 @click="tab = 'activity'">
                             Actividad
-                        </button>
-                        <button type="button"
-                                class="pb-2 border-b-2 flex items-center gap-1"
-                                :class="tab === 'whatsapp'
-                                    ? 'border-green-600 text-green-600 font-semibold'
-                                    : 'border-transparent text-gray-500'"
-                                @click="tab = 'whatsapp'">
-                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
-                            WhatsApp
-                            @if($whatsappConversations->isNotEmpty())
-                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-green-100 text-green-700 text-[10px] font-semibold px-1.5">
-                                    {{ $whatsappConversations->count() }}
-                                </span>
-                            @endif
                         </button>
                     </div>
 
@@ -335,41 +337,35 @@
                         @else
                             <ul class="space-y-2">
                                 @foreach($whatsappConversations as $conv)
-                                    <li class="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-3">
-                                        <div class="min-w-0">
+                                    <a href="{{ route('whatsapp.inbox.show', $conv) }}"
+                                       class="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 hover:bg-green-50 hover:border-green-200 transition group">
+                                        {{-- Avatar inicial --}}
+                                        <div class="size-9 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-semibold shrink-0">
+                                            {{ strtoupper(mb_substr($conv->contact_name ?? $conv->contact_phone ?? '?', 0, 1)) }}
+                                        </div>
+                                        <div class="min-w-0 flex-1">
                                             <div class="flex items-center gap-2">
-                                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
-                                                    {{ $conv->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600' }}">
-                                                    {{ $conv->status === 'open' ? 'Abierta' : 'Cerrada' }}
-                                                </span>
-                                                <span class="text-sm font-medium text-gray-900 truncate">
+                                                <span class="text-sm font-semibold text-gray-900 truncate group-hover:text-green-700">
                                                     {{ $conv->contact_name ?? $conv->contact_phone }}
                                                 </span>
+                                                <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold shrink-0
+                                                    {{ $conv->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500' }}">
+                                                    {{ $conv->status === 'open' ? 'Abierta' : 'Cerrada' }}
+                                                </span>
                                             </div>
-                                            <div class="mt-0.5 text-xs text-gray-500 flex items-center gap-2">
-                                                <span>{{ $conv->contact_phone }}</span>
-                                                @if($conv->account)
-                                                    <span class="text-gray-300">•</span>
-                                                    <span>{{ $conv->account->name }}</span>
-                                                @endif
-                                                @if($conv->last_message_at)
-                                                    <span class="text-gray-300">•</span>
-                                                    <span>{{ $conv->last_message_at->diffForHumans() }}</span>
-                                                @endif
-                                            </div>
+                                            <p class="text-xs text-gray-400 truncate mt-0.5">
+                                                {{ $conv->contact_phone }}
+                                                @if($conv->account) · {{ $conv->account->name }} @endif
+                                                @if($conv->last_message_at) · {{ $conv->last_message_at->diffForHumans() }} @endif
+                                            </p>
                                             @if($conv->last_message_preview)
-                                                <p class="mt-1 text-xs text-gray-500 truncate italic">{{ $conv->last_message_preview }}</p>
+                                                <p class="text-xs text-gray-500 truncate italic mt-0.5">{{ $conv->last_message_preview }}</p>
                                             @endif
                                         </div>
-                                        <a href="{{ route('whatsapp.inbox.show', $conv) }}"
-                                           class="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 transition">
-                                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                            </svg>
-                                            Abrir chat
-                                        </a>
-                                    </li>
+                                        <svg class="size-4 text-gray-300 group-hover:text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
                                 @endforeach
                             </ul>
                         @endif
