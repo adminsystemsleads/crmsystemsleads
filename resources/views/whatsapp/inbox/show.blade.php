@@ -44,8 +44,8 @@
   {{-- ════════════════════════════════════════
        PANEL IZQUIERDO – Lista de conversaciones
        ════════════════════════════════════════ --}}
-  <div :class="mp === 'sidebar' ? 'flex flex-col w-full' : 'hidden md:flex md:flex-col md:w-72'"
-       class="shrink-0 border-r border-gray-200">
+  <div :class="mp === 'sidebar' ? 'flex' : 'hidden md:flex'"
+       class="flex-col w-full md:w-72 shrink-0 border-r border-gray-200">
 
     {{-- Cabecera --}}
     <div class="h-12 px-3 flex items-center border-b border-gray-100 bg-gray-50">
@@ -128,8 +128,8 @@
   {{-- ════════════════════════════════════════
        PANEL CENTRAL – Chat
        ════════════════════════════════════════ --}}
-  <div :class="mp === 'chat' ? 'flex flex-col flex-1' : 'hidden md:flex md:flex-col md:flex-1'"
-       class="min-w-0 bg-gray-50">
+  <div :class="mp === 'chat' ? 'flex' : 'hidden md:flex'"
+       class="flex-col flex-1 min-w-0 bg-gray-50">
 
     {{-- Cabecera del chat --}}
     <div id="chatHeader" class="h-14 px-3 md:px-4 flex items-center gap-2 md:gap-3 border-b border-gray-200 bg-white shrink-0">
@@ -266,8 +266,8 @@
        PANEL DERECHO – Detalles del contacto
        ════════════════════════════════════════ --}}
   <div id="rightPanel"
-       :class="mp === 'info' ? 'flex flex-col w-full' : 'hidden md:flex md:flex-col md:w-[280px]'"
-       class="shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
+       :class="mp === 'info' ? 'flex' : 'hidden md:flex'"
+       class="flex-col w-full md:w-[280px] shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
 
     {{-- Header --}}
     <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
