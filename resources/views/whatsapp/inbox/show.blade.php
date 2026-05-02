@@ -309,32 +309,33 @@
 
     {{-- Asistente IA toggle --}}
     @if($hasAi)
-    <div class="px-4 py-3 border-b border-gray-100" id="aiToggleSection">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <svg class="size-4 {{ $conversation->ai_active ? 'text-green-500' : 'text-red-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
-          </svg>
-          <div>
-            <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
-            <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5 {{ $conversation->ai_active ? 'text-green-600' : 'text-red-500' }}">
-              <span id="aiToggleDot" class="size-2 rounded-full inline-block {{ $conversation->ai_active ? 'bg-green-500 animate-pulse' : 'bg-red-400' }}"></span>
-              {{ $conversation->ai_active ? 'Activo' : 'Pausado' }}
-            </p>
-          </div>
+    <div id="aiToggleSection"
+         data-toggle-url="{{ route('whatsapp.inbox.ai.toggle', $conversation) }}"
+         data-active="{{ $conversation->ai_active ? '1' : '0' }}"
+         onclick="toggleAiBot(this)"
+         class="px-4 py-3 border-b cursor-pointer select-none transition-colors
+                {{ $conversation->ai_active
+                    ? 'bg-green-50 border-green-100 hover:bg-green-100'
+                    : 'bg-red-50 border-red-100 hover:bg-red-100' }}">
+      <div class="flex items-center gap-2">
+        <svg class="size-4 shrink-0 {{ $conversation->ai_active ? 'text-green-500' : 'text-red-400' }}"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
+        </svg>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold {{ $conversation->ai_active ? 'text-green-800' : 'text-red-700' }}">Asistente IA</p>
+          <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5
+                                       {{ $conversation->ai_active ? 'text-green-600' : 'text-red-500' }}">
+            <span id="aiToggleDot" class="size-2 rounded-full inline-block
+                                          {{ $conversation->ai_active ? 'bg-green-500 animate-pulse' : 'bg-red-400' }}"></span>
+            {{ $conversation->ai_active ? 'Activo — toca para pausar' : 'Pausado — toca para activar' }}
+          </p>
         </div>
-        <button id="aiToggleBtn"
-                data-toggle-url="{{ route('whatsapp.inbox.ai.toggle', $conversation) }}"
-                data-active="{{ $conversation->ai_active ? '1' : '0' }}"
-                onclick="toggleAiBot(this)"
-                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none
-                       {{ $conversation->ai_active ? 'bg-green-500' : 'bg-red-400' }}">
-          <span id="aiToggleThumb"
-                class="inline-block size-4 transform rounded-full bg-white shadow transition-transform
-                       {{ $conversation->ai_active ? 'translate-x-6' : 'translate-x-1' }}">
-          </span>
-        </button>
+        <svg class="size-4 shrink-0 {{ $conversation->ai_active ? 'text-green-400' : 'text-red-300' }}"
+             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
       </div>
     </div>
     @endif
@@ -867,28 +868,36 @@ function setMobilePanel(panel) {
       : '';
 
     const aiActive = data.ai_active ?? true;
+    const aiCardCls  = aiActive
+      ? 'px-4 py-3 border-b border-green-100 bg-green-50 cursor-pointer select-none transition-colors hover:bg-green-100'
+      : 'px-4 py-3 border-b border-red-100 bg-red-50 cursor-pointer select-none transition-colors hover:bg-red-100';
+    const aiSvgCls   = aiActive ? 'text-green-500' : 'text-red-400';
+    const aiTitleCls = aiActive ? 'text-green-800' : 'text-red-700';
+    const aiLblCls   = aiActive ? 'text-green-600' : 'text-red-500';
+    const aiDotCls   = aiActive ? 'bg-green-500 animate-pulse' : 'bg-red-400';
+    const aiChevCls  = aiActive ? 'text-green-400' : 'text-red-300';
+    const aiLblTxt   = aiActive ? 'Activo — toca para pausar' : 'Pausado — toca para activar';
     const aiSectionHtml = data.has_ai ? `
-      <div class="px-4 py-3 border-b border-gray-100" id="aiToggleSection">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <svg class="size-4 ${aiActive ? 'text-green-500' : 'text-red-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
-            </svg>
-            <div>
-              <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
-              <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5 ${aiActive ? 'text-green-600' : 'text-red-500'}"><span id="aiToggleDot" class="size-2 rounded-full inline-block ${aiActive ? 'bg-green-500 animate-pulse' : 'bg-red-400'}"></span>${aiActive ? 'Activo' : 'Pausado'}</p>
-            </div>
+      <div id="aiToggleSection"
+           data-toggle-url="${escapeHtml(data.urls.ai_toggle)}"
+           data-active="${aiActive ? '1' : '0'}"
+           onclick="toggleAiBot(this)"
+           class="${aiCardCls}">
+        <div class="flex items-center gap-2">
+          <svg class="size-4 shrink-0 ${aiSvgCls}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
+          </svg>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold ${aiTitleCls}">Asistente IA</p>
+            <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5 ${aiLblCls}">
+              <span id="aiToggleDot" class="size-2 rounded-full inline-block ${aiDotCls}"></span>
+              ${aiLblTxt}
+            </p>
           </div>
-          <button id="aiToggleBtn"
-                  data-toggle-url="${escapeHtml(data.urls.ai_toggle)}"
-                  data-active="${aiActive ? '1' : '0'}"
-                  onclick="toggleAiBot(this)"
-                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${aiActive ? 'bg-green-500' : 'bg-red-400'}">
-            <span id="aiToggleThumb"
-                  class="inline-block size-4 transform rounded-full bg-white shadow transition-transform ${aiActive ? 'translate-x-6' : 'translate-x-1'}">
-            </span>
-          </button>
+          <svg class="size-4 shrink-0 ${aiChevCls}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
         </div>
       </div>` : '';
 
@@ -1004,23 +1013,28 @@ function setMobilePanel(panel) {
     }
   };
 
-  function applyAiToggleState(btn, active) {
-    btn.dataset.active = active ? '1' : '0';
-    btn.className = 'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ' +
-      (active ? 'bg-green-500' : 'bg-red-400');
-    const thumb = btn.querySelector('span');
-    if (thumb) thumb.className = 'inline-block size-4 transform rounded-full bg-white shadow transition-transform ' +
-      (active ? 'translate-x-6' : 'translate-x-1');
+  function applyAiToggleState(card, active) {
+    card.dataset.active = active ? '1' : '0';
+    // Tarjeta completa
+    card.className = active
+      ? 'px-4 py-3 border-b border-green-100 bg-green-50 cursor-pointer select-none transition-colors hover:bg-green-100'
+      : 'px-4 py-3 border-b border-red-100 bg-red-50 cursor-pointer select-none transition-colors hover:bg-red-100';
+    // SVGs (primero = icono IA, último = chevron)
+    const svgs = card.querySelectorAll('svg');
+    if (svgs[0]) svgs[0].className = 'size-4 shrink-0 ' + (active ? 'text-green-500' : 'text-red-400');
+    if (svgs[1]) svgs[1].className = 'size-4 shrink-0 ' + (active ? 'text-green-400' : 'text-red-300');
+    // Título
+    const title = card.querySelector('p.text-xs.font-semibold');
+    if (title) title.className = 'text-xs font-semibold ' + (active ? 'text-green-800' : 'text-red-700');
+    // Label + dot
     const label = document.getElementById('aiToggleLabel');
     if (label) {
       label.className = 'flex items-center gap-1 text-[10px] font-semibold mt-0.5 ' + (active ? 'text-green-600' : 'text-red-500');
       const dot = document.getElementById('aiToggleDot');
       if (dot) dot.className = 'size-2 rounded-full inline-block ' + (active ? 'bg-green-500 animate-pulse' : 'bg-red-400');
       const textNode = label.childNodes[label.childNodes.length - 1];
-      if (textNode) textNode.textContent = active ? 'Activo' : 'Pausado';
+      if (textNode) textNode.textContent = active ? ' Activo — toca para pausar' : ' Pausado — toca para activar';
     }
-    const svgIcon = document.querySelector('#aiToggleSection svg');
-    if (svgIcon) svgIcon.className = 'size-4 ' + (active ? 'text-green-500' : 'text-red-400');
     // Actualizar badge del header
     const badge = document.getElementById('aiBadge');
     if (badge) {
