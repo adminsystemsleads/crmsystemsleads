@@ -11,12 +11,17 @@
   $avatarCls = waAvatar($convName, $avatarColors);
 @endphp
 
-<div class="flex flex-col bg-white" style="height:100vh;">
+<div class="flex flex-col bg-white" style="height:100vh;height:100dvh;">
 
   {{-- ════ BARRA SUPERIOR ════ --}}
   <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4">
-    {{-- Espacio para el hamburger del nav en pantallas pequeñas --}}
-    <div class="w-8 lg:hidden shrink-0"></div>
+    {{-- Botón hamburger – solo visible en mobile cuando el panel container ya está montado --}}
+    <button onclick="window.dispatchEvent(new CustomEvent('mobile-panel',{detail:'sidebar'}))"
+            class="lg:hidden shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Ver conversaciones">
+      <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
     <svg class="size-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
       <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.855L.057 23.882a.5.5 0 00.611.61l6.102-1.6A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.944 9.944 0 01-5.073-1.386l-.363-.215-3.764.987.999-3.671-.236-.375A9.955 9.955 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
@@ -34,12 +39,13 @@
   </div>
 
   {{-- ════ TRES PANELES ════ --}}
-  <div class="flex flex-1 overflow-hidden">
+  <div class="flex flex-1 overflow-hidden" x-data="{ mp: 'chat' }" @mobile-panel.window="mp = $event.detail" id="panelContainer">
 
   {{-- ════════════════════════════════════════
        PANEL IZQUIERDO – Lista de conversaciones
        ════════════════════════════════════════ --}}
-  <div class="w-72 shrink-0 flex flex-col border-r border-gray-200">
+  <div :class="mp === 'sidebar' ? 'flex flex-col w-full' : 'hidden md:flex md:flex-col md:w-72'"
+       class="shrink-0 border-r border-gray-200">
 
     {{-- Cabecera --}}
     <div class="h-12 px-3 flex items-center border-b border-gray-100 bg-gray-50">
@@ -122,10 +128,17 @@
   {{-- ════════════════════════════════════════
        PANEL CENTRAL – Chat
        ════════════════════════════════════════ --}}
-  <div class="flex-1 flex flex-col min-w-0 bg-gray-50">
+  <div :class="mp === 'chat' ? 'flex flex-col flex-1' : 'hidden md:flex md:flex-col md:flex-1'"
+       class="min-w-0 bg-gray-50">
 
     {{-- Cabecera del chat --}}
-    <div id="chatHeader" class="h-14 px-4 flex items-center gap-3 border-b border-gray-200 bg-white shrink-0">
+    <div id="chatHeader" class="h-14 px-3 md:px-4 flex items-center gap-2 md:gap-3 border-b border-gray-200 bg-white shrink-0">
+      {{-- Botón volver al sidebar (solo mobile) --}}
+      <button @click="mp = 'sidebar'" class="md:hidden shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Conversaciones">
+        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
       <div id="chatHeaderAvatar" class="size-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 {{ $avatarCls }}">
         {{ $initials }}
       </div>
@@ -147,7 +160,13 @@
       @else
         <span id="aiBadge" class="hidden"></span>
       @endif
-      <span id="chatHeaderAccount" class="ml-auto text-xs text-gray-400 hidden lg:block">{{ $conversation->account?->name ?? '' }}</span>
+      <span id="chatHeaderAccount" class="hidden lg:block text-xs text-gray-400">{{ $conversation->account?->name ?? '' }}</span>
+      {{-- Botón detalles contacto (solo mobile) --}}
+      <button @click="mp = 'info'" class="ml-auto md:hidden shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Detalles del contacto">
+        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </button>
     </div>
 
     {{-- Mensajes --}}
@@ -158,7 +177,7 @@
         <div class="flex {{ $isOut ? 'justify-end' : 'justify-start' }}"
              data-message-id="{{ $m->message_id ?? '' }}"
              data-db-id="{{ $m->id ?? '' }}">
-          <div class="max-w-[70%] rounded-2xl px-3 py-2 text-sm shadow-sm
+          <div class="max-w-[85%] md:max-w-[70%] rounded-2xl px-3 py-2 text-sm shadow-sm
                       {{ $isOut ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-white text-gray-900 rounded-bl-sm' }}">
 
             @if($type === 'image' && !empty($m->public_url))
@@ -246,10 +265,17 @@
   {{-- ════════════════════════════════════════
        PANEL DERECHO – Detalles del contacto
        ════════════════════════════════════════ --}}
-  <div id="rightPanel" class="w-[280px] shrink-0 border-l border-gray-200 flex flex-col bg-white overflow-y-auto">
+  <div id="rightPanel"
+       :class="mp === 'info' ? 'flex flex-col w-full' : 'hidden md:flex md:flex-col md:w-[280px]'"
+       class="shrink-0 border-l border-gray-200 bg-white overflow-y-auto">
 
     {{-- Header --}}
-    <div class="h-14 px-4 flex items-center justify-between border-b border-gray-100 shrink-0">
+    <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
+      <button @click="mp = 'chat'" class="md:hidden shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
+        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
       <span class="text-sm font-semibold text-gray-900">Detalles del contacto</span>
     </div>
 
@@ -800,6 +826,9 @@
 
       // URL del browser
       history.pushState({ convId: data.id }, '', pageUrl);
+
+      // En mobile: cambiar al panel de chat
+      window.dispatchEvent(new CustomEvent('mobile-panel', { detail: 'chat' }));
     } catch (err) {
       console.warn('switchConversation error:', err);
       chatBox.innerHTML = '<div class="flex items-center justify-center py-8 text-red-400 text-sm">Error al cargar conversación.</div>';
@@ -903,7 +932,13 @@
     }
 
     return `
-      <div class="h-14 px-4 flex items-center justify-between border-b border-gray-100 shrink-0">
+      <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
+        <button onclick="window.dispatchEvent(new CustomEvent('mobile-panel',{detail:'chat'}))"
+                class="md:hidden shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
+          <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
         <span class="text-sm font-semibold text-gray-900">Detalles del contacto</span>
       </div>
       <div class="flex flex-col items-center py-5 border-b border-gray-100">
