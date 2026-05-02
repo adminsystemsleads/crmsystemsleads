@@ -155,10 +155,14 @@
 
             @if($type === 'image' && !empty($m->public_url))
               @if(!empty($m->caption))<div class="whitespace-pre-line mb-1.5 text-xs">{{ $m->caption }}</div>@endif
-              <img src="{{ $m->public_url }}" alt="imagen" class="rounded-lg max-w-full h-auto"/>
+              <a href="{{ $m->public_url }}" target="_blank" rel="noopener">
+                <img src="{{ $m->public_url }}" alt="imagen"
+                     class="rounded-lg object-cover cursor-zoom-in"
+                     style="max-width:240px;max-height:200px;display:block;"/>
+              </a>
             @elseif($type === 'video' && !empty($m->public_url))
               @if(!empty($m->caption))<div class="whitespace-pre-line mb-1.5 text-xs">{{ $m->caption }}</div>@endif
-              <video controls class="rounded-lg max-w-full h-auto">
+              <video controls class="rounded-lg" style="max-width:240px;max-height:200px;display:block;">
                 <source src="{{ $m->public_url }}" type="{{ $m->mime_type ?? 'video/mp4' }}">
               </video>
             @elseif($type === 'audio' && !empty($m->public_url))
@@ -422,11 +426,13 @@
     const cls = isOut ? 'text-white underline' : 'text-indigo-700 underline';
     if (type === 'image' && msg.public_url) {
       if (msg.caption) { const d = document.createElement('div'); d.className='whitespace-pre-line mb-1.5 text-xs'; d.textContent=msg.caption; bubble.appendChild(d); }
-      const img = document.createElement('img'); img.src=msg.public_url; img.alt='imagen'; img.className='rounded-lg max-w-full h-auto'; bubble.appendChild(img); return;
+      const link = document.createElement('a'); link.href=msg.public_url; link.target='_blank'; link.rel='noopener';
+      const img = document.createElement('img'); img.src=msg.public_url; img.alt='imagen'; img.className='rounded-lg object-cover cursor-zoom-in'; img.style.cssText='max-width:240px;max-height:200px;display:block;';
+      link.appendChild(img); bubble.appendChild(link); return;
     }
     if (type === 'video' && msg.public_url) {
       if (msg.caption) { const d = document.createElement('div'); d.className='whitespace-pre-line mb-1.5 text-xs'; d.textContent=msg.caption; bubble.appendChild(d); }
-      const v = document.createElement('video'); v.controls=true; v.className='rounded-lg max-w-full h-auto';
+      const v = document.createElement('video'); v.controls=true; v.className='rounded-lg'; v.style.cssText='max-width:240px;max-height:200px;display:block;';
       const s = document.createElement('source'); s.src=msg.public_url; s.type=msg.mime_type||'video/mp4'; v.appendChild(s); bubble.appendChild(v); return;
     }
     if (type === 'audio' && msg.public_url) {
