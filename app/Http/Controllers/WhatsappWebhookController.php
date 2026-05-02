@@ -208,8 +208,12 @@ class WhatsappWebhookController extends Controller
                 'sent_by_user_id'          => null,
             ]);
 
-            // 4) Broadcast realtime
-            event(new \App\Events\WhatsappMessageReceived($message));
+            // 4) Broadcast realtime (no fatal si Reverb no está disponible)
+            try {
+                event(new \App\Events\WhatsappMessageReceived($message));
+            } catch (\Throwable $broadcastErr) {
+                Log::warning('WA broadcast failed (non-fatal): ' . $broadcastErr->getMessage());
+            }
 
             // 5) Enlazar / crear deal
             $this->attachOrCreateDeal($account, $conversation, $contactName);
