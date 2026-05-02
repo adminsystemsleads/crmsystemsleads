@@ -262,45 +262,24 @@
       </div>
 
       @if($currentDeal)
+        @php
+          $dealPipeline = optional($currentDeal->pipeline);
+          $dealStage    = is_object($currentDeal->stage) ? $currentDeal->stage : null;
+        @endphp
         <a href="{{ route('deals.edit', [$currentDeal->pipeline_id, $currentDeal->id]) }}"
-           class="block rounded-xl border border-gray-200 bg-white p-3 hover:bg-indigo-50 hover:border-indigo-200 transition group">
-
-          {{-- Título --}}
-          <p class="text-xs font-semibold text-gray-900 truncate group-hover:text-indigo-700 mb-2">
-            {{ $currentDeal->title }}
-          </p>
-
-          {{-- Pipeline / Fase --}}
-          @php
-            $dealPipeline = optional($currentDeal->pipeline);
-            $dealStage    = is_object($currentDeal->stage) ? $currentDeal->stage : null;
-          @endphp
-          @if($dealPipeline->name || $dealStage)
-            <div class="flex items-center gap-1 mb-2">
-              <svg class="size-3 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-              </svg>
-              <span class="text-[11px] text-gray-500 truncate">
-                {{ $dealPipeline->name }}
-                @if($dealStage)
-                  <span class="text-gray-300 mx-0.5">›</span>{{ $dealStage->name }}
-                @endif
-              </span>
-            </div>
-          @endif
-
-          {{-- Estado + Monto --}}
-          <div class="flex items-center justify-between">
-            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
+           class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 hover:bg-indigo-50 hover:border-indigo-200 transition group">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-semibold text-gray-900 truncate group-hover:text-indigo-700">{{ $currentDeal->title }}</p>
+            <p class="text-[10px] text-gray-400 truncate mt-0.5">
+              {{ $dealPipeline->name }}@if($dealStage) › {{ $dealStage->name }}@endif
+            </p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold
                 {{ $currentDeal->status === 'open' ? 'bg-green-100 text-green-700' : ($currentDeal->status === 'won' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-600') }}">
               {{ match($currentDeal->status) { 'open' => 'Abierto', 'won' => 'Ganado', 'lost' => 'Perdido', default => $currentDeal->status } }}
             </span>
-            @if($currentDeal->amount)
-              <span class="text-[11px] font-semibold text-gray-700">
-                {{ number_format($currentDeal->amount, 0) }} {{ $currentDeal->currency }}
-              </span>
-            @endif
-            <svg class="size-3.5 shrink-0 text-gray-300 group-hover:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="size-3 text-gray-300 group-hover:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
