@@ -34,6 +34,6 @@ class WhatsappAiAssistant extends Model
 
     public function team()
     {
-        return $this->belongsTo(\Laravel\Jetstream\Team::class, 'team_id');
+        return $this->belongsTo(\App\Models\Team::class, 'team_id');
     }
 }
