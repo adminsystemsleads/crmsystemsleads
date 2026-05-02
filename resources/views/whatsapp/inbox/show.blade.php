@@ -296,8 +296,8 @@
           </svg>
           <div>
             <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
-            <p id="aiToggleLabel" class="text-[10px] text-gray-400 mt-0.5">
-              {{ $conversation->ai_active ? 'Respondiendo automáticamente' : 'Pausado' }}
+            <p id="aiToggleLabel" class="text-[10px] font-semibold mt-0.5 {{ $conversation->ai_active ? 'text-green-600' : 'text-red-500' }}">
+              {{ $conversation->ai_active ? 'Activo' : 'Pausado' }}
             </p>
           </div>
         </div>
@@ -824,13 +824,13 @@
       <div class="px-4 py-3 border-b border-gray-100" id="aiToggleSection">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <svg class="size-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="size-4 ${aiActive ? 'text-green-500' : 'text-red-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
             </svg>
             <div>
               <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
-              <p id="aiToggleLabel" class="text-[10px] text-gray-400 mt-0.5">${aiActive ? 'Respondiendo automáticamente' : 'Pausado'}</p>
+              <p id="aiToggleLabel" class="text-[10px] font-semibold mt-0.5 ${aiActive ? 'text-green-600' : 'text-red-500'}">${aiActive ? 'Activo' : 'Pausado'}</p>
             </div>
           </div>
           <button id="aiToggleBtn"
@@ -959,7 +959,12 @@
     if (thumb) thumb.className = 'inline-block size-4 transform rounded-full bg-white shadow transition-transform ' +
       (active ? 'translate-x-6' : 'translate-x-1');
     const label = document.getElementById('aiToggleLabel');
-    if (label) label.textContent = active ? 'Respondiendo automáticamente' : 'Pausado';
+    if (label) {
+      label.textContent = active ? 'Activo' : 'Pausado';
+      label.className = 'text-[10px] font-semibold mt-0.5 ' + (active ? 'text-green-600' : 'text-red-500');
+    }
+    const svgIcon = document.querySelector('#aiToggleSection svg');
+    if (svgIcon) svgIcon.className = 'size-4 ' + (active ? 'text-green-500' : 'text-red-400');
     // Actualizar badge del header
     const badge = document.getElementById('aiBadge');
     if (badge) {
