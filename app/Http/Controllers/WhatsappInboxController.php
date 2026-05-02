@@ -184,6 +184,70 @@ class WhatsappInboxController extends Controller
             ->with('deal_created', $deal->id);
     }
 
+    public function panel(WhatsappConversation $conversation, Request $request)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        $conversation->load(['account', 'messages.sentBy', 'deals']);
+
+        $currentDeal = $conversation->deals()
+            ->with(['pipeline', 'stage'])
+            ->orderByDesc('whatsapp_conversation_deals.created_at')
+            ->first();
+
+        $messages = $conversation->messages->map(fn($m) => [
+            'id'         => $m->id,
+            'message_id' => $m->message_id,
+            'direction'  => $m->direction,
+            'type'       => $m->type,
+            'body'       => $m->body,
+            'caption'    => $m->caption,
+            'public_url' => $m->public_url,
+            'mime_type'  => $m->mime_type,
+            'filename'   => $m->filename,
+            'created_at' => $m->created_at?->toIso8601String(),
+            'sent_by'    => $m->sentBy ? ['name' => $m->sentBy->name] : null,
+        ]);
+
+        $pipelines = \App\Models\Pipeline::where('team_id', $team->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get(['id', 'name']);
+
+        $dealData = null;
+        if ($currentDeal) {
+            $dealPipeline = optional($currentDeal->pipeline);
+            $dealStage    = is_object($currentDeal->stage) ? $currentDeal->stage : null;
+            $dealData = [
+                'id'            => $currentDeal->id,
+                'title'         => $currentDeal->title,
+                'status'        => $currentDeal->status,
+                'pipeline_name' => $dealPipeline->name ?? '',
+                'stage_name'    => $dealStage?->name ?? '',
+                'edit_url'      => route('deals.edit', [$currentDeal->pipeline_id, $currentDeal->id]),
+            ];
+        }
+
+        return response()->json([
+            'id'              => $conversation->id,
+            'contact_name'    => $conversation->contact_name,
+            'contact_phone'   => $conversation->contact_phone,
+            'status'          => $conversation->status,
+            'account_name'    => $conversation->account?->name,
+            'last_message_at' => $conversation->last_message_at?->diffForHumans(),
+            'messages'        => $messages,
+            'current_deal'    => $dealData,
+            'pipelines'       => $pipelines,
+            'urls'            => [
+                'send'        => route('whatsapp.inbox.send', $conversation),
+                'messages'    => route('whatsapp.inbox.messages', $conversation),
+                'create_deal' => route('whatsapp.inbox.deal.create', $conversation),
+                'page'        => route('whatsapp.inbox.show', $conversation),
+            ],
+        ]);
+    }
+
     public function sidebarPoll(Request $request)
     {
         $team      = $this->currentTeam();

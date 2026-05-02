@@ -125,21 +125,19 @@
   <div class="flex-1 flex flex-col min-w-0 bg-gray-50">
 
     {{-- Cabecera del chat --}}
-    <div class="h-14 px-4 flex items-center gap-3 border-b border-gray-200 bg-white shrink-0">
-      <div class="size-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 {{ $avatarCls }}">
+    <div id="chatHeader" class="h-14 px-4 flex items-center gap-3 border-b border-gray-200 bg-white shrink-0">
+      <div id="chatHeaderAvatar" class="size-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 {{ $avatarCls }}">
         {{ $initials }}
       </div>
       <div class="min-w-0">
-        <p class="text-sm font-semibold text-gray-900 truncate">{{ $convName }}</p>
-        <p class="text-xs text-gray-500">{{ $conversation->contact_phone }}</p>
+        <p id="chatHeaderName" class="text-sm font-semibold text-gray-900 truncate">{{ $convName }}</p>
+        <p id="chatHeaderPhone" class="text-xs text-gray-500">{{ $conversation->contact_phone }}</p>
       </div>
-      <span class="ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0
+      <span id="chatHeaderStatus" class="ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0
           {{ $conversation->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
         {{ $conversation->status === 'open' ? 'Abierta' : 'Cerrada' }}
       </span>
-      @if($conversation->account)
-        <span class="ml-auto text-xs text-gray-400 hidden lg:block">{{ $conversation->account->name }}</span>
-      @endif
+      <span id="chatHeaderAccount" class="ml-auto text-xs text-gray-400 hidden lg:block">{{ $conversation->account?->name ?? '' }}</span>
     </div>
 
     {{-- Mensajes --}}
@@ -238,7 +236,7 @@
   {{-- ════════════════════════════════════════
        PANEL DERECHO – Detalles del contacto
        ════════════════════════════════════════ --}}
-  <div class="w-[280px] shrink-0 border-l border-gray-200 flex flex-col bg-white overflow-y-auto">
+  <div id="rightPanel" class="w-[280px] shrink-0 border-l border-gray-200 flex flex-col bg-white overflow-y-auto">
 
     {{-- Header --}}
     <div class="h-14 px-4 flex items-center justify-between border-b border-gray-100 shrink-0">
@@ -374,10 +372,12 @@
 
 <script>
 (function () {
-  const conversationId  = @json($conversation->id);
-  const pollUrl         = @json(route('whatsapp.inbox.messages', $conversation));
-  const sidebarPollUrl  = @json(route('whatsapp.sidebar.poll'))
-                        + '?{{ http_build_query(array_filter(['account_id' => $accountId, 'status' => $status !== 'all' ? $status : null])) }}';
+  // ── Estado mutable (cambia al switchear conversación) ──────────────────────
+  let conversationId = @json($conversation->id);
+  let pollUrl        = @json(route('whatsapp.inbox.messages', $conversation));
+  let echoChannel    = null;
+  const sidebarPollUrl = @json(route('whatsapp.sidebar.poll'))
+                       + '?{{ http_build_query(array_filter(['account_id' => $accountId, 'status' => $status !== 'all' ? $status : null])) }}';
   const chatBox = document.getElementById('chatBox');
   const input   = document.getElementById('msgInput');
 
@@ -540,7 +540,7 @@
   }
 
   waitForEcho().then(Echo => {
-    Echo.private(`whatsapp.conversation.${conversationId}`).listen('.WhatsappMessageReceived', async e => {
+    echoChannel = Echo.private(`whatsapp.conversation.${conversationId}`).listen('.WhatsappMessageReceived', async e => {
       const dbId = e?.id || e?.message?.id || null;
       const fallback = e?.message ?? e;
       try {
@@ -564,7 +564,6 @@
   const filePreview = document.getElementById('filePreview');
   const filePreviewName = document.getElementById('filePreviewName');
   const fileClear   = document.getElementById('fileClear');
-  const sendUrl     = sendForm?.action;
   const csrfToken   = document.querySelector('meta[name="csrf-token"]')?.content;
 
   attachBtn?.addEventListener('click', () => mediaInput?.click());
@@ -619,7 +618,7 @@
     if (hasFile) formData.append('media', mediaInput.files[0]);
 
     try {
-      const res = await fetch(sendUrl, {
+      const res = await fetch(sendForm.action, {
         method: 'POST',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -653,6 +652,206 @@
       input?.focus();
     }
   });
+
+  // ── AVATAR COLORS ──────────────────────────────────────────────────────────
+  const avatarColors = [
+    'bg-green-100 text-green-700','bg-blue-100 text-blue-700','bg-purple-100 text-purple-700',
+    'bg-amber-100 text-amber-700','bg-rose-100 text-rose-700','bg-teal-100 text-teal-700'
+  ];
+  function getAvatarCls(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (Math.imul(31, h) + name.charCodeAt(i)) | 0;
+    return avatarColors[Math.abs(h) % avatarColors.length];
+  }
+
+  // ── SWITCH CONVERSACIÓN SIN RECARGA ───────────────────────────────────────
+  async function switchConversation(convId, pageUrl) {
+    if (convId === conversationId) return;
+
+    // Actualizar sidebar activo de inmediato
+    document.querySelectorAll('[data-conv-id]').forEach(el => {
+      const active = parseInt(el.dataset.convId) === convId;
+      el.classList.toggle('bg-indigo-50', active);
+      el.classList.toggle('border-l-indigo-500', active);
+      el.classList.toggle('border-l-transparent', !active);
+      el.querySelector('.sidebar-name')?.classList.toggle('text-indigo-700', active);
+      if (active) el.querySelector('.unread-dot')?.classList.add('hidden');
+    });
+
+    // Loading
+    chatBox.innerHTML = '<div class="flex items-center justify-center py-8 text-gray-400 text-sm">Cargando…</div>';
+
+    try {
+      const res = await fetch('/whatsapp/inbox/' + convId + '/panel', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+
+      // Actualizar header chat
+      const cName    = data.contact_name || data.contact_phone || '?';
+      const initials = (cName.charAt(0) + (cName.charAt(1) || '')).toUpperCase();
+      const avcls    = getAvatarCls(cName);
+      const avatar   = document.getElementById('chatHeaderAvatar');
+      if (avatar) { avatar.textContent = initials; avatar.className = 'size-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ' + avcls; }
+      const nameEl = document.getElementById('chatHeaderName'); if (nameEl) nameEl.textContent = cName;
+      const phoneEl = document.getElementById('chatHeaderPhone'); if (phoneEl) phoneEl.textContent = data.contact_phone || '';
+      const statusEl = document.getElementById('chatHeaderStatus');
+      if (statusEl) {
+        statusEl.textContent = data.status === 'open' ? 'Abierta' : 'Cerrada';
+        statusEl.className = 'ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 ' +
+          (data.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600');
+      }
+      const accountEl = document.getElementById('chatHeaderAccount'); if (accountEl) accountEl.textContent = data.account_name || '';
+
+      // Renderizar mensajes
+      chatBox.innerHTML = '';
+      lastDbId = 0;
+      (data.messages || []).forEach(m => addMessageToDom(m));
+      scrollBottom();
+
+      // Actualizar estado JS (guardar ID viejo antes de sobreescribir)
+      const oldConvId = conversationId;
+      conversationId = data.id;
+      pollUrl = data.urls.messages;
+      if (sendForm) sendForm.action = data.urls.send;
+
+      // Actualizar panel derecho
+      const rightPanel = document.getElementById('rightPanel');
+      if (rightPanel) {
+        rightPanel.innerHTML = buildRightPanel(data);
+        if (window.Alpine) Alpine.initTree(rightPanel);
+      }
+
+      // Suscripción WebSocket
+      if (window.Echo) {
+        if (echoChannel) { try { window.Echo.leave('whatsapp.conversation.' + oldConvId); } catch(_){} }
+        echoChannel = window.Echo.private('whatsapp.conversation.' + data.id).listen('.WhatsappMessageReceived', async e => {
+          const dbId = e?.id || e?.message?.id || null;
+          const fallback = e?.message ?? e;
+          try {
+            if (dbId) { const msg = await fetchMessage(dbId); addMessageToDom(msg); }
+            else addMessageToDom(fallback);
+          } catch(_) { if (fallback) addMessageToDom(fallback); }
+        });
+      }
+
+      // URL del browser
+      history.pushState({ convId: data.id }, '', pageUrl);
+    } catch (err) {
+      console.warn('switchConversation error:', err);
+      chatBox.innerHTML = '<div class="flex items-center justify-center py-8 text-red-400 text-sm">Error al cargar conversación.</div>';
+    }
+  }
+
+  function buildRightPanel(data) {
+    const cName    = data.contact_name || data.contact_phone || '?';
+    const initials = (cName.charAt(0) + (cName.charAt(1) || '')).toUpperCase();
+    const avcls    = getAvatarCls(cName);
+    const statusBadge = data.status === 'open'
+      ? '<span class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold bg-green-100 text-green-700">Abierta</span>'
+      : '<span class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold bg-gray-100 text-gray-500">Cerrada</span>';
+    const lastMsgHtml = data.last_message_at
+      ? `<div><p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Último mensaje</p><p class="text-gray-500 text-xs">${escapeHtml(data.last_message_at)}</p></div>`
+      : '';
+    const accountHtml = data.account_name
+      ? `<div><p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Cuenta WhatsApp</p><p class="text-gray-800">${escapeHtml(data.account_name)}</p></div>`
+      : '';
+
+    let dealHtml;
+    if (data.current_deal) {
+      const d = data.current_deal;
+      const statusMap = { open: 'Abierto', won: 'Ganado', lost: 'Perdido' };
+      const statusClsMap = { open: 'bg-green-100 text-green-700', won: 'bg-blue-100 text-blue-700', lost: 'bg-red-100 text-red-600' };
+      const sc = statusClsMap[d.status] || 'bg-gray-100 text-gray-500';
+      const sl = statusMap[d.status] || d.status;
+      const sub = d.pipeline_name + (d.stage_name ? ' › ' + d.stage_name : '');
+      dealHtml = `<a href="${escapeHtml(d.edit_url)}"
+        class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 hover:bg-indigo-50 hover:border-indigo-200 transition group">
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-semibold text-gray-900 truncate group-hover:text-indigo-700">${escapeHtml(d.title)}</p>
+          <p class="text-[10px] text-gray-400 truncate mt-0.5">${escapeHtml(sub)}</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${sc}">${sl}</span>
+          <svg class="size-3 text-gray-300 group-hover:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>`;
+    } else {
+      const pipelineOptions = (data.pipelines || []).map(p =>
+        `<option value="${p.id}">${escapeHtml(p.name)}</option>`
+      ).join('');
+      const defaultTitle = escapeHtml(cName) + ' - WhatsApp';
+      dealHtml = `<div x-data="{ open: false }" class="space-y-2">
+        <div class="rounded-xl border border-dashed border-gray-200 p-3 text-center">
+          <p class="text-xs text-gray-400 mb-2">Sin negociación vinculada.</p>
+          <button @click="open = !open" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Crear negociación
+          </button>
+        </div>
+        <div x-show="open" x-transition class="rounded-xl border border-indigo-100 bg-indigo-50 p-3 space-y-2">
+          <form method="POST" action="${escapeHtml(data.urls.create_deal)}">
+            <input type="hidden" name="_token" value="${escapeHtml(document.querySelector('meta[name=csrf-token]')?.content || '')}">
+            <div>
+              <label class="block text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">Pipeline</label>
+              <select name="pipeline_id" required class="w-full text-xs rounded-lg border-gray-200 bg-white py-1.5 text-gray-800">
+                <option value="">Selecciona un pipeline…</option>${pipelineOptions}
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">Título (opcional)</label>
+              <input type="text" name="title" placeholder="${defaultTitle}" class="w-full text-xs rounded-lg border-gray-200 bg-white py-1.5 text-gray-800 placeholder-gray-400">
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button type="submit" class="flex-1 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">Crear</button>
+              <button type="button" @click="open = false" class="flex-1 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>`;
+    }
+
+    return `
+      <div class="h-14 px-4 flex items-center justify-between border-b border-gray-100 shrink-0">
+        <span class="text-sm font-semibold text-gray-900">Detalles del contacto</span>
+      </div>
+      <div class="flex flex-col items-center py-5 border-b border-gray-100">
+        <div class="size-14 rounded-full flex items-center justify-center text-xl font-bold ${avcls}">${initials}</div>
+        <p class="mt-2 text-sm font-semibold text-gray-900">${escapeHtml(cName)}</p>
+        ${statusBadge}
+      </div>
+      <div class="px-4 py-4 space-y-3 border-b border-gray-100 text-sm">
+        <div><p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Teléfono</p>
+          <p class="text-gray-800 font-medium">${escapeHtml(data.contact_phone || '')}</p>
+        </div>
+        ${accountHtml}${lastMsgHtml}
+      </div>
+      <div class="px-4 py-4">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-semibold text-gray-700">Negociación</p>
+        </div>
+        ${dealHtml}
+      </div>`;
+  }
+
+  // Interceptar clicks del sidebar
+  document.getElementById('sidebarList')?.addEventListener('click', function (e) {
+    const link = e.target.closest('[data-conv-id]');
+    if (!link) return;
+    e.preventDefault();
+    switchConversation(parseInt(link.dataset.convId), link.href);
+  });
+
+  // Browser back/forward
+  window.addEventListener('popstate', function (e) {
+    const convId = e.state?.convId;
+    if (convId) switchConversation(convId, location.href);
+    else location.reload();
+  });
+
 })();
 </script>
 
