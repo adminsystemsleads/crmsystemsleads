@@ -109,9 +109,10 @@ class WhatsappInboxController extends Controller
         $conversations = $this->sidebarConversations($team->id, $accountId, $status);
 
         $aiAssistant = $conversation->account?->aiAssistant;
+        $hasAi       = $aiAssistant?->is_active ?? false;
 
         return view('whatsapp.inbox.show', compact(
-            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status', 'pipelines', 'aiAssistant'
+            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status', 'pipelines', 'aiAssistant', 'hasAi'
         ));
     }
 
@@ -236,18 +237,31 @@ class WhatsappInboxController extends Controller
             'contact_name'    => $conversation->contact_name,
             'contact_phone'   => $conversation->contact_phone,
             'status'          => $conversation->status,
+            'ai_active'       => (bool) $conversation->ai_active,
             'account_name'    => $conversation->account?->name,
             'last_message_at' => $conversation->last_message_at?->diffForHumans(),
             'messages'        => $messages,
             'current_deal'    => $dealData,
             'pipelines'       => $pipelines,
+            'has_ai'          => $conversation->account?->aiAssistant?->is_active ?? false,
             'urls'            => [
                 'send'        => route('whatsapp.inbox.send', $conversation),
                 'messages'    => route('whatsapp.inbox.messages', $conversation),
                 'create_deal' => route('whatsapp.inbox.deal.create', $conversation),
+                'ai_toggle'   => route('whatsapp.inbox.ai.toggle', $conversation),
                 'page'        => route('whatsapp.inbox.show', $conversation),
             ],
         ]);
+    }
+
+    public function toggleAi(WhatsappConversation $conversation)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        $conversation->update(['ai_active' => !$conversation->ai_active]);
+
+        return response()->json(['ai_active' => (bool) $conversation->ai_active]);
     }
 
     public function sidebarPoll(Request $request)
@@ -362,6 +376,7 @@ class WhatsappInboxController extends Controller
         $conversation->update([
             'last_message_at'      => now(),
             'last_message_preview' => mb_substr($msgBody, 0, 180),
+            'ai_active'            => false, // agente tomó control → pausa el bot
         ]);
 
         if ($request->expectsJson() || $request->ajax()) {

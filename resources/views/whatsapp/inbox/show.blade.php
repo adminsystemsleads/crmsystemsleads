@@ -284,6 +284,37 @@
       @endif
     </div>
 
+    {{-- Asistente IA toggle --}}
+    @if($hasAi)
+    <div class="px-4 py-3 border-b border-gray-100" id="aiToggleSection">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="size-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
+            <p id="aiToggleLabel" class="text-[10px] text-gray-400 mt-0.5">
+              {{ $conversation->ai_active ? 'Respondiendo automáticamente' : 'Pausado' }}
+            </p>
+          </div>
+        </div>
+        <button id="aiToggleBtn"
+                data-toggle-url="{{ route('whatsapp.inbox.ai.toggle', $conversation) }}"
+                data-active="{{ $conversation->ai_active ? '1' : '0' }}"
+                onclick="toggleAiBot(this)"
+                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none
+                       {{ $conversation->ai_active ? 'bg-violet-600' : 'bg-gray-200' }}">
+          <span id="aiToggleThumb"
+                class="inline-block size-4 transform rounded-full bg-white shadow transition-transform
+                       {{ $conversation->ai_active ? 'translate-x-6' : 'translate-x-1' }}">
+          </span>
+        </button>
+      </div>
+    </div>
+    @endif
+
     {{-- Negociación vinculada --}}
     <div class="px-4 py-4">
       <div class="flex items-center justify-between mb-2">
@@ -385,6 +416,8 @@
   let conversationId = @json($conversation->id);
   let pollUrl        = @json(route('whatsapp.inbox.messages', $conversation));
   let echoChannel    = null;
+  let aiToggleUrl    = @json(route('whatsapp.inbox.ai.toggle', $conversation));
+  let hasAi          = @json($hasAi);
   const sidebarPollUrl = @json(route('whatsapp.sidebar.poll'))
                        + '?{{ http_build_query(array_filter(['account_id' => $accountId, 'status' => $status !== 'all' ? $status : null])) }}';
   const chatBox = document.getElementById('chatBox');
@@ -713,6 +746,22 @@
       }
       const accountEl = document.getElementById('chatHeaderAccount'); if (accountEl) accountEl.textContent = data.account_name || '';
 
+      // Actualizar badge IA en el header
+      const aiBadge = document.getElementById('aiBadge');
+      if (aiBadge) {
+        if (data.has_ai) {
+          const aiOn = data.ai_active !== false;
+          aiBadge.className = 'ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 ' +
+            (aiOn ? 'bg-violet-100 text-violet-700' : 'bg-gray-100 text-gray-500');
+          aiBadge.innerHTML = aiOn
+            ? '<span class="size-1.5 rounded-full bg-violet-500 animate-pulse inline-block"></span> IA'
+            : '<span class="size-1.5 rounded-full bg-gray-400 inline-block"></span> IA pausada';
+        } else {
+          aiBadge.className = 'hidden';
+          aiBadge.innerHTML = '';
+        }
+      }
+
       // Renderizar mensajes
       chatBox.innerHTML = '';
       lastDbId = 0;
@@ -722,7 +771,9 @@
       // Actualizar estado JS (guardar ID viejo antes de sobreescribir)
       const oldConvId = conversationId;
       conversationId = data.id;
-      pollUrl = data.urls.messages;
+      pollUrl        = data.urls.messages;
+      aiToggleUrl    = data.urls.ai_toggle;
+      hasAi          = data.has_ai ?? false;
       if (sendForm) sendForm.action = data.urls.send;
 
       // Actualizar panel derecho
@@ -766,6 +817,32 @@
     const accountHtml = data.account_name
       ? `<div><p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Cuenta WhatsApp</p><p class="text-gray-800">${escapeHtml(data.account_name)}</p></div>`
       : '';
+
+    const aiActive = data.ai_active ?? true;
+    const aiSectionHtml = data.has_ai ? `
+      <div class="px-4 py-3 border-b border-gray-100" id="aiToggleSection">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg class="size-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
+            </svg>
+            <div>
+              <p class="text-xs font-semibold text-gray-700">Asistente IA</p>
+              <p id="aiToggleLabel" class="text-[10px] text-gray-400 mt-0.5">${aiActive ? 'Respondiendo automáticamente' : 'Pausado'}</p>
+            </div>
+          </div>
+          <button id="aiToggleBtn"
+                  data-toggle-url="${escapeHtml(data.urls.ai_toggle)}"
+                  data-active="${aiActive ? '1' : '0'}"
+                  onclick="toggleAiBot(this)"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${aiActive ? 'bg-violet-600' : 'bg-gray-200'}">
+            <span id="aiToggleThumb"
+                  class="inline-block size-4 transform rounded-full bg-white shadow transition-transform ${aiActive ? 'translate-x-6' : 'translate-x-1'}">
+            </span>
+          </button>
+        </div>
+      </div>` : '';
 
     let dealHtml;
     if (data.current_deal) {
@@ -838,12 +915,60 @@
         </div>
         ${accountHtml}${lastMsgHtml}
       </div>
+      ${aiSectionHtml}
       <div class="px-4 py-4">
         <div class="flex items-center justify-between mb-2">
           <p class="text-xs font-semibold text-gray-700">Negociación</p>
         </div>
         ${dealHtml}
       </div>`;
+  }
+
+  // ── TOGGLE IA POR CONVERSACIÓN ────────────────────────────────────────────
+  window.toggleAiBot = async function(btn) {
+    const currentlyActive = btn.dataset.active === '1';
+    const newActive = !currentlyActive;
+
+    // Optimistic UI
+    applyAiToggleState(btn, newActive);
+
+    try {
+      const res = await fetch(aiToggleUrl, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken,
+        },
+      });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      applyAiToggleState(btn, data.ai_active);
+    } catch(e) {
+      // Revert on failure
+      applyAiToggleState(btn, currentlyActive);
+    }
+  };
+
+  function applyAiToggleState(btn, active) {
+    btn.dataset.active = active ? '1' : '0';
+    btn.className = 'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ' +
+      (active ? 'bg-violet-600' : 'bg-gray-200');
+    const thumb = btn.querySelector('span');
+    if (thumb) thumb.className = 'inline-block size-4 transform rounded-full bg-white shadow transition-transform ' +
+      (active ? 'translate-x-6' : 'translate-x-1');
+    const label = document.getElementById('aiToggleLabel');
+    if (label) label.textContent = active ? 'Respondiendo automáticamente' : 'Pausado';
+    // Actualizar badge del header
+    const badge = document.getElementById('aiBadge');
+    if (badge) {
+      badge.className = active
+        ? 'ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-violet-100 text-violet-700 shrink-0'
+        : 'ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-gray-100 text-gray-500 shrink-0';
+      badge.innerHTML = active
+        ? '<span class="size-1.5 rounded-full bg-violet-500 animate-pulse inline-block"></span> IA'
+        : '<span class="size-1.5 rounded-full bg-gray-400 inline-block"></span> IA pausada';
+    }
   }
 
   // Interceptar clicks del sidebar

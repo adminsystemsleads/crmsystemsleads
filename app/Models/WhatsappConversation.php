@@ -7,19 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class WhatsappConversation extends Model
 {
     protected $fillable = [
-  'team_id',
-  'whatsapp_account_id',
-  'wa_id',
-  'contact_name',
-  'contact_phone',
-  'status',
-  'last_message_at',
-  'last_message_preview',
-];
-
+        'team_id',
+        'whatsapp_account_id',
+        'wa_id',
+        'contact_name',
+        'contact_phone',
+        'status',
+        'ai_active',
+        'last_message_at',
+        'last_message_preview',
+    ];
 
     protected $casts = [
         'last_message_at' => 'datetime',
+        'ai_active'       => 'boolean',
     ];
 
     public function account()

@@ -131,6 +131,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::post('/whatsapp/inbox/{conversation}/send', [WhatsappInboxController::class, 'send'])->name('whatsapp.inbox.send');
     Route::get('/whatsapp/inbox/{conversation}/messages', [WhatsappInboxController::class, 'newMessages'])->name('whatsapp.inbox.messages');
     Route::get('/whatsapp/inbox/{conversation}/panel', [WhatsappInboxController::class, 'panel'])->name('whatsapp.inbox.panel');
+    Route::post('/whatsapp/inbox/{conversation}/ai-toggle', [WhatsappInboxController::class, 'toggleAi'])->name('whatsapp.inbox.ai.toggle');
     Route::get('/whatsapp/sidebar-poll', [WhatsappInboxController::class, 'sidebarPoll'])->name('whatsapp.sidebar.poll');
     Route::post('/whatsapp/inbox/{conversation}/deal', [WhatsappInboxController::class, 'createDeal'])->name('whatsapp.inbox.deal.create');
 

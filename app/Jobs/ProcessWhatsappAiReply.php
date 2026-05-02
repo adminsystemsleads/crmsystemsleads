@@ -28,7 +28,7 @@ class ProcessWhatsappAiReply implements ShouldQueue
         $conversation = WhatsappConversation::with('account')->find($this->conversationId);
         $assistant    = WhatsappAiAssistant::find($this->assistantId);
 
-        if (!$conversation || !$assistant || !$assistant->is_active) {
+        if (!$conversation || !$assistant || !$assistant->is_active || !$conversation->ai_active) {
             return;
         }
 
