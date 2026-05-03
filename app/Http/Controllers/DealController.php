@@ -222,7 +222,7 @@ class DealController extends Controller
         $whatsappConversations = $deal->whatsappConversations;
         $dealProducts          = $deal->dealProducts;
 
-        $catalogProducts = \App\Models\Product::where('team_id', $team->id ?? $deal->team_id)
+        $catalogProducts = \App\Models\Product::where('team_id', $deal->team_id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'price', 'unit', 'currency']);
