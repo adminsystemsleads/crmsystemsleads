@@ -21,6 +21,8 @@ use App\Http\Controllers\TeamModulesController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DealProductController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceConfigController;
 
 
 Route::get('/', function () {
@@ -70,6 +72,19 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    // Facturación electrónica
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+    Route::get('/invoices/{invoice}/download-xml', [InvoiceController::class, 'downloadXml'])->name('invoices.download-xml');
+    Route::post('/invoices/{invoice}/sign', [InvoiceController::class, 'signOnly'])->name('invoices.sign');
+    Route::post('/invoices/{invoice}/send-sunat', [InvoiceController::class, 'sendToSunat'])->name('invoices.send-sunat');
+    Route::get('/pipelines/{pipeline}/deals/{deal}/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('/pipelines/{pipeline}/deals/{deal}/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+    // Configuración SUNAT por equipo
+    Route::get('/invoice-config', [InvoiceConfigController::class, 'edit'])->name('invoice-config.edit');
+    Route::put('/invoice-config', [InvoiceConfigController::class, 'update'])->name('invoice-config.update');
 
      Route::get('/pipelines', [PipelineController::class, 'index'])->name('pipelines.index');
     Route::get('/pipelines/create', [PipelineController::class, 'create'])->name('pipelines.create');

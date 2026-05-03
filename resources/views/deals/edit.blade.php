@@ -636,6 +636,70 @@
             </div>
             {{-- FIN SECCIÓN PRODUCTOS --}}
 
+            {{-- ====== SECCIÓN FACTURAS / BOLETAS ====== --}}
+            <div class="mt-6 bg-white shadow-sm sm:rounded-lg p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-gray-900">Comprobantes electrónicos</h3>
+                <a href="{{ route('invoices.create', [$pipeline, $deal]) }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
+                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  Nueva factura / boleta
+                </a>
+              </div>
+
+              @php $invoices = $deal->invoices()->with('items')->get(); @endphp
+
+              @if($invoices->isNotEmpty())
+                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">Número</th>
+                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">Tipo</th>
+                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">Emisión</th>
+                        <th class="px-3 py-2.5 text-right text-xs font-semibold text-gray-600">Total</th>
+                        <th class="px-3 py-2.5 text-center text-xs font-semibold text-gray-600">Estado</th>
+                        <th class="px-3 py-2.5"></th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                      @foreach($invoices as $inv)
+                        @php
+                          $colors = ['draft'=>'bg-gray-100 text-gray-500','signed'=>'bg-blue-100 text-blue-700',
+                                     'sent'=>'bg-yellow-100 text-yellow-700','accepted'=>'bg-green-100 text-green-700',
+                                     'rejected'=>'bg-red-100 text-red-700','cancelled'=>'bg-gray-100 text-gray-400'];
+                        @endphp
+                        <tr class="hover:bg-gray-50">
+                          <td class="px-3 py-2.5 font-mono text-xs text-gray-700">{{ $inv->numero }}</td>
+                          <td class="px-3 py-2.5 text-gray-600">{{ $inv->tipo_nombre }}</td>
+                          <td class="px-3 py-2.5 text-gray-500">{{ $inv->fecha_emision->format('d/m/Y') }}</td>
+                          <td class="px-3 py-2.5 text-right font-semibold text-gray-900">
+                            {{ $inv->moneda }} {{ number_format($inv->total, 2) }}
+                          </td>
+                          <td class="px-3 py-2.5 text-center">
+                            <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold {{ $colors[$inv->estado] ?? 'bg-gray-100 text-gray-500' }}">
+                              {{ $inv->estado_badge }}
+                            </span>
+                          </td>
+                          <td class="px-3 py-2.5 text-right">
+                            <a href="{{ route('invoices.show', $inv) }}"
+                               class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Ver</a>
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              @else
+                <div class="rounded-xl border border-dashed border-gray-200 py-6 text-center text-sm text-gray-400">
+                  Sin comprobantes. Haz clic en <strong>Nueva factura / boleta</strong> para generar el primero.
+                </div>
+              @endif
+            </div>
+            {{-- FIN SECCIÓN FACTURAS --}}
+
         </div>
     </div>
 

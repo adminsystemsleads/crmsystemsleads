@@ -22,6 +22,9 @@ class Contact extends Model
         'status',
         'source',
         'notes',
+        'tipo_doc',
+        'num_doc',
+        'razon_social',
     ];
 
     public function team()

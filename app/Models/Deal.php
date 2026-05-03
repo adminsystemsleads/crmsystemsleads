@@ -98,4 +98,9 @@ public function recalculateAmount(): void
     $this->timestamps = true;
 }
 
+public function invoices()
+{
+    return $this->hasMany(\App\Models\Invoice::class)->latest();
+}
+
 }
