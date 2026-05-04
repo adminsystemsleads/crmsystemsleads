@@ -46,7 +46,10 @@ class InvoiceConfigController extends Controller
             'ambiente'        => 'required|in:beta,produccion',
             'serie_factura'   => 'required|string|size:4',
             'serie_boleta'    => 'required|string|size:4',
+            'test_mode'       => 'nullable|boolean',
         ]);
+
+        $data['test_mode'] = $request->boolean('test_mode');
 
         $config->fill(['team_id' => $team->id] + $data);
         $config->save();

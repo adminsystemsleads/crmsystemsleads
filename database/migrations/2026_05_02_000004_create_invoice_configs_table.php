@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('serie_boleta', 4)->default('B001');
             $table->unsignedInteger('next_factura')->default(1);
             $table->unsignedInteger('next_boleta')->default(1);
+            $table->boolean('test_mode')->default(true); // simula SUNAT sin certificado real
             $table->timestamps();
 
             $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');

@@ -1,638 +1,523 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QipuCRM — CRM inteligente para equipos de ventas</title>
+  <meta name="description" content="QipuCRM centraliza tus negociaciones, contactos, WhatsApp y facturación electrónica en un solo sistema. Hecho para equipos de ventas en Perú.">
 
-        <title>{{ config('app.name', 'MiComuniApp') }} - Gestión de condominios y edificios</title>
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800" rel="stylesheet"/>
 
-        <meta name="description" content="MiComuniApp es el sistema de gestión para condominios, edificios y residenciales que centraliza pagos, incidencias, comunicación con vecinos y reportes en un solo lugar.">
-        <meta name="keywords" content="condominios, edificios, gestión de condominios, administración, residentes, MiComuniApp">
+  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @endif
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+  <style>
+    :root {
+      --indigo: #4f46e5;
+      --indigo-dark: #3730a3;
+      --indigo-light: #eef2ff;
+      --violet: #7c3aed;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-600: #475569;
+      --slate-900: #0f172a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-900);
+    }
+    a { text-decoration: none; }
 
-        <!-- CSS de tu app (Tailwind de Laravel Breeze) -->
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @endif
+    /* Layout helpers */
+    .container { max-width: 72rem; margin: 0 auto; padding: 0 1.25rem; }
+    .flex       { display: flex; }
+    .grid-2     { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .grid-3     { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 
-        <!-- Estilos propios de marca (NO dependen de Tailwind) -->
-        <style>
-            :root {
-                --brand-orange: #F28A1E;
-                --brand-navy:   #0F3555;
-            }
+    /* Hero gradient */
+    .hero-bg {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 70%, #7c3aed 100%);
+    }
 
-            body {
-                font-family: 'Instrument Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                background-color: #f8fafc;
-                color: #0f172a;
-            }
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+      padding: .7rem 1.6rem; border-radius: 9999px; border: none;
+      background: var(--indigo); color: #fff;
+      font-weight: 600; font-size: .9rem; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(79,70,229,.35);
+      transition: all .15s ease;
+    }
+    .btn-primary:hover { background: var(--indigo-dark); transform: translateY(-1px); box-shadow: 0 12px 30px rgba(79,70,229,.4); }
 
-            .bg-gradient-hero{
-                background: radial-gradient(circle at top left, var(--brand-orange) 0, var(--brand-navy) 40%, #020617 100%);
-            }
-            .bg-orange-brand{ background-color: var(--brand-orange) !important; }
-            .text-orange-brand{ color: var(--brand-orange) !important; }
-            .bg-navy-brand{ background-color: var(--brand-navy) !important; }
-            .text-navy-brand{ color: var(--brand-navy) !important; }
-            .bg-orange-soft{ background-color: rgba(242,138,30,0.06) !important; }
-            .bg-navy-soft{ background-color: rgba(15,53,85,0.06) !important; }
+    .btn-ghost {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: .7rem 1.6rem; border-radius: 9999px;
+      border: 1.5px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.08); color: #fff;
+      font-weight: 500; font-size: .9rem;
+      transition: all .15s ease;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.16); }
 
-            /* Botones de marca */
-            .btn-brand-primary{
-                display:inline-flex;
-                align-items:center;
-                justify-content:center;
-                padding:0.7rem 1.7rem;
-                border-radius:9999px;
-                border:none;
-                background-color:var(--brand-orange);
-                color:#ffffff;
-                font-weight:600;
-                font-size:0.9rem;
-                text-decoration:none;
-                transition:all .15s ease;
-                box-shadow:0 10px 25px rgba(0,0,0,0.12);
-            }
-            .btn-brand-primary:hover{
-                background-color:#d97311;
-                transform:translateY(1px);
-                box-shadow:0 16px 35px rgba(0,0,0,0.18);
-            }
+    .btn-nav {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: .4rem 1.2rem; border-radius: 9999px;
+      border: 1.5px solid var(--slate-200);
+      background: #fff; color: var(--slate-900);
+      font-size: .8rem; font-weight: 500;
+      transition: all .15s ease;
+    }
+    .btn-nav:hover { background: var(--slate-100); }
+    .btn-nav-solid {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: .4rem 1.2rem; border-radius: 9999px; border: none;
+      background: var(--indigo); color: #fff;
+      font-size: .8rem; font-weight: 600;
+      transition: all .15s ease;
+    }
+    .btn-nav-solid:hover { background: var(--indigo-dark); }
 
-            .btn-brand-outline{
-                display:inline-flex;
-                align-items:center;
-                justify-content:center;
-                padding:0.7rem 1.7rem;
-                border-radius:9999px;
-                border:1px solid rgba(255,255,255,0.4);
-                background-color:rgba(255,255,255,0.08);
-                color:#ffffff;
-                font-weight:500;
-                font-size:0.9rem;
-                text-decoration:none;
-                transition:all .15s ease;
-            }
-            .btn-brand-outline:hover{
-                background-color:rgba(255,255,255,0.16);
-            }
+    /* Cards */
+    .card {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 1rem;
+      padding: 1.4rem;
+      box-shadow: 0 1px 6px rgba(15,23,42,.06);
+    }
+    .card-icon {
+      width: 2.4rem; height: 2.4rem; border-radius: .7rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: .85rem;
+      background: var(--indigo-light);
+    }
 
-            .btn-header-outline{
-                display:inline-flex;
-                align-items:center;
-                justify-content:center;
-                padding:0.45rem 1.3rem;
-                border-radius:9999px;
-                border:1px solid #e2e8f0;
-                background-color:#ffffff;
-                color:#0f172a;
-                font-size:0.8rem;
-                font-weight:500;
-                text-decoration:none;
-                transition:all .15s ease;
-            }
-            .btn-header-outline:hover{
-                background-color:#f8fafc;
-            }
+    /* Sections */
+    section { padding: 4.5rem 0; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .3rem .9rem; border-radius: 9999px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      font-size: .7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: #c7d2fe; margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; line-height: 1.15;
+    }
+    .section-sub { font-size: .95rem; color: var(--slate-600); margin-top: .6rem; line-height: 1.7; }
 
-            .btn-header-solid{
-                display:inline-flex;
-                align-items:center;
-                justify-content:center;
-                padding:0.45rem 1.3rem;
-                border-radius:9999px;
-                border:none;
-                background-color:var(--brand-orange);
-                color:#ffffff;
-                font-size:0.8rem;
-                font-weight:600;
-                text-decoration:none;
-                transition:all .15s ease;
-                box-shadow:0 8px 18px rgba(0,0,0,0.12);
-            }
-            .btn-header-solid:hover{
-                background-color:#d97311;
-                transform:translateY(1px);
-            }
+    /* Badge */
+    .badge {
+      display: inline-block; padding: .2rem .7rem; border-radius: 9999px;
+      font-size: .7rem; font-weight: 700;
+    }
+    .badge-indigo { background: var(--indigo-light); color: var(--indigo); }
 
-            /* Pequeños ajustes genericos por si Tailwind no está */
-            .max-w-6xl{max-width:72rem;margin-left:auto;margin-right:auto;}
-            .max-w-xl{max-width:36rem;}
-            .max-w-md{max-width:28rem;}
-            .px-4{padding-left:1rem;padding-right:1rem;}
-            .px-8{padding-left:2rem;padding-right:2rem;}
-            .py-4{padding-top:1rem;padding-bottom:1rem;}
-            .py-6{padding-top:1.5rem;padding-bottom:1.5rem;}
-            .py-8{padding-top:2rem;padding-bottom:2rem;}
-            .py-12{padding-top:3rem;padding-bottom:3rem;}
-            .py-16{padding-top:4rem;padding-bottom:4rem;}
-            .rounded-2xl{border-radius:1rem;}
-            .rounded-3xl{border-radius:1.5rem;}
-            .shadow-md{box-shadow:0 4px 6px rgba(15,23,42,0.12);}
-            .shadow-lg{box-shadow:0 10px 25px rgba(15,23,42,0.18);}
-            .border{border:1px solid #e2e8f0;}
-            .border-t{border-top:1px solid #e2e8f0;}
-            .text-center{text-align:center;}
-        </style>
+    /* Feature pill list */
+    .pill-list { list-style: none; display: flex; flex-direction: column; gap: .55rem; margin-top: .8rem; }
+    .pill-list li {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .85rem; color: var(--slate-600);
+    }
+    .pill-list li::before {
+      content: '';
+      display: inline-block; width: .45rem; height: .45rem;
+      border-radius: 9999px; background: var(--indigo); flex-shrink: 0;
+    }
 
-        <style>
-            /* Tamaño por defecto (móvil / tablet) */
-            .micomuniapp-logo {
-                height: 80px;
-                width: auto;
-            }
+    /* Highlight number */
+    .stat-number { font-size: 2rem; font-weight: 800; color: var(--indigo); }
 
-            /* En escritorio (>= 1024px) se ve como te gustó: ~120px */
-            @media (min-width: 1024px) {
-                .micomuniapp-logo {
-                    height: 120px;
-                }
-            }
-        </style>
-    </head>
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .hide-mobile { display: none !important; }
+    }
+  </style>
+</head>
+<body>
 
-    <body class="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-        <!-- HEADER -->
-        <header class="bg-white border-b border-slate-200">
-            <div class="max-w-6xl mx-auto px-4 lg:px-8 py-2 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2">
-                        <!-- Logo más grande -->
-                        <img src="https://systemsleads.com/wp-content/uploads/2025/11/logo1_micomuniapp.png"
-                            alt="MiComuniApp"
-                            class="block micomuniapp-logo">
+<!-- ===================== HEADER ===================== -->
+<header style="background:#fff; border-bottom:1px solid var(--slate-200); position:sticky; top:0; z-index:50;">
+  <div class="container" style="padding-top:.85rem; padding-bottom:.85rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
 
-                    </a>
-                    <div class="hidden lg:block">
-                        <p class="text-xs uppercase tracking-wide text-navy-brand font-semibold">
-                            GESTIÓN INTEGRAL DE CONDOMINIOS, EDIFICIOS Y RESIDENCIALES
-                        </p>
-                    </div>
-                </div>
+    {{-- Logo --}}
+    <a href="{{ url('/') }}" style="display:flex; align-items:center; gap:.6rem;">
+      <div style="width:2rem; height:2rem; border-radius:.6rem; background:linear-gradient(135deg,#4f46e5,#7c3aed); display:flex; align-items:center; justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 3.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+        </svg>
+      </div>
+      <span style="font-size:1.1rem; font-weight:800; color:var(--slate-900); letter-spacing:-.02em;">
+        Qipu<span style="color:var(--indigo);">CRM</span>
+      </span>
+    </a>
 
-                @if (Route::has('login'))
-                    <nav class="flex items-center justify-end gap-3 text-sm">
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="btn-header-outline">
-                                Dashboard
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}" class="btn-header-outline">
-                                Ingresar
-                            </a>
+    {{-- Nav links --}}
+    <nav class="hide-mobile" style="display:flex; align-items:center; gap:1.5rem; font-size:.85rem; color:var(--slate-600);">
+      <a href="#funcionalidades" style="color:var(--slate-600);">Funcionalidades</a>
+      <a href="#integraciones"   style="color:var(--slate-600);">Integraciones</a>
+      <a href="#faq"             style="color:var(--slate-600);">Preguntas</a>
+    </nav>
 
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="btn-header-solid">
-                                    Crear cuenta
-                                </a>
-                            @endif
-                        @endauth
-                    </nav>
-                @endif
-            </div>
-        </header>
+    {{-- Auth buttons --}}
+    @if (Route::has('login'))
+      <div style="display:flex; align-items:center; gap:.6rem;">
+        @auth
+          <a href="{{ url('/dashboard') }}" class="btn-nav">Dashboard</a>
+        @else
+          <a href="{{ route('login') }}" class="btn-nav">Ingresar</a>
+          @if (Route::has('register'))
+            <a href="{{ route('register') }}" class="btn-nav-solid">Crear cuenta</a>
+          @endif
+        @endauth
+      </div>
+    @endif
+  </div>
+</header>
 
-        <!-- MAIN -->
-        <main class="flex-1">
-            <!-- HERO -->
-            <section class="bg-gradient-hero text-white">
-                <div class="max-w-6xl mx-auto px-4 lg:px-8 py-12 lg:py-16 flex flex-col lg:flex-row items-center gap-10">
-                    <div class="flex-1 max-w-xl">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-orange-soft text-xs font-semibold uppercase tracking-wide text-orange-brand mb-4" style="border:1px solid rgba(255,255,255,0.4);">
-                            Plataforma para condominios, edificios y residenciales
-                        </span>
-                        <h1 class="text-3xl lg:text-4xl font-bold leading-tight mb-3">
-                            Controla tu condominio<br>
-                            <span class="text-orange-brand">en una sola plataforma</span>
-                        </h1>
-                        <p class="text-sm lg:text-base text-slate-100" style="opacity:0.9; margin-bottom:1.5rem;">
-                            MiComuniApp centraliza pagos, incidencias, reservas, comunicaciones y reportes
-                            para administradores y residentes. Menos caos en WhatsApp, más orden y transparencia
-                            en tu comunidad.
-                        </p>
+<!-- ===================== HERO ===================== -->
+<section class="hero-bg" style="padding: 5rem 0 4rem;">
+  <div class="container">
+    <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:1.5rem; max-width:700px; margin:0 auto;">
 
-                        <div class="flex flex-col sm:flex-row gap-3 mb-4">
-                            <a
-                                href="{{ Route::has('register') ? route('register') : '#' }}"
-                                class="btn-brand-primary"
-                            >
-                                Probar MiComuniApp
-                            </a>
-                            <a
-                                href="#planes"
-                                class="btn-brand-outline"
-                            >
-                                Ver planes y módulos
-                            </a>
-                        </div>
+      <div class="section-label">
+        <svg width="12" height="12" fill="#c7d2fe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+        CRM para equipos de ventas en Perú
+      </div>
 
-                        <div class="flex flex-wrap gap-4 text-xs text-slate-100" style="opacity:0.9;">
-                            <div class="flex items-center gap-2">
-                                <span style="width:8px;height:8px;border-radius:9999px;background-color:#22c55e;"></span>
-                                <span>Pagos y morosidad en tiempo real</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span style="width:8px;height:8px;border-radius:9999px;background-color:var(--brand-orange);"></span>
-                                <span>Incidencias y mantenimiento trazables</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span style="width:8px;height:8px;border-radius:9999px;background-color:#38bdf8;"></span>
-                                <span>App pensada para administradores y vecinos</span>
-                            </div>
-                        </div>
-                    </div>
+      <h1 style="font-size:clamp(2rem,5vw,3rem); font-weight:800; color:#fff; line-height:1.1; letter-spacing:-.02em;">
+        Gestiona tus ventas,<br>
+        <span style="color:#a5b4fc;">contactos y WhatsApp</span><br>
+        desde un solo lugar
+      </h1>
 
-                    <div class="flex-1 w-full max-w-md">
-                        <div class="bg-white/10 border border-white/20 rounded-3xl p-4 lg:p-5 shadow-lg backdrop-blur-sm">
-                            <div class="bg-white text-slate-900 rounded-2xl p-4 lg:p-5 shadow-md">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div>
-                                        <p class="text-xs text-slate-500 mb-1">Resumen del condominio</p>
-                                        <p class="text-lg font-semibold text-navy-brand">Residencial Los Olivos</p>
-                                    </div>
-                                    <span class="px-3 py-1 rounded-full text-xs font-medium" style="background-color:#ecfdf3;color:#047857;">
-                                        92% pagos al día
-                                    </span>
-                                </div>
+      <p style="font-size:1rem; color:#c7d2fe; line-height:1.75; max-width:560px;">
+        QipuCRM es el sistema de gestión comercial hecho para equipos de ventas peruanos.
+        Pipeline Kanban, contactos, conversaciones de WhatsApp con IA, productos y
+        facturación electrónica SUNAT integrados en una sola plataforma.
+      </p>
 
-                                <div class="grid grid-cols-2 gap-3 mb-4">
-                                    <div class="rounded-xl bg-orange-soft p-3">
-                                        <p class="text-xs text-slate-500 mb-1">Cuotas cobradas</p>
-                                        <p class="text-xl font-bold text-orange-brand">S/ 38,450</p>
-                                        <p class="text-[0.7rem] text-slate-500 mt-1">Este mes</p>
-                                    </div>
-                                    <div class="rounded-xl bg-navy-soft p-3">
-                                        <p class="text-xs text-slate-500 mb-1">Incidencias abiertas</p>
-                                        <p class="text-xl font-bold text-navy-brand">08</p>
-                                        <p class="text-[0.7rem] text-slate-500 mt-1">3 en mantenimiento</p>
-                                    </div>
-                                </div>
+      <div style="display:flex; flex-wrap:wrap; gap:.75rem; justify-content:center;">
+        <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-primary">
+          Empezar gratis
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+        <a href="#funcionalidades" class="btn-ghost">Ver funcionalidades</a>
+      </div>
 
-                                <div class="border border-slate-100 rounded-xl p-3 mb-3">
-                                    <p class="text-xs font-semibold text-slate-600 mb-2">Comunicados recientes</p>
-                                    <ul class="space-y-1.5 text-xs text-slate-600">
-                                        <li>• Corte programado de agua – Torre B</li>
-                                        <li>• Actualización de reglamento interno</li>
-                                        <li>• Nuevo horario de uso de piscina</li>
-                                    </ul>
-                                </div>
+      {{-- Mini stats --}}
+      <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center; margin-top:.5rem;">
+        @foreach([['Pipeline Kanban','visual e intuitivo'],['WhatsApp + IA','respuestas automáticas'],['Facturación SUNAT','facturas y boletas']] as [$t,$s])
+          <div style="display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:#c7d2fe;">
+            <svg width="14" height="14" fill="#6ee7b7" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span><strong style="color:#fff;">{{ $t }}</strong> — {{ $s }}</span>
+          </div>
+        @endforeach
+      </div>
 
-                                <button
-                                    type="button"
-                                    class="w-full mt-2 btn-header-solid"
-                                    style="justify-content:center;"
-                                >
-                                    Ver panel de administrador
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    </div>
 
-            <!-- BENEFICIOS PRINCIPALES -->
-            <section id="funcionalidades" class="max-w-6xl mx-auto px-4 lg:px-8 py-12">
-                <div class="text-center mb-8 max-w-xl mx-auto">
-                    <h2 class="text-2xl lg:text-3xl font-bold text-navy-brand mb-2">
-                        Todo lo que necesita tu condominio<br> en un mismo sistema
-                    </h2>
-                    <p class="text-sm text-slate-600">
-                        Reduce la carga operativa del administrador, mejora la transparencia con los vecinos
-                        y centraliza la información clave de tu edificio o residencial.
-                    </p>
-                </div>
+    {{-- Mock UI card --}}
+    <div style="margin-top:3rem; max-width:820px; margin-left:auto; margin-right:auto;">
+      <div style="background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); border-radius:1.25rem; padding:1rem; backdrop-filter:blur(10px);">
+        <div style="background:#fff; border-radius:.9rem; padding:1.25rem; box-shadow:0 20px 60px rgba(0,0,0,.25);">
+          {{-- Fake kanban --}}
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+            <span style="font-size:.8rem; font-weight:700; color:var(--slate-900);">Pipeline de Ventas — Mayo 2025</span>
+            <span style="font-size:.7rem; background:var(--indigo-light); color:var(--indigo); padding:.2rem .6rem; border-radius:9999px; font-weight:600;">12 negociaciones activas</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem;">
+            @foreach([['Prospecto','3','#e0e7ff','#4338ca'],['Propuesta','4','#fef3c7','#d97706'],['Negociación','3','#dbeafe','#1d4ed8'],['Cerrado','2','#dcfce7','#15803d']] as [$col,$n,$bg,$tc])
+              <div style="background:{{ $bg }}20; border:1px solid {{ $bg }}; border-radius:.6rem; padding:.6rem;">
+                <p style="font-size:.65rem; font-weight:700; color:{{ $tc }}; margin-bottom:.4rem;">{{ $col }} ({{ $n }})</p>
+                @for($i=0;$i<min((int)$n,2);$i++)
+                  <div style="background:#fff; border-radius:.4rem; padding:.4rem .5rem; margin-bottom:.3rem; font-size:.6rem; color:var(--slate-600); border:1px solid var(--slate-200);">
+                    Negociación #{{ rand(10,99) }} — S/ {{ rand(500,9999) }}
+                  </div>
+                @endfor
+              </div>
+            @endforeach
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Card 1 -->
-                    <div class="bg-white rounded-2xl shadow-md border p-5">
-                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-orange-soft mb-3">
-                            <span class="text-orange-brand text-lg">₿</span>
-                        </div>
-                        <h3 class="text-base font-semibold text-navy-brand mb-1">Pagos y morosidad</h3>
-                        <p class="text-sm text-slate-600 mb-2">
-                            Registra cuotas, mantenimientos y otros cargos. Visualiza quién está al día,
-                            quién está en mora y envía recordatorios.
-                        </p>
-                        <ul class="text-xs text-slate-500 space-y-1">
-                            <li>• Estado de cuenta por departamento</li>
-                            <li>• Reportes por periodo y tipo de gasto</li>
-                            <li>• Exportación de datos para contabilidad</li>
-                        </ul>
-                    </div>
+<!-- ===================== FUNCIONALIDADES ===================== -->
+<section id="funcionalidades" style="background:var(--slate-50);">
+  <div class="container">
+    <div style="text-align:center; max-width:560px; margin:0 auto 3rem;">
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Funcionalidades</span>
+      <h2 class="section-title">Todo lo que necesita tu equipo de ventas</h2>
+      <p class="section-sub">Una plataforma completa, sin apps extra ni integraciones complicadas.</p>
+    </div>
 
-                    <!-- Card 2 -->
-                    <div class="bg-white rounded-2xl shadow-md border p-5">
-                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-navy-soft mb-3">
-                            <span class="text-navy-brand text-lg">🛠</span>
-                        </div>
-                        <h3 class="text-base font-semibold text-navy-brand mb-1">Incidencias y mantenimiento</h3>
-                        <p class="text-sm text-slate-600 mb-2">
-                            Registra problemas de áreas comunes, asigna responsables y da seguimiento
-                            hasta su solución.
-                        </p>
-                        <ul class="text-xs text-slate-500 space-y-1">
-                            <li>• Alta de incidencias por administrador o vecino</li>
-                            <li>• Estados: abierto, en gestión, resuelto</li>
-                            <li>• Historial y evidencia fotográfica</li>
-                        </ul>
-                    </div>
+    <div class="grid-3">
 
-                    <!-- Card 3 -->
-                    <div class="bg-white rounded-2xl shadow-md border p-5">
-                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-orange-soft mb-3">
-                            <span class="text-orange-brand text-lg">📣</span>
-                        </div>
-                        <h3 class="text-base font-semibold text-navy-brand mb-1">Comunicados y avisos</h3>
-                        <p class="text-sm text-slate-600 mb-2">
-                            Publica avisos oficiales, acuerdos y documentos importantes en un muro
-                            digital que los vecinos pueden consultar en cualquier momento.
-                        </p>
-                        <ul class="text-xs text-slate-500 space-y-1">
-                            <li>• Filtros por torre, edificio o bloque</li>
-                            <li>• Adjuntos: PDFs, imágenes y reglamentos</li>
-                            <li>• Historial de comunicados</li>
-                        </ul>
-                    </div>
+      {{-- 1 --}}
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+          </svg>
+        </div>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Pipeline Kanban</h3>
+        <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
+          Visualiza tus negociaciones en etapas personalizadas. Mueve deals con drag & drop y sabe exactamente en qué fase está cada oportunidad.
+        </p>
+        <ul class="pill-list">
+          <li>Etapas de venta configurables</li>
+          <li>Asignación de responsables</li>
+          <li>Múltiples pipelines por equipo</li>
+        </ul>
+      </div>
 
-                    <!-- Card 4 -->
-                    <div class="bg-white rounded-2xl shadow-md border p-5">
-                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-navy-soft mb-3">
-                            <span class="text-navy-brand text-lg">📅</span>
-                        </div>
-                        <h3 class="text-base font-semibold text-navy-brand mb-1">Reservas de áreas comunes</h3>
-                        <p class="text-sm text-slate-600 mb-2">
-                            Controla el uso de áreas como sala de usos múltiples, parrillas, gimnasio o piscina
-                            con un calendario claro y ordenado.
-                        </p>
-                        <ul class="text-xs text-slate-500 space-y-1">
-                            <li>• Reglas de horarios y aforos</li>
-                            <li>• Registro de responsables por reserva</li>
-                            <li>• Reporte de uso por periodo</li>
-                        </ul>
-                    </div>
+      {{-- 2 --}}
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Gestión de contactos</h3>
+        <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
+          Base de datos centralizada de clientes y prospectos con historial de interacciones, negociaciones asociadas y datos fiscales para facturación.
+        </p>
+        <ul class="pill-list">
+          <li>Historial completo por contacto</li>
+          <li>RUC / DNI para facturación</li>
+          <li>Importación y exportación</li>
+        </ul>
+      </div>
 
-                    <!-- Card 5 -->
-                    <div class="bg-white rounded-2xl shadow-md border p-5">
-                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-orange-soft mb-3">
-                            <span class="text-orange-brand text-lg">🧑‍💼</span>
-                        </div>
-                        <h3 class="text-base font-semibold text-navy-brand mb-1">Gestión de residentes</h3>
-                        <p class="text-sm text-slate-600 mb-2">
-                            Ten siempre actualizado el padrón de propietarios e inquilinos, contactos de
-                            emergencia y datos clave de cada unidad.
-                        </p>
-                        <ul class="text-xs text-slate-500 space-y-1">
-                            <li>• Unidades por torre, edificio o bloque</li>
-                            <li>• Propietario, inquilino y contacto alterno</li>
-                            <li>• Etiquetas para clasificar residentes</li>
-                        </ul>
-                    </div>
+      {{-- 3 --}}
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+        </div>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">WhatsApp integrado</h3>
+        <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
+          Bandeja de entrada de WhatsApp directamente en el CRM. Vincula conversaciones a negociaciones y responde desde un solo panel.
+        </p>
+        <ul class="pill-list">
+          <li>Inbox unificado del equipo</li>
+          <li>Conversaciones vinculadas a deals</li>
+          <li>Respuestas rápidas plantilla</li>
+        </ul>
+      </div>
 
-                    <!-- Card 6 -->
-                    <div class="bg-white rounded-2xl shadow-md border p-5">
-                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-navy-soft mb-3">
-                            <span class="text-navy-brand text-lg">📊</span>
-                        </div>
-                        <h3 class="text-base font-semibold text-navy-brand mb-1">Reportes y transparencia</h3>
-                        <p class="text-sm text-slate-600 mb-2">
-                            Entrega información clara a la asamblea: ingresos, egresos, saldos por unidad
-                            y avance de proyectos.
-                        </p>
-                        <ul class="text-xs text-slate-500 space-y-1">
-                            <li>• Panel de indicadores para administración</li>
-                            <li>• Reportes descargables en Excel / PDF</li>
-                            <li>• Soporte para auditorías internas</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+      {{-- 4 --}}
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Asistente IA en WhatsApp</h3>
+        <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
+          Activa un asistente con inteligencia artificial por conversación. Responde consultas frecuentes automáticamente y escala cuando es necesario.
+        </p>
+        <ul class="pill-list">
+          <li>IA activable por conversación</li>
+          <li>Personalización por cuenta WA</li>
+          <li>Pausable en cualquier momento</li>
+        </ul>
+      </div>
 
-            <!-- ADMINISTRADORES vs RESIDENTES -->
-            <section class="max-w-6xl mx-auto px-4 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div class="space-y-4">
-                        <h2 class="text-2xl font-bold text-navy-brand">
-                            Pensado para administradores
-                        </h2>
-                        <p class="text-sm text-slate-600">
-                            Reduce llamadas, correos y mensajes dispersos. Con MiComuniApp, toda la operación
-                            del condominio se gestiona desde un panel claro y centralizado.
-                        </p>
-                        <ul class="space-y-2 text-sm text-slate-600">
-                            <li>• Visualiza el estado de todos tus condominios y edificios.</li>
-                            <li>• Historial de pagos, acuerdos e incidencias.</li>
-                            <li>• Comunicación directa con el consejo directivo.</li>
-                            <li>• Documentación lista para cambios de administración.</li>
-                        </ul>
-                    </div>
-                    <div class="space-y-4">
-                        <h2 class="text-2xl font-bold text-navy-brand">
-                            Fácil para residentes
-                        </h2>
-                        <p class="text-sm text-slate-600">
-                            Los vecinos tienen un espacio único donde ver avisos, pagos pendientes, reservas
-                            y reglas del condominio, sin perderse en chats infinitos.
-                        </p>
-                        <ul class="space-y-2 text-sm text-slate-600">
-                            <li>• Acceso rápido a comunicados y documentos oficiales.</li>
-                            <li>• Consulta de deudas y pagos realizados.</li>
-                            <li>• Registro de incidencias con fotos y comentarios.</li>
-                            <li>• Mayor transparencia y trazabilidad en la gestión.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+      {{-- 5 --}}
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+          </svg>
+        </div>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Catálogo de productos</h3>
+        <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
+          Crea tu catálogo una vez y reutilízalo en cualquier negociación. Agrega líneas de producto con precios, cantidades y descuentos.
+        </p>
+        <ul class="pill-list">
+          <li>Catálogo por equipo</li>
+          <li>Precios en PEN o USD</li>
+          <li>Totales automáticos en el deal</li>
+        </ul>
+      </div>
 
-            <!-- PLANES Y MÓDULOS -->
-            <section id="planes" class="bg-white border-t border-slate-200">
-                <div class="max-w-6xl mx-auto px-4 lg:px-8 py-12">
-                    <div class="text-center mb-8 max-w-xl mx-auto">
-                        <h2 class="text-2xl lg:text-3xl font-bold text-navy-brand mb-2">
-                            Planes y módulos para tu comunidad
-                        </h2>
-                        <p class="text-sm text-slate-600">
-                            Elige el plan que mejor se adapta al tamaño de tu condominio o edificio.
-                            Todos los planes incluyen soporte y mejoras continuas.
-                        </p>
-                    </div>
+      {{-- 6 --}}
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Facturación electrónica SUNAT</h3>
+        <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
+          Genera facturas y boletas de venta directamente desde la negociación. Envía a SUNAT, descarga el XML y obtén la respuesta CDR sin salir del CRM.
+        </p>
+        <ul class="pill-list">
+          <li>Facturas y boletas electrónicas</li>
+          <li>Envío directo a SUNAT</li>
+          <li>Modo prueba para testear</li>
+        </ul>
+      </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Plan Básico -->
-                        <div class="bg-slate-50 rounded-2xl border shadow-md p-6 flex flex-col">
-                            <p class="text-xs font-semibold text-navy-brand uppercase tracking-wide mb-2">
-                                Plan Básico
-                            </p>
-                            <p class="text-2xl font-bold text-navy-brand mb-1">Pequeños condominios</p>
-                            <p class="text-xs text-slate-500 mb-4">
-                                Ideal para edificios con pocas unidades que quieren ordenar pagos y comunicados.
-                            </p>
-                            <p class="text-3xl font-bold text-orange-brand mb-4">US$ XX<span class="text-base text-slate-500"> / mes</span></p>
-                            <ul class="text-xs text-slate-600 space-y-2 mb-6">
-                                <li>• Hasta X unidades registradas</li>
-                                <li>• Gestión de cuotas y morosidad</li>
-                                <li>• Comunicados y documentos básicos</li>
-                                <li>• Soporte por correo</li>
-                            </ul>
-                            <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-brand-primary" style="margin-top:auto;">
-                                Empezar con el Plan Básico
-                            </a>
-                        </div>
+    </div>
+  </div>
+</section>
 
-                        <!-- Plan Recomendado -->
-                        <div class="bg-navy-brand rounded-2xl shadow-lg p-6 border border-orange-brand flex flex-col">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs font-semibold text-orange-brand uppercase tracking-wide">
-                                    Plan Recomendado
-                                </p>
-                                <span class="px-2 py-1 rounded-full text-[0.7rem] font-semibold bg-orange-soft text-orange-brand">
-                                    Más elegido
-                                </span>
-                            </div>
-                            <p class="text-2xl font-bold text-white mb-1">Condominios en crecimiento</p>
-                            <p class="text-xs text-slate-100 mb-4" style="opacity:0.9;">
-                                Para residenciales con varias torres o bloques que requieren más control y reportes.
-                            </p>
-                            <p class="text-3xl font-bold text-orange-brand mb-4">US$ YY<span class="text-base text-slate-200"> / mes</span></p>
-                            <ul class="text-xs text-slate-100 space-y-2 mb-6" style="opacity:0.95;">
-                                <li>• Hasta XX unidades registradas</li>
-                                <li>• Pagos, morosidad e incidencias</li>
-                                <li>• Reservas de áreas comunes</li>
-                                <li>• Reportes financieros detallados</li>
-                                <li>• Soporte prioritario</li>
-                            </ul>
-                            <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-brand-primary" style="background-color:#F28A1E;color:#fff;margin-top:auto;">
-                                Contratar plan recomendado
-                            </a>
-                        </div>
+<!-- ===================== CÓMO FUNCIONA ===================== -->
+<section id="integraciones" style="background:#fff; border-top:1px solid var(--slate-200);">
+  <div class="container">
+    <div style="text-align:center; max-width:540px; margin:0 auto 3rem;">
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Flujo de trabajo</span>
+      <h2 class="section-title">Del primer contacto a la factura,<br>sin salir del sistema</h2>
+      <p class="section-sub">QipuCRM cubre todo el ciclo de ventas en un flujo continuo.</p>
+    </div>
 
-                        <!-- Plan Completo -->
-                        <div class="bg-slate-50 rounded-2xl border shadow-md p-6 flex flex-col">
-                            <p class="text-xs font-semibold text-navy-brand uppercase tracking-wide mb-2">
-                                Plan Complejo Residencial
-                            </p>
-                            <p class="text-2xl font-bold text-navy-brand mb-1">Grandes complejos</p>
-                            <p class="text-xs text-slate-500 mb-4">
-                                Para condominios con muchas unidades, varios accesos y alta rotación de residentes.
-                            </p>
-                            <p class="text-3xl font-bold text-orange-brand mb-4">US$ ZZ<span class="text-base text-slate-500"> / mes</span></p>
-                            <ul class="text-xs text-slate-600 space-y-2 mb-6">
-                                <li>• Unidades ilimitadas</li>
-                                <li>• Múltiples administradores y roles</li>
-                                <li>• Módulos avanzados de reportes</li>
-                                <li>• Integraciones a medida</li>
-                                <li>• Acompañamiento en la implementación</li>
-                            </ul>
-                            <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-brand-primary" style="margin-top:auto;">
-                                Hablar con ventas
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; position:relative;">
+      @php
+        $steps = [
+          ['01','Captura el lead','El prospecto llega por WhatsApp o lo creas manualmente. Se vincula al pipeline.','#dbeafe','#1d4ed8'],
+          ['02','Gestiona el deal','Mueve la negociación en el Kanban, agrega productos, comentarios y actividades.','#ede9fe','#6d28d9'],
+          ['03','Cierra la venta','La IA de WhatsApp ayuda a responder dudas. Haz seguimiento hasta el cierre.','#d1fae5','#065f46'],
+          ['04','Emite el comprobante','Genera la factura o boleta desde la misma negociación y envíala a SUNAT.','#fef3c7','#92400e'],
+        ];
+      @endphp
+      @foreach($steps as [$num,$title,$desc,$bg,$tc])
+        <div style="text-align:center; padding:1.4rem 1rem;">
+          <div style="width:2.8rem; height:2.8rem; border-radius:9999px; background:{{ $bg }}; border:2px solid {{ $tc }}20;
+                      display:flex; align-items:center; justify-content:center; margin:0 auto .9rem; font-size:.85rem; font-weight:800; color:{{ $tc }};">
+            {{ $num }}
+          </div>
+          <h3 style="font-size:.9rem; font-weight:700; margin-bottom:.4rem;">{{ $title }}</h3>
+          <p style="font-size:.8rem; color:var(--slate-600); line-height:1.6;">{{ $desc }}</p>
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
 
-            <!-- FAQ -->
-            <section class="max-w-6xl mx-auto px-4 lg:px-8 py-12">
-                <div class="text-center mb-8 max-w-xl mx-auto">
-                    <h2 class="text-2xl lg:text-3xl font-bold text-navy-brand mb-2">
-                        Preguntas frecuentes
-                    </h2>
-                    <p class="text-sm text-slate-600">
-                        Resolvemos las dudas más comunes de administradores y juntas de propietarios.
-                    </p>
-                </div>
+<!-- ===================== VENTAJAS ===================== -->
+<section style="background:linear-gradient(135deg,#1e1b4b,#312e81); color:#fff;">
+  <div class="container">
+    <div class="grid-2" style="align-items:center; gap:4rem;">
+      <div>
+        <span class="badge" style="background:rgba(255,255,255,.12);color:#c7d2fe; margin-bottom:1rem; display:inline-block; padding:.3rem .9rem; border-radius:9999px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;">
+          ¿Por qué QipuCRM?
+        </span>
+        <h2 style="font-size:clamp(1.5rem,3vw,2rem); font-weight:800; line-height:1.2; margin-bottom:1rem;">
+          Diseñado para la realidad<br>del negocio peruano
+        </h2>
+        <p style="font-size:.9rem; color:#c7d2fe; line-height:1.75; margin-bottom:1.5rem;">
+          No es una herramienta genérica traducida. QipuCRM incluye facturación electrónica SUNAT,
+          integración con WhatsApp Business y todo en soles y dólares.
+        </p>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:.8rem;">
+          @foreach(['Multi-equipo con roles y permisos','Pipeline visual con etapas personalizadas','WhatsApp Business API integrada','Facturación SUNAT (facturas y boletas)','Asistente IA por conversación','Catálogo de productos reutilizable'] as $item)
+            <li style="display:flex; align-items:center; gap:.7rem; font-size:.85rem; color:#e0e7ff;">
+              <svg width="16" height="16" fill="#6ee7b7" viewBox="0 0 24 24" style="flex-shrink:0;">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              {{ $item }}
+            </li>
+          @endforeach
+        </ul>
+      </div>
 
-                <div class="space-y-4 max-w-3xl mx-auto">
-                    <div class="bg-white border rounded-2xl shadow-sm p-4">
-                        <h3 class="text-sm font-semibold text-navy-brand mb-1">
-                            ¿MiComuniApp reemplaza los grupos de WhatsApp?
-                        </h3>
-                        <p class="text-sm text-slate-600">
-                            No elimina los grupos, pero te permite centralizar avisos oficiales, pagos, incidencias
-                            y reportes en un sistema ordenado. Así, los acuerdos importantes no se pierden en el chat.
-                        </p>
-                    </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        @foreach([['Equipos','Multi-usuario con roles'],['Kanban','Pipelines ilimitados'],['WhatsApp','IA integrada'],['SUNAT','Facturación real']] as [$t,$s])
+          <div style="background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:1rem; padding:1.2rem;">
+            <p style="font-size:1.4rem; font-weight:800; color:#a5b4fc; margin-bottom:.25rem;">{{ $t }}</p>
+            <p style="font-size:.78rem; color:#c7d2fe;">{{ $s }}</p>
+          </div>
+        @endforeach
+      </div>
+    </div>
+  </div>
+</section>
 
-                    <div class="bg-white border rounded-2xl shadow-sm p-4">
-                        <h3 class="text-sm font-semibold text-navy-brand mb-1">
-                            ¿Puedo usar MiComuniApp si administro varios condominios?
-                        </h3>
-                        <p class="text-sm text-slate-600">
-                            Sí. Desde un mismo usuario puedes gestionar varios edificios o residenciales,
-                            con información y reportes separados por cada uno.
-                        </p>
-                    </div>
+<!-- ===================== FAQ ===================== -->
+<section id="faq" style="background:var(--slate-50); border-top:1px solid var(--slate-200);">
+  <div class="container">
+    <div style="text-align:center; max-width:500px; margin:0 auto 3rem;">
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Preguntas frecuentes</span>
+      <h2 class="section-title">Respuestas rápidas</h2>
+    </div>
 
-                    <div class="bg-white border rounded-2xl shadow-sm p-4">
-                        <h3 class="text-sm font-semibold text-navy-brand mb-1">
-                            ¿Los residentes necesitan una capacitación especial?
-                        </h3>
-                        <p class="text-sm text-slate-600">
-                            No. La interfaz está pensada para que puedan consultar avisos, pagos y reservas
-                            de forma muy simple, incluso desde el móvil.
-                        </p>
-                    </div>
+    <div style="max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:1rem;">
+      @foreach([
+        ['¿Necesito instalar algo?','No. QipuCRM es 100% web. Funciona desde cualquier navegador en PC o celular, sin instalaciones.'],
+        ['¿Puedo tener varios equipos o empresas?','Sí. Puedes crear múltiples equipos dentro de tu cuenta, cada uno con sus propios pipelines, contactos y configuración.'],
+        ['¿La facturación electrónica requiere algo especial?','Solo necesitas tu RUC, usuario SOL y el certificado digital de SUNAT. También puedes activar el modo prueba para testear sin enviar documentos reales.'],
+        ['¿El WhatsApp necesita el número oficial de mi empresa?','Sí, se conecta mediante la API oficial de WhatsApp Business (Meta). Solo funciona con números aprobados por Meta.'],
+        ['¿La IA de WhatsApp responde sola o necesito supervisión?','Puedes activarla o pausarla por conversación. Cuando está activa responde automáticamente; cuando la pausas, toma el control el asesor humano.'],
+      ] as [$q,$a])
+        <div class="card" style="padding:1.1rem 1.3rem;">
+          <h3 style="font-size:.88rem; font-weight:700; color:var(--slate-900); margin-bottom:.4rem;">{{ $q }}</h3>
+          <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">{{ $a }}</p>
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
 
-                    <div class="bg-white border rounded-2xl shadow-sm p-4">
-                        <h3 class="text-sm font-semibold text-navy-brand mb-1">
-                            ¿Qué soporte ofrecen si tengo dudas o incidencias?
-                        </h3>
-                        <p class="text-sm text-slate-600">
-                            Dependiendo del plan, tienes soporte por correo, chat o acompañamiento en la implementación.
-                            Nuestro objetivo es que la puesta en marcha sea rápida y ordenada.
-                        </p>
-                    </div>
-                </div>
-            </section>
+<!-- ===================== CTA FINAL ===================== -->
+<section style="background:#fff; border-top:1px solid var(--slate-200);">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,#1e1b4b,#4f46e5); border-radius:1.5rem; padding:3rem 2.5rem;
+                display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:2rem;
+                box-shadow:0 20px 50px rgba(79,70,229,.3);">
+      <div style="max-width:500px;">
+        <h2 style="font-size:clamp(1.4rem,3vw,1.9rem); font-weight:800; color:#fff; margin-bottom:.65rem; line-height:1.2;">
+          Empieza a organizar tus ventas hoy mismo
+        </h2>
+        <p style="font-size:.9rem; color:#c7d2fe; line-height:1.7;">
+          QipuCRM está listo para tu equipo. Pipeline, contactos, WhatsApp con IA y
+          facturación electrónica en un solo sistema.
+        </p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:.7rem; min-width:220px;">
+        <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-primary" style="width:100%; justify-content:center;">
+          Crear mi cuenta
+        </a>
+        <a href="{{ Route::has('login') ? route('login') : '#' }}" class="btn-ghost" style="width:100%; justify-content:center;">
+          Ya tengo una cuenta
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-            <!-- CTA FINAL -->
-            <section class="bg-white border-t border-slate-200">
-                <div class="max-w-6xl mx-auto px-4 lg:px-8 py-12">
-                    <div class="bg-navy-brand text-white rounded-2xl px-6 py-8 lg:px-8 lg:py-10 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-lg">
-                        <div class="max-w-xl">
-                            <h2 class="text-2xl font-bold mb-2 leading-tight">
-                                Da el siguiente paso en la gestión de tu condominio
-                            </h2>
-                            <p class="text-sm text-slate-100" style="opacity:0.9;margin-bottom:0.75rem;">
-                                MiComuniApp te ayuda a organizar la operación diaria, mejorar la comunicación con vecinos
-                                y tener información financiera clara y actualizada.
-                            </p>
-                            <p class="text-xs text-slate-200" style="opacity:0.85;">
-                                Ideal para condominios, edificios multifamiliares, residenciales y complejos cerrados.
-                            </p>
-                        </div>
-                        <div class="flex flex-col items-stretch lg:items-end gap-3 w-full max-w-xs">
-                            <a
-                                href="{{ Route::has('register') ? route('register') : '#' }}"
-                                class="btn-brand-primary"
-                                style="width:100%;text-align:center;"
-                            >
-                                Crear cuenta de administrador
-                            </a>
-                            <a
-                                href="{{ Route::has('login') ? route('login') : '#' }}"
-                                class="btn-brand-outline"
-                                style="width:100%;text-align:center;border-color:rgba(255,255,255,0.5);"
-                            >
-                                Ya tengo una cuenta
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+<!-- ===================== FOOTER ===================== -->
+<footer style="background:var(--slate-900); border-top:1px solid #1e293b; padding:1.5rem 0;">
+  <div class="container" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.75rem;">
+    <div style="display:flex; align-items:center; gap:.5rem;">
+      <div style="width:1.4rem; height:1.4rem; border-radius:.35rem; background:var(--indigo); display:flex; align-items:center; justify-content:center;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 3.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+        </svg>
+      </div>
+      <span style="font-size:.82rem; font-weight:700; color:#e2e8f0; letter-spacing:-.01em;">
+        Qipu<span style="color:#818cf8;">CRM</span>
+      </span>
+      <span style="font-size:.75rem; color:#64748b; margin-left:.4rem;">© {{ date('Y') }}</span>
+    </div>
+    <p style="font-size:.75rem; color:#64748b;">Desarrollado por Systems Leads</p>
+  </div>
+</footer>
 
-        <!-- FOOTER -->
-        <footer class="border-t border-slate-200 bg-white">
-            <div class="max-w-6xl mx-auto px-4 lg:px-8 py-4 flex flex-col lg:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-                <p>© {{ date('Y') }} MiComuniApp. Plataforma de gestión de condominios y edificios.</p>
-                <p class="text-right">
-                    Desarrollado por Systems Leads
-                </p>
-            </div>
-        </footer>
-    </body>
+</body>
 </html>

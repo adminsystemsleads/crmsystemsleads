@@ -155,9 +155,16 @@
   @endif
 
   {{-- Acciones SUNAT --}}
+  @if($config && $config->test_mode)
+    <div class="mb-4 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+      <strong>Modo prueba activo</strong> — los envíos a SUNAT son simulados. Desactívalo en
+      <a href="{{ route('invoice-config.edit') }}" class="underline font-semibold">Configuración</a> para producción.
+    </div>
+  @endif
+
   @if(!in_array($invoice->estado, ['accepted', 'cancelled']))
     <div class="flex gap-3 flex-wrap">
-      @if($config && $config->certificate_pem && $invoice->estado === 'draft')
+      @if($config && ($config->certificate_pem || $config->test_mode) && $invoice->estado === 'draft')
         <form method="POST" action="{{ route('invoices.sign', $invoice) }}">
           @csrf
           <button type="submit"
@@ -167,7 +174,7 @@
         </form>
       @endif
 
-      @if($config && $config->sol_user && in_array($invoice->estado, ['draft','signed','rejected']))
+      @if($config && ($config->sol_user || $config->test_mode) && in_array($invoice->estado, ['draft','signed','rejected']))
         <form method="POST" action="{{ route('invoices.send-sunat', $invoice) }}"
               onsubmit="return confirm('¿Enviar a SUNAT?')">
           @csrf

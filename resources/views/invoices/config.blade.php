@@ -20,6 +20,33 @@
   <form method="POST" action="{{ route('invoice-config.update') }}" class="space-y-6">
     @csrf @method('PUT')
 
+    {{-- Modo prueba --}}
+    <div class="rounded-xl border-2 {{ old('test_mode', $config->test_mode ?? true) ? 'border-amber-300 bg-amber-50' : 'border-gray-200 bg-white' }} p-5">
+      <div class="flex items-start gap-4">
+        <div class="flex items-center h-5 mt-0.5">
+          <input type="checkbox" name="test_mode" id="test_mode" value="1"
+                 {{ old('test_mode', $config->test_mode ?? true) ? 'checked' : '' }}
+                 onchange="this.closest('div.rounded-xl').className = this.checked
+                   ? 'rounded-xl border-2 border-amber-300 bg-amber-50 p-5'
+                   : 'rounded-xl border-2 border-gray-200 bg-white p-5'"
+                 class="rounded border-gray-300 text-amber-500 focus:ring-amber-400">
+        </div>
+        <div class="flex-1">
+          <label for="test_mode" class="text-sm font-bold text-amber-800 cursor-pointer">
+            Modo prueba (simulado)
+          </label>
+          <p class="text-xs text-amber-700 mt-0.5">
+            Activa esto para probar la facturación <strong>sin enviar nada a SUNAT</strong>.
+            Los comprobantes se marcan como "Aceptado" automáticamente. No necesitas certificado ni credenciales reales.
+          </p>
+          <button type="button" onclick="fillTestData()"
+                  class="mt-2 px-3 py-1 rounded bg-amber-100 border border-amber-300 text-amber-800 text-xs font-medium hover:bg-amber-200 transition">
+            Rellenar con datos de prueba
+          </button>
+        </div>
+      </div>
+    </div>
+
     {{-- Datos del emisor --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
       <h2 class="text-sm font-bold text-gray-800 border-b pb-2">Datos del Emisor (SUNAT)</h2>
@@ -147,4 +174,21 @@
     </div>
   </form>
 </div>
+
+<script>
+function fillTestData() {
+  document.querySelector('[name=ruc]').value          = '20000000001';
+  document.querySelector('[name=razon_social]').value = 'EMPRESA DE PRUEBAS S.A.C.';
+  document.querySelector('[name=ubigeo]').value       = '150101';
+  document.querySelector('[name=departamento]').value = 'LIMA';
+  document.querySelector('[name=provincia]').value    = 'LIMA';
+  document.querySelector('[name=distrito]').value     = 'LIMA';
+  document.querySelector('[name=direccion]').value    = 'AV. PRUEBA 123';
+  document.querySelector('[name=sol_user]').value     = 'MODDATOS';
+  document.querySelector('[name=sol_password]').value = 'moddatos';
+  document.querySelector('[name=ambiente]').value     = 'beta';
+  document.querySelector('[name=test_mode]').checked  = true;
+  document.querySelector('[name=test_mode]').dispatchEvent(new Event('change'));
+}
+</script>
 </x-app-layout>

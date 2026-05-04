@@ -173,6 +173,17 @@ class InvoiceController extends Controller
 
         $config = InvoiceConfig::where('team_id', $team->id)->firstOrFail();
 
+        // Modo prueba: simula aceptación sin llamar a SUNAT
+        if ($config->test_mode) {
+            $invoice->update([
+                'estado'            => 'accepted',
+                'sunat_code'        => '0',
+                'sunat_description' => 'MODO PRUEBA — Comprobante aceptado simulado correctamente.',
+                'sunat_notes'       => null,
+            ]);
+            return back()->with('success', '[MODO PRUEBA] Comprobante aceptado simulado.');
+        }
+
         try {
             $result = $greenter->sendToSunat($invoice, $config);
         } catch (\Throwable $e) {
@@ -192,6 +203,12 @@ class InvoiceController extends Controller
         abort_unless($invoice->team_id === $team->id, 403);
 
         $config = InvoiceConfig::where('team_id', $team->id)->firstOrFail();
+
+        // Modo prueba: marca como firmado sin generar XML real
+        if ($config->test_mode) {
+            $invoice->update(['estado' => 'signed']);
+            return back()->with('success', '[MODO PRUEBA] Comprobante marcado como firmado.');
+        }
 
         try {
             $greenter->buildAndSign($invoice, $config);

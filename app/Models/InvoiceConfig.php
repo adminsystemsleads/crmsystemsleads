@@ -12,8 +12,10 @@ class InvoiceConfig extends Model
         'urbanizacion', 'direccion', 'cod_pais',
         'sol_user', 'sol_password', 'certificate_pem',
         'ambiente', 'serie_factura', 'serie_boleta',
-        'next_factura', 'next_boleta',
+        'next_factura', 'next_boleta', 'test_mode',
     ];
+
+    protected $casts = ['test_mode' => 'boolean'];
 
     public function team()
     {
