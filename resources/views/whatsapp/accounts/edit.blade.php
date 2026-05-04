@@ -58,6 +58,33 @@
             @error('pipeline_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
           </div>
 
+          {{-- Asignación equitativa de negociaciones --}}
+          <div class="mb-6 p-4 rounded-lg border border-indigo-100 bg-indigo-50/40">
+            <label class="block text-sm font-semibold text-gray-800 mb-1">Usuarios para asignar negociaciones</label>
+            <p class="text-xs text-gray-500 mb-3">
+              Las nuevas negociaciones que entren por este WhatsApp se asignarán automáticamente
+              <strong>de forma equitativa (round-robin)</strong> entre los usuarios marcados.
+            </p>
+
+            @if($teamMembers->isEmpty())
+              <p class="text-xs text-gray-400">No hay miembros en este equipo todavía.</p>
+            @else
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
+                @foreach($teamMembers as $member)
+                  @php
+                    $checked = in_array($member->id, old('assignee_ids', $assignedUserIds ?? []));
+                  @endphp
+                  <label class="flex items-center gap-2 px-3 py-2 rounded-md bg-white border border-gray-200 cursor-pointer hover:border-indigo-300 transition">
+                    <input type="checkbox" name="assignee_ids[]" value="{{ $member->id }}"
+                           {{ $checked ? 'checked' : '' }}
+                           class="rounded border-gray-300 text-indigo-600">
+                    <span class="text-sm text-gray-700 truncate">{{ $member->name }}</span>
+                  </label>
+                @endforeach
+              </div>
+            @endif
+          </div>
+
           <div class="mb-6 flex items-center gap-2">
             <input type="checkbox" name="is_active" value="1" {{ old('is_active', $account->is_active) ? 'checked' : '' }}>
             <span class="text-sm text-gray-700">Activo</span>

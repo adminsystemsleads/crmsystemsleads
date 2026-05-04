@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\PipelineStage;
 use App\Models\WhatsappAccount;
@@ -330,21 +331,25 @@ class WhatsappWebhookController extends Controller
 
     if (!$firstStage) return;
 
+    // 3.1) Buscar o crear el Contact a partir del teléfono / nombre
+    $contactId = $this->findOrCreateContactId($teamId, $waId, $contactName, $account);
+
+    // 3.2) Asignar responsable equitativamente entre los usuarios configurados
+    $responsibleId = $account->nextAssigneeId(); // null si no hay assignees
+
     $title = ($contactName ?: ($conversation->contact_phone ?? 'WhatsApp')) . ' - WhatsApp';
 
     $deal = Deal::create([
         'team_id'        => $teamId,
-        'owner_id'       => $account->team->owner_id ?? 1,
+        'owner_id'       => $responsibleId ?: ($account->team->owner_id ?? 1),
         'pipeline_id'    => $pipelineId,
         'stage_id'       => $firstStage->id,
-
-        // si ya tienes contactos, aquí puedes poner el contact_id real
-        'contact_id'     => null,
+        'contact_id'     => $contactId,
 
         // CLAVE PARA EVITAR DUPLICADOS
         'wa_id'          => $waId,
 
-        'responsible_id' => null,
+        'responsible_id' => $responsibleId,
         'title'          => $title,
         'amount'         => null,
         'currency'       => 'PEN',
@@ -357,6 +362,50 @@ class WhatsappWebhookController extends Controller
         'started_at' => now(),
         'ended_at'   => null,
     ]);
+}
+
+/**
+ * Busca un Contact por teléfono dentro del team o lo crea automáticamente.
+ */
+protected function findOrCreateContactId(
+    int $teamId,
+    string $phone,
+    ?string $contactName,
+    WhatsappAccount $account
+): ?int {
+    $contact = Contact::where('team_id', $teamId)
+        ->where('phone', $phone)
+        ->first();
+
+    if ($contact) {
+        // Si llegó con un nombre y antes no lo teníamos, lo actualizamos
+        if ($contactName && !$contact->name) {
+            $contact->update([
+                'name'       => $contactName,
+                'first_name' => $contact->first_name ?: $contactName,
+            ]);
+        }
+        return $contact->id;
+    }
+
+    $name = $contactName ?: $phone;
+
+    $contact = Contact::create([
+        'team_id'    => $teamId,
+        'owner_id'   => $account->team->owner_id ?? 1,
+        'first_name' => $name,
+        'last_name'  => null,
+        'name'       => $name,
+        'email'      => null,
+        'phone'      => $phone,
+        'company'    => null,
+        'position'   => null,
+        'status'     => 'nuevo',
+        'source'     => 'whatsapp',
+        'notes'      => null,
+    ]);
+
+    return $contact->id;
 }
    
 
