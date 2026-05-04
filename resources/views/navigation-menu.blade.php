@@ -274,64 +274,71 @@
 
     {{-- Condominio / Team switcher --}}
     @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
-      <div class="px-3 py-2 border-t border-gray-100 shrink-0">
+      <div class="px-3 py-2 border-t border-gray-100 shrink-0 relative"
+           x-data="{ openTeam: false }" @click.away="openTeam = false">
         <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Condominio</p>
-        <x-dropdown align="left" width="60">
-          <x-slot name="trigger">
-            <button type="button"
-                    class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg hover:bg-gray-100 text-gray-700 transition">
-              <svg class="size-4 shrink-0 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
-                   viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17 20h5V4H2v16h5M7 20V10h10v10"/>
-              </svg>
-              <span class="truncate text-sm">{{ Auth::user()->currentTeam->name }}</span>
-              <svg class="size-4 shrink-0 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
-              </svg>
-            </button>
-          </x-slot>
-          <x-slot name="content">
-            <div class="w-60 py-1">
-              <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}"
-                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-                {{ __('Team Settings') }}
-              </a>
-              @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                <a href="{{ route('teams.create') }}"
-                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-                  {{ __('Create New Team') }}
-                </a>
-              @endcan
 
-              @php $allTeams = Auth::user()->allTeams(); @endphp
-              @if ($allTeams->count() > 1)
-                <div class="border-t border-gray-200 my-1"></div>
-                <div class="block px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
-                  {{ __('Switch Teams') }}
-                </div>
-                @foreach ($allTeams as $teamItem)
-                  <form method="POST" action="{{ route('current-team.update') }}">
-                    @csrf @method('PUT')
-                    <input type="hidden" name="team_id" value="{{ $teamItem->id }}">
-                    <button type="submit"
-                            class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 transition
-                                   {{ Auth::user()->isCurrentTeam($teamItem) ? 'text-indigo-700 font-semibold bg-indigo-50' : 'text-gray-700' }}">
-                      @if (Auth::user()->isCurrentTeam($teamItem))
-                        <svg class="size-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                      @else
-                        <span class="size-4 shrink-0"></span>
-                      @endif
-                      <span class="truncate">{{ $teamItem->name }}</span>
-                    </button>
-                  </form>
-                @endforeach
-              @endif
+        <button type="button" @click="openTeam = !openTeam"
+                class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg hover:bg-gray-100 text-gray-700 transition">
+          <svg class="size-4 shrink-0 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5V4H2v16h5M7 20V10h10v10"/>
+          </svg>
+          <span class="truncate text-sm">{{ Auth::user()->currentTeam->name }}</span>
+          <svg class="size-4 shrink-0 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+          </svg>
+        </button>
+
+        {{-- Drop-up: se abre hacia arriba --}}
+        <div x-show="openTeam"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-1"
+             class="absolute left-3 right-3 bottom-full mb-2 z-50 bg-white rounded-lg shadow-xl ring-1 ring-black/5 max-h-80 overflow-y-auto py-1"
+             style="display: none;">
+
+          <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}"
+             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
+            {{ __('Team Settings') }}
+          </a>
+          @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+            <a href="{{ route('teams.create') }}"
+               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
+              {{ __('Create New Team') }}
+            </a>
+          @endcan
+
+          @php $allTeams = Auth::user()->allTeams(); @endphp
+          @if ($allTeams->count() > 1)
+            <div class="border-t border-gray-200 my-1"></div>
+            <div class="block px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+              {{ __('Switch Teams') }}
             </div>
-          </x-slot>
-        </x-dropdown>
+            @foreach ($allTeams as $teamItem)
+              <form method="POST" action="{{ route('current-team.update') }}">
+                @csrf @method('PUT')
+                <input type="hidden" name="team_id" value="{{ $teamItem->id }}">
+                <button type="submit"
+                        class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 transition
+                               {{ Auth::user()->isCurrentTeam($teamItem) ? 'text-indigo-700 font-semibold bg-indigo-50' : 'text-gray-700' }}">
+                  @if (Auth::user()->isCurrentTeam($teamItem))
+                    <svg class="size-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  @else
+                    <span class="size-4 shrink-0"></span>
+                  @endif
+                  <span class="truncate">{{ $teamItem->name }}</span>
+                </button>
+              </form>
+            @endforeach
+          @endif
+        </div>
       </div>
     @endif
 
