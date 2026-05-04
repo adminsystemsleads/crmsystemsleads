@@ -17,8 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'team.license' => EnsureTeamLicense::class,
         ]);
-        
-        $middleware->append(\App\Http\Middleware\SetGlobalLocale::class);
+
+        // Debe ir DENTRO del grupo web para que la sesión esté iniciada
+        // antes de leer/escribir el locale en sesión.
+        $middleware->web(append: [
+            \App\Http\Middleware\SetGlobalLocale::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
