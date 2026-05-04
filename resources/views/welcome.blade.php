@@ -166,6 +166,7 @@
       <a href="#funcionalidades" style="color:var(--slate-600);">Funcionalidades</a>
       <a href="#integraciones"   style="color:var(--slate-600);">Integraciones</a>
       <a href="#faq"             style="color:var(--slate-600);">Preguntas</a>
+      <a href="#demo" style="color:var(--indigo); font-weight:600;">📅 Agendar demo</a>
     </nav>
 
     {{-- Auth buttons --}}
@@ -213,7 +214,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
           </svg>
         </a>
-        <a href="#funcionalidades" class="btn-ghost">Ver funcionalidades</a>
+        <a href="#demo" class="btn-ghost">
+          📅 Ver demo en vivo
+        </a>
       </div>
 
       {{-- Mini stats --}}
@@ -473,6 +476,37 @@
     </div>
   </div>
 </section>
+
+<!-- ===================== DEMO EN VIVO ===================== -->
+<section id="demo" style="background:var(--slate-50); border-top:1px solid var(--slate-200);">
+  <div class="container">
+    <div style="text-align:center; max-width:560px; margin:0 auto 2.5rem;">
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Demo gratuita</span>
+      <h2 class="section-title">Agenda una demostración en vivo</h2>
+      <p class="section-sub">
+        Muéstrate el sistema con tus propios datos. Un especialista te guía en 30 minutos
+        y responde todas tus preguntas sobre QipuCRM.
+      </p>
+    </div>
+
+    <div style="max-width:820px; margin:0 auto; background:#fff; border:1px solid var(--slate-200); border-radius:1.25rem; padding:1.5rem; box-shadow:0 4px 20px rgba(15,23,42,.07);">
+      <div id="calendar-bitrix-widget"></div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var el = document.getElementById("calendar-bitrix-widget");
+  var ifr = document.createElement("iframe");
+  ifr.src = "https://connection.systemsleads.com/calendar/28a711a564e76dcd5ff19d5e678861776f7e6865e7a3756fa0aea2508953e428";
+  ifr.style.cssText = "width:100%;height:700px;border:none;border-radius:8px;";
+  ifr.setAttribute("allowtransparency","true");
+  el.appendChild(ifr);
+  window.addEventListener("message", function(e){
+    if(e.data && e.data.type === "cal-resize") ifr.style.height = e.data.height + "px";
+  });
+})();
+</script>
 
 <!-- ===================== CTA FINAL ===================== -->
 <section style="background:#fff; border-top:1px solid var(--slate-200);">
