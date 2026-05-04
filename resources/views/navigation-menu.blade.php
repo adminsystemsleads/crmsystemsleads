@@ -292,20 +292,41 @@
             </button>
           </x-slot>
           <x-slot name="content">
-            <div class="w-60">
-              <x-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
+            <div class="w-60 py-1">
+              <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}"
+                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
                 {{ __('Team Settings') }}
-              </x-dropdown-link>
+              </a>
               @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                <x-dropdown-link href="{{ route('teams.create') }}">
+                <a href="{{ route('teams.create') }}"
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
                   {{ __('Create New Team') }}
-                </x-dropdown-link>
+                </a>
               @endcan
-              @if (Auth::user()->allTeams()->count() > 1)
+
+              @php $allTeams = Auth::user()->allTeams(); @endphp
+              @if ($allTeams->count() > 1)
                 <div class="border-t border-gray-200 my-1"></div>
-                <div class="block px-4 py-1.5 text-xs text-gray-500">{{ __('Switch Teams') }}</div>
-                @foreach (Auth::user()->allTeams() as $team)
-                  <x-switchable-team :team="$team" />
+                <div class="block px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                  {{ __('Switch Teams') }}
+                </div>
+                @foreach ($allTeams as $teamItem)
+                  <form method="POST" action="{{ route('current-team.update') }}">
+                    @csrf @method('PUT')
+                    <input type="hidden" name="team_id" value="{{ $teamItem->id }}">
+                    <button type="submit"
+                            class="w-full text-left flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 transition
+                                   {{ Auth::user()->isCurrentTeam($teamItem) ? 'text-indigo-700 font-semibold bg-indigo-50' : 'text-gray-700' }}">
+                      @if (Auth::user()->isCurrentTeam($teamItem))
+                        <svg class="size-4 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                      @else
+                        <span class="size-4 shrink-0"></span>
+                      @endif
+                      <span class="truncate">{{ $teamItem->name }}</span>
+                    </button>
+                  </form>
                 @endforeach
               @endif
             </div>
