@@ -108,4 +108,109 @@ class ContactController extends Controller
 
         return redirect()->route('contacts.index')->with('status', 'Contacto eliminado.');
     }
+
+    /* ============ IMPORT CSV ============ */
+
+    public function importForm()
+    {
+        return view('contacts.import');
+    }
+
+    public function importTemplate(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="plantilla_contactos.csv"',
+        ];
+
+        return response()->stream(function () {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM para Excel
+            fputcsv($out, ['first_name', 'last_name', 'email', 'phone', 'company', 'position', 'tipo_doc', 'num_doc', 'status', 'source', 'notes']);
+            fputcsv($out, ['Juan', 'Pérez', 'juan@empresa.com', '+51987654321', 'Empresa SAC', 'Gerente', '6', '20123456789', 'nuevo', 'web', 'Cliente referido']);
+            fputcsv($out, ['María', 'Gómez', 'maria@correo.com', '+51912345678', '', '', '1', '12345678', 'activo', 'whatsapp', '']);
+            fputcsv($out, ['Carlos', '', '', '+51900111222', '', '', '', '', 'nuevo', 'manual', '']);
+            fclose($out);
+        }, 200, $headers);
+    }
+
+    public function importStore(Request $request)
+    {
+        $team = $this->currentTeam();
+
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:5120',
+        ]);
+
+        $file = $request->file('csv_file');
+        $handle = fopen($file->getRealPath(), 'r');
+        if (!$handle) {
+            return back()->with('error', 'No se pudo abrir el archivo.');
+        }
+
+        $first = fread($handle, 3);
+        if ($first !== "\xEF\xBB\xBF") rewind($handle);
+
+        $sample = fgets($handle);
+        $delimiter = (substr_count($sample, ';') > substr_count($sample, ',')) ? ';' : ',';
+        rewind($handle);
+        if ($first === "\xEF\xBB\xBF") fread($handle, 3);
+
+        $headerRow = fgetcsv($handle, 0, $delimiter);
+        if (!$headerRow) {
+            fclose($handle);
+            return back()->with('error', 'CSV vacío o inválido.');
+        }
+        $headers = array_map(fn($h) => strtolower(trim($h)), $headerRow);
+
+        $created = 0;
+        $errors  = [];
+        $line    = 1;
+
+        while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
+            $line++;
+            if (count(array_filter($row, fn($v) => $v !== null && $v !== '')) === 0) continue;
+
+            $row = array_pad($row, count($headers), null);
+            $assoc = array_combine($headers, $row);
+
+            $firstName = trim($assoc['first_name'] ?? '');
+            if ($firstName === '') {
+                $errors[] = "Línea {$line}: falta first_name.";
+                continue;
+            }
+            $lastName = trim($assoc['last_name'] ?? '');
+            $email    = trim($assoc['email'] ?? '');
+            if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Línea {$line}: email inválido ({$email}).";
+                continue;
+            }
+
+            Contact::create([
+                'team_id'      => $team->id,
+                'owner_id'     => Auth::id(),
+                'first_name'   => $firstName,
+                'last_name'    => $lastName ?: null,
+                'name'         => trim($firstName . ' ' . $lastName),
+                'email'        => $email ?: null,
+                'phone'        => trim($assoc['phone'] ?? '') ?: null,
+                'company'      => trim($assoc['company'] ?? '') ?: null,
+                'position'     => trim($assoc['position'] ?? '') ?: null,
+                'tipo_doc'     => trim($assoc['tipo_doc'] ?? '') ?: null,
+                'num_doc'      => trim($assoc['num_doc'] ?? '') ?: null,
+                'status'       => trim($assoc['status'] ?? 'nuevo') ?: 'nuevo',
+                'source'       => trim($assoc['source'] ?? '') ?: null,
+                'notes'        => trim($assoc['notes'] ?? '') ?: null,
+            ]);
+            $created++;
+        }
+        fclose($handle);
+
+        $msg = "Se importaron {$created} contactos.";
+        if ($errors) {
+            $msg .= ' Errores: ' . implode(' | ', array_slice($errors, 0, 5));
+        }
+
+        return redirect()->route('contacts.index')->with('status', $msg);
+    }
 }

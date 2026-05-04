@@ -72,6 +72,15 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    // Import CSV de productos
+    Route::get('/products/import',          [ProductController::class, 'importForm'])->name('products.import.form');
+    Route::get('/products/import/template', [ProductController::class, 'importTemplate'])->name('products.import.template');
+    Route::post('/products/import',         [ProductController::class, 'importStore'])->name('products.import.store');
+
+    // Import CSV de contactos
+    Route::get('/contacts/import',          [ContactController::class, 'importForm'])->name('contacts.import.form');
+    Route::get('/contacts/import/template', [ContactController::class, 'importTemplate'])->name('contacts.import.template');
+    Route::post('/contacts/import',         [ContactController::class, 'importStore'])->name('contacts.import.store');
 
     // Facturación electrónica
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');

@@ -1,15 +1,24 @@
 <x-app-layout>
 <div class="max-w-5xl mx-auto px-4 py-8">
 
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
     <h1 class="text-xl font-bold text-gray-900">Catálogo de productos</h1>
-    <button onclick="document.getElementById('modalNewProduct').classList.remove('hidden')"
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-      <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-      </svg>
-      Nuevo producto
-    </button>
+    <div class="flex flex-wrap gap-2">
+      <a href="{{ route('products.import.form') }}"
+         class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Importar CSV
+      </a>
+      <button onclick="document.getElementById('modalNewProduct').classList.remove('hidden')"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nuevo producto
+      </button>
+    </div>
   </div>
 
   @if(session('success'))
@@ -22,6 +31,7 @@
     <table class="w-full text-sm">
       <thead>
         <tr class="bg-gray-50 border-b border-gray-200">
+          <th class="px-4 py-3 text-left font-semibold text-gray-600 w-16"></th>
           <th class="px-4 py-3 text-left font-semibold text-gray-600">Nombre</th>
           <th class="px-4 py-3 text-left font-semibold text-gray-600">Unidad</th>
           <th class="px-4 py-3 text-right font-semibold text-gray-600">Precio</th>
@@ -32,6 +42,18 @@
       <tbody class="divide-y divide-gray-100">
         @forelse($products as $p)
           <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3">
+              @if($p->image_path)
+                <img src="{{ $p->image_url }}" alt="{{ $p->name }}"
+                     class="size-12 object-cover rounded-lg border border-gray-200">
+              @else
+                <div class="size-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-300">
+                  <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+              @endif
+            </td>
             <td class="px-4 py-3">
               <p class="font-medium text-gray-900">{{ $p->name }}</p>
               @if($p->description)
@@ -50,7 +72,7 @@
               @endif
             </td>
             <td class="px-4 py-3 text-right">
-              <button onclick="openEditProduct({{ $p->id }}, @json($p->name), @json($p->description ?? ''), @json($p->unit), {{ $p->price }}, @json($p->currency), {{ $p->is_active ? 'true' : 'false' }})"
+              <button onclick="openEditProduct({{ $p->id }}, @json($p->name), @json($p->description ?? ''), @json($p->unit), {{ $p->price }}, @json($p->currency), {{ $p->is_active ? 'true' : 'false' }}, @json($p->image_url))"
                       class="text-xs text-indigo-600 hover:text-indigo-800 font-medium mr-3">Editar</button>
               <form method="POST" action="{{ route('products.destroy', $p) }}" class="inline"
                     onsubmit="return confirm('¿Eliminar producto?')">
@@ -61,7 +83,7 @@
           </tr>
         @empty
           <tr>
-            <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">Sin productos. Crea el primero.</td>
+            <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">Sin productos. Crea el primero.</td>
           </tr>
         @endforelse
       </tbody>
@@ -71,9 +93,9 @@
 
 {{-- Modal nuevo producto --}}
 <div id="modalNewProduct" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 max-h-[90vh] overflow-y-auto">
     <h2 class="text-base font-bold text-gray-900 mb-4">Nuevo producto</h2>
-    <form method="POST" action="{{ route('products.store') }}" class="space-y-3">
+    <form method="POST" action="{{ route('products.store') }}" class="space-y-3" enctype="multipart/form-data">
       @csrf
       @include('products._form')
       <div class="flex gap-2 pt-2">
@@ -87,9 +109,9 @@
 
 {{-- Modal editar producto --}}
 <div id="modalEditProduct" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 max-h-[90vh] overflow-y-auto">
     <h2 class="text-base font-bold text-gray-900 mb-4">Editar producto</h2>
-    <form id="editProductForm" method="POST" action="" class="space-y-3">
+    <form id="editProductForm" method="POST" action="" class="space-y-3" enctype="multipart/form-data">
       @csrf @method('PUT')
       @include('products._form', ['edit' => true])
       <div class="flex gap-2 pt-2">
@@ -102,7 +124,7 @@
 </div>
 
 <script>
-function openEditProduct(id, name, desc, unit, price, currency, active) {
+function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl) {
   const form = document.getElementById('editProductForm');
   form.action = '/products/' + id;
   form.querySelector('[name=name]').value        = name;
@@ -111,6 +133,18 @@ function openEditProduct(id, name, desc, unit, price, currency, active) {
   form.querySelector('[name=price]').value       = price;
   form.querySelector('[name=currency]').value    = currency;
   form.querySelector('[name=is_active]').checked = active;
+
+  // mostrar imagen actual si existe
+  const wrap = document.getElementById('currentImageWrap-edit');
+  if (wrap) {
+    wrap.innerHTML = imageUrl
+      ? `<img src="${imageUrl}" class="size-20 object-cover rounded-lg border border-gray-200" alt="">`
+      : '<p class="text-[10px] text-gray-400">Sin imagen actual.</p>';
+  }
+  // limpiar checkbox eliminar imagen
+  const remove = form.querySelector('[name=remove_image]');
+  if (remove) remove.checked = false;
+
   document.getElementById('modalEditProduct').classList.remove('hidden');
 }
 </script>

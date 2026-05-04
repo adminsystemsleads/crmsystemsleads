@@ -1,4 +1,20 @@
 <div>
+  <label class="block text-xs font-semibold text-gray-600 mb-1">Imagen (opcional)</label>
+  @isset($edit)
+    <div id="currentImageWrap-{{ $edit ? 'edit' : 'new' }}" class="mb-2"></div>
+  @endisset
+  <input type="file" name="image" accept="image/jpeg,image/png,image/webp"
+         class="block w-full text-xs text-gray-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0
+                file:text-xs file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+  <p class="text-[10px] text-gray-400 mt-1">JPG, PNG o WebP. Máx 2MB.</p>
+  @isset($edit)
+    <label class="inline-flex items-center gap-2 mt-2 text-xs text-gray-600">
+      <input type="checkbox" name="remove_image" value="1" class="rounded border-gray-300 text-red-500">
+      Eliminar imagen actual
+    </label>
+  @endisset
+</div>
+<div>
   <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre *</label>
   <input type="text" name="name" required maxlength="255" value="{{ old('name') }}"
          class="w-full rounded-lg border-gray-200 text-sm py-2">
