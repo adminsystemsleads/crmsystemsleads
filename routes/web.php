@@ -31,12 +31,15 @@ Route::get('/', function () {
 
 Route::post('/locale', function (Request $request) {
     $data = $request->validate([
-        'locale' => 'required|string|in:en,es,pt,fr,de',
+        'locale' => 'required|string|in:es,en,pt',
     ]);
-    Cache::forever('app:locale', $data['locale']);
+
+    // Por sesión (cada usuario / navegador independiente) — evita que el cambio
+    // afecte a todos los demás usuarios (lo que pasaba con Cache::forever).
+    session(['locale' => $data['locale']]);
     app()->setLocale($data['locale']);
 
-    return back()->with('success', 'Idioma actualizado.');
+    return back();
 })->name('locale.update');
 Route::middleware([
     'auth:sanctum',

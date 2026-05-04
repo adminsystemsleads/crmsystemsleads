@@ -342,6 +342,12 @@
       </div>
     @endif
 
+    {{-- Idioma --}}
+    <div class="px-3 py-2 border-t border-gray-100 shrink-0">
+      <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Language') }}</p>
+      <x-language-switcher variant="sidebar" />
+    </div>
+
     {{-- Perfil / Logout --}}
     <div class="p-3 border-t border-gray-200 shrink-0 space-y-0.5">
       <a href="{{ route('profile.show') }}"

@@ -7,19 +7,6 @@
 
     <div>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <!-- En tu barra superior -->
-<form action="{{ route('locale.update') }}" method="POST" class="inline">
-  @csrf
-  <select name="locale"
-          onchange="this.form.submit()"
-          class="border rounded px-2 py-1 text-sm">
-      @foreach(config('app.supported_locales') as $loc)
-        <option value="{{ $loc }}" {{ app()->getLocale() === $loc ? 'selected' : '' }}>
-          {{ strtoupper($loc) }}
-        </option>
-      @endforeach
-  </select>
-</form>
             @livewire('teams.update-team-name-form', ['team' => $team])
 
             @livewire('teams.team-member-manager', ['team' => $team])
