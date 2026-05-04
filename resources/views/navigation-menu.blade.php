@@ -291,16 +291,16 @@
           </svg>
         </button>
 
-        {{-- Drop-up: se abre hacia arriba --}}
+        {{-- Drop-up: se abre hacia arriba (estilos inline para no depender de Tailwind compile) --}}
         <div x-show="openTeam"
              x-transition:enter="transition ease-out duration-150"
-             x-transition:enter-start="opacity-0 translate-y-1"
-             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
              x-transition:leave="transition ease-in duration-100"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 translate-y-1"
-             class="absolute left-3 right-3 bottom-full mb-2 z-50 bg-white rounded-lg shadow-xl ring-1 ring-black/5 max-h-80 overflow-y-auto py-1"
-             style="display: none;">
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="bg-white rounded-lg shadow-xl ring-1 ring-black/5 overflow-y-auto py-1"
+             style="display: none; position: absolute; bottom: calc(100% + 4px); left: 0.75rem; right: 0.75rem; z-index: 60; max-height: 20rem;">
 
           <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}"
              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
