@@ -16,6 +16,16 @@ return [
 'openai' => [
     'api_key' => env('OPENAI_API_KEY'),
 ],
+
+'culqi' => [
+    'public_key' => env('CULQI_PUBLIC_KEY'),
+    'secret_key' => env('CULQI_SECRET_KEY'),
+    'webhook_secret' => env('CULQI_WEBHOOK_SECRET'),
+    // Plan mensual por defecto (en céntimos de PEN). 4990 = S/ 49.90
+    'plan_amount_cents' => env('CULQI_PLAN_AMOUNT_CENTS', 4990),
+    'plan_currency' => env('CULQI_PLAN_CURRENCY', 'PEN'),
+    'plan_name' => env('CULQI_PLAN_NAME', 'QipuCRM Mensual'),
+],
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

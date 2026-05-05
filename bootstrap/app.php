@@ -23,6 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SetGlobalLocale::class,
         ]);
+
+        // El webhook de Culqi no debe validar CSRF (lo llama Culqi externamente)
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/culqi',
+            'webhooks/whatsapp',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

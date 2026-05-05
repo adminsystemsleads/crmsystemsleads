@@ -23,6 +23,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DealProductController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceConfigController;
+use App\Http\Controllers\PaymentController;
 
 
 Route::get('/', function () {
@@ -41,6 +42,10 @@ Route::post('/locale', function (Request $request) {
 
     return back();
 })->name('locale.update');
+
+// Webhook público de Culqi (sin auth, sin CSRF — excluido en bootstrap/app.php)
+Route::post('/webhooks/culqi', [PaymentController::class, 'webhook'])->name('webhooks.culqi');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -124,6 +129,10 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     // Activar / renovar
     Route::post('/teams/{team}/licencia/activar', [TeamLicenseController::class, 'activate'])
         ->name('team.license.activate');
+
+    // Pagos con Culqi
+    Route::get('/teams/{team}/pagar',  [PaymentController::class, 'checkout'])->name('payments.checkout');
+    Route::post('/teams/{team}/pagar', [PaymentController::class, 'process'])->name('payments.process');
 
 
          // Rutas protegidas por licencia
