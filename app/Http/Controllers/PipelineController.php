@@ -127,7 +127,7 @@ class PipelineController extends Controller
             'name'        => 'required|string|max:255',
             'slug'        => 'nullable|string|max:255',
             'probability' => 'nullable|integer|min:0|max:100',
-            'color'       => 'nullable|string|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
+            'color'       => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'is_won'      => 'nullable|boolean',
             'is_lost'     => 'nullable|boolean',
         ]);
@@ -158,7 +158,7 @@ class PipelineController extends Controller
             'name'        => 'required|string|max:255',
             'slug'        => 'nullable|string|max:255',
             'probability' => 'nullable|integer|min:0|max:100',
-            'color'       => 'nullable|string|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
+            'color'       => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'is_won'      => 'nullable|boolean',
             'is_lost'     => 'nullable|boolean',
             'sort_order'  => 'nullable|integer',
