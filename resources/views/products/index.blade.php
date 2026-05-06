@@ -26,6 +26,21 @@
       {{ session('success') }}
     </div>
   @endif
+  @if(session('error'))
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+      {{ session('error') }}
+    </div>
+  @endif
+  @if($errors->any())
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+      <p class="font-semibold mb-1">Hay errores de validación:</p>
+      <ul class="list-disc list-inside space-y-0.5">
+        @foreach($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
 
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
     <table class="w-full text-sm">
@@ -126,13 +141,26 @@
 <script>
 function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl) {
   const form = document.getElementById('editProductForm');
-  form.action = '/products/' + id;
-  form.querySelector('[name=name]').value        = name;
-  form.querySelector('[name=description]').value = desc;
-  form.querySelector('[name=unit]').value        = unit;
-  form.querySelector('[name=price]').value       = price;
-  form.querySelector('[name=currency]').value    = currency;
-  form.querySelector('[name=is_active]').checked = active;
+  if (!form) { console.error('editProductForm no encontrado'); return; }
+
+  // ⚠ La acción debe ser absoluta y completa para que el form sepa adónde enviar
+  form.action = '{{ url('/products') }}/' + id;
+
+  // Helper para asignar valor solo a inputs no-hidden
+  function setField(name, value) {
+    const inputs = form.querySelectorAll(`[name="${name}"]`);
+    inputs.forEach(inp => { if (inp.type !== 'hidden') inp.value = value; });
+  }
+
+  setField('name', name ?? '');
+  setField('description', desc ?? '');
+  setField('unit', unit ?? 'unidad');
+  setField('price', price ?? 0);
+  setField('currency', currency ?? 'PEN');
+
+  // is_active hay 2 inputs (hidden + checkbox). Solo afecta el checkbox.
+  const chk = form.querySelector('input[type=checkbox][name=is_active]');
+  if (chk) chk.checked = !!active;
 
   // mostrar imagen actual si existe
   const wrap = document.getElementById('currentImageWrap-edit');
@@ -142,7 +170,7 @@ function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl
       : '<p class="text-[10px] text-gray-400">Sin imagen actual.</p>';
   }
   // limpiar checkbox eliminar imagen
-  const remove = form.querySelector('[name=remove_image]');
+  const remove = form.querySelector('input[type=checkbox][name=remove_image]');
   if (remove) remove.checked = false;
 
   document.getElementById('modalEditProduct').classList.remove('hidden');
