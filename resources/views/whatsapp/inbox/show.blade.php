@@ -594,8 +594,53 @@ function setMobilePanel(panel) {
     if (id > lastDbId) lastDbId = id;
   });
 
-  function scrollBottom() { chatBox.scrollTop = chatBox.scrollHeight; }
-  scrollBottom();
+  function scrollBottom(behavior = 'auto') {
+    if (!chatBox) return;
+    // Usar scrollTop directo en lugar de scrollIntoView (más confiable en mobile)
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // En mobile/desktop: scrollear varias veces a medida que el layout se asienta:
+  //  - inmediato (puede que el container aún no tenga altura)
+  //  - rAF (después del primer paint)
+  //  - 100ms y 400ms (después de que imágenes/videos terminen de medir)
+  function settleScrollBottom() {
+    scrollBottom();
+    requestAnimationFrame(() => {
+      scrollBottom();
+      setTimeout(scrollBottom, 100);
+      setTimeout(scrollBottom, 400);
+    });
+  }
+
+  // Cuando una imagen termine de cargar, vuelve a scrollear (la altura del chat cambia)
+  chatBox.querySelectorAll('img, video').forEach(media => {
+    if (media.complete || media.readyState >= 1) return;
+    media.addEventListener('load',         scrollBottom, { once: true });
+    media.addEventListener('loadedmetadata', scrollBottom, { once: true });
+    media.addEventListener('error',        scrollBottom, { once: true });
+  });
+
+  // Mobile: la barra de navegación / dynamic viewport puede cambiar el alto.
+  // ResizeObserver dispara scroll cuando eso pasa durante la primera carga.
+  let resizeFires = 0;
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => {
+      // Solo reaccionar las primeras veces (carga inicial)
+      if (resizeFires++ < 4) scrollBottom();
+    });
+    ro.observe(chatBox);
+    setTimeout(() => ro.disconnect(), 1500);
+  }
+
+  // Inicial
+  settleScrollBottom();
+  // También al estar todo cargado (incluye imágenes externas)
+  if (document.readyState === 'complete') {
+    settleScrollBottom();
+  } else {
+    window.addEventListener('load', settleScrollBottom, { once: true });
+  }
 
   if (input) {
     input.addEventListener('input', function () {
@@ -957,7 +1002,14 @@ function setMobilePanel(panel) {
       chatBox.innerHTML = '';
       lastDbId = 0;
       (data.messages || []).forEach(m => addMessageToDom(m));
-      scrollBottom();
+      // En mobile el switch panel también necesita scroll robusto (reintentos)
+      settleScrollBottom();
+      // Volver a scrollear cuando cargan las imágenes/videos del nuevo chat
+      chatBox.querySelectorAll('img, video').forEach(media => {
+        if (media.complete || media.readyState >= 1) return;
+        media.addEventListener('load',         scrollBottom, { once: true });
+        media.addEventListener('loadedmetadata', scrollBottom, { once: true });
+      });
 
       // Actualizar estado JS (guardar ID viejo antes de sobreescribir)
       const oldConvId = conversationId;
