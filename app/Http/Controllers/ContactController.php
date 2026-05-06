@@ -111,7 +111,7 @@ class ContactController extends Controller
 
     /* ============ EXPORT CSV ============ */
 
-    public function export(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function export(Request $request)
     {
         $team   = $this->currentTeam();
         $q      = $request->query('q');
@@ -130,39 +130,43 @@ class ContactController extends Controller
 
         $filename = 'contactos_' . now()->format('Y-m-d_His') . '.csv';
 
-        return response()->stream(function () use ($contacts) {
-            $out = fopen('php://output', 'w');
-            fwrite($out, "\xEF\xBB\xBF"); // BOM para Excel
+        $tmp = fopen('php://temp', 'r+');
+        fwrite($tmp, "\xEF\xBB\xBF"); // BOM Excel
 
-            fputcsv($out, [
-                'id', 'first_name', 'last_name', 'name', 'email', 'phone',
-                'company', 'position', 'tipo_doc', 'num_doc', 'razon_social',
-                'status', 'source', 'notes', 'created_at',
+        fputcsv($tmp, [
+            'id', 'first_name', 'last_name', 'name', 'email', 'phone',
+            'company', 'position', 'tipo_doc', 'num_doc', 'razon_social',
+            'status', 'source', 'notes', 'created_at',
+        ]);
+
+        foreach ($contacts as $c) {
+            fputcsv($tmp, [
+                (string) $c->id,
+                (string) ($c->first_name ?? ''),
+                (string) ($c->last_name ?? ''),
+                (string) ($c->name ?? ''),
+                (string) ($c->email ?? ''),
+                (string) ($c->phone ?? ''),
+                (string) ($c->company ?? ''),
+                (string) ($c->position ?? ''),
+                (string) ($c->tipo_doc ?? ''),
+                (string) ($c->num_doc ?? ''),
+                (string) ($c->razon_social ?? ''),
+                (string) ($c->status ?? ''),
+                (string) ($c->source ?? ''),
+                str_replace(["\r", "\n"], ' ', (string) ($c->notes ?? '')),
+                $c->created_at?->format('Y-m-d H:i:s') ?? '',
             ]);
+        }
 
-            foreach ($contacts as $c) {
-                fputcsv($out, [
-                    $c->id,
-                    $c->first_name,
-                    $c->last_name,
-                    $c->name,
-                    $c->email,
-                    $c->phone,
-                    $c->company,
-                    $c->position,
-                    $c->tipo_doc,
-                    $c->num_doc,
-                    $c->razon_social,
-                    $c->status,
-                    $c->source,
-                    str_replace(["\r", "\n"], ' ', (string) $c->notes),
-                    $c->created_at?->format('Y-m-d H:i:s'),
-                ]);
-            }
-            fclose($out);
-        }, 200, [
+        rewind($tmp);
+        $csv = stream_get_contents($tmp);
+        fclose($tmp);
+
+        return response($csv, 200, [
             'Content-Type'        => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Content-Length'      => (string) strlen($csv),
         ]);
     }
 

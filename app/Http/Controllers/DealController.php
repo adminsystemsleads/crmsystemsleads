@@ -366,7 +366,7 @@ protected function ensureCanEditDeals(Pipeline $pipeline)
 
     /* ============ EXPORT CSV ============ */
 
-    public function export(Request $request, Pipeline $pipeline): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function export(Request $request, Pipeline $pipeline)
     {
         $pipeline = $this->pipelineForTeam($pipeline->id);
         $team     = $this->currentTeam();
@@ -385,55 +385,64 @@ protected function ensureCanEditDeals(Pipeline $pipeline)
             ->get();
 
         $stageLabel = $stageId
-            ? ($pipeline->stages()->where('id', $stageId)->value('name') ?? 'fase')
+            ? (PipelineStage::where('pipeline_id', $pipeline->id)->where('id', $stageId)->value('name') ?? 'fase')
             : 'todas';
-        $slug = \Illuminate\Support\Str::slug($pipeline->name . '-' . $stageLabel);
+        $slug     = \Illuminate\Support\Str::slug($pipeline->name . '-' . $stageLabel);
         $filename = "negociaciones_{$slug}_" . now()->format('Y-m-d_His') . '.csv';
 
-        return response()->stream(function () use ($deals, $pipeline) {
-            $out = fopen('php://output', 'w');
-            fwrite($out, "\xEF\xBB\xBF"); // BOM Excel
+        // Construir CSV en memoria — más confiable que streaming
+        $tmp = fopen('php://temp', 'r+');
+        fwrite($tmp, "\xEF\xBB\xBF"); // BOM UTF-8 para Excel
 
-            fputcsv($out, [
-                'id', 'titulo', 'pipeline', 'fase', 'estado',
-                'monto', 'moneda', 'fecha_cierre',
-                'contacto_nombre', 'contacto_email', 'contacto_telefono',
-                'responsable', 'creador', 'wa_id',
-                'descripcion', 'creado_el', 'actualizado_el',
+        fputcsv($tmp, [
+            'id', 'titulo', 'pipeline', 'fase', 'estado',
+            'monto', 'moneda', 'fecha_cierre',
+            'contacto_nombre', 'contacto_email', 'contacto_telefono',
+            'responsable', 'creador', 'wa_id',
+            'descripcion', 'creado_el', 'actualizado_el',
+        ]);
+
+        foreach ($deals as $d) {
+            $statusLabel = match ($d->status) {
+                'open' => 'Abierta',
+                'won'  => 'Ganada',
+                'lost' => 'Perdida',
+                default => (string) $d->status,
+            };
+
+            $closeDate = $d->close_date instanceof \Carbon\Carbon
+                ? $d->close_date->format('Y-m-d')
+                : (is_string($d->close_date) ? $d->close_date : '');
+
+            fputcsv($tmp, [
+                (string) $d->id,
+                (string) ($d->title ?? ''),
+                (string) $pipeline->name,
+                (string) ($d->stage?->name ?? ''),
+                $statusLabel,
+                $d->amount !== null ? (string) $d->amount : '',
+                (string) ($d->currency ?? ''),
+                $closeDate,
+                (string) ($d->contact?->name ?? ''),
+                (string) ($d->contact?->email ?? ''),
+                (string) ($d->contact?->phone ?? ''),
+                (string) ($d->responsible?->name ?? ''),
+                (string) ($d->owner?->name ?? ''),
+                (string) ($d->wa_id ?? ''),
+                str_replace(["\r", "\n"], ' ', (string) ($d->description ?? '')),
+                $d->created_at?->format('Y-m-d H:i:s') ?? '',
+                $d->updated_at?->format('Y-m-d H:i:s') ?? '',
             ]);
+        }
 
-            foreach ($deals as $d) {
-                $statusLabel = match ($d->status) {
-                    'open' => 'Abierta',
-                    'won'  => 'Ganada',
-                    'lost' => 'Perdida',
-                    default => $d->status,
-                };
+        rewind($tmp);
+        $csv = stream_get_contents($tmp);
+        fclose($tmp);
 
-                fputcsv($out, [
-                    $d->id,
-                    $d->title,
-                    $pipeline->name,
-                    $d->stage?->name,
-                    $statusLabel,
-                    $d->amount,
-                    $d->currency,
-                    optional($d->close_date)->format('Y-m-d'),
-                    $d->contact?->name,
-                    $d->contact?->email,
-                    $d->contact?->phone,
-                    $d->responsible?->name,
-                    $d->owner?->name,
-                    $d->wa_id,
-                    str_replace(["\r", "\n"], ' ', (string) $d->description),
-                    $d->created_at?->format('Y-m-d H:i:s'),
-                    $d->updated_at?->format('Y-m-d H:i:s'),
-                ]);
-            }
-            fclose($out);
-        }, 200, [
+        return response($csv, 200, [
             'Content-Type'        => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Content-Length'      => (string) strlen($csv),
         ]);
     }
 
