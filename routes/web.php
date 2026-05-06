@@ -130,9 +130,10 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::post('/teams/{team}/licencia/activar', [TeamLicenseController::class, 'activate'])
         ->name('team.license.activate');
 
-    // Pagos con Culqi
-    Route::get('/teams/{team}/pagar',  [PaymentController::class, 'checkout'])->name('payments.checkout');
-    Route::post('/teams/{team}/pagar', [PaymentController::class, 'process'])->name('payments.process');
+    // Suscripciones Culqi
+    Route::get('/teams/{team}/pagar',                     [PaymentController::class, 'checkout'])->name('payments.checkout');
+    Route::post('/teams/{team}/suscribir',                [PaymentController::class, 'subscribe'])->name('payments.subscribe');
+    Route::delete('/teams/{team}/suscripcion/{subscription}', [PaymentController::class, 'cancel'])->name('payments.cancel');
 
 
          // Rutas protegidas por licencia
@@ -178,6 +179,8 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/whatsapp/inbox', [WhatsappInboxController::class, 'index'])->name('whatsapp.inbox.index');
     Route::get('/whatsapp/inbox/{conversation}', [WhatsappInboxController::class, 'show'])->name('whatsapp.inbox.show');
     Route::post('/whatsapp/inbox/{conversation}/send', [WhatsappInboxController::class, 'send'])->name('whatsapp.inbox.send');
+    Route::get('/whatsapp/inbox/{conversation}/templates',  [WhatsappInboxController::class, 'templates'])->name('whatsapp.inbox.templates');
+    Route::post('/whatsapp/inbox/{conversation}/send-template', [WhatsappInboxController::class, 'sendTemplate'])->name('whatsapp.inbox.send-template');
     Route::get('/whatsapp/inbox/{conversation}/messages', [WhatsappInboxController::class, 'newMessages'])->name('whatsapp.inbox.messages');
     Route::get('/whatsapp/inbox/{conversation}/panel', [WhatsappInboxController::class, 'panel'])->name('whatsapp.inbox.panel');
     Route::post('/whatsapp/inbox/{conversation}/ai-toggle', [WhatsappInboxController::class, 'toggleAi'])->name('whatsapp.inbox.ai.toggle');

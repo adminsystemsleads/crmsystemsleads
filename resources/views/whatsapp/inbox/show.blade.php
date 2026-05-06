@@ -9,6 +9,13 @@
   $convName  = $conversation->contact_name ?? $conversation->contact_phone ?? '?';
   $initials  = strtoupper(mb_substr($convName, 0, 1) . (mb_substr($convName, 1, 1) ?: ''));
   $avatarCls = waAvatar($convName, $avatarColors);
+
+  // Calcular si la ventana de 24h ya pasó (basado en último mensaje INBOUND)
+  $lastInbound = $conversation->messages()
+      ->where('direction', 'inbound')
+      ->orderByDesc('created_at')
+      ->first();
+  $waWindowExpired = !$lastInbound || $lastInbound->created_at->copy()->addHours(24)->isPast();
 @endphp
 
 <div class="flex flex-col bg-white" style="height:100vh;height:100dvh;">
@@ -225,6 +232,28 @@
         <button type="button" id="fileClear" class="shrink-0 text-indigo-400 hover:text-red-500">✕</button>
       </div>
 
+      {{-- Banner: ventana de 24h vencida (solo se muestra cuando aplica) --}}
+      <div id="windowExpiredBanner" class="{{ $waWindowExpired ? '' : 'hidden' }} mb-2 rounded-lg bg-amber-50 border border-amber-300 px-3 py-2.5">
+        <div class="flex items-start gap-2">
+          <svg class="size-4 shrink-0 text-amber-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <div class="flex-1 text-xs text-amber-800">
+            <p class="font-semibold">Ventana de 24h vencida</p>
+            <p class="mt-0.5">El cliente no ha escrito en más de 24 horas. WhatsApp solo permite enviar
+              <strong>plantillas aprobadas</strong> en este momento.</p>
+            <button type="button" onclick="openTemplatesModal()"
+                    class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 transition">
+              <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+              Enviar plantilla
+            </button>
+          </div>
+        </div>
+      </div>
+
       <form id="sendForm" method="POST" action="{{ route('whatsapp.inbox.send', $conversation) }}"
             class="flex items-end gap-2" enctype="multipart/form-data">
         @csrf
@@ -238,6 +267,16 @@
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+          </svg>
+        </button>
+
+        {{-- Botón plantillas --}}
+        <button type="button" onclick="openTemplatesModal()"
+                class="shrink-0 p-2 rounded-xl text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                title="Enviar plantilla aprobada">
+          <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
           </svg>
         </button>
 
@@ -776,6 +815,13 @@ function setMobilePanel(panel) {
       if (!res.ok) throw new Error(res.status);
       const data = await res.json();
 
+      // Exponer urls + estado para el modal de plantillas
+      window.WAPanel = { urls: data.urls };
+
+      // Mostrar/ocultar banner de ventana 24h vencida
+      const banner = document.getElementById('windowExpiredBanner');
+      if (banner) banner.classList.toggle('hidden', !data.window_expired);
+
       // Actualizar header chat
       const cName    = data.contact_name || data.contact_phone || '?';
       const initials = (cName.charAt(0) + (cName.charAt(1) || '')).toUpperCase();
@@ -1062,6 +1108,287 @@ function setMobilePanel(panel) {
     else location.reload();
   });
 
+})();
+</script>
+
+{{-- ════════════════════════════════════════
+     MODAL DE PLANTILLAS DE WHATSAPP
+     ════════════════════════════════════════ --}}
+<div id="templatesModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+      <h3 class="text-base font-bold text-gray-900">Plantillas aprobadas de WhatsApp</h3>
+      <div class="flex items-center gap-2">
+        <button type="button" id="reloadTemplatesBtn"
+                class="p-1.5 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition" title="Recargar lista">
+          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+        </button>
+        <button type="button" onclick="closeTemplatesModal()"
+                class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
+          <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    {{-- Búsqueda --}}
+    <div class="px-5 py-3 border-b border-gray-100">
+      <input type="text" id="tplSearch" placeholder="Buscar plantilla por nombre…"
+             class="w-full rounded-lg border-gray-200 text-sm py-2 px-3">
+    </div>
+
+    {{-- Listado --}}
+    <div id="templatesList" class="flex-1 overflow-y-auto px-5 py-3 space-y-2">
+      <p id="templatesLoading" class="text-center text-sm text-gray-400 py-8">Cargando plantillas…</p>
+    </div>
+
+    {{-- Formulario de variables (oculto hasta seleccionar) --}}
+    <div id="tplFormSection" class="hidden border-t border-gray-200 px-5 py-4 bg-gray-50">
+      <div class="mb-3">
+        <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Plantilla seleccionada</p>
+        <p class="text-sm font-bold text-gray-900" id="tplSelectedName"></p>
+        <p class="text-xs text-gray-500" id="tplSelectedLang"></p>
+      </div>
+
+      <div id="tplPreviewBox" class="bg-white border border-gray-200 rounded-lg p-3 mb-3 text-sm whitespace-pre-line"></div>
+
+      <div id="tplVariablesBox" class="space-y-2 mb-3"></div>
+
+      <div class="flex gap-2 justify-end">
+        <button type="button" onclick="resetTemplateSelection()"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+        <button type="button" id="sendTplBtn"
+                class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
+          Enviar plantilla
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const modal     = document.getElementById('templatesModal');
+  const listBox   = document.getElementById('templatesList');
+  const searchBox = document.getElementById('tplSearch');
+  const reloadBtn = document.getElementById('reloadTemplatesBtn');
+  const formBox   = document.getElementById('tplFormSection');
+  const sendBtn   = document.getElementById('sendTplBtn');
+
+  let allTemplates = [];
+  let selected = null;
+
+  function getCurrentConvUrls() {
+    // El JS de la conversación principal expone estos URLs en window.WAPanel?.urls
+    if (window.WAPanel?.urls) return window.WAPanel.urls;
+    // Fallback: rutas estáticas usando el path actual (debe contener /whatsapp/inbox/{id})
+    const m = location.pathname.match(/\/whatsapp\/inbox\/(\d+)/);
+    if (!m) return null;
+    const base = '/whatsapp/inbox/' + m[1];
+    return {
+      templates:     base + '/templates',
+      send_template: base + '/send-template',
+    };
+  }
+
+  window.openTemplatesModal = function () {
+    modal.classList.remove('hidden');
+    resetTemplateSelection();
+    loadTemplates(false);
+  };
+
+  window.closeTemplatesModal = function () {
+    modal.classList.add('hidden');
+  };
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeTemplatesModal();
+  });
+
+  function loadTemplates(force) {
+    const urls = getCurrentConvUrls();
+    if (!urls?.templates) return;
+
+    listBox.innerHTML = '<p class="text-center text-sm text-gray-400 py-8">Cargando plantillas…</p>';
+
+    fetch(urls.templates + (force ? '?refresh=1' : ''), {
+      headers: { 'Accept': 'application/json' },
+      credentials: 'same-origin',
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.ok) {
+        listBox.innerHTML = '<div class="text-center py-8"><p class="text-sm text-red-600">' +
+          (data.message || 'Error al cargar plantillas') + '</p></div>';
+        return;
+      }
+      allTemplates = data.templates || [];
+      renderList(allTemplates);
+    })
+    .catch(err => {
+      listBox.innerHTML = '<p class="text-center text-sm text-red-600 py-8">Error: ' + err.message + '</p>';
+    });
+  }
+
+  function renderList(items) {
+    if (!items.length) {
+      listBox.innerHTML = '<p class="text-center text-sm text-gray-400 py-8">No hay plantillas aprobadas. Créalas en Meta Business Manager.</p>';
+      return;
+    }
+
+    listBox.innerHTML = items.map(t => {
+      const cat = (t.category || '').toLowerCase();
+      const catColor = cat === 'marketing' ? 'bg-purple-100 text-purple-700'
+                     : cat === 'utility'   ? 'bg-blue-100 text-blue-700'
+                     : 'bg-gray-100 text-gray-600';
+      const body = (t.components || []).find(c => c.type === 'BODY')?.text || '';
+      const preview = body.length > 120 ? body.substring(0, 120) + '…' : body;
+      return `
+        <button type="button" data-tpl='${JSON.stringify(t).replace(/'/g, "&apos;")}'
+                class="tpl-item w-full text-left bg-white border border-gray-200 hover:border-indigo-400 rounded-lg p-3 transition">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-sm text-gray-900 truncate">${t.name}</p>
+              <p class="text-xs text-gray-400 mt-0.5">${t.language}</p>
+            </div>
+            <span class="inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${catColor}">${t.category || '—'}</span>
+          </div>
+          ${preview ? '<p class="mt-2 text-xs text-gray-600 line-clamp-2">' + escapeHtml(preview) + '</p>' : ''}
+        </button>`;
+    }).join('');
+
+    listBox.querySelectorAll('.tpl-item').forEach(btn => {
+      btn.addEventListener('click', () => selectTemplate(JSON.parse(btn.dataset.tpl.replace(/&apos;/g, "'"))));
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function selectTemplate(tpl) {
+    selected = tpl;
+    document.getElementById('tplSelectedName').textContent = tpl.name;
+    document.getElementById('tplSelectedLang').textContent = 'Idioma: ' + tpl.language;
+
+    const body = (tpl.components || []).find(c => c.type === 'BODY');
+    const header = (tpl.components || []).find(c => c.type === 'HEADER');
+    const footer = (tpl.components || []).find(c => c.type === 'FOOTER');
+
+    const bodyVarCount = body ? (body.text.match(/\{\{\d+\}\}/g) || []).length : 0;
+    const headerVarCount = (header && header.format === 'TEXT') ? (header.text.match(/\{\{\d+\}\}/g) || []).length : 0;
+
+    let preview = '';
+    if (header && header.format === 'TEXT') preview += '*' + header.text + '*\n\n';
+    if (body) preview += body.text;
+    if (footer) preview += '\n\n_' + footer.text + '_';
+    document.getElementById('tplPreviewBox').textContent = preview || '(sin contenido)';
+
+    const varsBox = document.getElementById('tplVariablesBox');
+    varsBox.innerHTML = '';
+    let html = '';
+    for (let i = 0; i < headerVarCount; i++) {
+      html += `<div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Header — Variable {{${i+1}}}</label>
+        <input type="text" data-vartype="header" data-varidx="${i}" class="w-full rounded-lg border-gray-200 text-sm py-2" placeholder="Valor para {{${i+1}}}">
+      </div>`;
+    }
+    for (let i = 0; i < bodyVarCount; i++) {
+      html += `<div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Body — Variable {{${i+1}}}</label>
+        <input type="text" data-vartype="body" data-varidx="${i}" class="w-full rounded-lg border-gray-200 text-sm py-2" placeholder="Valor para {{${i+1}}}">
+      </div>`;
+    }
+    if (!html) {
+      html = '<p class="text-xs text-gray-400">Esta plantilla no tiene variables. Puedes enviarla directamente.</p>';
+    }
+    varsBox.innerHTML = html;
+
+    formBox.classList.remove('hidden');
+  }
+
+  window.resetTemplateSelection = function () {
+    selected = null;
+    formBox.classList.add('hidden');
+    document.getElementById('tplVariablesBox').innerHTML = '';
+    document.getElementById('tplPreviewBox').textContent = '';
+  };
+
+  searchBox.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    renderList(q
+      ? allTemplates.filter(t => t.name.toLowerCase().includes(q) || (t.category || '').toLowerCase().includes(q))
+      : allTemplates);
+  });
+
+  reloadBtn.addEventListener('click', () => loadTemplates(true));
+
+  sendBtn.addEventListener('click', () => {
+    if (!selected) return;
+    const urls = getCurrentConvUrls();
+    if (!urls?.send_template) return;
+
+    const headerParams = [];
+    const bodyParams   = [];
+    document.querySelectorAll('#tplVariablesBox input').forEach(inp => {
+      if (inp.dataset.vartype === 'header') headerParams[parseInt(inp.dataset.varidx, 10)] = inp.value;
+      else bodyParams[parseInt(inp.dataset.varidx, 10)] = inp.value;
+    });
+
+    // Validar que todas estén llenas
+    const allFilled = [...headerParams, ...bodyParams].every(v => (v ?? '').toString().trim() !== '');
+    const hasVars = headerParams.length + bodyParams.length > 0;
+    if (hasVars && !allFilled) {
+      alert('Completa todas las variables antes de enviar.');
+      return;
+    }
+
+    // Construir preview con valores reemplazados
+    const bodyComp = (selected.components || []).find(c => c.type === 'BODY');
+    let preview = bodyComp?.text || '';
+    bodyParams.forEach((v, i) => { preview = preview.replace(new RegExp('\\{\\{' + (i+1) + '\\}\\}', 'g'), v); });
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Enviando…';
+
+    fetch(urls.send_template, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept':       'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+      },
+      body: JSON.stringify({
+        name:          selected.name,
+        language:      selected.language,
+        body_params:   bodyParams,
+        header_params: headerParams,
+        preview:       preview,
+      }),
+    })
+    .then(r => r.json().then(d => ({ status: r.status, data: d })))
+    .then(({ status, data }) => {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Enviar plantilla';
+      if (status === 200 && data.ok) {
+        closeTemplatesModal();
+        // Refrescar el panel actual de mensajes (la función ya existe en el JS principal)
+        if (typeof refreshMessages === 'function') refreshMessages();
+        else if (typeof loadConversation === 'function') loadConversation();
+      } else {
+        alert('❌ ' + (data.message || 'Error al enviar plantilla'));
+      }
+    })
+    .catch(err => {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Enviar plantilla';
+      alert('Error: ' + err.message);
+    });
+  });
 })();
 </script>
 

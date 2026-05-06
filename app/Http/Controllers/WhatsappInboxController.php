@@ -7,6 +7,7 @@ use App\Models\WhatsappAccount;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use App\Services\WhatsappCloudService;
+use App\Services\WhatsappTemplateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -232,6 +233,20 @@ class WhatsappInboxController extends Controller
             ];
         }
 
+        // Calcular ventana de 24h: el último mensaje INBOUND del cliente
+        $lastInbound = $conversation->messages()
+            ->where('direction', 'inbound')
+            ->orderByDesc('created_at')
+            ->first();
+
+        $windowExpired = true;
+        $windowExpiresAt = null;
+        if ($lastInbound && $lastInbound->created_at) {
+            $expires = $lastInbound->created_at->copy()->addHours(24);
+            $windowExpiresAt = $expires->toIso8601String();
+            $windowExpired   = $expires->isPast();
+        }
+
         return response()->json([
             'id'              => $conversation->id,
             'contact_name'    => $conversation->contact_name,
@@ -240,16 +255,20 @@ class WhatsappInboxController extends Controller
             'ai_active'       => (bool) $conversation->ai_active,
             'account_name'    => $conversation->account?->name,
             'last_message_at' => $conversation->last_message_at?->diffForHumans(),
+            'window_expired'  => $windowExpired,
+            'window_expires_at' => $windowExpiresAt,
             'messages'        => $messages,
             'current_deal'    => $dealData,
             'pipelines'       => $pipelines,
             'has_ai'          => $conversation->account?->aiAssistant?->is_active ?? false,
             'urls'            => [
-                'send'        => route('whatsapp.inbox.send', $conversation),
-                'messages'    => route('whatsapp.inbox.messages', $conversation),
-                'create_deal' => route('whatsapp.inbox.deal.create', $conversation),
-                'ai_toggle'   => route('whatsapp.inbox.ai.toggle', $conversation),
-                'page'        => route('whatsapp.inbox.show', $conversation),
+                'send'             => route('whatsapp.inbox.send', $conversation),
+                'messages'         => route('whatsapp.inbox.messages', $conversation),
+                'create_deal'      => route('whatsapp.inbox.deal.create', $conversation),
+                'ai_toggle'        => route('whatsapp.inbox.ai.toggle', $conversation),
+                'page'             => route('whatsapp.inbox.show', $conversation),
+                'templates'        => route('whatsapp.inbox.templates', $conversation),
+                'send_template'    => route('whatsapp.inbox.send-template', $conversation),
             ],
         ]);
     }
@@ -396,5 +415,83 @@ class WhatsappInboxController extends Controller
         }
 
         return back()->with('status', 'Mensaje enviado.');
+    }
+
+    /* ============ PLANTILLAS DE META ============ */
+
+    public function templates(WhatsappConversation $conversation, Request $request, WhatsappTemplateService $tpl)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        $force = $request->boolean('refresh');
+        $result = $tpl->listTemplates($conversation->account, $force);
+
+        return response()->json($result);
+    }
+
+    public function sendTemplate(Request $request, WhatsappConversation $conversation, WhatsappTemplateService $tpl)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        $data = $request->validate([
+            'name'           => 'required|string|max:255',
+            'language'       => 'required|string|max:20',
+            'body_params'    => 'nullable|array',
+            'body_params.*'  => 'string|max:500',
+            'header_params'  => 'nullable|array',
+            'header_params.*'=> 'string|max:500',
+            'preview'        => 'nullable|string|max:1000',
+        ]);
+
+        $account = $conversation->account;
+
+        $result = $tpl->sendTemplate(
+            account:      $account,
+            toPhone:      $conversation->contact_phone,
+            name:         $data['name'],
+            language:     $data['language'],
+            bodyParams:   $data['body_params'] ?? [],
+            headerParams: $data['header_params'] ?? []
+        );
+
+        if (!$result['ok']) {
+            return response()->json([
+                'ok'      => false,
+                'message' => $result['message'] ?? 'Error al enviar plantilla',
+            ], 422);
+        }
+
+        $metaMessageId = $result['response']['messages'][0]['id'] ?? null;
+        $bodyPreview   = $data['preview'] ?? "[plantilla: {$data['name']}]";
+
+        $message = WhatsappMessage::create([
+            'team_id'                  => $team->id,
+            'whatsapp_conversation_id' => $conversation->id,
+            'direction'                => 'outbound',
+            'message_id'               => $metaMessageId,
+            'type'                     => 'template',
+            'body'                     => $bodyPreview,
+            'raw_payload'              => json_encode($result['response']),
+            'sent_by_user_id'          => Auth::id(),
+        ]);
+
+        $conversation->update([
+            'last_message_at'      => now(),
+            'last_message_preview' => mb_substr($bodyPreview, 0, 180),
+            'ai_active'            => false,
+        ]);
+
+        return response()->json([
+            'ok'         => true,
+            'id'         => $message->id,
+            'message_id' => $message->message_id,
+            'direction'  => 'outbound',
+            'type'       => 'template',
+            'body'       => $message->body,
+            'created_at' => $message->created_at?->toIso8601String(),
+            'sent_by'    => ['name' => Auth::user()->name],
+        ]);
     }
 }
