@@ -24,6 +24,7 @@ use App\Http\Controllers\DealProductController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceConfigController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\QuickReplyController;
 
 
 Route::get('/', function () {
@@ -167,6 +168,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/whatsapp/accounts/{account}/edit', [WhatsappAccountController::class, 'edit'])->name('whatsapp.accounts.edit');
     Route::put('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'update'])->name('whatsapp.accounts.update');
     Route::delete('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'destroy'])->name('whatsapp.accounts.destroy');
+    Route::post('/whatsapp/accounts/detect-waba',  [WhatsappAccountController::class, 'detectWabaId'])->name('whatsapp.accounts.detect-waba');
 
     // AI Assistant per account
     Route::get('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'edit'])->name('whatsapp.ai.edit');
@@ -181,6 +183,13 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::post('/whatsapp/inbox/{conversation}/send', [WhatsappInboxController::class, 'send'])->name('whatsapp.inbox.send');
     Route::get('/whatsapp/inbox/{conversation}/templates',  [WhatsappInboxController::class, 'templates'])->name('whatsapp.inbox.templates');
     Route::post('/whatsapp/inbox/{conversation}/send-template', [WhatsappInboxController::class, 'sendTemplate'])->name('whatsapp.inbox.send-template');
+
+    // Respuestas rápidas reutilizables
+    Route::get('/quick-replies',                  [QuickReplyController::class, 'index'])->name('quick-replies.index');
+    Route::post('/quick-replies',                 [QuickReplyController::class, 'store'])->name('quick-replies.store');
+    Route::put('/quick-replies/{quickReply}',     [QuickReplyController::class, 'update'])->name('quick-replies.update');
+    Route::delete('/quick-replies/{quickReply}',  [QuickReplyController::class, 'destroy'])->name('quick-replies.destroy');
+    Route::post('/quick-replies/{quickReply}/used', [QuickReplyController::class, 'used'])->name('quick-replies.used');
     Route::get('/whatsapp/inbox/{conversation}/messages', [WhatsappInboxController::class, 'newMessages'])->name('whatsapp.inbox.messages');
     Route::get('/whatsapp/inbox/{conversation}/panel', [WhatsappInboxController::class, 'panel'])->name('whatsapp.inbox.panel');
     Route::post('/whatsapp/inbox/{conversation}/ai-toggle', [WhatsappInboxController::class, 'toggleAi'])->name('whatsapp.inbox.ai.toggle');

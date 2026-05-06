@@ -25,14 +25,71 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">WABA ID (opcional)</label>
-              <input name="waba_id" value="{{ old('waba_id', $account->waba_id) }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <label class="block text-sm font-medium text-gray-700">WABA ID *</label>
+                <button type="button" id="autoDetectWaba"
+                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-1">
+                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                  </svg>
+                  Auto-detectar
+                </button>
+              </div>
+              <input id="wabaIdInput" name="waba_id" value="{{ old('waba_id', $account->waba_id) }}"
+                     placeholder="Ej: 123456789012345"
+                     class="w-full border-gray-300 rounded-md shadow-sm">
+              <p id="autoDetectMsg" class="text-xs mt-1 hidden"></p>
+              <p class="text-[11px] text-gray-400 mt-1">⚠ NO es lo mismo que el Phone Number ID. Click "Auto-detectar" para obtenerlo automáticamente.</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Business ID (opcional)</label>
               <input name="business_id" value="{{ old('business_id', $account->business_id) }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
             </div>
           </div>
+
+          <script>
+          document.getElementById('autoDetectWaba')?.addEventListener('click', async function () {
+            const phoneId = document.querySelector('[name=phone_number_id]')?.value?.trim();
+            const token   = document.querySelector('[name=access_token]')?.value?.trim();
+            const msgEl   = document.getElementById('autoDetectMsg');
+            const wabaInp = document.getElementById('wabaIdInput');
+
+            msgEl.className = 'text-xs mt-1 text-gray-500';
+            msgEl.textContent = 'Consultando Meta…';
+            msgEl.classList.remove('hidden');
+
+            if (!phoneId || !token) {
+              msgEl.className = 'text-xs mt-1 text-red-600';
+              msgEl.textContent = 'Completa Phone Number ID y Access Token primero.';
+              return;
+            }
+
+            try {
+              const res = await fetch('{{ route("whatsapp.accounts.detect-waba") }}', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept':       'application/json',
+                  'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({ phone_number_id: phoneId, access_token: token }),
+              });
+              const data = await res.json();
+              if (data.ok) {
+                wabaInp.value = data.waba_id;
+                msgEl.className = 'text-xs mt-1 text-green-600';
+                msgEl.textContent = '✓ WABA ID detectado: ' + data.waba_id +
+                  (data.verified_name ? ' (' + data.verified_name + ')' : '');
+              } else {
+                msgEl.className = 'text-xs mt-1 text-red-600';
+                msgEl.textContent = '❌ ' + (data.message || 'No se pudo detectar.');
+              }
+            } catch (err) {
+              msgEl.className = 'text-xs mt-1 text-red-600';
+              msgEl.textContent = '❌ Error: ' + err.message;
+            }
+          });
+          </script>
 
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Access Token</label>

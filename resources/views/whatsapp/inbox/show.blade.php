@@ -280,6 +280,16 @@
           </svg>
         </button>
 
+        {{-- Botón respuestas rápidas --}}
+        <button type="button" onclick="openQuickRepliesModal()"
+                class="shrink-0 p-2 rounded-xl text-gray-400 hover:text-amber-500 hover:bg-amber-50 transition"
+                title="Respuestas rápidas (también escribe / en el chat)">
+          <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </button>
+
         <textarea id="msgInput" name="message" rows="1"
                   class="flex-1 resize-none rounded-xl border-gray-200 bg-gray-50 text-sm px-3 py-2 focus:ring-indigo-400 focus:border-indigo-400"
                   placeholder="Escribe un mensaje..."
@@ -1390,6 +1400,324 @@ function setMobilePanel(panel) {
       alert('Error: ' + err.message);
     });
   });
+})();
+</script>
+@endverbatim
+
+{{-- ════════════════════════════════════════
+     MODAL DE RESPUESTAS RÁPIDAS
+     ════════════════════════════════════════ --}}
+<div id="quickRepliesModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+      <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+        <svg class="size-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        Respuestas rápidas
+      </h3>
+      <button type="button" onclick="closeQuickRepliesModal()"
+              class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
+        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+      <input type="text" id="qrSearch" placeholder="Buscar respuesta…"
+             class="flex-1 rounded-lg border-gray-200 text-sm py-2 px-3">
+      <button type="button" onclick="qrShowCreate()"
+              class="shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nueva
+      </button>
+    </div>
+
+    {{-- Listado --}}
+    <div id="qrList" class="flex-1 overflow-y-auto px-5 py-3 space-y-2">
+      <p class="text-center text-sm text-gray-400 py-8">Cargando…</p>
+    </div>
+
+    {{-- Formulario crear/editar (oculto) --}}
+    <div id="qrFormSection" class="hidden border-t border-gray-200 px-5 py-4 bg-gray-50">
+      <h4 class="text-sm font-bold text-gray-800 mb-3" id="qrFormTitle">Nueva respuesta rápida</h4>
+      <input type="hidden" id="qrEditingId" value="">
+
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Atajo (opcional)</label>
+            <div class="flex">
+              <span class="inline-flex items-center px-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l-lg text-xs text-gray-500">/</span>
+              <input type="text" id="qrShortcut" maxlength="50"
+                     placeholder="saludo"
+                     class="flex-1 rounded-r-lg border-gray-200 text-sm py-2">
+            </div>
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Título *</label>
+            <input type="text" id="qrTitle" required maxlength="150"
+                   placeholder="Saludo inicial"
+                   class="w-full rounded-lg border-gray-200 text-sm py-2">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Contenido *</label>
+          <textarea id="qrContent" rows="4" maxlength="4000" required
+                    placeholder="Hola, gracias por escribirnos. ¿En qué podemos ayudarte?"
+                    class="w-full rounded-lg border-gray-200 text-sm py-2"></textarea>
+        </div>
+
+        <label class="flex items-center gap-2 text-xs text-gray-700">
+          <input type="checkbox" id="qrTeamWide" checked class="rounded border-gray-300 text-indigo-600">
+          Compartir con todo el equipo
+        </label>
+      </div>
+
+      <div class="flex gap-2 justify-end mt-4">
+        <button type="button" onclick="qrHideForm()"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+        <button type="button" id="qrSaveBtn" onclick="qrSave()"
+                class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@verbatim
+<script>
+(function () {
+  const modal     = document.getElementById('quickRepliesModal');
+  const listBox   = document.getElementById('qrList');
+  const searchBox = document.getElementById('qrSearch');
+  const formBox   = document.getElementById('qrFormSection');
+  const csrf      = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+  let allReplies = [];
+
+  /* ============ Modal abrir/cerrar ============ */
+  window.openQuickRepliesModal = function () {
+    modal.classList.remove('hidden');
+    qrHideForm();
+    loadQuickReplies();
+  };
+  window.closeQuickRepliesModal = function () { modal.classList.add('hidden'); };
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeQuickRepliesModal(); });
+
+  /* ============ Cargar lista ============ */
+  function loadQuickReplies(search) {
+    listBox.innerHTML = '<p class="text-center text-sm text-gray-400 py-8">Cargando…</p>';
+    const url = '/quick-replies' + (search ? '?q=' + encodeURIComponent(search) : '');
+    fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.ok) {
+          listBox.innerHTML = '<p class="text-center text-sm text-red-600 py-8">' + (data.message || 'Error') + '</p>';
+          return;
+        }
+        allReplies = data.replies;
+        renderReplies(allReplies);
+      })
+      .catch(err => {
+        listBox.innerHTML = '<p class="text-center text-sm text-red-600 py-8">Error: ' + err.message + '</p>';
+      });
+  }
+
+  function renderReplies(items) {
+    if (!items.length) {
+      listBox.innerHTML = '<p class="text-center text-sm text-gray-400 py-8">No hay respuestas. Crea la primera con el botón "Nueva".</p>';
+      return;
+    }
+
+    listBox.innerHTML = items.map(r => {
+      const preview = r.content.length > 200 ? r.content.substring(0, 200) + '…' : r.content;
+      return `
+        <div class="bg-white border border-gray-200 hover:border-indigo-400 rounded-lg p-3 transition">
+          <div class="flex items-start justify-between gap-2 mb-1">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+              ${r.shortcut ? `<span class="shrink-0 inline-flex items-center rounded-md bg-amber-100 text-amber-700 px-1.5 py-0.5 text-[10px] font-mono font-semibold">/${escapeHtml(r.shortcut)}</span>` : ''}
+              <p class="font-semibold text-sm text-gray-900 truncate">${escapeHtml(r.title)}</p>
+              ${r.is_team_wide ? '<span class="shrink-0 inline-flex items-center rounded-full bg-blue-100 text-blue-600 px-1.5 py-0.5 text-[10px] font-medium" title="Compartida con el equipo">👥</span>' : '<span class="shrink-0 inline-flex items-center rounded-full bg-gray-100 text-gray-600 px-1.5 py-0.5 text-[10px] font-medium" title="Solo tuya">🔒</span>'}
+            </div>
+            <span class="shrink-0 text-[10px] text-gray-400">${r.times_used} usos</span>
+          </div>
+          <p class="text-xs text-gray-600 line-clamp-2 whitespace-pre-line mb-2">${escapeHtml(preview)}</p>
+          <div class="flex gap-1.5">
+            <button onclick='qrUse(${JSON.stringify(r.id)}, ${JSON.stringify(r.content).replace(/'/g, "&apos;")})'
+                    class="flex-1 px-3 py-1.5 rounded-md bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
+              Usar
+            </button>
+            ${r.is_mine ? `
+              <button onclick='qrEdit(${JSON.stringify(r).replace(/'/g, "&apos;")})'
+                      class="px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 text-xs hover:bg-gray-50">Editar</button>
+              <button onclick="qrDelete(${r.id})"
+                      class="px-2 py-1.5 rounded-md border border-red-200 text-red-500 text-xs hover:bg-red-50">✕</button>
+            ` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  /* ============ Form crear/editar ============ */
+  window.qrShowCreate = function () {
+    document.getElementById('qrFormTitle').textContent = 'Nueva respuesta rápida';
+    document.getElementById('qrEditingId').value = '';
+    document.getElementById('qrShortcut').value = '';
+    document.getElementById('qrTitle').value = '';
+    document.getElementById('qrContent').value = '';
+    document.getElementById('qrTeamWide').checked = true;
+    formBox.classList.remove('hidden');
+  };
+
+  window.qrEdit = function (r) {
+    document.getElementById('qrFormTitle').textContent = 'Editar respuesta rápida';
+    document.getElementById('qrEditingId').value = r.id;
+    document.getElementById('qrShortcut').value = r.shortcut || '';
+    document.getElementById('qrTitle').value = r.title;
+    document.getElementById('qrContent').value = r.content;
+    document.getElementById('qrTeamWide').checked = r.is_team_wide;
+    formBox.classList.remove('hidden');
+  };
+
+  window.qrHideForm = function () { formBox.classList.add('hidden'); };
+
+  window.qrSave = function () {
+    const id       = document.getElementById('qrEditingId').value;
+    const shortcut = document.getElementById('qrShortcut').value.trim();
+    const title    = document.getElementById('qrTitle').value.trim();
+    const content  = document.getElementById('qrContent').value.trim();
+    const teamWide = document.getElementById('qrTeamWide').checked;
+
+    if (!title || !content) { alert('Título y contenido son obligatorios.'); return; }
+
+    const url    = id ? `/quick-replies/${id}` : '/quick-replies';
+    const method = id ? 'PUT' : 'POST';
+    const btn    = document.getElementById('qrSaveBtn');
+    btn.disabled = true; btn.textContent = 'Guardando…';
+
+    fetch(url, {
+      method, credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+      body: JSON.stringify({ shortcut: shortcut || null, title, content, is_team_wide: teamWide ? 1 : 0 }),
+    })
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false; btn.textContent = 'Guardar';
+      if (d.ok) { qrHideForm(); loadQuickReplies(); }
+      else { alert('Error: ' + (d.message || 'No se pudo guardar')); }
+    })
+    .catch(e => { btn.disabled = false; btn.textContent = 'Guardar'; alert('Error: ' + e.message); });
+  };
+
+  window.qrDelete = function (id) {
+    if (!confirm('¿Eliminar esta respuesta rápida?')) return;
+    fetch(`/quick-replies/${id}`, {
+      method: 'DELETE', credentials: 'same-origin',
+      headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+    })
+    .then(r => r.json())
+    .then(d => { if (d.ok) loadQuickReplies(); else alert('Error al eliminar'); });
+  };
+
+  /* ============ Usar respuesta ============ */
+  window.qrUse = function (id, content) {
+    const ta = document.getElementById('msgInput');
+    if (ta) {
+      ta.value = content;
+      ta.focus();
+      // Disparar input event para que se actualicen tamaños/contadores si los hay
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    // Marcar como usada (incrementa contador)
+    fetch(`/quick-replies/${id}/used`, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+    });
+    closeQuickRepliesModal();
+  };
+
+  /* ============ Búsqueda ============ */
+  let searchTimer;
+  searchBox.addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    const v = e.target.value.toLowerCase().trim();
+    searchTimer = setTimeout(() => {
+      renderReplies(v
+        ? allReplies.filter(r =>
+            (r.title || '').toLowerCase().includes(v) ||
+            (r.shortcut || '').toLowerCase().includes(v) ||
+            (r.content || '').toLowerCase().includes(v))
+        : allReplies);
+    }, 150);
+  });
+
+  /* ============ Autocomplete con "/" en el textarea ============ */
+  const ta = document.getElementById('msgInput');
+  if (ta) {
+    let suggestionsBox;
+    function ensureSuggestionsBox() {
+      if (!suggestionsBox) {
+        suggestionsBox = document.createElement('div');
+        suggestionsBox.id = 'qrSuggestions';
+        suggestionsBox.className = 'absolute z-50 bg-white rounded-lg shadow-xl ring-1 ring-black/10 max-h-64 overflow-y-auto py-1 text-sm';
+        suggestionsBox.style.cssText = 'min-width:280px; bottom: calc(100% + 4px); left: 0;';
+        ta.parentElement.style.position = 'relative';
+        ta.parentElement.appendChild(suggestionsBox);
+      }
+      return suggestionsBox;
+    }
+    function hideSuggestions() { if (suggestionsBox) suggestionsBox.style.display = 'none'; }
+    function showSuggestions(matches) {
+      if (!matches.length) { hideSuggestions(); return; }
+      const box = ensureSuggestionsBox();
+      box.innerHTML = matches.slice(0, 8).map((r, i) => `
+        <button type="button" data-content='${JSON.stringify(r.content).replace(/'/g, "&apos;")}'
+                class="qr-sugg w-full text-left px-3 py-2 hover:bg-indigo-50 transition flex items-center gap-2">
+          <span class="font-mono text-xs text-amber-600">/${r.shortcut}</span>
+          <span class="font-medium text-gray-800 truncate">${(r.title || '').replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]))}</span>
+        </button>`).join('');
+      box.style.display = 'block';
+      box.querySelectorAll('.qr-sugg').forEach(btn => {
+        btn.addEventListener('click', () => {
+          ta.value = JSON.parse(btn.dataset.content.replace(/&apos;/g, "'"));
+          ta.focus();
+          hideSuggestions();
+        });
+      });
+    }
+
+    let cachedReplies = null;
+    function getReplies() {
+      if (cachedReplies) return Promise.resolve(cachedReplies);
+      return fetch('/quick-replies', { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(d => { cachedReplies = (d.replies || []).filter(r => r.shortcut); return cachedReplies; });
+    }
+
+    ta.addEventListener('input', () => {
+      const v = ta.value;
+      const m = v.match(/^\/([\w-]*)$/); // solo si empieza con / y es lo único
+      if (m) {
+        const q = m[1].toLowerCase();
+        getReplies().then(reps => {
+          showSuggestions(reps.filter(r => r.shortcut.toLowerCase().startsWith(q)));
+        });
+      } else {
+        hideSuggestions();
+      }
+    });
+    ta.addEventListener('blur', () => setTimeout(hideSuggestions, 200));
+  }
 })();
 </script>
 @endverbatim

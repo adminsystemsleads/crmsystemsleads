@@ -6,6 +6,7 @@ use App\Models\Pipeline;
 use App\Models\WhatsappAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class WhatsappAccountController extends Controller
 {
@@ -131,6 +132,52 @@ class WhatsappAccountController extends Controller
         $account->assignees()->sync($data['assignee_ids'] ?? []);
 
         return redirect()->route('whatsapp.accounts.index')->with('status', 'Cuenta actualizada.');
+    }
+
+    /**
+     * Detecta automáticamente el WABA ID desde el Phone Number ID + access token.
+     * Se llama por AJAX desde el formulario.
+     */
+    public function detectWabaId(Request $request)
+    {
+        $data = $request->validate([
+            'phone_number_id' => 'required|string|max:50',
+            'access_token'    => 'required|string',
+        ]);
+
+        try {
+            $res = Http::withToken($data['access_token'])
+                ->acceptJson()
+                ->timeout(15)
+                ->get("https://graph.facebook.com/v20.0/{$data['phone_number_id']}", [
+                    'fields' => 'whatsapp_business_account_id,verified_name,display_phone_number',
+                ]);
+
+            $body = $res->json() ?? [];
+            if (!$res->successful()) {
+                return response()->json([
+                    'ok'      => false,
+                    'message' => $body['error']['message'] ?? 'Error al consultar Meta',
+                ], 422);
+            }
+
+            $wabaId = $body['whatsapp_business_account_id'] ?? null;
+            if (!$wabaId) {
+                return response()->json([
+                    'ok'      => false,
+                    'message' => 'No se encontró el WABA ID. Verifica que el token tenga permiso whatsapp_business_management.',
+                ], 422);
+            }
+
+            return response()->json([
+                'ok'                    => true,
+                'waba_id'               => $wabaId,
+                'verified_name'         => $body['verified_name'] ?? null,
+                'display_phone_number'  => $body['display_phone_number'] ?? null,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(WhatsappAccount $account)

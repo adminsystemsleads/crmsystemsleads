@@ -35,9 +35,21 @@ class WhatsappTemplateService
 
                 if (!$res->successful()) {
                     $body = $res->json() ?? [];
+                    $metaMsg = $body['error']['message'] ?? 'No se pudieron obtener las plantillas.';
+
+                    // Errores típicos: WABA ID incorrecto o token sin permisos
+                    if (str_contains($metaMsg, 'message_templates') || str_contains($metaMsg, 'nonexisting field')) {
+                        $metaMsg = 'El WABA ID configurado no es válido (no es una WhatsApp Business Account). '
+                                 . 'Verifica que en "WhatsApp → Cuentas → Editar" hayas puesto el WABA ID correcto '
+                                 . '(NO el Phone Number ID). El WABA ID lo encuentras en Meta Business Suite → Cuentas de WhatsApp.';
+                    } elseif (str_contains(strtolower($metaMsg), 'permission')) {
+                        $metaMsg = 'El Access Token no tiene permiso "whatsapp_business_management". '
+                                 . 'Genera un token con ese permiso en Meta para Desarrolladores.';
+                    }
+
                     return [
                         'ok'        => false,
-                        'message'   => $body['error']['message'] ?? 'No se pudieron obtener las plantillas.',
+                        'message'   => $metaMsg,
                         'templates' => [],
                     ];
                 }
