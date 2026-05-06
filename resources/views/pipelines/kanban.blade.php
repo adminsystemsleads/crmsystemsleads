@@ -107,7 +107,10 @@
                                         </td>
 
                                         <td class="py-2 pr-4">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-700">
+                                            @php $sColor = $stage->color ?? '#6366f1'; @endphp
+                                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold"
+                                                  style="background-color: {{ $sColor }}1A; color: {{ $sColor }};">
+                                                <span class="size-1.5 rounded-full" style="background-color: {{ $sColor }};"></span>
                                                 {{ $stage->name }}
                                             </span>
                                         </td>
@@ -182,19 +185,28 @@
                             $currency = $deals->count() ? ($deals->first()->currency ?? 'PEN') : 'PEN';
                         @endphp
 
+                        @php
+                            $stageColor = $stage->color ?? '#6366f1';
+                        @endphp
+
                         {{-- Columna --}}
                         <div class="flex-shrink-0 w-72"
                              data-stage-id="{{ $stage->id }}"
                              data-pipeline-id="{{ $pipeline->id }}">
-                            <div class="rounded-2xl flex flex-col h-[78vh] border border-gray-200 bg-transparent">
+                            <div class="rounded-2xl flex flex-col h-[78vh] border bg-white shadow-sm overflow-hidden"
+                                 style="border-color: {{ $stageColor }}40;">
 
-                                {{-- Header --}}
-                                <div class="rounded-t-2xl px-4 pt-3 pb-2 bg-transparent">
-                                    <div class="text-xs font-semibold uppercase tracking-wide text-gray-900">
-                                        {{ $stage->name }}
-                                        <span class="text-[10px] opacity-80 text-gray-700" data-stage-count>
-                                            ({{ $deals->count() }})
-                                        </span>
+                                {{-- Header con color --}}
+                                <div class="px-4 pt-3 pb-2 border-b-4"
+                                     style="background-color: {{ $stageColor }}1A; border-bottom-color: {{ $stageColor }};">
+                                    <div class="flex items-center gap-2">
+                                        <span class="size-3 rounded-full shrink-0" style="background-color: {{ $stageColor }};"></span>
+                                        <div class="text-xs font-bold uppercase tracking-wide flex-1" style="color: {{ $stageColor }};">
+                                            {{ $stage->name }}
+                                            <span class="text-[10px] opacity-80" data-stage-count>
+                                                ({{ $deals->count() }})
+                                            </span>
+                                        </div>
                                     </div>
 
                                     <div class="mt-2 text-lg font-bold text-gray-900">

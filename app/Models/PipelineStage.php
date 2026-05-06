@@ -15,6 +15,7 @@ class PipelineStage extends Model
         'slug',
         'sort_order',
         'probability',
+        'color',
         'is_won',
         'is_lost',
     ];

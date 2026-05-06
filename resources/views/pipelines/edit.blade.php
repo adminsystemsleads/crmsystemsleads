@@ -74,6 +74,7 @@
                         <tr>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Orden</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Color</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Prob.</th>
                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
                             <th class="px-4 py-2"></th>
@@ -94,6 +95,16 @@
                                     <td class="px-4 py-2">
                                         <input type="text" name="name" value="{{ $stage->name }}"
                                                class="w-full border-gray-300 rounded-md text-sm">
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        @php $stageColor = $stage->color ?? '#6366f1'; @endphp
+                                        <div class="flex items-center gap-2">
+                                            <input type="color" name="color" value="{{ $stageColor }}"
+                                                   class="size-8 rounded border border-gray-200 cursor-pointer p-0"
+                                                   title="Click para elegir color">
+                                            <span class="inline-block size-5 rounded-full ring-1 ring-gray-200"
+                                                  style="background-color: {{ $stageColor }};"></span>
+                                        </div>
                                     </td>
                                     <td class="px-4 py-2">
                                         <input type="number" name="probability" value="{{ $stage->probability }}"
@@ -137,7 +148,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-4 text-gray-500">
+                                <td colspan="6" class="px-4 py-4 text-gray-500">
                                     Aún no hay fases definidas.
                                 </td>
                             </tr>
@@ -147,7 +158,7 @@
 
                 {{-- Nueva fase --}}
                 <h4 class="text-sm font-semibold mb-2">Agregar nueva fase</h4>
-                <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                     @csrf
                     <div>
                         <label class="block text-xs font-medium text-gray-700">Nombre</label>
@@ -158,6 +169,11 @@
                         <label class="block text-xs font-medium text-gray-700">Slug (opcional)</label>
                         <input type="text" name="slug"
                                class="mt-1 block w-full border-gray-300 rounded-md text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700">Color</label>
+                        <input type="color" name="color" value="#6366f1"
+                               class="mt-1 block w-full h-9 border border-gray-300 rounded-md cursor-pointer p-0">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-700">Probabilidad %</label>

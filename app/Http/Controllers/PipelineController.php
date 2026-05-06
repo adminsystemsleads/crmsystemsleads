@@ -127,6 +127,7 @@ class PipelineController extends Controller
             'name'        => 'required|string|max:255',
             'slug'        => 'nullable|string|max:255',
             'probability' => 'nullable|integer|min:0|max:100',
+            'color'       => 'nullable|string|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
             'is_won'      => 'nullable|boolean',
             'is_lost'     => 'nullable|boolean',
         ]);
@@ -139,6 +140,7 @@ class PipelineController extends Controller
             'slug'        => $data['slug'] ?: \Str::slug($data['name']),
             'sort_order'  => $sortOrder,
             'probability' => $data['probability'] ?? null,
+            'color'       => $data['color'] ?? '#6366f1',
             'is_won'      => $request->boolean('is_won'),
             'is_lost'     => $request->boolean('is_lost'),
         ]);
@@ -156,6 +158,7 @@ class PipelineController extends Controller
             'name'        => 'required|string|max:255',
             'slug'        => 'nullable|string|max:255',
             'probability' => 'nullable|integer|min:0|max:100',
+            'color'       => 'nullable|string|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
             'is_won'      => 'nullable|boolean',
             'is_lost'     => 'nullable|boolean',
             'sort_order'  => 'nullable|integer',
@@ -165,6 +168,7 @@ class PipelineController extends Controller
             'name'        => $data['name'],
             'slug'        => $data['slug'] ?: \Str::slug($data['name']),
             'probability' => $data['probability'] ?? null,
+            'color'       => $data['color'] ?? ($stage->color ?? '#6366f1'),
             'is_won'      => $request->boolean('is_won'),
             'is_lost'     => $request->boolean('is_lost'),
             'sort_order'  => $data['sort_order'] ?? $stage->sort_order,
