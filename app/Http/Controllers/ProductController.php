@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -34,14 +35,12 @@ class ProductController extends Controller
             'unit'        => 'nullable|string|max:50',
             'price'       => 'required|numeric|min:0',
             'currency'    => 'required|string|size:3',
-            'is_active'   => 'boolean',
-            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'is_active'   => 'nullable|boolean',
+            // file en lugar de image: no requiere GD/Imagick. Validamos por mimes y tamaño.
+            'image'       => 'nullable|file|mimes:jpg,jpeg,png,webp,gif|max:2048',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store("products/{$team->id}", 'public');
-        }
+        $imagePath = $this->storeUploadedImage($request, $team->id);
 
         Product::create([
             'team_id'     => $team->id,
@@ -54,7 +53,7 @@ class ProductController extends Controller
             'image_path'  => $imagePath,
         ]);
 
-        return back()->with('success', 'Producto creado.');
+        return redirect()->route('products.index')->with('success', 'Producto creado.');
     }
 
     public function update(Request $request, Product $product)
@@ -67,21 +66,25 @@ class ProductController extends Controller
             'unit'        => 'nullable|string|max:50',
             'price'       => 'required|numeric|min:0',
             'currency'    => 'required|string|size:3',
-            'is_active'   => 'boolean',
-            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'is_active'   => 'nullable|boolean',
+            'image'       => 'nullable|file|mimes:jpg,jpeg,png,webp,gif|max:2048',
             'remove_image'=> 'nullable|boolean',
         ]);
 
         if ($request->boolean('remove_image') && $product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
+            try { Storage::disk('public')->delete($product->image_path); }
+            catch (\Throwable $e) { Log::warning('No se pudo borrar imagen anterior: ' . $e->getMessage()); }
             $product->image_path = null;
         }
 
-        if ($request->hasFile('image')) {
+        $newPath = $this->storeUploadedImage($request, $product->team_id);
+        if ($newPath !== null) {
+            // Borrar imagen anterior si había
             if ($product->image_path) {
-                Storage::disk('public')->delete($product->image_path);
+                try { Storage::disk('public')->delete($product->image_path); }
+                catch (\Throwable $e) { Log::warning('No se pudo borrar imagen anterior: ' . $e->getMessage()); }
             }
-            $product->image_path = $request->file('image')->store("products/{$product->team_id}", 'public');
+            $product->image_path = $newPath;
         }
 
         $product->fill([
@@ -93,17 +96,48 @@ class ProductController extends Controller
             'is_active'   => $request->boolean('is_active', true),
         ])->save();
 
-        return back()->with('success', 'Producto actualizado.');
+        return redirect()->route('products.index')->with('success', 'Producto actualizado.');
     }
 
     public function destroy(Product $product)
     {
         abort_unless($product->team_id === $this->currentTeam()->id, 404);
         if ($product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
+            try { Storage::disk('public')->delete($product->image_path); }
+            catch (\Throwable $e) { Log::warning('No se pudo borrar imagen: ' . $e->getMessage()); }
         }
         $product->delete();
         return back()->with('success', 'Producto eliminado.');
+    }
+
+    /**
+     * Sube la imagen al disco public. Devuelve la ruta o null si no había/falló.
+     * Lanza ValidationException si el archivo subió pero el storage falló.
+     */
+    private function storeUploadedImage(Request $request, int $teamId): ?string
+    {
+        if (!$request->hasFile('image')) return null;
+
+        $file = $request->file('image');
+        if (!$file || !$file->isValid()) {
+            // Posible falla por tamaño php.ini upload_max_filesize / post_max_size
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'image' => 'La imagen no se pudo procesar. Puede que exceda el límite del servidor.',
+            ]);
+        }
+
+        try {
+            $path = $file->store("products/{$teamId}", 'public');
+            if (!$path) {
+                throw new \RuntimeException('Storage devolvió una ruta vacía.');
+            }
+            return $path;
+        } catch (\Throwable $e) {
+            Log::error('Error guardando imagen del producto: ' . $e->getMessage());
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'image' => 'No se pudo guardar la imagen en el servidor: ' . $e->getMessage(),
+            ]);
+        }
     }
 
     /* ============ IMPORT CSV ============ */
@@ -122,7 +156,6 @@ class ProductController extends Controller
 
         return response()->stream(function () {
             $out = fopen('php://output', 'w');
-            // BOM para Excel
             fwrite($out, "\xEF\xBB\xBF");
             fputcsv($out, ['name', 'description', 'unit', 'price', 'currency', 'is_active']);
             fputcsv($out, ['Laptop HP 15"', 'Laptop con 8GB RAM y 256GB SSD', 'unidad', '2499.00', 'PEN', '1']);
@@ -146,21 +179,13 @@ class ProductController extends Controller
             return back()->with('error', 'No se pudo abrir el archivo.');
         }
 
-        // Detectar y descartar BOM
         $first = fread($handle, 3);
-        if ($first !== "\xEF\xBB\xBF") {
-            rewind($handle);
-        }
+        if ($first !== "\xEF\xBB\xBF") rewind($handle);
 
-        // Detectar separador (coma o punto y coma)
         $sample = fgets($handle);
         $delimiter = (substr_count($sample, ';') > substr_count($sample, ',')) ? ';' : ',';
         rewind($handle);
-        if ($first !== "\xEF\xBB\xBF") {
-            rewind($handle);
-        } else {
-            fread($handle, 3);
-        }
+        if ($first === "\xEF\xBB\xBF") fread($handle, 3);
 
         $headerRow = fgetcsv($handle, 0, $delimiter);
         if (!$headerRow) {
@@ -177,7 +202,7 @@ class ProductController extends Controller
             $line++;
             if (count(array_filter($row, fn($v) => $v !== null && $v !== '')) === 0) continue;
 
-            $row = array_pad($row, count($headers), null);
+            $row   = array_pad($row, count($headers), null);
             $assoc = array_combine($headers, $row);
 
             $name = trim($assoc['name'] ?? '');
