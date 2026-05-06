@@ -41,12 +41,18 @@ class WhatsappInboxController extends Controller
 
 
 
-    protected function sidebarConversations(int $teamId, ?string $accountId, string $status = 'all'): \Illuminate\Database\Eloquent\Collection
+    protected function sidebarConversations(
+        int $teamId,
+        ?string $accountId,
+        string $status = 'all',
+        ?string $search = null,
+        ?int $tagId = null
+    ): \Illuminate\Database\Eloquent\Collection
     {
         $q = WhatsappConversation::where('team_id', $teamId)
-            ->with('account')
+            ->with(['account', 'tags:chat_tags.id,name,color'])
             ->orderByDesc('last_message_at')
-            ->limit(60);
+            ->limit(120);
 
         if ($accountId) {
             $q->where('whatsapp_account_id', $accountId);
@@ -57,6 +63,19 @@ class WhatsappInboxController extends Controller
             $q->where('status', 'closed');
         }
 
+        if ($search) {
+            $term = '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%';
+            $q->where(function ($w) use ($term) {
+                $w->where('contact_name',  'like', $term)
+                  ->orWhere('contact_phone', 'like', $term)
+                  ->orWhere('wa_id',         'like', $term);
+            });
+        }
+
+        if ($tagId) {
+            $q->whereHas('tags', fn($w) => $w->where('chat_tags.id', $tagId));
+        }
+
         return $q->get();
     }
 
@@ -65,21 +84,25 @@ class WhatsappInboxController extends Controller
         $team      = $this->currentTeam();
         $accountId = $request->query('account_id');
         $status    = $request->query('status', 'all');
+        $search    = $request->query('q');
+        $tagId     = $request->query('tag_id') ? (int) $request->query('tag_id') : null;
 
         $accounts = WhatsappAccount::where('team_id', $team->id)
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        $conversations = $this->sidebarConversations($team->id, $accountId, $status);
+        $conversations = $this->sidebarConversations($team->id, $accountId, $status, $search, $tagId);
 
         // Redirect to first conversation so the user lands in the 3-panel view
-        if ($conversations->isNotEmpty() && !$request->expectsJson()) {
+        if ($conversations->isNotEmpty() && !$request->expectsJson() && !$search && !$tagId) {
             return redirect()->route('whatsapp.inbox.show', $conversations->first())
                 ->withInput($request->only('account_id', 'status'));
         }
 
-        return view('whatsapp.inbox.index', compact('accounts', 'conversations', 'accountId', 'status'));
+        $allTags = \App\Models\ChatTag::where('team_id', $team->id)->orderBy('name')->get(['id', 'name', 'color']);
+
+        return view('whatsapp.inbox.index', compact('accounts', 'conversations', 'accountId', 'status', 'search', 'tagId', 'allTags'));
     }
 
     public function show(WhatsappConversation $conversation, Request $request)
@@ -96,6 +119,8 @@ class WhatsappInboxController extends Controller
 
         $accountId = $request->query('account_id');
         $status    = $request->query('status', 'all');
+        $search    = $request->query('q');
+        $tagId     = $request->query('tag_id') ? (int) $request->query('tag_id') : null;
 
         $accounts = WhatsappAccount::where('team_id', $team->id)
             ->where('is_active', true)
@@ -107,13 +132,17 @@ class WhatsappInboxController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        $conversations = $this->sidebarConversations($team->id, $accountId, $status);
+        $conversations = $this->sidebarConversations($team->id, $accountId, $status, $search, $tagId);
 
         $aiAssistant = $conversation->account?->aiAssistant;
         $hasAi       = $aiAssistant?->is_active ?? false;
 
+        $allTags = \App\Models\ChatTag::where('team_id', $team->id)->orderBy('name')->get(['id', 'name', 'color']);
+        $conversation->load('tags:chat_tags.id,name,color');
+
         return view('whatsapp.inbox.show', compact(
-            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status', 'pipelines', 'aiAssistant', 'hasAi'
+            'conversation', 'currentDeal', 'conversations', 'accounts', 'accountId', 'status',
+            'pipelines', 'aiAssistant', 'hasAi', 'search', 'tagId', 'allTags'
         ));
     }
 
@@ -288,8 +317,10 @@ class WhatsappInboxController extends Controller
         $team      = $this->currentTeam();
         $accountId = $request->query('account_id');
         $status    = $request->query('status', 'all');
+        $search    = $request->query('q');
+        $tagId     = $request->query('tag_id') ? (int) $request->query('tag_id') : null;
 
-        $conversations = $this->sidebarConversations($team->id, $accountId, $status)
+        $conversations = $this->sidebarConversations($team->id, $accountId, $status, $search, $tagId)
             ->map(fn($c) => [
                 'id'                   => $c->id,
                 'contact_name'         => $c->contact_name,
@@ -297,6 +328,7 @@ class WhatsappInboxController extends Controller
                 'last_message_preview' => $c->last_message_preview,
                 'last_message_at'      => $c->last_message_at?->timestamp ?? 0,
                 'status'               => $c->status,
+                'tags'                 => $c->tags->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'color' => $t->color])->all(),
             ]);
 
         return response()->json($conversations);

@@ -58,11 +58,25 @@
       <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">Conversaciones</span>
     </div>
 
-    {{-- Filtro de cuenta --}}
-    <div class="px-3 py-2 border-b border-gray-100 bg-white">
-      <form method="GET" action="{{ route('whatsapp.inbox.show', $conversation) }}" class="flex gap-1.5">
+    {{-- Búsqueda + filtros --}}
+    <div class="px-3 py-2 border-b border-gray-100 bg-white space-y-2">
+      <form method="GET" action="{{ route('whatsapp.inbox.show', $conversation) }}" class="space-y-1.5">
+        @if($accountId)<input type="hidden" name="account_id" value="{{ $accountId }}">@endif
+        @if($status && $status !== 'all')<input type="hidden" name="status" value="{{ $status }}">@endif
+
+        {{-- Buscador por nombre/teléfono --}}
+        <div class="relative">
+          <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" name="q" value="{{ $search ?? '' }}"
+                 placeholder="Buscar por nombre o número…"
+                 class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pl-8 pr-3 text-gray-700">
+        </div>
+
+        {{-- Cuenta WhatsApp --}}
         <select name="account_id" onchange="this.form.submit()"
-                class="flex-1 text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
+                class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
           <option value="">Todas las cuentas</option>
           @foreach($accounts as $a)
             <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
@@ -70,6 +84,22 @@
             </option>
           @endforeach
         </select>
+
+        {{-- Filtro por etiqueta --}}
+        @if($allTags->isNotEmpty())
+          <select name="tag_id" onchange="this.form.submit()"
+                  class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
+            <option value="">Todas las etiquetas</option>
+            @foreach($allTags as $t)
+              <option value="{{ $t->id }}" {{ (string)$tagId === (string)$t->id ? 'selected' : '' }}>🏷 {{ $t->name }}</option>
+            @endforeach
+          </select>
+        @endif
+
+        @if($search || $tagId)
+          <a href="{{ route('whatsapp.inbox.show', $conversation) }}"
+             class="block text-center text-[11px] text-indigo-600 hover:text-indigo-800">Limpiar filtros</a>
+        @endif
       </form>
     </div>
 
@@ -115,6 +145,19 @@
               <span class="sidebar-time text-[10px] text-gray-400 shrink-0">{{ $time }}</span>
             </div>
             <p class="sidebar-preview text-xs text-gray-500 truncate mt-0.5">{{ $c->last_message_preview ?? '—' }}</p>
+            @if($c->tags && $c->tags->isNotEmpty())
+              <div class="flex flex-wrap gap-1 mt-1">
+                @foreach($c->tags->take(3) as $tg)
+                  @php [$bg, $tx] = \App\Models\ChatTag::colorClasses($tg->color); @endphp
+                  <span class="inline-flex items-center rounded px-1.5 py-0 text-[9px] font-semibold {{ $bg }} {{ $tx }}">
+                    {{ $tg->name }}
+                  </span>
+                @endforeach
+                @if($c->tags->count() > 3)
+                  <span class="text-[9px] text-gray-400">+{{ $c->tags->count() - 3 }}</span>
+                @endif
+              </div>
+            @endif
           </div>
           {{-- Puntos: notificación (azul) + estado open (verde) --}}
           <div class="flex flex-col items-center gap-1 shrink-0">
@@ -354,6 +397,25 @@
           <p class="text-gray-500 text-xs">{{ $conversation->last_message_at->diffForHumans() }}</p>
         </div>
       @endif
+
+      {{-- Etiquetas asignadas --}}
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Etiquetas</p>
+          <button type="button" onclick="openTagsModal()"
+                  class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold">+ Editar</button>
+        </div>
+        <div id="convTagsBox" class="flex flex-wrap gap-1">
+          @forelse($conversation->tags as $tg)
+            @php [$bg, $tx] = \App\Models\ChatTag::colorClasses($tg->color); @endphp
+            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold {{ $bg }} {{ $tx }}">
+              🏷 {{ $tg->name }}
+            </span>
+          @empty
+            <span class="text-[11px] text-gray-400 italic">Sin etiquetas</span>
+          @endforelse
+        </div>
+      </div>
     </div>
 
     {{-- Asistente IA toggle --}}
@@ -1717,6 +1779,197 @@ function setMobilePanel(panel) {
       }
     });
     ta.addEventListener('blur', () => setTimeout(hideSuggestions, 200));
+  }
+})();
+</script>
+@endverbatim
+
+{{-- ════════════════════════════════════════
+     MODAL DE ETIQUETAS
+     ════════════════════════════════════════ --}}
+<div id="tagsModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+      <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+        🏷 Etiquetas de la conversación
+      </h3>
+      <button type="button" onclick="closeTagsModal()"
+              class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
+        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    {{-- Crear nueva --}}
+    <div class="px-5 py-3 border-b border-gray-100">
+      <label class="block text-xs font-semibold text-gray-600 mb-1">Crear nueva etiqueta</label>
+      <div class="flex gap-2">
+        <input type="text" id="newTagName" maxlength="80" placeholder="Ej: Cliente VIP"
+               class="flex-1 rounded-lg border-gray-200 text-sm py-2 px-3">
+        <select id="newTagColor" class="rounded-lg border-gray-200 text-sm py-2 px-2">
+          <option value="indigo">🟣 Indigo</option>
+          <option value="red">🔴 Rojo</option>
+          <option value="orange">🟠 Naranja</option>
+          <option value="amber">🟡 Ámbar</option>
+          <option value="green">🟢 Verde</option>
+          <option value="teal">🔵 Teal</option>
+          <option value="blue">🔷 Azul</option>
+          <option value="purple">🟪 Morado</option>
+          <option value="pink">💗 Rosa</option>
+          <option value="gray">⚫ Gris</option>
+        </select>
+        <button type="button" onclick="createTag()"
+                class="px-3 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
+          Crear
+        </button>
+      </div>
+    </div>
+
+    {{-- Lista checkboxes --}}
+    <div class="flex-1 overflow-y-auto px-5 py-3 space-y-1.5" id="tagsCheckboxList">
+      <p class="text-center text-sm text-gray-400 py-4">Cargando…</p>
+    </div>
+
+    <div class="flex gap-2 justify-end px-5 py-3 border-t border-gray-200 bg-gray-50">
+      <button type="button" onclick="closeTagsModal()"
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+      <button type="button" id="saveTagsBtn" onclick="saveConversationTags()"
+              class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
+@verbatim
+<script>
+(function () {
+  const modal = document.getElementById('tagsModal');
+  const listBox = document.getElementById('tagsCheckboxList');
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+  let allTags = [];
+  let assigned = new Set();
+
+  function getConvId() {
+    const m = location.pathname.match(/\/whatsapp\/inbox\/(\d+)/);
+    return m ? m[1] : null;
+  }
+
+  window.openTagsModal = function () {
+    modal.classList.remove('hidden');
+    listBox.innerHTML = '<p class="text-center text-sm text-gray-400 py-4">Cargando…</p>';
+    Promise.all([
+      fetch('/chat-tags', { headers: { Accept: 'application/json' }, credentials: 'same-origin' }).then(r => r.json()),
+      fetch('/whatsapp/inbox/' + getConvId() + '/tags', { headers: { Accept: 'application/json' }, credentials: 'same-origin' }).then(r => r.json()),
+    ]).then(([tagsData, convData]) => {
+      allTags = tagsData.tags || [];
+      assigned = new Set((convData.tags || []).map(t => t.id));
+      renderList();
+    });
+  };
+
+  window.closeTagsModal = function () { modal.classList.add('hidden'); };
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeTagsModal(); });
+
+  const colorMap = {
+    red:'bg-red-100 text-red-700', orange:'bg-orange-100 text-orange-700', amber:'bg-amber-100 text-amber-700',
+    yellow:'bg-yellow-100 text-yellow-700', green:'bg-green-100 text-green-700', teal:'bg-teal-100 text-teal-700',
+    blue:'bg-blue-100 text-blue-700', purple:'bg-purple-100 text-purple-700', pink:'bg-pink-100 text-pink-700',
+    gray:'bg-gray-100 text-gray-700', indigo:'bg-indigo-100 text-indigo-700',
+  };
+
+  function renderList() {
+    if (!allTags.length) {
+      listBox.innerHTML = '<p class="text-center text-sm text-gray-400 py-6">Aún no hay etiquetas. Crea la primera arriba.</p>';
+      return;
+    }
+    listBox.innerHTML = allTags.map(t => {
+      const cls = colorMap[t.color] || colorMap.indigo;
+      const chk = assigned.has(t.id) ? 'checked' : '';
+      return `
+        <label class="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <input type="checkbox" data-tag-id="${t.id}" ${chk}
+                 class="rounded border-gray-300 text-indigo-600">
+          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${cls}">🏷 ${escapeHtml(t.name)}</span>
+          <button type="button" data-del-tag="${t.id}" class="ml-auto text-[10px] text-red-400 hover:text-red-600">Eliminar</button>
+        </label>`;
+    }).join('');
+
+    listBox.querySelectorAll('[data-del-tag]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = parseInt(btn.dataset.delTag, 10);
+        if (!confirm('¿Eliminar esta etiqueta de TODO el sistema?')) return;
+        fetch('/chat-tags/' + id, {
+          method: 'DELETE', credentials: 'same-origin',
+          headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' }
+        }).then(r => r.json()).then(d => {
+          if (d.ok) { allTags = allTags.filter(x => x.id !== id); assigned.delete(id); renderList(); }
+        });
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  window.createTag = function () {
+    const name = document.getElementById('newTagName').value.trim();
+    const color = document.getElementById('newTagColor').value;
+    if (!name) { alert('Escribe un nombre.'); return; }
+
+    fetch('/chat-tags', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+      body: JSON.stringify({ name, color })
+    }).then(r => r.json()).then(d => {
+      if (d.ok && d.tag) {
+        document.getElementById('newTagName').value = '';
+        if (!allTags.find(x => x.id === d.tag.id)) allTags.push(d.tag);
+        assigned.add(d.tag.id);
+        renderList();
+      } else {
+        alert('Error: ' + (d.message || 'No se pudo crear'));
+      }
+    });
+  };
+
+  window.saveConversationTags = function () {
+    const ids = [];
+    listBox.querySelectorAll('input[type=checkbox][data-tag-id]').forEach(c => {
+      if (c.checked) ids.push(parseInt(c.dataset.tagId, 10));
+    });
+
+    const btn = document.getElementById('saveTagsBtn');
+    btn.disabled = true; btn.textContent = 'Guardando…';
+
+    fetch('/whatsapp/inbox/' + getConvId() + '/tags', {
+      method: 'PUT', credentials: 'same-origin',
+      headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+      body: JSON.stringify({ tag_ids: ids })
+    }).then(r => r.json()).then(d => {
+      btn.disabled = false; btn.textContent = 'Guardar';
+      if (d.ok) {
+        renderConvTagsBox(d.tags || []);
+        closeTagsModal();
+      } else { alert('Error al guardar'); }
+    });
+  };
+
+  function renderConvTagsBox(tags) {
+    const box = document.getElementById('convTagsBox');
+    if (!box) return;
+    if (!tags.length) {
+      box.innerHTML = '<span class="text-[11px] text-gray-400 italic">Sin etiquetas</span>';
+      return;
+    }
+    box.innerHTML = tags.map(t => {
+      const cls = colorMap[t.color] || colorMap.indigo;
+      return `<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}">🏷 ${escapeHtml(t.name)}</span>`;
+    }).join(' ');
   }
 })();
 </script>

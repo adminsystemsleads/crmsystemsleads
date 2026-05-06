@@ -25,6 +25,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceConfigController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuickReplyController;
+use App\Http\Controllers\ChatTagController;
 
 
 Route::get('/', function () {
@@ -190,6 +191,14 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::put('/quick-replies/{quickReply}',     [QuickReplyController::class, 'update'])->name('quick-replies.update');
     Route::delete('/quick-replies/{quickReply}',  [QuickReplyController::class, 'destroy'])->name('quick-replies.destroy');
     Route::post('/quick-replies/{quickReply}/used', [QuickReplyController::class, 'used'])->name('quick-replies.used');
+
+    // Etiquetas (tags) para conversaciones
+    Route::get('/chat-tags',                       [ChatTagController::class, 'index'])->name('chat-tags.index');
+    Route::post('/chat-tags',                      [ChatTagController::class, 'store'])->name('chat-tags.store');
+    Route::put('/chat-tags/{chatTag}',             [ChatTagController::class, 'update'])->name('chat-tags.update');
+    Route::delete('/chat-tags/{chatTag}',          [ChatTagController::class, 'destroy'])->name('chat-tags.destroy');
+    Route::get('/whatsapp/inbox/{conversation}/tags',  [ChatTagController::class, 'conversationTags'])->name('chat-tags.conversation');
+    Route::put('/whatsapp/inbox/{conversation}/tags',  [ChatTagController::class, 'syncConversationTags'])->name('chat-tags.sync');
     Route::get('/whatsapp/inbox/{conversation}/messages', [WhatsappInboxController::class, 'newMessages'])->name('whatsapp.inbox.messages');
     Route::get('/whatsapp/inbox/{conversation}/panel', [WhatsappInboxController::class, 'panel'])->name('whatsapp.inbox.panel');
     Route::post('/whatsapp/inbox/{conversation}/ai-toggle', [WhatsappInboxController::class, 'toggleAi'])->name('whatsapp.inbox.ai.toggle');

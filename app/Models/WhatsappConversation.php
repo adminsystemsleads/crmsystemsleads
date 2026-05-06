@@ -49,4 +49,14 @@ class WhatsappConversation extends Model
             ->orderByDesc('whatsapp_conversation_deals.created_at')
             ->limit(1);
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(
+            ChatTag::class,
+            'whatsapp_conversation_tag',
+            'whatsapp_conversation_id',
+            'chat_tag_id'
+        )->withTimestamps();
+    }
 }
