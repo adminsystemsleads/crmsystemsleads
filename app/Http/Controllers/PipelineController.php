@@ -137,7 +137,7 @@ class PipelineController extends Controller
         PipelineStage::create([
             'pipeline_id' => $pipeline->id,
             'name'        => $data['name'],
-            'slug'        => $data['slug'] ?: \Str::slug($data['name']),
+            'slug'        => ($data['slug'] ?? null) ?: \Str::slug($data['name']),
             'sort_order'  => $sortOrder,
             'probability' => $data['probability'] ?? null,
             'color'       => $data['color'] ?? '#6366f1',
@@ -166,7 +166,7 @@ class PipelineController extends Controller
 
         $stage->update([
             'name'        => $data['name'],
-            'slug'        => $data['slug'] ?: \Str::slug($data['name']),
+            'slug'        => ($data['slug'] ?? null) ?: \Str::slug($data['name']),
             'probability' => $data['probability'] ?? null,
             'color'       => $data['color'] ?? ($stage->color ?? '#6366f1'),
             'is_won'      => $request->boolean('is_won'),
