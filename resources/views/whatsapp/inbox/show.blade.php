@@ -59,49 +59,55 @@
       <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">Conversaciones</span>
     </div>
 
-    {{-- Búsqueda + filtros --}}
-    <div class="px-3 py-2 border-b border-gray-100 bg-white space-y-2">
-      <form method="GET" action="{{ route('whatsapp.inbox.show', $conversation) }}" class="space-y-1.5">
-        @if($accountId)<input type="hidden" name="account_id" value="{{ $accountId }}">@endif
-        @if($status && $status !== 'all')<input type="hidden" name="status" value="{{ $status }}">@endif
+    {{-- Búsqueda + filtros (live AJAX, sin recargar) --}}
+    <div class="px-3 py-2 border-b border-gray-100 bg-white space-y-2" id="sidebarFilters"
+         data-current-account="{{ $accountId ?? '' }}"
+         data-current-status="{{ $status ?? 'all' }}"
+         data-current-tag="{{ $tagId ?? '' }}">
 
-        {{-- Buscador por nombre/teléfono --}}
-        <div class="relative">
-          <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      {{-- Buscador por nombre/teléfono --}}
+      <div class="relative">
+        <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" id="sidebarSearchInput" value="{{ $search ?? '' }}"
+               autocomplete="off"
+               placeholder="Buscar por nombre o número…"
+               class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pl-8 pr-8 text-gray-700">
+        <button type="button" id="sidebarSearchClear"
+                class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-0.5">
+          <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>
-          <input type="text" name="q" value="{{ $search ?? '' }}"
-                 placeholder="Buscar por nombre o número…"
-                 class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pl-8 pr-3 text-gray-700">
-        </div>
+        </button>
+      </div>
 
-        {{-- Cuenta WhatsApp --}}
-        <select name="account_id" onchange="this.form.submit()"
+      {{-- Cuenta WhatsApp --}}
+      <select id="sidebarAccountFilter"
+              class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
+        <option value="">Todas las cuentas</option>
+        @foreach($accounts as $a)
+          <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
+            {{ $a->name }}
+          </option>
+        @endforeach
+      </select>
+
+      {{-- Filtro por etiqueta --}}
+      @if($allTags->isNotEmpty())
+        <select id="sidebarTagFilter"
                 class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
-          <option value="">Todas las cuentas</option>
-          @foreach($accounts as $a)
-            <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
-              {{ $a->name }}
-            </option>
+          <option value="">Todas las etiquetas</option>
+          @foreach($allTags as $t)
+            <option value="{{ $t->id }}" {{ (string)$tagId === (string)$t->id ? 'selected' : '' }}>🏷 {{ $t->name }}</option>
           @endforeach
         </select>
+      @endif
 
-        {{-- Filtro por etiqueta --}}
-        @if($allTags->isNotEmpty())
-          <select name="tag_id" onchange="this.form.submit()"
-                  class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
-            <option value="">Todas las etiquetas</option>
-            @foreach($allTags as $t)
-              <option value="{{ $t->id }}" {{ (string)$tagId === (string)$t->id ? 'selected' : '' }}>🏷 {{ $t->name }}</option>
-            @endforeach
-          </select>
-        @endif
-
-        @if($search || $tagId)
-          <a href="{{ route('whatsapp.inbox.show', $conversation) }}"
-             class="block text-center text-[11px] text-indigo-600 hover:text-indigo-800">Limpiar filtros</a>
-        @endif
-      </form>
+      <button type="button" id="sidebarClearAll"
+              class="{{ ($search || $tagId) ? '' : 'hidden' }} block w-full text-center text-[11px] text-indigo-600 hover:text-indigo-800">
+        Limpiar filtros
+      </button>
     </div>
 
     {{-- Tabs: Todo / Abierto / Cerrado --}}
@@ -894,6 +900,26 @@ function setMobilePanel(panel) {
       // Mostrar/ocultar banner de ventana 24h vencida
       const banner = document.getElementById('windowExpiredBanner');
       if (banner) banner.classList.toggle('hidden', !data.window_expired);
+
+      // Actualizar etiquetas del panel derecho
+      const convTagsBox = document.getElementById('convTagsBox');
+      if (convTagsBox) {
+        const colorMap = {
+          red:'bg-red-100 text-red-700', orange:'bg-orange-100 text-orange-700', amber:'bg-amber-100 text-amber-700',
+          yellow:'bg-yellow-100 text-yellow-700', green:'bg-green-100 text-green-700', teal:'bg-teal-100 text-teal-700',
+          blue:'bg-blue-100 text-blue-700', purple:'bg-purple-100 text-purple-700', pink:'bg-pink-100 text-pink-700',
+          gray:'bg-gray-100 text-gray-700', indigo:'bg-indigo-100 text-indigo-700',
+        };
+        const tags = data.tags || [];
+        if (tags.length === 0) {
+          convTagsBox.innerHTML = '<span class="text-[11px] text-gray-400 italic">Sin etiquetas</span>';
+        } else {
+          convTagsBox.innerHTML = tags.map(t => {
+            const cls = colorMap[t.color] || colorMap.indigo;
+            return `<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}">🏷 ${escapeHtml(t.name)}</span>`;
+          }).join(' ');
+        }
+      }
 
       // Actualizar header chat
       const cName    = data.contact_name || data.contact_phone || '?';
@@ -1972,6 +1998,186 @@ function setMobilePanel(panel) {
       return `<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}">🏷 ${escapeHtml(t.name)}</span>`;
     }).join(' ');
   }
+})();
+</script>
+@endverbatim
+
+{{-- ═══════════════════════════════════════════════
+     BÚSQUEDA LIVE DEL SIDEBAR (sin recargar página)
+     ═══════════════════════════════════════════════ --}}
+@verbatim
+<script>
+(function () {
+  const filters     = document.getElementById('sidebarFilters');
+  if (!filters) return;
+
+  const searchInput = document.getElementById('sidebarSearchInput');
+  const clearBtn    = document.getElementById('sidebarSearchClear');
+  const accountSel  = document.getElementById('sidebarAccountFilter');
+  const tagSel      = document.getElementById('sidebarTagFilter');
+  const clearAll    = document.getElementById('sidebarClearAll');
+  const listBox     = document.getElementById('sidebarList');
+
+  const avatarColors = ['bg-green-100 text-green-700','bg-blue-100 text-blue-700','bg-purple-100 text-purple-700',
+                        'bg-amber-100 text-amber-700','bg-rose-100 text-rose-700','bg-teal-100 text-teal-700'];
+  function avatarCls(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = ((h << 5) - h) + name.charCodeAt(i);
+    return avatarColors[Math.abs(h) % avatarColors.length];
+  }
+
+  const tagColorMap = {
+    red:'bg-red-100 text-red-700', orange:'bg-orange-100 text-orange-700', amber:'bg-amber-100 text-amber-700',
+    yellow:'bg-yellow-100 text-yellow-700', green:'bg-green-100 text-green-700', teal:'bg-teal-100 text-teal-700',
+    blue:'bg-blue-100 text-blue-700', purple:'bg-purple-100 text-purple-700', pink:'bg-pink-100 text-pink-700',
+    gray:'bg-gray-100 text-gray-700', indigo:'bg-indigo-100 text-indigo-700',
+  };
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function highlight(text, query) {
+    if (!query) return escapeHtml(text);
+    const safe = escapeHtml(text);
+    const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return safe.replace(new RegExp('(' + q + ')', 'gi'), '<mark class="bg-yellow-200 rounded">$1</mark>');
+  }
+
+  function formatTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts * 1000);
+    const today = new Date();
+    if (d.toDateString() === today.toDateString()) {
+      return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    }
+    return d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0');
+  }
+
+  function buildQuery() {
+    const params = new URLSearchParams();
+    const q = searchInput?.value.trim() || '';
+    if (q) params.set('q', q);
+    const aId = accountSel?.value || '';
+    if (aId) params.set('account_id', aId);
+    const tId = tagSel?.value || '';
+    if (tId) params.set('tag_id', tId);
+    const status = filters.dataset.currentStatus || 'all';
+    if (status && status !== 'all') params.set('status', status);
+    return params;
+  }
+
+  function updateClearButtons() {
+    const hasText = (searchInput?.value || '').trim().length > 0;
+    if (clearBtn) clearBtn.classList.toggle('hidden', !hasText);
+    const hasAny = hasText || (tagSel?.value) || (accountSel?.value);
+    if (clearAll) clearAll.classList.toggle('hidden', !hasAny);
+  }
+
+  function renderItems(items, query) {
+    if (!items.length) {
+      listBox.innerHTML = '<div class="p-6 text-center text-sm text-gray-400">No se encontraron conversaciones.</div>';
+      return;
+    }
+
+    const activeId = window.WAState?.activeConvId
+                  || parseInt(location.pathname.match(/\/whatsapp\/inbox\/(\d+)/)?.[1] || '0', 10);
+
+    listBox.innerHTML = items.map(c => {
+      const cName = c.contact_name || c.contact_phone || '?';
+      const cInit = (cName.charAt(0) + (cName.charAt(1) || '')).toUpperCase();
+      const cAva  = avatarCls(cName);
+      const isActive = c.id === activeId;
+      const time  = formatTime(c.last_message_at);
+
+      const tagsHtml = (c.tags || []).slice(0, 3).map(tg => {
+        const cls = tagColorMap[tg.color] || tagColorMap.indigo;
+        return `<span class="inline-flex items-center rounded px-1.5 py-0 text-[9px] font-semibold ${cls}">${escapeHtml(tg.name)}</span>`;
+      }).join('');
+      const moreTags = (c.tags || []).length > 3 ? `<span class="text-[9px] text-gray-400">+${c.tags.length - 3}</span>` : '';
+
+      return `
+        <a id="sidebar-conv-${c.id}"
+           href="/whatsapp/inbox/${c.id}"
+           data-conv-id="${c.id}"
+           data-last-ts="${c.last_message_at || 0}"
+           class="flex items-center gap-3 px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition
+                  ${isActive ? 'bg-indigo-50 border-l-[3px] border-l-indigo-500' : 'border-l-[3px] border-l-transparent'}">
+          <div class="size-10 rounded-full flex items-center justify-center shrink-0 text-sm font-semibold ${cAva}">${cInit}</div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <span class="sidebar-name text-sm font-semibold text-gray-900 truncate ${isActive ? 'text-indigo-700' : ''}">
+                ${highlight(cName, query)}
+              </span>
+              <span class="sidebar-time text-[10px] text-gray-400 shrink-0">${time}</span>
+            </div>
+            <p class="sidebar-preview text-xs text-gray-500 truncate mt-0.5">${escapeHtml(c.last_message_preview || '—')}</p>
+            ${(tagsHtml || moreTags) ? `<div class="flex flex-wrap gap-1 mt-1">${tagsHtml}${moreTags}</div>` : ''}
+          </div>
+          <div class="flex flex-col items-center gap-1 shrink-0">
+            <span class="unread-dot hidden size-2.5 rounded-full bg-blue-500"></span>
+            ${c.status === 'open' ? '<span class="size-2 rounded-full bg-green-400"></span>' : ''}
+          </div>
+        </a>`;
+    }).join('');
+  }
+
+  let abortCtrl  = null;
+  let debounceId = null;
+
+  function runSearch() {
+    updateClearButtons();
+    const params = buildQuery();
+    const q = searchInput?.value.trim() || '';
+
+    // Cancelar request anterior
+    if (abortCtrl) abortCtrl.abort();
+    abortCtrl = new AbortController();
+
+    // Loading sutil
+    listBox.style.opacity = '0.5';
+
+    fetch('/whatsapp/sidebar-poll?' + params.toString(), {
+      headers: { 'Accept': 'application/json' },
+      credentials: 'same-origin',
+      signal: abortCtrl.signal,
+    })
+    .then(r => r.json())
+    .then(items => {
+      listBox.style.opacity = '1';
+      renderItems(items, q);
+    })
+    .catch(err => {
+      if (err.name !== 'AbortError') {
+        listBox.style.opacity = '1';
+        console.warn('Search failed', err);
+      }
+    });
+  }
+
+  function debounceSearch(ms = 250) {
+    clearTimeout(debounceId);
+    debounceId = setTimeout(runSearch, ms);
+  }
+
+  searchInput?.addEventListener('input', () => debounceSearch(220));
+  accountSel?.addEventListener('change', () => debounceSearch(0));
+  tagSel?.addEventListener('change', () => debounceSearch(0));
+
+  clearBtn?.addEventListener('click', () => {
+    searchInput.value = '';
+    searchInput.focus();
+    debounceSearch(0);
+  });
+
+  clearAll?.addEventListener('click', () => {
+    searchInput.value = '';
+    if (accountSel) accountSel.value = '';
+    if (tagSel) tagSel.value = '';
+    debounceSearch(0);
+  });
+
+  updateClearButtons();
 })();
 </script>
 @endverbatim

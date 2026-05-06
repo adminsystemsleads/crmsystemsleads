@@ -222,7 +222,7 @@ class WhatsappInboxController extends Controller
         $team = $this->currentTeam();
         abort_unless($conversation->team_id === $team->id, 404);
 
-        $conversation->load(['account', 'messages.sentBy', 'deals']);
+        $conversation->load(['account', 'messages.sentBy', 'deals', 'tags:chat_tags.id,name,color']);
 
         $currentDeal = $conversation->deals()
             ->with(['pipeline', 'stage'])
@@ -287,6 +287,9 @@ class WhatsappInboxController extends Controller
             'last_message_at' => $conversation->last_message_at?->diffForHumans(),
             'window_expired'  => $windowExpired,
             'window_expires_at' => $windowExpiresAt,
+            'tags'            => $conversation->tags->map(fn($t) => [
+                'id' => $t->id, 'name' => $t->name, 'color' => $t->color,
+            ])->all(),
             'messages'        => $messages,
             'current_deal'    => $dealData,
             'pipelines'       => $pipelines,
