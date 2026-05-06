@@ -117,7 +117,8 @@ class ContactController extends Controller
         $q      = $request->query('q');
         $status = $request->query('status');
 
-        $contacts = Contact::where('team_id', $team->id)
+        // Query SIN ejecutar — la cursor() corre en el closure
+        $query = Contact::where('team_id', $team->id)
             ->when($q, fn($query) => $query->where(function ($sq) use ($q) {
                 $sq->where('name', 'like', "%{$q}%")
                    ->orWhere('email', 'like', "%{$q}%")
@@ -125,49 +126,60 @@ class ContactController extends Controller
                    ->orWhere('company', 'like', "%{$q}%");
             }))
             ->when($status, fn($query) => $query->where('status', $status))
-            ->orderBy('name')
-            ->get();
+            ->orderBy('id'); // ordenar por id es más eficiente con cursor
 
         $filename = 'contactos_' . now()->format('Y-m-d_His') . '.csv';
 
-        $tmp = fopen('php://temp', 'r+');
-        fwrite($tmp, "\xEF\xBB\xBF"); // BOM Excel
-
-        fputcsv($tmp, [
-            'id', 'first_name', 'last_name', 'name', 'email', 'phone',
-            'company', 'position', 'tipo_doc', 'num_doc', 'razon_social',
-            'status', 'source', 'notes', 'created_at',
-        ]);
-
-        foreach ($contacts as $c) {
-            fputcsv($tmp, [
-                (string) $c->id,
-                (string) ($c->first_name ?? ''),
-                (string) ($c->last_name ?? ''),
-                (string) ($c->name ?? ''),
-                (string) ($c->email ?? ''),
-                (string) ($c->phone ?? ''),
-                (string) ($c->company ?? ''),
-                (string) ($c->position ?? ''),
-                (string) ($c->tipo_doc ?? ''),
-                (string) ($c->num_doc ?? ''),
-                (string) ($c->razon_social ?? ''),
-                (string) ($c->status ?? ''),
-                (string) ($c->source ?? ''),
-                str_replace(["\r", "\n"], ' ', (string) ($c->notes ?? '')),
-                $c->created_at?->format('Y-m-d H:i:s') ?? '',
-            ]);
-        }
-
-        rewind($tmp);
-        $csv = stream_get_contents($tmp);
-        fclose($tmp);
-
-        return response($csv, 200, [
+        $headers = [
             'Content-Type'        => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Content-Length'      => (string) strlen($csv),
-        ]);
+            'Cache-Control'       => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma'              => 'no-cache',
+            'X-Accel-Buffering'   => 'no',
+        ];
+
+        return response()->streamDownload(function () use ($query) {
+            @set_time_limit(0);
+            while (ob_get_level() > 0) { ob_end_clean(); }
+
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM Excel
+
+            fputcsv($out, [
+                'id', 'first_name', 'last_name', 'name', 'email', 'phone',
+                'company', 'position', 'tipo_doc', 'num_doc', 'razon_social',
+                'status', 'source', 'notes', 'created_at',
+            ]);
+            flush();
+
+            $count = 0;
+            foreach ($query->cursor() as $c) {
+                fputcsv($out, [
+                    (string) $c->id,
+                    (string) ($c->first_name ?? ''),
+                    (string) ($c->last_name ?? ''),
+                    (string) ($c->name ?? ''),
+                    (string) ($c->email ?? ''),
+                    (string) ($c->phone ?? ''),
+                    (string) ($c->company ?? ''),
+                    (string) ($c->position ?? ''),
+                    (string) ($c->tipo_doc ?? ''),
+                    (string) ($c->num_doc ?? ''),
+                    (string) ($c->razon_social ?? ''),
+                    (string) ($c->status ?? ''),
+                    (string) ($c->source ?? ''),
+                    str_replace(["\r", "\n"], ' ', (string) ($c->notes ?? '')),
+                    $c->created_at?->format('Y-m-d H:i:s') ?? '',
+                ]);
+
+                if (++$count % 200 === 0) {
+                    flush();
+                }
+            }
+
+            fclose($out);
+            flush();
+        }, $filename, $headers);
     }
 
     /* ============ IMPORT CSV ============ */

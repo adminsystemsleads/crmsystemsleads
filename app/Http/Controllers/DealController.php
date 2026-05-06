@@ -364,7 +364,7 @@ protected function ensureCanEditDeals(Pipeline $pipeline)
     }
 }
 
-    /* ============ EXPORT CSV ============ */
+    /* ============ EXPORT CSV (streaming, soporta miles de filas) ============ */
 
     public function export(Request $request, Pipeline $pipeline)
     {
@@ -375,14 +375,14 @@ protected function ensureCanEditDeals(Pipeline $pipeline)
         $status  = $request->query('status'); // open, won, lost
         $q       = $request->query('q');
 
-        $deals = Deal::where('team_id', $team->id)
+        // No ejecutar la query — pasar el builder al closure
+        $query = Deal::where('team_id', $team->id)
             ->where('pipeline_id', $pipeline->id)
-            ->with(['contact', 'stage', 'responsible', 'owner'])
+            ->with(['contact:id,name,email,phone', 'stage:id,name', 'responsible:id,name', 'owner:id,name'])
             ->when($stageId, fn($qq) => $qq->where('stage_id', $stageId))
-            ->when($status, fn($qq) => $qq->where('status', $status))
-            ->when($q, fn($qq) => $qq->where('title', 'like', "%{$q}%"))
-            ->orderByDesc('created_at')
-            ->get();
+            ->when($status,  fn($qq) => $qq->where('status', $status))
+            ->when($q,       fn($qq) => $qq->where('title', 'like', "%{$q}%"))
+            ->orderBy('id'); // ordenar por id es más eficiente con cursor
 
         $stageLabel = $stageId
             ? (PipelineStage::where('pipeline_id', $pipeline->id)->where('id', $stageId)->value('name') ?? 'fase')
@@ -390,60 +390,75 @@ protected function ensureCanEditDeals(Pipeline $pipeline)
         $slug     = \Illuminate\Support\Str::slug($pipeline->name . '-' . $stageLabel);
         $filename = "negociaciones_{$slug}_" . now()->format('Y-m-d_His') . '.csv';
 
-        // Construir CSV en memoria — más confiable que streaming
-        $tmp = fopen('php://temp', 'r+');
-        fwrite($tmp, "\xEF\xBB\xBF"); // BOM UTF-8 para Excel
+        $headers = [
+            'Content-Type'         => 'text/csv; charset=UTF-8',
+            'Content-Disposition'  => "attachment; filename=\"{$filename}\"",
+            'Cache-Control'        => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma'               => 'no-cache',
+            'X-Accel-Buffering'    => 'no', // desactiva buffer en nginx
+        ];
 
-        fputcsv($tmp, [
-            'id', 'titulo', 'pipeline', 'fase', 'estado',
-            'monto', 'moneda', 'fecha_cierre',
-            'contacto_nombre', 'contacto_email', 'contacto_telefono',
-            'responsable', 'creador', 'wa_id',
-            'descripcion', 'creado_el', 'actualizado_el',
-        ]);
+        return response()->streamDownload(function () use ($query, $pipeline) {
+            // Sin límite de tiempo para datasets grandes
+            @set_time_limit(0);
+            // Limpiar todos los buffers de salida pendientes
+            while (ob_get_level() > 0) { ob_end_clean(); }
 
-        foreach ($deals as $d) {
-            $statusLabel = match ($d->status) {
-                'open' => 'Abierta',
-                'won'  => 'Ganada',
-                'lost' => 'Perdida',
-                default => (string) $d->status,
-            };
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM Excel
 
-            $closeDate = $d->close_date instanceof \Carbon\Carbon
-                ? $d->close_date->format('Y-m-d')
-                : (is_string($d->close_date) ? $d->close_date : '');
-
-            fputcsv($tmp, [
-                (string) $d->id,
-                (string) ($d->title ?? ''),
-                (string) $pipeline->name,
-                (string) ($d->stage?->name ?? ''),
-                $statusLabel,
-                $d->amount !== null ? (string) $d->amount : '',
-                (string) ($d->currency ?? ''),
-                $closeDate,
-                (string) ($d->contact?->name ?? ''),
-                (string) ($d->contact?->email ?? ''),
-                (string) ($d->contact?->phone ?? ''),
-                (string) ($d->responsible?->name ?? ''),
-                (string) ($d->owner?->name ?? ''),
-                (string) ($d->wa_id ?? ''),
-                str_replace(["\r", "\n"], ' ', (string) ($d->description ?? '')),
-                $d->created_at?->format('Y-m-d H:i:s') ?? '',
-                $d->updated_at?->format('Y-m-d H:i:s') ?? '',
+            fputcsv($out, [
+                'id', 'titulo', 'pipeline', 'fase', 'estado',
+                'monto', 'moneda', 'fecha_cierre',
+                'contacto_nombre', 'contacto_email', 'contacto_telefono',
+                'responsable', 'creador', 'wa_id',
+                'descripcion', 'creado_el', 'actualizado_el',
             ]);
-        }
+            flush();
 
-        rewind($tmp);
-        $csv = stream_get_contents($tmp);
-        fclose($tmp);
+            $count = 0;
+            // cursor() = generador, mantiene memoria constante con miles de filas
+            foreach ($query->cursor() as $d) {
+                $statusLabel = match ($d->status) {
+                    'open' => 'Abierta',
+                    'won'  => 'Ganada',
+                    'lost' => 'Perdida',
+                    default => (string) $d->status,
+                };
 
-        return response($csv, 200, [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            'Content-Length'      => (string) strlen($csv),
-        ]);
+                $closeDate = $d->close_date instanceof \Carbon\Carbon
+                    ? $d->close_date->format('Y-m-d')
+                    : (is_string($d->close_date) ? $d->close_date : '');
+
+                fputcsv($out, [
+                    (string) $d->id,
+                    (string) ($d->title ?? ''),
+                    (string) $pipeline->name,
+                    (string) ($d->stage?->name ?? ''),
+                    $statusLabel,
+                    $d->amount !== null ? (string) $d->amount : '',
+                    (string) ($d->currency ?? ''),
+                    $closeDate,
+                    (string) ($d->contact?->name ?? ''),
+                    (string) ($d->contact?->email ?? ''),
+                    (string) ($d->contact?->phone ?? ''),
+                    (string) ($d->responsible?->name ?? ''),
+                    (string) ($d->owner?->name ?? ''),
+                    (string) ($d->wa_id ?? ''),
+                    str_replace(["\r", "\n"], ' ', (string) ($d->description ?? '')),
+                    $d->created_at?->format('Y-m-d H:i:s') ?? '',
+                    $d->updated_at?->format('Y-m-d H:i:s') ?? '',
+                ]);
+
+                // Cada 200 filas, vacía el buffer al cliente
+                if (++$count % 200 === 0) {
+                    flush();
+                }
+            }
+
+            fclose($out);
+            flush();
+        }, $filename, $headers);
     }
 
 }
