@@ -1154,6 +1154,21 @@ function setMobilePanel(panel) {
       </div>`;
     }
 
+    // ── Etiquetas ──────────────────────────────────────────────────────────
+    const tagColorMap = {
+      red:'bg-red-100 text-red-700', orange:'bg-orange-100 text-orange-700', amber:'bg-amber-100 text-amber-700',
+      yellow:'bg-yellow-100 text-yellow-700', green:'bg-green-100 text-green-700', teal:'bg-teal-100 text-teal-700',
+      blue:'bg-blue-100 text-blue-700', purple:'bg-purple-100 text-purple-700', pink:'bg-pink-100 text-pink-700',
+      gray:'bg-gray-100 text-gray-700', indigo:'bg-indigo-100 text-indigo-700',
+    };
+    const tagsList = data.tags || [];
+    const tagsChips = tagsList.length
+      ? tagsList.map(t => {
+          const cls = tagColorMap[t.color] || tagColorMap.indigo;
+          return `<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}">🏷 ${escapeHtml(t.name)}</span>`;
+        }).join(' ')
+      : '<span class="text-[11px] text-gray-400 italic">Sin etiquetas</span>';
+
     return `
       <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
         <button onclick="setMobilePanel('chat')"
@@ -1174,6 +1189,13 @@ function setMobilePanel(panel) {
           <p class="text-gray-800 font-medium">${escapeHtml(data.contact_phone || '')}</p>
         </div>
         ${accountHtml}${lastMsgHtml}
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Etiquetas</p>
+            <button type="button" onclick="openTagsModal()" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold">+ Editar</button>
+          </div>
+          <div id="convTagsBox" class="flex flex-wrap gap-1">${tagsChips}</div>
+        </div>
       </div>
       ${aiSectionHtml}
       <div class="px-4 py-4">
