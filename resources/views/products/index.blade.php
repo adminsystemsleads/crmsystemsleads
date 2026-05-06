@@ -126,11 +126,19 @@
 <div id="modalEditProduct" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 max-h-[90vh] overflow-y-auto">
     <h2 class="text-base font-bold text-gray-900 mb-4">Editar producto</h2>
-    <form id="editProductForm" method="POST" action="" class="space-y-3" enctype="multipart/form-data">
-      @csrf @method('PUT')
+
+    {{-- Errores inline (se llenan por JS al fallar el submit) --}}
+    <div id="editProductErrors" class="hidden mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700"></div>
+
+    <form id="editProductForm" class="space-y-3" enctype="multipart/form-data">
+      @csrf
+      <input type="hidden" id="editProductId" value="">
       @include('products._form', ['edit' => true])
       <div class="flex gap-2 pt-2">
-        <button type="submit" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">Actualizar</button>
+        <button type="submit" id="editProductSubmit"
+                class="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition disabled:bg-gray-300">
+          Actualizar
+        </button>
         <button type="button" onclick="document.getElementById('modalEditProduct').classList.add('hidden')"
                 class="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
       </div>
@@ -143,10 +151,9 @@ function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl
   const form = document.getElementById('editProductForm');
   if (!form) { console.error('editProductForm no encontrado'); return; }
 
-  // ⚠ La acción debe ser absoluta y completa para que el form sepa adónde enviar
-  form.action = '{{ url('/products') }}/' + id;
+  document.getElementById('editProductId').value = id;
+  document.getElementById('editProductErrors').classList.add('hidden');
 
-  // Helper para asignar valor solo a inputs no-hidden
   function setField(name, value) {
     const inputs = form.querySelectorAll(`[name="${name}"]`);
     inputs.forEach(inp => { if (inp.type !== 'hidden') inp.value = value; });
@@ -158,22 +165,91 @@ function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl
   setField('price', price ?? 0);
   setField('currency', currency ?? 'PEN');
 
-  // is_active hay 2 inputs (hidden + checkbox). Solo afecta el checkbox.
   const chk = form.querySelector('input[type=checkbox][name=is_active]');
   if (chk) chk.checked = !!active;
 
-  // mostrar imagen actual si existe
   const wrap = document.getElementById('currentImageWrap-edit');
   if (wrap) {
     wrap.innerHTML = imageUrl
       ? `<img src="${imageUrl}" class="size-20 object-cover rounded-lg border border-gray-200" alt="">`
       : '<p class="text-[10px] text-gray-400">Sin imagen actual.</p>';
   }
-  // limpiar checkbox eliminar imagen
   const remove = form.querySelector('input[type=checkbox][name=remove_image]');
   if (remove) remove.checked = false;
 
+  // Limpiar input de archivo (no se puede setValue por seguridad)
+  const fileInp = form.querySelector('input[type=file][name=image]');
+  if (fileInp) fileInp.value = '';
+
   document.getElementById('modalEditProduct').classList.remove('hidden');
 }
+
+// Submit por AJAX con fetch (evita problemas con PUT + multipart)
+document.getElementById('editProductForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const form    = e.target;
+  const id      = document.getElementById('editProductId').value;
+  const errBox  = document.getElementById('editProductErrors');
+  const submit  = document.getElementById('editProductSubmit');
+
+  if (!id) { alert('No se identificó el producto a editar.'); return; }
+
+  errBox.classList.add('hidden');
+  submit.disabled = true;
+  submit.textContent = 'Guardando…';
+
+  const fd = new FormData(form);
+  // Spoofing PUT con FormData
+  fd.set('_method', 'PUT');
+  // checkboxes desmarcados envían 0 (FormData no los incluye por defecto)
+  ['is_active', 'remove_image'].forEach(n => {
+    const cb = form.querySelector(`input[type=checkbox][name="${n}"]`);
+    if (cb && !cb.checked) fd.set(n, '0');
+  });
+
+  try {
+    const res = await fetch('{{ url('/products') }}/' + id, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+      },
+      body: fd,
+    });
+
+    if (res.redirected || res.status === 200 || res.status === 302) {
+      // Éxito → recargar para mostrar la lista actualizada
+      window.location.href = '{{ route('products.index') }}';
+      return;
+    }
+
+    if (res.status === 422) {
+      const data = await res.json();
+      const msgs = [];
+      if (data.errors) {
+        for (const k in data.errors) {
+          (data.errors[k] || []).forEach(m => msgs.push(m));
+        }
+      } else if (data.message) {
+        msgs.push(data.message);
+      }
+      errBox.innerHTML = msgs.length
+        ? '<ul class="list-disc list-inside space-y-0.5">' + msgs.map(m => '<li>' + m.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) + '</li>').join('') + '</ul>'
+        : 'Error de validación.';
+      errBox.classList.remove('hidden');
+    } else {
+      errBox.textContent = 'Error del servidor (' + res.status + '). Intenta de nuevo.';
+      errBox.classList.remove('hidden');
+    }
+  } catch (err) {
+    errBox.textContent = 'Error de red: ' + err.message;
+    errBox.classList.remove('hidden');
+  } finally {
+    submit.disabled = false;
+    submit.textContent = 'Actualizar';
+  }
+});
 </script>
 </x-app-layout>
