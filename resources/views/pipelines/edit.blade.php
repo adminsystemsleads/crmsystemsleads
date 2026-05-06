@@ -83,8 +83,9 @@
                     <tbody class="bg-white divide-y divide-gray-200 text-sm">
                         @forelse($pipeline->stages as $stage)
                             <tr>
-                                <form method="POST"
-                                      action="{{ route('pipelines.stages.update', [$pipeline, $stage]) }}">
+                                <form data-stage-form
+                                      data-stage-action="{{ route('pipelines.stages.update', [$pipeline, $stage]) }}"
+                                      onsubmit="return false;">
                                     @csrf
                                     @method('PUT')
 
@@ -102,7 +103,7 @@
                                             <input type="color" name="color" value="{{ $stageColor }}"
                                                    class="size-8 rounded border border-gray-200 cursor-pointer p-0"
                                                    title="Click para elegir color">
-                                            <span class="inline-block size-5 rounded-full ring-1 ring-gray-200"
+                                            <span class="inline-block size-5 rounded-full ring-1 ring-gray-200 stage-color-preview"
                                                   style="background-color: {{ $stageColor }};"></span>
                                         </div>
                                     </td>
@@ -127,11 +128,8 @@
                                             </label>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-2 text-right space-x-2">
-                                        <button type="submit"
-                                                class="text-indigo-600 hover:text-indigo-900 text-xs">
-                                            Guardar
-                                        </button>
+                                    <td class="px-4 py-2 text-right space-x-2 whitespace-nowrap">
+                                        <span class="stage-save-status text-xs text-gray-400 inline-block min-w-[70px] align-middle"></span>
                                 </form>
                                 <form method="POST"
                                       action="{{ route('pipelines.stages.destroy', [$pipeline, $stage]) }}"
@@ -200,4 +198,101 @@
             </div>
         </div>
     </div>
+
+{{-- Auto-guardado de fases --}}
+<script>
+(function () {
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content
+            || document.querySelector('input[name="_token"]')?.value || '';
+
+  document.querySelectorAll('form[data-stage-form]').forEach(form => {
+    const url        = form.dataset.stageAction;
+    const status     = form.querySelector('.stage-save-status');
+    const colorInput = form.querySelector('input[type=color]');
+    const preview    = form.querySelector('.stage-color-preview');
+
+    let timer = null;
+    let pendingCtrl = null;
+
+    function setStatus(state) {
+      if (!status) return;
+      switch (state) {
+        case 'saving':
+          status.textContent = 'Guardando…';
+          status.className   = 'stage-save-status text-xs text-gray-400 inline-block min-w-[70px] align-middle';
+          break;
+        case 'saved':
+          status.textContent = '✓ Guardado';
+          status.className   = 'stage-save-status text-xs text-green-600 font-semibold inline-block min-w-[70px] align-middle';
+          setTimeout(() => {
+            if (status.textContent === '✓ Guardado') {
+              status.textContent = '';
+              status.className = 'stage-save-status text-xs text-gray-400 inline-block min-w-[70px] align-middle';
+            }
+          }, 1800);
+          break;
+        case 'error':
+          status.textContent = '✕ Error';
+          status.className   = 'stage-save-status text-xs text-red-500 font-semibold inline-block min-w-[70px] align-middle';
+          break;
+      }
+    }
+
+    async function save() {
+      if (pendingCtrl) pendingCtrl.abort();
+      pendingCtrl = new AbortController();
+      setStatus('saving');
+
+      const fd = new FormData(form);
+      fd.set('_method', 'PUT');
+      // Asegurar que checkboxes desmarcados envíen 0 (FormData no los incluye si no checked)
+      ['is_won', 'is_lost'].forEach(name => {
+        const cb = form.querySelector(`input[type=checkbox][name="${name}"]`);
+        if (cb && !cb.checked) fd.set(name, '0');
+      });
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'X-CSRF-TOKEN': csrf, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+          body: fd,
+          signal: pendingCtrl.signal,
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        setStatus('saved');
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error(err);
+          setStatus('error');
+        }
+      }
+    }
+
+    function debounceSave(ms = 500) {
+      clearTimeout(timer);
+      timer = setTimeout(save, ms);
+    }
+
+    // Texto y números: debounce 500ms (mientras escribe)
+    form.querySelectorAll('input[type=text], input[type=number]').forEach(inp => {
+      inp.addEventListener('input', () => debounceSave(500));
+      inp.addEventListener('change', () => debounceSave(0));
+    });
+
+    // Checkbox: instantáneo
+    form.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', () => debounceSave(0));
+    });
+
+    // Color: actualiza preview + guarda instantáneo
+    if (colorInput) {
+      colorInput.addEventListener('input', () => {
+        if (preview) preview.style.backgroundColor = colorInput.value;
+      });
+      colorInput.addEventListener('change', () => debounceSave(0));
+    }
+  });
+})();
+</script>
 </x-app-layout>
