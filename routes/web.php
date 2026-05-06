@@ -114,6 +114,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
 
     // Fases (stages) del pipeline
     Route::post('/pipelines/{pipeline}/stages', [PipelineController::class, 'storeStage'])->name('pipelines.stages.store');
+    Route::put('/pipelines/{pipeline}/stages-bulk', [PipelineController::class, 'updateStagesBulk'])->name('pipelines.stages.bulk');
     Route::put('/pipelines/{pipeline}/stages/{stage}', [PipelineController::class, 'updateStage'])->name('pipelines.stages.update');
     Route::delete('/pipelines/{pipeline}/stages/{stage}', [PipelineController::class, 'destroyStage'])->name('pipelines.stages.destroy');
 

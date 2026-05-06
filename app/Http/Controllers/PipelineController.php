@@ -148,6 +148,46 @@ class PipelineController extends Controller
         return back()->with('status', 'Fase creada correctamente.');
     }
 
+    /**
+     * Guardar todas las fases del pipeline en un solo request.
+     */
+    public function updateStagesBulk(Request $request, Pipeline $pipeline)
+    {
+        $pipeline = $this->pipelineForTeam($pipeline->id);
+
+        $data = $request->validate([
+            'stages'                  => 'required|array',
+            'stages.*.name'           => 'required|string|max:255',
+            'stages.*.slug'           => 'nullable|string|max:255',
+            'stages.*.probability'    => 'nullable|integer|min:0|max:100',
+            'stages.*.color'          => ['nullable', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'stages.*.is_won'         => 'nullable|boolean',
+            'stages.*.is_lost'        => 'nullable|boolean',
+            'stages.*.sort_order'     => 'nullable|integer',
+        ]);
+
+        $validIds = PipelineStage::where('pipeline_id', $pipeline->id)->pluck('id')->all();
+
+        foreach ($data['stages'] as $stageId => $row) {
+            if (!in_array((int) $stageId, $validIds, true)) continue;
+
+            $stage = PipelineStage::find($stageId);
+            if (!$stage) continue;
+
+            $stage->update([
+                'name'        => $row['name'],
+                'slug'        => ($row['slug'] ?? null) ?: \Str::slug($row['name']),
+                'probability' => $row['probability'] ?? null,
+                'color'       => $row['color'] ?? ($stage->color ?? '#6366f1'),
+                'is_won'      => filter_var($row['is_won']  ?? false, FILTER_VALIDATE_BOOLEAN),
+                'is_lost'     => filter_var($row['is_lost'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                'sort_order'  => $row['sort_order'] ?? $stage->sort_order,
+            ]);
+        }
+
+        return back()->with('status', 'Fases actualizadas correctamente.');
+    }
+
     public function updateStage(Request $request, Pipeline $pipeline, PipelineStage $stage)
     {
         $pipeline = $this->pipelineForTeam($pipeline->id);
