@@ -87,8 +87,18 @@
               @endif
             </td>
             <td class="px-4 py-3 text-right">
-              <button onclick="openEditProduct({{ $p->id }}, @json($p->name), @json($p->description ?? ''), @json($p->unit), {{ $p->price }}, @json($p->currency), {{ $p->is_active ? 'true' : 'false' }}, @json($p->image_url))"
-                      class="text-xs text-indigo-600 hover:text-indigo-800 font-medium mr-3">Editar</button>
+              <button type="button"
+                      class="btn-edit-product text-xs text-indigo-600 hover:text-indigo-800 font-medium mr-3"
+                      data-id="{{ $p->id }}"
+                      data-name="{{ $p->name }}"
+                      data-description="{{ $p->description ?? '' }}"
+                      data-unit="{{ $p->unit }}"
+                      data-price="{{ $p->price }}"
+                      data-currency="{{ $p->currency }}"
+                      data-active="{{ $p->is_active ? '1' : '0' }}"
+                      data-image-url="{{ $p->image_url ?? '' }}">
+                Editar
+              </button>
               <form method="POST" action="{{ route('products.destroy', $p) }}" class="inline"
                     onsubmit="return confirm('¿Eliminar producto?')">
                 @csrf @method('DELETE')
@@ -147,11 +157,28 @@
 </div>
 
 <script>
-function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl) {
+// Listener delegado: cualquier botón .btn-edit-product abre el modal de edición
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn-edit-product');
+  if (!btn) return;
+  e.preventDefault();
+  openEditProduct({
+    id:          btn.dataset.id,
+    name:        btn.dataset.name,
+    description: btn.dataset.description,
+    unit:        btn.dataset.unit,
+    price:       parseFloat(btn.dataset.price) || 0,
+    currency:    btn.dataset.currency,
+    active:      btn.dataset.active === '1',
+    imageUrl:    btn.dataset.imageUrl || '',
+  });
+});
+
+function openEditProduct(p) {
   const form = document.getElementById('editProductForm');
   if (!form) { console.error('editProductForm no encontrado'); return; }
 
-  document.getElementById('editProductId').value = id;
+  document.getElementById('editProductId').value = p.id;
   document.getElementById('editProductErrors').classList.add('hidden');
 
   function setField(name, value) {
@@ -159,25 +186,25 @@ function openEditProduct(id, name, desc, unit, price, currency, active, imageUrl
     inputs.forEach(inp => { if (inp.type !== 'hidden') inp.value = value; });
   }
 
-  setField('name', name ?? '');
-  setField('description', desc ?? '');
-  setField('unit', unit ?? 'unidad');
-  setField('price', price ?? 0);
-  setField('currency', currency ?? 'PEN');
+  setField('name', p.name ?? '');
+  setField('description', p.description ?? '');
+  setField('unit', p.unit ?? 'unidad');
+  setField('price', p.price ?? 0);
+  setField('currency', p.currency ?? 'PEN');
 
   const chk = form.querySelector('input[type=checkbox][name=is_active]');
-  if (chk) chk.checked = !!active;
+  if (chk) chk.checked = !!p.active;
 
   const wrap = document.getElementById('currentImageWrap-edit');
   if (wrap) {
-    wrap.innerHTML = imageUrl
-      ? `<img src="${imageUrl}" class="size-20 object-cover rounded-lg border border-gray-200" alt="">`
+    wrap.innerHTML = p.imageUrl
+      ? `<img src="${p.imageUrl}" class="size-20 object-cover rounded-lg border border-gray-200" alt="">`
       : '<p class="text-[10px] text-gray-400">Sin imagen actual.</p>';
   }
   const remove = form.querySelector('input[type=checkbox][name=remove_image]');
   if (remove) remove.checked = false;
 
-  // Limpiar input de archivo (no se puede setValue por seguridad)
+  // Limpiar input de archivo (por seguridad no se puede setValue con valor)
   const fileInp = form.querySelector('input[type=file][name=image]');
   if (fileInp) fileInp.value = '';
 
