@@ -1169,6 +1169,7 @@ function setMobilePanel(panel) {
   </div>
 </div>
 
+@verbatim
 <script>
 (function () {
   const modal     = document.getElementById('templatesModal');
@@ -1391,5 +1392,6 @@ function setMobilePanel(panel) {
   });
 })();
 </script>
+@endverbatim
 
 </x-app-layout>
