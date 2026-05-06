@@ -263,9 +263,10 @@ class WhatsappInboxController extends Controller
         }
 
         // Calcular ventana de 24h: el último mensaje INBOUND del cliente
+        // Usamos reorder() porque la relación messages() ya define orderBy ASC por defecto.
         $lastInbound = $conversation->messages()
             ->where('direction', 'inbound')
-            ->orderByDesc('created_at')
+            ->reorder('created_at', 'desc')
             ->first();
 
         $windowExpired = true;

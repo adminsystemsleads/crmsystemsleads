@@ -11,9 +11,10 @@
   $avatarCls = waAvatar($convName, $avatarColors);
 
   // Calcular si la ventana de 24h ya pasó (basado en último mensaje INBOUND)
+  // reorder() limpia el orderBy ASC por defecto de la relación messages()
   $lastInbound = $conversation->messages()
       ->where('direction', 'inbound')
-      ->orderByDesc('created_at')
+      ->reorder('created_at', 'desc')
       ->first();
   $waWindowExpired = !$lastInbound || $lastInbound->created_at->copy()->addHours(24)->isPast();
 @endphp
