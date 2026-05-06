@@ -30,6 +30,55 @@
                 </p>
 
                 <div class="flex items-center gap-2">
+                    {{-- Botón exportar con dropdown --}}
+                    <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                        <button type="button" @click="open = !open"
+                                class="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition">
+                            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Exportar
+                        </button>
+
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             class="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-xl ring-1 ring-black/5 py-1 z-50"
+                             style="display: none;">
+
+                            <a href="{{ route('deals.export', $pipeline) }}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
+                                📋 Todas las negociaciones
+                            </a>
+                            <div class="border-t my-1"></div>
+                            <p class="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Por fase</p>
+                            @foreach($stages as $stage)
+                                <a href="{{ route('deals.export', [$pipeline, 'stage_id' => $stage->id]) }}"
+                                   class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
+                                    <span class="size-2 rounded-full shrink-0"
+                                          style="background-color: {{ $stage->color ?? '#6366f1' }};"></span>
+                                    <span class="truncate">{{ $stage->name }}</span>
+                                </a>
+                            @endforeach
+                            <div class="border-t my-1"></div>
+                            <p class="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Por estado</p>
+                            <a href="{{ route('deals.export', [$pipeline, 'status' => 'open']) }}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
+                                🟢 Solo abiertas
+                            </a>
+                            <a href="{{ route('deals.export', [$pipeline, 'status' => 'won']) }}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
+                                🏆 Solo ganadas
+                            </a>
+                            <a href="{{ route('deals.export', [$pipeline, 'status' => 'lost']) }}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
+                                ❌ Solo perdidas
+                            </a>
+                        </div>
+                    </div>
+
                     <a href="{{ route('pipelines.edit', $pipeline) }}"
                        class="text-indigo-100 text-xs px-3 py-1 rounded-full bg-indigo-600/80 hover:bg-indigo-700">
                         Configurar fases

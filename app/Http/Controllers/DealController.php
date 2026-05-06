@@ -364,4 +364,77 @@ protected function ensureCanEditDeals(Pipeline $pipeline)
     }
 }
 
+    /* ============ EXPORT CSV ============ */
+
+    public function export(Request $request, Pipeline $pipeline): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $pipeline = $this->pipelineForTeam($pipeline->id);
+        $team     = $this->currentTeam();
+
+        $stageId = $request->query('stage_id');
+        $status  = $request->query('status'); // open, won, lost
+        $q       = $request->query('q');
+
+        $deals = Deal::where('team_id', $team->id)
+            ->where('pipeline_id', $pipeline->id)
+            ->with(['contact', 'stage', 'responsible', 'owner'])
+            ->when($stageId, fn($qq) => $qq->where('stage_id', $stageId))
+            ->when($status, fn($qq) => $qq->where('status', $status))
+            ->when($q, fn($qq) => $qq->where('title', 'like', "%{$q}%"))
+            ->orderByDesc('created_at')
+            ->get();
+
+        $stageLabel = $stageId
+            ? ($pipeline->stages()->where('id', $stageId)->value('name') ?? 'fase')
+            : 'todas';
+        $slug = \Illuminate\Support\Str::slug($pipeline->name . '-' . $stageLabel);
+        $filename = "negociaciones_{$slug}_" . now()->format('Y-m-d_His') . '.csv';
+
+        return response()->stream(function () use ($deals, $pipeline) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM Excel
+
+            fputcsv($out, [
+                'id', 'titulo', 'pipeline', 'fase', 'estado',
+                'monto', 'moneda', 'fecha_cierre',
+                'contacto_nombre', 'contacto_email', 'contacto_telefono',
+                'responsable', 'creador', 'wa_id',
+                'descripcion', 'creado_el', 'actualizado_el',
+            ]);
+
+            foreach ($deals as $d) {
+                $statusLabel = match ($d->status) {
+                    'open' => 'Abierta',
+                    'won'  => 'Ganada',
+                    'lost' => 'Perdida',
+                    default => $d->status,
+                };
+
+                fputcsv($out, [
+                    $d->id,
+                    $d->title,
+                    $pipeline->name,
+                    $d->stage?->name,
+                    $statusLabel,
+                    $d->amount,
+                    $d->currency,
+                    optional($d->close_date)->format('Y-m-d'),
+                    $d->contact?->name,
+                    $d->contact?->email,
+                    $d->contact?->phone,
+                    $d->responsible?->name,
+                    $d->owner?->name,
+                    $d->wa_id,
+                    str_replace(["\r", "\n"], ' ', (string) $d->description),
+                    $d->created_at?->format('Y-m-d H:i:s'),
+                    $d->updated_at?->format('Y-m-d H:i:s'),
+                ]);
+            }
+            fclose($out);
+        }, 200, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
 }

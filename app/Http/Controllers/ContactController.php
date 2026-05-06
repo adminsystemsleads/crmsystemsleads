@@ -109,6 +109,63 @@ class ContactController extends Controller
         return redirect()->route('contacts.index')->with('status', 'Contacto eliminado.');
     }
 
+    /* ============ EXPORT CSV ============ */
+
+    public function export(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $team   = $this->currentTeam();
+        $q      = $request->query('q');
+        $status = $request->query('status');
+
+        $contacts = Contact::where('team_id', $team->id)
+            ->when($q, fn($query) => $query->where(function ($sq) use ($q) {
+                $sq->where('name', 'like', "%{$q}%")
+                   ->orWhere('email', 'like', "%{$q}%")
+                   ->orWhere('phone', 'like', "%{$q}%")
+                   ->orWhere('company', 'like', "%{$q}%");
+            }))
+            ->when($status, fn($query) => $query->where('status', $status))
+            ->orderBy('name')
+            ->get();
+
+        $filename = 'contactos_' . now()->format('Y-m-d_His') . '.csv';
+
+        return response()->stream(function () use ($contacts) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM para Excel
+
+            fputcsv($out, [
+                'id', 'first_name', 'last_name', 'name', 'email', 'phone',
+                'company', 'position', 'tipo_doc', 'num_doc', 'razon_social',
+                'status', 'source', 'notes', 'created_at',
+            ]);
+
+            foreach ($contacts as $c) {
+                fputcsv($out, [
+                    $c->id,
+                    $c->first_name,
+                    $c->last_name,
+                    $c->name,
+                    $c->email,
+                    $c->phone,
+                    $c->company,
+                    $c->position,
+                    $c->tipo_doc,
+                    $c->num_doc,
+                    $c->razon_social,
+                    $c->status,
+                    $c->source,
+                    str_replace(["\r", "\n"], ' ', (string) $c->notes),
+                    $c->created_at?->format('Y-m-d H:i:s'),
+                ]);
+            }
+            fclose($out);
+        }, 200, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
     /* ============ IMPORT CSV ============ */
 
     public function importForm()

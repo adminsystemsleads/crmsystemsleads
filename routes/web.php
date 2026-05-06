@@ -91,6 +91,11 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/contacts/import',          [ContactController::class, 'importForm'])->name('contacts.import.form');
     Route::get('/contacts/import/template', [ContactController::class, 'importTemplate'])->name('contacts.import.template');
     Route::post('/contacts/import',         [ContactController::class, 'importStore'])->name('contacts.import.store');
+    // Export CSV de contactos
+    Route::get('/contacts/export',          [ContactController::class, 'export'])->name('contacts.export');
+
+    // Export CSV de negociaciones
+    Route::get('/pipelines/{pipeline}/deals/export', [DealController::class, 'export'])->name('deals.export');
 
     // Facturación electrónica
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
