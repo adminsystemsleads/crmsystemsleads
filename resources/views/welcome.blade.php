@@ -169,9 +169,10 @@
       <a href="#demo" style="color:var(--indigo); font-weight:600;">📅 Agendar demo</a>
     </nav>
 
-    {{-- Auth buttons + idioma --}}
+    {{-- Auth buttons + idioma + tema --}}
     @if (Route::has('login'))
       <div style="display:flex; align-items:center; gap:.6rem;">
+        <x-theme-toggle variant="compact" />
         <x-language-switcher variant="compact" />
         @auth
           <a href="{{ url('/dashboard') }}" class="btn-nav">Dashboard</a>

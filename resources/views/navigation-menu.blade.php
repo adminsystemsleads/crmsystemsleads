@@ -342,6 +342,12 @@
       </div>
     @endif
 
+    {{-- Tema --}}
+    <div class="px-3 py-2 border-t border-gray-100 shrink-0">
+      <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Tema</p>
+      <x-theme-toggle variant="sidebar" />
+    </div>
+
     {{-- Idioma --}}
     <div class="px-3 py-2 border-t border-gray-100 shrink-0">
       <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Language') }}</p>
