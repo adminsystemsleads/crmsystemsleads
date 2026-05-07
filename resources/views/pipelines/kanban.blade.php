@@ -277,17 +277,23 @@
                                 {{-- Cards --}}
                                 <div class="flex-1 px-3 pb-3 overflow-y-auto space-y-3" data-stage-body>
                                     @foreach($deals as $deal)
-                                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 text-xs space-y-1 kanban-card"
+                                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-3 py-3 text-xs space-y-1 kanban-card cursor-pointer
+                                                    transition-all duration-150 ease-out
+                                                    hover:shadow-lg hover:-translate-y-0.5 hover:border-indigo-300
+                                                    active:translate-y-0 active:shadow-md"
                                              draggable="true"
                                              data-deal-id="{{ $deal->id }}"
                                              data-amount="{{ $deal->amount ?? 0 }}"
-                                             data-currency="{{ $deal->currency ?? 'PEN' }}">
+                                             data-currency="{{ $deal->currency ?? 'PEN' }}"
+                                             data-deal-url="{{ route('deals.edit', [$pipeline, $deal]) }}"
+                                             onclick="kanbanOpenDeal(event, this)"
+                                             title="Click para ver / editar">
                                             <div class="flex justify-between items-start">
                                                 <div class="font-semibold text-gray-800 text-sm line-clamp-2">
                                                     {{ $deal->title }}
                                                 </div>
 
-                                                <div class="flex items-center space-x-1">
+                                                <div class="flex items-center space-x-1 kanban-card-actions">
                                                     <a href="{{ route('deals.edit', [$pipeline, $deal]) }}"
                                                        class="text-gray-400 hover:text-indigo-600 text-xs"
                                                        title="Editar">
@@ -359,6 +365,28 @@
     {{-- JS SOLO PARA KANBAN --}}
     @if(($viewMode ?? 'kanban') !== 'table')
     <script>
+        // Abrir la negociación al hacer click en la cartilla.
+        // Ignora clicks sobre los botones de editar/eliminar y soporta drag.
+        let __kanbanDragStarted = false;
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.closest && e.target.closest('.kanban-card')) {
+                __kanbanDragStarted = true;
+            }
+        });
+        document.addEventListener('dragend', () => {
+            // Pequeño delay para que no dispare click después de soltar
+            setTimeout(() => { __kanbanDragStarted = false; }, 150);
+        });
+
+        window.kanbanOpenDeal = function (event, card) {
+            // Si el click vino de un botón/enlace/form, no navegar
+            if (event.target.closest('.kanban-card-actions, button, a, form')) return;
+            // Si acabamos de hacer drag, tampoco
+            if (__kanbanDragStarted) return;
+            const url = card.dataset.dealUrl;
+            if (url) window.location.href = url;
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const csrfTokenEl = document.querySelector('meta[name="csrf-token"]');
             const csrfToken = csrfTokenEl ? csrfTokenEl.getAttribute('content') : '';
