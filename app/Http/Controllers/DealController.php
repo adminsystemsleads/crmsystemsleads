@@ -227,6 +227,9 @@ class DealController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'price', 'unit', 'currency']);
 
+        $customFields = \App\Support\CustomFieldsHelper::fieldsFor($deal->team_id, 'deal');
+        $customValues = \App\Support\CustomFieldsHelper::valuesFor($deal);
+
         return view('deals.edit', compact(
             'pipeline',
             'deal',
@@ -237,7 +240,9 @@ class DealController extends Controller
             'activities',
             'whatsappConversations',
             'dealProducts',
-            'catalogProducts'
+            'catalogProducts',
+            'customFields',
+            'customValues'
         ));
     }
 
@@ -260,6 +265,7 @@ class DealController extends Controller
             'stage_id'    => 'required|exists:pipeline_stages,id',
             'close_date'  => 'nullable|date',
             'description' => 'nullable|string',
+            'custom_fields' => 'nullable|array',
 
             // Persona responsable: debe pertenecer al team
             'responsible_id' => [
@@ -288,6 +294,8 @@ class DealController extends Controller
             'close_date'     => $data['close_date'] ?? null,
             'description'    => $data['description'] ?? null,
         ]);
+
+        \App\Support\CustomFieldsHelper::sync($deal, $data['custom_fields'] ?? null, $team->id, 'deal');
 
         return redirect()->route('pipelines.kanban', $pipeline)
             ->with('status', 'Negociación actualizada.');

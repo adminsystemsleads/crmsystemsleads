@@ -155,6 +155,19 @@
                         placeholder="Información adicional sobre el contacto…">{{ old('notes', $contact?->notes) }}</textarea>
             </div>
 
+            {{-- Campos personalizados --}}
+            @if(isset($customFields) && $customFields->isNotEmpty())
+              <div class="pt-3 border-t border-gray-100">
+                <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <svg class="size-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-7-7h14"/>
+                  </svg>
+                  Campos personalizados
+                </h3>
+                @include('custom-fields._inputs', ['customFields' => $customFields, 'customValues' => $customValues ?? []])
+              </div>
+            @endif
+
             {{-- Botones --}}
             <div class="flex items-center justify-between pt-2 border-t border-gray-100">
               @if($contact)

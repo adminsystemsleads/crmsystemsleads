@@ -244,6 +244,16 @@
               </svg>
               <span class="truncate text-xs">Facturas</span>
             </a>
+            <a href="{{ route('custom-fields.index') }}"
+               class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
+                      {{ request()->routeIs('custom-fields.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
+              <svg class="shrink-0 {{ request()->routeIs('custom-fields.*') ? 'text-indigo-400' : 'text-gray-400' }}"
+                   style="width:12px;height:12px;min-width:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5h2m-1 0v14m-7-7h14"/>
+              </svg>
+              <span class="truncate text-xs">Campos personalizados</span>
+            </a>
           @endif
 
           {{-- Accesos rápidos al Kanban bajo el módulo CRM --}}

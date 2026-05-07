@@ -26,6 +26,7 @@ use App\Http\Controllers\InvoiceConfigController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuickReplyController;
 use App\Http\Controllers\ChatTagController;
+use App\Http\Controllers\CustomFieldController;
 
 
 Route::get('/', function () {
@@ -96,6 +97,12 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
 
     // Export CSV de negociaciones
     Route::get('/pipelines/{pipeline}/deals/export', [DealController::class, 'export'])->name('deals.export');
+
+    // Campos personalizados
+    Route::get('/custom-fields',                  [CustomFieldController::class, 'index'])->name('custom-fields.index');
+    Route::post('/custom-fields',                 [CustomFieldController::class, 'store'])->name('custom-fields.store');
+    Route::put('/custom-fields/{customField}',    [CustomFieldController::class, 'update'])->name('custom-fields.update');
+    Route::delete('/custom-fields/{customField}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
 
     // Facturación electrónica
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');

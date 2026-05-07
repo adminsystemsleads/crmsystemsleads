@@ -36,7 +36,8 @@ class ContactController extends Controller
 
     public function create()
     {
-        return view('contacts.edit', ['contact' => null]);
+        $customFields = \App\Support\CustomFieldsHelper::fieldsFor($this->currentTeam()->id, 'contact');
+        return view('contacts.edit', ['contact' => null, 'customFields' => $customFields, 'customValues' => []]);
     }
 
     public function store(Request $request)
@@ -53,6 +54,7 @@ class ContactController extends Controller
             'status'     => 'nullable|string|max:50',
             'source'     => 'nullable|string|max:100',
             'notes'      => 'nullable|string',
+            'custom_fields' => 'nullable|array',
         ]);
 
         $data['name']     = trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? ''));
@@ -60,7 +62,12 @@ class ContactController extends Controller
         $data['owner_id'] = Auth::id();
         $data['status']   = $data['status'] ?? 'nuevo';
 
-        Contact::create($data);
+        $customFieldsPayload = $data['custom_fields'] ?? null;
+        unset($data['custom_fields']);
+
+        $contact = Contact::create($data);
+
+        \App\Support\CustomFieldsHelper::sync($contact, $customFieldsPayload, $team->id, 'contact');
 
         return redirect()->route('contacts.index')->with('status', 'Contacto creado correctamente.');
     }
@@ -72,7 +79,10 @@ class ContactController extends Controller
 
         $contact->load(['deals.pipeline', 'deals.stage', 'owner']);
 
-        return view('contacts.edit', compact('contact'));
+        $customFields = \App\Support\CustomFieldsHelper::fieldsFor($team->id, 'contact');
+        $customValues = \App\Support\CustomFieldsHelper::valuesFor($contact);
+
+        return view('contacts.edit', compact('contact', 'customFields', 'customValues'));
     }
 
     public function update(Request $request, Contact $contact)
@@ -90,11 +100,17 @@ class ContactController extends Controller
             'status'     => 'nullable|string|max:50',
             'source'     => 'nullable|string|max:100',
             'notes'      => 'nullable|string',
+            'custom_fields' => 'nullable|array',
         ]);
 
         $data['name'] = trim(($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? ''));
 
+        $customFieldsPayload = $data['custom_fields'] ?? null;
+        unset($data['custom_fields']);
+
         $contact->update($data);
+
+        \App\Support\CustomFieldsHelper::sync($contact, $customFieldsPayload, $team->id, 'contact');
 
         return back()->with('status', 'Contacto actualizado correctamente.');
     }
