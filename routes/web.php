@@ -189,6 +189,14 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::put('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'update'])->name('whatsapp.ai.update');
     Route::delete('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'destroy'])->name('whatsapp.ai.destroy');
 
+    // AI Functions (custom function calling)
+    Route::get('/whatsapp/accounts/{account}/ai/functions',  [\App\Http\Controllers\AiFunctionController::class, 'index'])->name('ai-functions.index');
+    Route::post('/whatsapp/accounts/{account}/ai/functions', [\App\Http\Controllers\AiFunctionController::class, 'store'])->name('ai-functions.store');
+    Route::put('/ai-functions/{aiFunction}',                 [\App\Http\Controllers\AiFunctionController::class, 'update'])->name('ai-functions.update');
+    Route::delete('/ai-functions/{aiFunction}',              [\App\Http\Controllers\AiFunctionController::class, 'destroy'])->name('ai-functions.destroy');
+    Route::get('/ai-functions/available-fields',             [\App\Http\Controllers\AiFunctionController::class, 'availableFields'])->name('ai-functions.available-fields');
+    Route::get('/ai-functions/available-stages',             [\App\Http\Controllers\AiFunctionController::class, 'availableStages'])->name('ai-functions.available-stages');
+
     
 
     // Inbox

@@ -151,14 +151,21 @@ class ProcessWhatsappAiReply implements ShouldQueue
                 $args      = json_decode($argsJson, true) ?: [];
                 $callId    = $tc['id'] ?? null;
 
-                $result = $fn->executeToolCall($name, $args, $conversation);
+                $exec = $fn->executeToolCall($name, $args, $conversation);
+                $result = $exec['result'] ?? ['ok' => false];
 
                 Log::info("AI tool call ejecutado", ['name' => $name, 'args' => $args, 'result' => $result]);
+
+                // Si la función tiene response_template, pasarlo al modelo como sugerencia
+                $payload = $result;
+                if (!empty($exec['response'])) {
+                    $payload['suggested_response'] = $exec['response'];
+                }
 
                 $messages[] = [
                     'role'         => 'tool',
                     'tool_call_id' => $callId,
-                    'content'      => json_encode($result, JSON_UNESCAPED_UNICODE),
+                    'content'      => json_encode($payload, JSON_UNESCAPED_UNICODE),
                 ];
             }
         }
