@@ -6,6 +6,7 @@ use App\Models\WhatsappAiAssistant;
 use App\Models\WhatsappConversation;
 use App\Models\WhatsappMessage;
 use App\Services\AiFunctionCallingService;
+use App\Services\AiKnowledgeService;
 use App\Services\OpenAiService;
 use App\Services\WhatsappCloudService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +28,8 @@ class ProcessWhatsappAiReply implements ShouldQueue
     public function handle(
         OpenAiService $openAi,
         WhatsappCloudService $wa,
-        AiFunctionCallingService $fn
+        AiFunctionCallingService $fn,
+        AiKnowledgeService $kb
     ): void {
         $conversation = WhatsappConversation::with('account')->find($this->conversationId);
         $assistant    = WhatsappAiAssistant::find($this->assistantId);
@@ -50,11 +52,19 @@ class ProcessWhatsappAiReply implements ShouldQueue
 
         $openAiMessages = [];
 
-        if ($assistant->system_prompt) {
-            $sp = $assistant->system_prompt;
-            if ($assistant->function_calling_enabled) {
-                $sp .= "\n\nIMPORTANTE: Tienes herramientas para guardar datos del cliente en el CRM. Úsalas SIEMPRE que el cliente comparta información concreta (nombre, empresa, RUC/DNI, presupuesto, fecha tentativa, datos del proyecto, etc.). Llama a la función adecuada antes o después de responder al cliente.";
-            }
+        $sp = $assistant->system_prompt ?? '';
+
+        if ($assistant->function_calling_enabled) {
+            $sp .= "\n\nIMPORTANTE: Tienes herramientas para guardar datos del cliente en el CRM. Úsalas SIEMPRE que el cliente comparta información concreta (nombre, empresa, RUC/DNI, presupuesto, fecha tentativa, datos del proyecto, etc.). Llama a la función adecuada antes o después de responder al cliente.";
+        }
+
+        // Inyectar base de conocimiento si hay entradas activas
+        $knowledgeBlock = $kb->buildPromptContext($assistant);
+        if ($knowledgeBlock !== '') {
+            $sp .= "\n\n" . $knowledgeBlock;
+        }
+
+        if (trim($sp) !== '') {
             $openAiMessages[] = ['role' => 'system', 'content' => $sp];
         }
 

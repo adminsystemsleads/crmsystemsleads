@@ -215,6 +215,53 @@
           </div>
         </div>
 
+        {{-- ============ BASE DE CONOCIMIENTO ============ --}}
+        @if($assistant)
+        <div class="px-6 py-5 border-t border-gray-100">
+          <div class="rounded-xl border-2 border-emerald-100 bg-gradient-to-br from-emerald-50/40 to-teal-50/40 p-5">
+            <div class="flex items-start gap-3 mb-4">
+              <div class="size-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-sm font-bold text-gray-900">Base de conocimiento</h3>
+                <p class="text-xs text-gray-600 mt-0.5">
+                  Sube archivos (TXT, MD, PDF, DOCX) o pega texto. La IA usará esta información para
+                  responder con datos oficiales de tu empresa.
+                </p>
+              </div>
+              <span id="kbUsageBadge" class="text-[10px] text-gray-500 shrink-0"></span>
+            </div>
+
+            <div id="kbList" class="space-y-2 mb-3"></div>
+
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="kbOpenFileModal()"
+                      class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition shadow-sm">
+                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                </svg>
+                Subir archivo
+              </button>
+              <button type="button" onclick="kbOpenTextModal()"
+                      class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
+                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-7-7h14"/>
+                </svg>
+                Pegar texto
+              </button>
+            </div>
+
+            <p class="text-[11px] text-gray-500 mt-3 italic">
+              💡 La IA recibe esta info en cada respuesta. Mantén textos concisos para mejores resultados.
+            </p>
+          </div>
+        </div>
+        @endif
+
         {{-- Botones --}}
         <div class="px-6 py-4 flex items-center justify-between gap-3 bg-gray-50 rounded-b-2xl">
           <div>
@@ -644,6 +691,287 @@
 
   // Cargar lista al iniciar
   loadFunctions();
+})();
+</script>
+@endverbatim
+
+{{-- ════════════════════════════════════════
+     MODAL SUBIR ARCHIVO A BASE DE CONOCIMIENTO
+     ════════════════════════════════════════ --}}
+<div id="kbFileModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-base font-bold text-gray-900">📚 Subir archivo</h3>
+      <button type="button" onclick="kbCloseFileModal()" class="text-gray-400 hover:text-red-500">✕</button>
+    </div>
+    <div id="kbFileError" class="hidden mb-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
+
+    <form id="kbFileForm" enctype="multipart/form-data" class="space-y-3">
+      @csrf
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Título (opcional)</label>
+        <input type="text" name="title" maxlength="200" placeholder="Ej: Catálogo de servicios"
+               class="w-full rounded-lg border-gray-200 text-sm py-2">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Archivo *</label>
+        <input type="file" name="file" required accept=".txt,.md,.csv,.log,.pdf,.docx,text/plain,application/pdf"
+               class="block w-full text-sm text-gray-700 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0
+                      file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+        <p class="text-[10px] text-gray-400 mt-1">Formatos: TXT, MD, CSV, PDF, DOCX. Máx 5 MB.</p>
+      </div>
+      <div class="flex gap-2 justify-end pt-2">
+        <button type="button" onclick="kbCloseFileModal()"
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">Cancelar</button>
+        <button type="submit" id="kbFileSubmit"
+                class="px-5 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+          Subir
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{-- ════════════════════════════════════════
+     MODAL PEGAR TEXTO
+     ════════════════════════════════════════ --}}
+<div id="kbTextModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+      <h3 class="text-base font-bold text-gray-900" id="kbTextTitle">📝 Pegar texto</h3>
+      <button type="button" onclick="kbCloseTextModal()" class="text-gray-400 hover:text-red-500">✕</button>
+    </div>
+    <div id="kbTextError" class="hidden mx-5 mt-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
+
+    <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+      <input type="hidden" id="kbTextId" value="">
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Título *</label>
+        <input type="text" id="kbTextTitleInput" maxlength="200"
+               placeholder="Ej: Política de devoluciones"
+               class="w-full rounded-lg border-gray-200 text-sm py-2">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Contenido *</label>
+        <textarea id="kbTextContent" rows="14" maxlength="200000"
+                  placeholder="Pega aquí información de tu empresa, productos, políticas, FAQs…"
+                  class="w-full rounded-lg border-gray-200 text-sm py-2 font-mono"></textarea>
+        <p class="text-[10px] text-gray-400 mt-1">Caracteres: <span id="kbTextCharCount">0</span></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="kbTextActive" checked class="rounded border-gray-300 text-emerald-600">
+        <label for="kbTextActive" class="text-sm text-gray-700">Activo (la IA lo usará)</label>
+      </div>
+    </div>
+
+    <div class="flex gap-2 justify-end px-5 py-3 border-t border-gray-200 bg-gray-50">
+      <button type="button" onclick="kbCloseTextModal()"
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">Cancelar</button>
+      <button type="button" id="kbTextSaveBtn" onclick="kbTextSave()"
+              class="px-5 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
+@verbatim
+<script>
+(function () {
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+@endverbatim
+  const kbBaseUrl     = '{{ route("ai-knowledge.index", $account) }}';
+  const kbStoreFile   = '{{ route("ai-knowledge.store-file", $account) }}';
+  const kbStoreText   = '{{ route("ai-knowledge.store-text", $account) }}';
+@verbatim
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function loadKb() {
+    fetch(kbBaseUrl, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(d => {
+        if (!d.ok) return;
+        renderKbList(d.entries || []);
+        updateUsage(d.total_chars || 0, d.max_chars || 16000);
+      });
+  }
+
+  function updateUsage(used, max) {
+    const badge = document.getElementById('kbUsageBadge');
+    if (!badge) return;
+    const pct = Math.min(100, Math.round(used / max * 100));
+    const color = pct > 90 ? 'text-red-600' : pct > 70 ? 'text-amber-600' : 'text-gray-500';
+    badge.className = 'text-[10px] shrink-0 ' + color;
+    badge.textContent = used.toLocaleString() + ' / ' + max.toLocaleString() + ' chars';
+  }
+
+  function renderKbList(entries) {
+    const box = document.getElementById('kbList');
+    if (!entries.length) {
+      box.innerHTML = '<p class="text-xs text-gray-500 italic">Sin entradas todavía. Sube un archivo o pega texto.</p>';
+      return;
+    }
+    box.innerHTML = entries.map(e => {
+      const icon = e.source === 'file' ? '📎' : '📝';
+      const sub = e.source === 'file'
+        ? `${escapeHtml(e.original_filename || '')} · ${e.size_kb} KB`
+        : 'Texto pegado';
+      return `
+        <div class="bg-white rounded-lg border border-gray-200 p-3 flex items-start gap-3 ${e.is_active ? '' : 'opacity-60'}">
+          <span class="text-xl shrink-0">${icon}</span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <p class="font-semibold text-sm text-gray-900 truncate">${escapeHtml(e.title)}</p>
+              ${e.is_active ? '' : '<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">Inactivo</span>'}
+            </div>
+            <p class="text-[11px] text-gray-500 truncate">${escapeHtml(sub)}</p>
+            <p class="text-[10px] text-gray-400">${escapeHtml(e.created_at || '')}</p>
+          </div>
+          <div class="flex gap-1 shrink-0">
+            ${e.source === 'text' ? `<button type="button" onclick="kbEditText(${e.id})" class="text-xs text-indigo-600 hover:text-indigo-800 px-2">Editar</button>` : ''}
+            <button type="button" onclick="kbToggleActive(${e.id}, ${!e.is_active})"
+                    class="text-xs ${e.is_active ? 'text-amber-600' : 'text-green-600'} hover:opacity-75 px-2">
+              ${e.is_active ? 'Pausar' : 'Activar'}
+            </button>
+            <button type="button" onclick="kbDelete(${e.id})" class="text-xs text-red-500 hover:text-red-700 px-2">✕</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ============ Modal subir archivo ============ */
+  window.kbOpenFileModal = function () {
+    document.getElementById('kbFileForm').reset();
+    document.getElementById('kbFileError').classList.add('hidden');
+    document.getElementById('kbFileModal').classList.remove('hidden');
+  };
+  window.kbCloseFileModal = function () { document.getElementById('kbFileModal').classList.add('hidden'); };
+
+  document.getElementById('kbFileForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const errBox = document.getElementById('kbFileError');
+    const btn    = document.getElementById('kbFileSubmit');
+    errBox.classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Subiendo…';
+
+    const fd = new FormData(this);
+    try {
+      const res = await fetch(kbStoreFile, {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+        body: fd,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        kbCloseFileModal();
+        loadKb();
+      } else {
+        const msgs = [];
+        if (data.errors) Object.values(data.errors).forEach(arr => arr.forEach(m => msgs.push(m)));
+        else if (data.message) msgs.push(data.message);
+        errBox.innerHTML = msgs.length ? msgs.join('<br>') : 'Error al subir';
+        errBox.classList.remove('hidden');
+      }
+    } catch (err) {
+      errBox.textContent = 'Error: ' + err.message;
+      errBox.classList.remove('hidden');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Subir';
+    }
+  });
+
+  /* ============ Modal pegar texto ============ */
+  window.kbOpenTextModal = function () {
+    document.getElementById('kbTextTitle').textContent = '📝 Pegar texto';
+    document.getElementById('kbTextId').value = '';
+    document.getElementById('kbTextTitleInput').value = '';
+    document.getElementById('kbTextContent').value = '';
+    document.getElementById('kbTextActive').checked = true;
+    document.getElementById('kbTextCharCount').textContent = '0';
+    document.getElementById('kbTextError').classList.add('hidden');
+    document.getElementById('kbTextModal').classList.remove('hidden');
+  };
+  window.kbCloseTextModal = function () { document.getElementById('kbTextModal').classList.add('hidden'); };
+
+  document.getElementById('kbTextContent').addEventListener('input', function () {
+    document.getElementById('kbTextCharCount').textContent = this.value.length.toLocaleString();
+  });
+
+  window.kbEditText = function (id) {
+    fetch('/ai-knowledge/' + id, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(d => {
+        if (!d.ok) return;
+        const e = d.entry;
+        document.getElementById('kbTextTitle').textContent = '📝 Editar texto';
+        document.getElementById('kbTextId').value = e.id;
+        document.getElementById('kbTextTitleInput').value = e.title || '';
+        document.getElementById('kbTextContent').value = e.content || '';
+        document.getElementById('kbTextActive').checked = !!e.is_active;
+        document.getElementById('kbTextCharCount').textContent = (e.content || '').length.toLocaleString();
+        document.getElementById('kbTextError').classList.add('hidden');
+        document.getElementById('kbTextModal').classList.remove('hidden');
+      });
+  };
+
+  window.kbTextSave = function () {
+    const id      = document.getElementById('kbTextId').value;
+    const title   = document.getElementById('kbTextTitleInput').value.trim();
+    const content = document.getElementById('kbTextContent').value;
+    const active  = document.getElementById('kbTextActive').checked;
+    const errBox  = document.getElementById('kbTextError');
+    const btn     = document.getElementById('kbTextSaveBtn');
+
+    if (!title || !content.trim()) {
+      errBox.textContent = 'Título y contenido son obligatorios.';
+      errBox.classList.remove('hidden');
+      return;
+    }
+
+    errBox.classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Guardando…';
+
+    const url = id ? '/ai-knowledge/' + id : kbStoreText;
+    const method = id ? 'PUT' : 'POST';
+
+    fetch(url, {
+      method, credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+      body: JSON.stringify({ title, content, is_active: active ? 1 : 0 }),
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+    .then(({ ok, data }) => {
+      btn.disabled = false; btn.textContent = 'Guardar';
+      if (ok && data.ok) {
+        kbCloseTextModal();
+        loadKb();
+      } else {
+        errBox.textContent = data.message || 'Error al guardar';
+        errBox.classList.remove('hidden');
+      }
+    });
+  };
+
+  window.kbToggleActive = function (id, makeActive) {
+    fetch('/ai-knowledge/' + id, {
+      method: 'PUT', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+      body: JSON.stringify({ is_active: makeActive ? 1 : 0 }),
+    }).then(r => r.json()).then(d => { if (d.ok) loadKb(); });
+  };
+
+  window.kbDelete = function (id) {
+    if (!confirm('¿Eliminar esta entrada de la base de conocimiento?')) return;
+    fetch('/ai-knowledge/' + id, {
+      method: 'DELETE', credentials: 'same-origin',
+      headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+    }).then(r => r.json()).then(d => { if (d.ok) loadKb(); });
+  };
+
+  loadKb();
 })();
 </script>
 @endverbatim

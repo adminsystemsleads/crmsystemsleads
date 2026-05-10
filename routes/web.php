@@ -197,7 +197,13 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/ai-functions/available-fields',             [\App\Http\Controllers\AiFunctionController::class, 'availableFields'])->name('ai-functions.available-fields');
     Route::get('/ai-functions/available-stages',             [\App\Http\Controllers\AiFunctionController::class, 'availableStages'])->name('ai-functions.available-stages');
 
-    
+    // Base de conocimiento del asistente IA
+    Route::get('/whatsapp/accounts/{account}/ai/knowledge',       [\App\Http\Controllers\AiKnowledgeController::class, 'index'])->name('ai-knowledge.index');
+    Route::post('/whatsapp/accounts/{account}/ai/knowledge/file', [\App\Http\Controllers\AiKnowledgeController::class, 'storeFile'])->name('ai-knowledge.store-file');
+    Route::post('/whatsapp/accounts/{account}/ai/knowledge/text', [\App\Http\Controllers\AiKnowledgeController::class, 'storeText'])->name('ai-knowledge.store-text');
+    Route::get('/ai-knowledge/{aiKnowledgeEntry}',                [\App\Http\Controllers\AiKnowledgeController::class, 'show'])->name('ai-knowledge.show');
+    Route::put('/ai-knowledge/{aiKnowledgeEntry}',                [\App\Http\Controllers\AiKnowledgeController::class, 'update'])->name('ai-knowledge.update');
+    Route::delete('/ai-knowledge/{aiKnowledgeEntry}',             [\App\Http\Controllers\AiKnowledgeController::class, 'destroy'])->name('ai-knowledge.destroy');
 
     // Inbox
     Route::get('/whatsapp/inbox', [WhatsappInboxController::class, 'index'])->name('whatsapp.inbox.index');
