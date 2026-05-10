@@ -30,6 +30,24 @@
           {{ session('status') }}
         </div>
       @endif
+      @if(session('error'))
+        <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 flex items-start gap-2">
+          <svg class="size-4 shrink-0 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 13l.94 4.7A2 2 0 007.9 19h8.2a2 2 0 001.96-1.3L19 13M19 13H5m14 0L17.1 5.3A2 2 0 0015.14 4H8.86a2 2 0 00-1.96 1.3L5 13"/>
+          </svg>
+          <span>{{ session('error') }}</span>
+        </div>
+      @endif
+      @if($errors->any())
+        <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <p class="font-semibold mb-1">Errores de validación:</p>
+          <ul class="list-disc list-inside space-y-0.5">
+            @foreach($errors->all() as $err)
+              <li>{{ $err }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
 
       {{-- Card info --}}
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-start gap-4">

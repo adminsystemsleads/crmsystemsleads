@@ -38,7 +38,7 @@ class WhatsappAiAssistantController extends Controller
             'temperature'      => 'required|numeric|min:0|max:2',
             'max_tokens'       => 'required|integer|min:50|max:4000',
             'context_messages' => 'required|integer|min:1|max:50',
-            'is_active'        => 'boolean',
+            'is_active'        => 'nullable|boolean',
             'function_calling_enabled' => 'nullable|boolean',
             'capture_contact'  => 'nullable|boolean',
             'capture_deal'     => 'nullable|boolean',
@@ -49,9 +49,11 @@ class WhatsappAiAssistantController extends Controller
             'whatsapp_account_id' => $account->id,
         ]);
 
-        $assistant->team_id    = $team->id;
-        $assistant->provider   = 'openai';
-        $assistant->model      = $data['model'];
+        // Asegurar campos obligatorios
+        $assistant->team_id  = $team->id;
+        $assistant->provider = 'openai';
+
+        $assistant->model            = $data['model'];
         $assistant->system_prompt    = $data['system_prompt'] ?? null;
         $assistant->temperature      = $data['temperature'];
         $assistant->max_tokens       = $data['max_tokens'];
@@ -64,15 +66,31 @@ class WhatsappAiAssistantController extends Controller
             'custom'  => $request->boolean('capture_custom', true),
         ];
 
-        // Only update api_key if a new one was provided
+        // API key: solo se actualiza si se ingresó una nueva.
+        // Si el registro es nuevo y no se ingresó nada, permitimos guardar
+        // (la columna debe ser nullable — ver migración).
         if (!empty($data['api_key'])) {
             $assistant->api_key = $data['api_key'];
+        } elseif (!$assistant->exists) {
+            $assistant->api_key   = null;
+            $assistant->is_active = false; // sin api key, no puede operar
         }
 
-        $assistant->save();
+        try {
+            $assistant->save();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('AI assistant save failed: ' . $e->getMessage());
+            return back()
+                ->withInput()
+                ->with('error', 'No se pudo guardar la configuración: ' . $e->getMessage());
+        }
 
-        return redirect()->route('whatsapp.ai.edit', $account)
-            ->with('status', 'Asistente IA guardado correctamente.');
+        $msg = 'Asistente IA guardado correctamente.';
+        if (empty($assistant->api_key)) {
+            $msg .= ' ⚠ Falta la API Key de OpenAI — el asistente no podrá responder hasta que la agregues.';
+        }
+
+        return redirect()->route('whatsapp.ai.edit', $account)->with('status', $msg);
     }
 
     public function destroy(WhatsappAccount $account)
