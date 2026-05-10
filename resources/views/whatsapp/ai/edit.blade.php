@@ -284,14 +284,12 @@
         <div class="px-6 py-4 flex items-center justify-between gap-3 bg-gray-50 rounded-b-2xl">
           <div>
             @if($assistant)
-              <form method="POST" action="{{ route('whatsapp.ai.destroy', $account) }}"
-                    onsubmit="return confirm('¿Eliminar la configuración del asistente IA?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="text-xs text-red-500 hover:text-red-700 underline">
-                  Eliminar configuración
-                </button>
-              </form>
+              {{-- ⚠ NO anidamos otro <form> dentro del form principal: usamos form="aiAssistantDeleteForm" --}}
+              <button type="submit" form="aiAssistantDeleteForm"
+                      onclick="return confirm('¿Eliminar la configuración del asistente IA?')"
+                      class="text-xs text-red-500 hover:text-red-700 underline">
+                Eliminar configuración
+              </button>
             @endif
           </div>
           <div class="flex gap-2">
@@ -307,6 +305,14 @@
         </div>
 
       </form>
+
+      {{-- Form de eliminación FUERA del form principal — referenciado por el botón vía form="..." --}}
+      @if($assistant)
+        <form id="aiAssistantDeleteForm" method="POST"
+              action="{{ route('whatsapp.ai.destroy', $account) }}" class="hidden">
+          @csrf @method('DELETE')
+        </form>
+      @endif
 
       {{-- Info adicional --}}
       <div class="rounded-xl bg-amber-50 border border-amber-200 px-5 py-4 text-xs text-amber-800 space-y-1.5">
