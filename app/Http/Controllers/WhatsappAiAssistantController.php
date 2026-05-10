@@ -39,6 +39,10 @@ class WhatsappAiAssistantController extends Controller
             'max_tokens'       => 'required|integer|min:50|max:4000',
             'context_messages' => 'required|integer|min:1|max:50',
             'is_active'        => 'boolean',
+            'function_calling_enabled' => 'nullable|boolean',
+            'capture_contact'  => 'nullable|boolean',
+            'capture_deal'     => 'nullable|boolean',
+            'capture_custom'   => 'nullable|boolean',
         ]);
 
         $assistant = WhatsappAiAssistant::firstOrNew([
@@ -53,6 +57,12 @@ class WhatsappAiAssistantController extends Controller
         $assistant->max_tokens       = $data['max_tokens'];
         $assistant->context_messages = $data['context_messages'];
         $assistant->is_active        = $request->boolean('is_active');
+        $assistant->function_calling_enabled = $request->boolean('function_calling_enabled');
+        $assistant->capture_config   = [
+            'contact' => $request->boolean('capture_contact', true),
+            'deal'    => $request->boolean('capture_deal', true),
+            'custom'  => $request->boolean('capture_custom', true),
+        ];
 
         // Only update api_key if a new one was provided
         if (!empty($data['api_key'])) {

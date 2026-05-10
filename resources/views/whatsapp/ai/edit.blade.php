@@ -171,6 +171,81 @@
           </div>
         </div>
 
+        {{-- ============ FUNCTION CALLING ============ --}}
+        <div class="px-6 py-5 border-t border-gray-100">
+          @php
+            $captureCfg     = $assistant?->capture_config ?? [];
+            $captureContact = old('capture_contact', $captureCfg['contact'] ?? true);
+            $captureDeal    = old('capture_deal',    $captureCfg['deal']    ?? true);
+            $captureCustom  = old('capture_custom',  $captureCfg['custom']  ?? true);
+          @endphp
+
+          <div class="rounded-xl border-2 border-indigo-100 bg-gradient-to-br from-indigo-50/50 to-violet-50/50 p-5">
+            <div class="flex items-start gap-3 mb-4">
+              <div class="size-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-sm font-bold text-gray-900">Capturar datos automáticamente (Function Calling)</h3>
+                <p class="text-xs text-gray-600 mt-0.5">
+                  La IA leerá la conversación y guardará automáticamente datos del cliente en el CRM
+                  (nombre, RUC, presupuesto, etc.) cuando los detecte.
+                </p>
+              </div>
+              <label class="inline-flex items-center cursor-pointer shrink-0">
+                <input type="hidden" name="function_calling_enabled" value="0">
+                <input type="checkbox" name="function_calling_enabled" value="1" class="sr-only peer"
+                       {{ old('function_calling_enabled', $assistant?->function_calling_enabled) ? 'checked' : '' }}>
+                <span class="relative w-10 h-5 bg-gray-300 peer-checked:bg-indigo-600 rounded-full transition
+                            after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4
+                            after:bg-white after:rounded-full after:transition peer-checked:after:translate-x-5"></span>
+              </label>
+            </div>
+
+            <div class="space-y-2 ml-11">
+              <p class="text-[11px] uppercase tracking-wide text-gray-500 font-semibold">¿Qué puede capturar?</p>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 cursor-pointer">
+                <input type="hidden" name="capture_contact" value="0">
+                <input type="checkbox" name="capture_contact" value="1" class="rounded border-gray-300 text-indigo-600"
+                       {{ $captureContact ? 'checked' : '' }}>
+                <span class="text-sm text-gray-700">
+                  👤 <strong>Datos del contacto</strong>
+                  <span class="text-xs text-gray-400 block">nombre, email, empresa, cargo, RUC/DNI</span>
+                </span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 cursor-pointer">
+                <input type="hidden" name="capture_deal" value="0">
+                <input type="checkbox" name="capture_deal" value="1" class="rounded border-gray-300 text-indigo-600"
+                       {{ $captureDeal ? 'checked' : '' }}>
+                <span class="text-sm text-gray-700">
+                  💼 <strong>Datos de la negociación</strong>
+                  <span class="text-xs text-gray-400 block">monto, fecha de cierre, descripción del proyecto</span>
+                </span>
+              </label>
+
+              <label class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-indigo-300 cursor-pointer">
+                <input type="hidden" name="capture_custom" value="0">
+                <input type="checkbox" name="capture_custom" value="1" class="rounded border-gray-300 text-indigo-600"
+                       {{ $captureCustom ? 'checked' : '' }}>
+                <span class="text-sm text-gray-700">
+                  🧩 <strong>Campos personalizados</strong>
+                  <span class="text-xs text-gray-400 block">los que definas en
+                    <a href="{{ route('custom-fields.index') }}" class="text-indigo-600 underline">CRM → Campos personalizados</a>
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <p class="text-[11px] text-gray-500 mt-3 ml-11 italic">
+              💡 Tip: Funciona mejor con modelos GPT-4o o GPT-4o Mini. El modelo decide qué guardar leyendo el contexto, no necesitas instrucciones específicas en el prompt.
+            </p>
+          </div>
+        </div>
+
         {{-- Botones --}}
         <div class="px-6 py-4 flex items-center justify-between gap-3 bg-gray-50 rounded-b-2xl">
           <div>

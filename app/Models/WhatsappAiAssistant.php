@@ -17,14 +17,18 @@ class WhatsappAiAssistant extends Model
         'max_tokens',
         'context_messages',
         'is_active',
+        'function_calling_enabled',
+        'capture_config',
     ];
 
     protected $casts = [
-        'is_active'        => 'boolean',
-        'api_key'          => 'encrypted',
-        'temperature'      => 'float',
-        'max_tokens'       => 'integer',
-        'context_messages' => 'integer',
+        'is_active'                => 'boolean',
+        'function_calling_enabled' => 'boolean',
+        'api_key'                  => 'encrypted',
+        'temperature'              => 'float',
+        'max_tokens'               => 'integer',
+        'context_messages'         => 'integer',
+        'capture_config'           => 'array',
     ];
 
     public function account()
