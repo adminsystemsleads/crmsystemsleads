@@ -145,7 +145,12 @@ class ProcessWhatsappAiReply implements ShouldQueue
             'last_message_preview' => mb_substr($reply, 0, 180),
         ]);
 
-        event(new \App\Events\WhatsappMessageReceived($message));
+        // Broadcast realtime (no fatal si Reverb no está disponible)
+        try {
+            event(new \App\Events\WhatsappMessageReceived($message));
+        } catch (\Throwable $broadcastErr) {
+            Log::warning('AI broadcast failed (non-fatal): ' . $broadcastErr->getMessage());
+        }
     }
 
     /**

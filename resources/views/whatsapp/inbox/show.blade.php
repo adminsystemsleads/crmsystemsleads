@@ -1268,8 +1268,14 @@ function setMobilePanel(panel) {
           'X-CSRF-TOKEN': csrfToken,
         },
       });
-      if (!res.ok) throw new Error(res.status);
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        if (status) status.textContent = originalText || 'Error al reiniciar';
+        alert('Error al reiniciar: ' + (data.message || ('HTTP ' + res.status)));
+        return;
+      }
+
       if (status) status.textContent = '✓ Hilo reiniciado — la IA empezará fresca en el próximo mensaje';
       if (status) status.className = 'text-[10px] text-green-600 mt-0.5 font-semibold';
       setTimeout(() => {

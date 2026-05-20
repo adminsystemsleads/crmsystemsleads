@@ -312,13 +312,28 @@ class WhatsappInboxController extends Controller
         $team = $this->currentTeam();
         abort_unless($conversation->team_id === $team->id, 404);
 
-        // Marca el inicio del nuevo contexto: solo mensajes >= ahora se incluirán
-        $conversation->update(['ai_context_from' => now()]);
+        // Verificar que la columna existe (la migración pudo no haberse ejecutado)
+        if (!\Illuminate\Support\Facades\Schema::hasColumn('whatsapp_conversations', 'ai_context_from')) {
+            return response()->json([
+                'ok'      => false,
+                'message' => 'Falta ejecutar la migración: php artisan migrate',
+            ], 422);
+        }
 
-        return response()->json([
-            'ok'              => true,
-            'ai_context_from' => $conversation->ai_context_from?->toIso8601String(),
-        ]);
+        try {
+            $conversation->update(['ai_context_from' => now()]);
+
+            return response()->json([
+                'ok'              => true,
+                'ai_context_from' => $conversation->ai_context_from?->toIso8601String(),
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('resetAi falló: ' . $e->getMessage());
+            return response()->json([
+                'ok'      => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function toggleAi(WhatsappConversation $conversation)
