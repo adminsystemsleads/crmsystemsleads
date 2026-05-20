@@ -153,9 +153,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
 
          // Rutas protegidas por licencia
     Route::middleware(['team.license'])->group(function () {
-        Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/mis-finanzas', [FinanzasController::class, 'index'])
      ->name('finanzas.index');
