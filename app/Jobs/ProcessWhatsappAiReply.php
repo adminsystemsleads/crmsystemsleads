@@ -17,8 +17,8 @@ class ProcessWhatsappAiReply implements ShouldQueue
 {
     use Queueable;
 
-    public int $tries = 2;
-    public int $timeout = 90;
+    public int $tries = 1;       // sin reintentos para no duplicar respuestas
+    public int $timeout = 120;
 
     public function __construct(
         public readonly int $conversationId,
@@ -41,7 +41,12 @@ class ProcessWhatsappAiReply implements ShouldQueue
         $account = $conversation->account;
         if (!$account) return;
 
-        // Build messages array from conversation history
+        if (empty($assistant->api_key)) {
+            Log::warning('AI assistant sin API key', ['assistant' => $assistant->id]);
+            return;
+        }
+
+        // Construir historial
         $history = WhatsappMessage::where('whatsapp_conversation_id', $this->conversationId)
             ->whereIn('type', ['text'])
             ->orderByDesc('id')
@@ -55,10 +60,9 @@ class ProcessWhatsappAiReply implements ShouldQueue
         $sp = $assistant->system_prompt ?? '';
 
         if ($assistant->function_calling_enabled) {
-            $sp .= "\n\nIMPORTANTE: Tienes herramientas para guardar datos del cliente en el CRM. Úsalas SIEMPRE que el cliente comparta información concreta (nombre, empresa, RUC/DNI, presupuesto, fecha tentativa, datos del proyecto, etc.). Llama a la función adecuada antes o después de responder al cliente.";
+            $sp .= "\n\nIMPORTANTE: Tienes herramientas/funciones disponibles. Llámalas SIEMPRE que detectes la situación descrita en cada una (cliente comparte datos, acepta reunión, etc.). Tras ejecutar las funciones, RESPONDE al cliente con un mensaje normal en español.";
         }
 
-        // Inyectar base de conocimiento si hay entradas activas
         $knowledgeBlock = $kb->buildPromptContext($assistant);
         if ($knowledgeBlock !== '') {
             $sp .= "\n\n" . $knowledgeBlock;
@@ -79,19 +83,36 @@ class ProcessWhatsappAiReply implements ShouldQueue
             return;
         }
 
+        // Decidir si usar function calling: solo si está activo Y hay funciones definidas
+        $tools = $assistant->function_calling_enabled
+            ? $fn->buildTools($assistant)
+            : [];
+
         try {
-            $reply = $assistant->function_calling_enabled
-                ? $this->chatWithFunctions($openAi, $fn, $assistant, $conversation, $openAiMessages)
-                : $openAi->chat($assistant->api_key, $assistant->model, $openAiMessages, $assistant->temperature, $assistant->max_tokens);
+            if (!empty($tools)) {
+                $reply = $this->chatWithFunctions($openAi, $fn, $assistant, $conversation, $openAiMessages, $tools);
+            } else {
+                $reply = $openAi->chat(
+                    $assistant->api_key,
+                    $assistant->model,
+                    $openAiMessages,
+                    $assistant->temperature,
+                    $assistant->max_tokens
+                );
+            }
         } catch (\Throwable $e) {
-            Log::error('WhatsApp AI reply failed: ' . $e->getMessage(), [
+            Log::error('AI reply failed: ' . $e->getMessage(), [
                 'conversation_id' => $this->conversationId,
                 'assistant_id'    => $this->assistantId,
+                'trace'           => substr($e->getTraceAsString(), 0, 1000),
             ]);
             return;
         }
 
-        if (!is_string($reply) || trim($reply) === '') return;
+        if (!is_string($reply) || trim($reply) === '') {
+            Log::info('AI no devolvió texto para enviar', ['conv' => $this->conversationId]);
+            return;
+        }
 
         try {
             $res = $wa->sendText($account, $conversation->contact_phone, $reply);
@@ -122,20 +143,20 @@ class ProcessWhatsappAiReply implements ShouldQueue
     }
 
     /**
-     * Chat con function calling: ejecuta tools en loop hasta que el modelo
-     * devuelva texto final para enviar al cliente.
+     * Bucle de function calling. Ejecuta tools y le pide al modelo
+     * que finalmente devuelva texto al cliente.
      */
     private function chatWithFunctions(
         OpenAiService $openAi,
         AiFunctionCallingService $fn,
         WhatsappAiAssistant $assistant,
         WhatsappConversation $conversation,
-        array $messages
+        array $messages,
+        array $tools
     ): ?string {
-        $tools = $fn->buildTools($assistant);
+        $maxIterations = 4;
 
-        // Loop limitado para evitar bucles infinitos
-        for ($iter = 0; $iter < 5; $iter++) {
+        for ($iter = 0; $iter < $maxIterations; $iter++) {
             $msg = $openAi->chatWithTools(
                 $assistant->api_key,
                 $assistant->model,
@@ -145,28 +166,65 @@ class ProcessWhatsappAiReply implements ShouldQueue
                 $assistant->max_tokens
             );
 
-            $messages[] = $msg; // agregar la respuesta del asistente
-
-            $toolCalls = $msg['tool_calls'] ?? null;
-            if (!is_array($toolCalls) || empty($toolCalls)) {
-                // No hay tools que ejecutar → respuesta final
-                $content = $msg['content'] ?? '';
-                return is_string($content) ? trim($content) : null;
+            // Sanitizar el mensaje del asistente antes de re-enviarlo a OpenAI:
+            // solo conservamos campos que la API acepta de vuelta.
+            $assistantMsg = ['role' => 'assistant'];
+            if (isset($msg['content']) && is_string($msg['content']) && trim($msg['content']) !== '') {
+                $assistantMsg['content'] = $msg['content'];
+            } else {
+                $assistantMsg['content'] = null;
+            }
+            if (!empty($msg['tool_calls']) && is_array($msg['tool_calls'])) {
+                $assistantMsg['tool_calls'] = array_map(function ($tc) {
+                    return [
+                        'id'       => $tc['id'] ?? null,
+                        'type'     => 'function',
+                        'function' => [
+                            'name'      => $tc['function']['name']      ?? '',
+                            'arguments' => $tc['function']['arguments'] ?? '{}',
+                        ],
+                    ];
+                }, $msg['tool_calls']);
             }
 
-            // Ejecutar cada tool y agregar resultado al contexto
+            $messages[] = $assistantMsg;
+
+            $toolCalls = $msg['tool_calls'] ?? null;
+
+            // Sin tool_calls → ya hay respuesta final
+            if (!is_array($toolCalls) || empty($toolCalls)) {
+                $content = $msg['content'] ?? '';
+                if (is_string($content) && trim($content) !== '') {
+                    return trim($content);
+                }
+                // El modelo no respondió texto ni tools → forzar un texto pidiendo expreso
+                Log::info('AI sin texto ni tool_calls, forzando respuesta final', ['iter' => $iter]);
+                break;
+            }
+
+            // Ejecutar cada tool y agregar resultado
             foreach ($toolCalls as $tc) {
-                $name      = $tc['function']['name']      ?? '';
-                $argsJson  = $tc['function']['arguments'] ?? '{}';
-                $args      = json_decode($argsJson, true) ?: [];
-                $callId    = $tc['id'] ?? null;
+                $name     = $tc['function']['name']      ?? '';
+                $argsJson = $tc['function']['arguments'] ?? '{}';
+                $args     = json_decode($argsJson, true) ?: [];
+                $callId   = $tc['id'] ?? null;
 
-                $exec = $fn->executeToolCall($name, $args, $conversation);
-                $result = $exec['result'] ?? ['ok' => false];
+                if (!$callId) {
+                    Log::warning('tool_call sin id', ['tc' => $tc]);
+                    continue;
+                }
 
-                Log::info("AI tool call ejecutado", ['name' => $name, 'args' => $args, 'result' => $result]);
+                try {
+                    $exec   = $fn->executeToolCall($name, $args, $conversation, $assistant->id);
+                    $result = $exec['result'] ?? ['ok' => false];
+                } catch (\Throwable $e) {
+                    Log::error("Tool '{$name}' lanzó excepción: " . $e->getMessage());
+                    $result = ['ok' => false, 'message' => 'Error interno'];
+                    $exec   = ['result' => $result];
+                }
 
-                // Si la función tiene response_template, pasarlo al modelo como sugerencia
+                Log::info('AI tool ejecutado', ['name' => $name, 'args' => $args, 'result' => $result]);
+
                 $payload = $result;
                 if (!empty($exec['response'])) {
                     $payload['suggested_response'] = $exec['response'];
@@ -180,7 +238,26 @@ class ProcessWhatsappAiReply implements ShouldQueue
             }
         }
 
-        Log::warning('AI function calling alcanzó iteraciones máximas', ['conv' => $conversation->id]);
-        return null;
+        // Si llegamos aquí sin texto final, hacer una última llamada SIN tools
+        // para forzar al modelo a generar una respuesta de texto.
+        Log::info('Forzando respuesta final SIN tools', ['conv' => $conversation->id]);
+
+        $messages[] = [
+            'role'    => 'system',
+            'content' => 'Responde ahora al cliente con un mensaje normal en español. No llames a más funciones.',
+        ];
+
+        try {
+            return $openAi->chat(
+                $assistant->api_key,
+                $assistant->model,
+                $messages,
+                $assistant->temperature,
+                $assistant->max_tokens
+            );
+        } catch (\Throwable $e) {
+            Log::error('AI final reply failed: ' . $e->getMessage());
+            return null;
+        }
     }
 }

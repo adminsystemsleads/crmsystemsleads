@@ -70,16 +70,27 @@ class AiFunctionCallingService
      *
      * @return array{result: array, response?: string|null}
      */
-    public function executeToolCall(string $name, array $args, WhatsappConversation $conversation): array
+    public function executeToolCall(string $name, array $args, WhatsappConversation $conversation, ?int $assistantId = null): array
     {
         try {
-            $fn = AiFunction::where('whatsapp_ai_assistant_id', $conversation->account?->aiAssistant?->id ?? 0)
+            // Resolver assistantId: parámetro explícito > lookup desde la conversación
+            if (!$assistantId) {
+                $assistantId = $conversation->account?->aiAssistant?->id;
+            }
+
+            if (!$assistantId) {
+                Log::warning("AI executeToolCall sin assistant_id", ['name' => $name]);
+                return ['result' => ['ok' => false, 'message' => 'Asistente no encontrado']];
+            }
+
+            $fn = AiFunction::where('whatsapp_ai_assistant_id', $assistantId)
                 ->where('name', $name)
                 ->where('is_active', true)
                 ->first();
 
             if (!$fn) {
-                return ['result' => ['ok' => false, 'message' => "Función desconocida: {$name}"]];
+                Log::warning("AI función no encontrada", ['name' => $name, 'assistant' => $assistantId]);
+                return ['result' => ['ok' => false, 'message' => "Función '{$name}' no encontrada o inactiva"]];
             }
 
             switch ($fn->mode) {
@@ -101,7 +112,9 @@ class AiFunctionCallingService
                 'response' => $fn->response_template ?: null,
             ];
         } catch (\Throwable $e) {
-            Log::error("AI function '{$name}' falló: " . $e->getMessage());
+            Log::error("AI function '{$name}' falló: " . $e->getMessage(), [
+                'trace' => substr($e->getTraceAsString(), 0, 500),
+            ]);
             return ['result' => ['ok' => false, 'message' => 'Error: ' . $e->getMessage()]];
         }
     }
