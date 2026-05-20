@@ -91,7 +91,7 @@
           </a>
         </div>
 
-        {{-- ========= FUNNELS por pipeline ========= --}}
+        {{-- ========= FUNNELS por pipeline (gráficos de barras) ========= --}}
         @if($metrics['funnels']->isNotEmpty())
           <div class="space-y-4">
             <div class="flex items-center justify-between">
@@ -115,37 +115,62 @@
                   @if($funnel['stages']->isEmpty())
                     <p class="text-sm text-gray-400 italic text-center py-3">Pipeline sin fases</p>
                   @else
-                    <div class="space-y-2">
-                      @foreach($funnel['stages'] as $stage)
-                        @php
-                          $pct = $funnel['max_count'] > 0
-                            ? round(($stage['count'] / $funnel['max_count']) * 100)
-                            : 0;
-                        @endphp
-                        <div>
-                          <div class="flex items-center justify-between text-xs mb-1">
-                            <div class="flex items-center gap-2 min-w-0">
-                              <span class="size-2 rounded-full shrink-0" style="background-color: {{ $stage['color'] }};"></span>
-                              <span class="font-medium text-gray-700 truncate">{{ $stage['name'] }}</span>
-                              @if($stage['is_won'])
-                                <span class="inline-flex rounded-full bg-green-100 text-green-700 px-1.5 py-0 text-[9px] font-semibold">GANADA</span>
-                              @elseif($stage['is_lost'])
-                                <span class="inline-flex rounded-full bg-red-100 text-red-700 px-1.5 py-0 text-[9px] font-semibold">PERDIDA</span>
-                              @endif
-                            </div>
-                            <div class="text-right shrink-0">
-                              <span class="font-bold text-gray-900">{{ $stage['count'] }}</span>
-                              @if($stage['total'] > 0)
-                                <span class="text-[10px] text-gray-400 ml-1">{{ number_format($stage['total'], 0) }}</span>
-                              @endif
+                    {{-- Gráfico de barras verticales --}}
+                    <div class="relative">
+                      {{-- Cuadrícula de fondo --}}
+                      <div class="absolute inset-x-0 bottom-8 h-44 flex flex-col justify-between pointer-events-none">
+                        <div class="border-t border-dashed border-gray-100"></div>
+                        <div class="border-t border-dashed border-gray-100"></div>
+                        <div class="border-t border-dashed border-gray-100"></div>
+                        <div class="border-t border-dashed border-gray-100"></div>
+                        <div class="border-t border-gray-200"></div>
+                      </div>
+
+                      {{-- Barras --}}
+                      <div class="relative flex items-end justify-around gap-1 h-44 px-1">
+                        @foreach($funnel['stages'] as $stage)
+                          @php
+                            $maxC = max($funnel['max_count'], 1);
+                            $pct  = $maxC > 0 ? ($stage['count'] / $maxC) * 100 : 0;
+                            // Altura mínima 4% para que se vea algo aunque sea 0; pero si es 0 real, dejar mas chico
+                            $hPct = $stage['count'] > 0 ? max($pct, 8) : 2;
+                          @endphp
+                          <div class="flex-1 flex flex-col items-center justify-end h-full group min-w-0">
+                            {{-- Número arriba de la barra --}}
+                            <span class="text-xs font-bold text-gray-700 mb-1
+                                         {{ $stage['count'] > 0 ? '' : 'text-gray-300' }}">
+                              {{ $stage['count'] }}
+                            </span>
+                            {{-- Barra --}}
+                            <div class="w-full rounded-t-lg transition-all duration-300 ease-out hover:opacity-80 cursor-default
+                                        relative overflow-hidden shadow-sm"
+                                 style="height: {{ $hPct }}%;
+                                        background: linear-gradient(180deg, {{ $stage['color'] }} 0%, {{ $stage['color'] }}CC 100%);
+                                        min-height: {{ $stage['count'] > 0 ? '8px' : '4px' }};"
+                                 title="{{ $stage['name'] }}: {{ $stage['count'] }} negociaciones{{ $stage['total'] > 0 ? ' — Monto: ' . number_format($stage['total'], 2) : '' }}">
+                              {{-- brillo top sutil --}}
+                              <span class="absolute inset-x-0 top-0 h-1/3 bg-white/15 pointer-events-none"></span>
                             </div>
                           </div>
-                          <div class="h-2 rounded-full overflow-hidden bg-gray-100">
-                            <div class="h-full rounded-full transition-all"
-                                 style="width: {{ max($pct, $stage['count'] > 0 ? 4 : 0) }}%; background-color: {{ $stage['color'] }};"></div>
+                        @endforeach
+                      </div>
+
+                      {{-- Eje X — etiquetas --}}
+                      <div class="flex items-start justify-around gap-1 mt-2 px-1">
+                        @foreach($funnel['stages'] as $stage)
+                          <div class="flex-1 flex flex-col items-center min-w-0 text-center">
+                            <span class="size-2 rounded-full mb-1 shrink-0" style="background-color: {{ $stage['color'] }};"></span>
+                            <span class="text-[10px] font-medium text-gray-600 truncate w-full leading-tight">
+                              {{ $stage['name'] }}
+                            </span>
+                            @if($stage['is_won'])
+                              <span class="text-[8px] font-bold text-green-600 mt-0.5">GANADA</span>
+                            @elseif($stage['is_lost'])
+                              <span class="text-[8px] font-bold text-red-600 mt-0.5">PERDIDA</span>
+                            @endif
                           </div>
-                        </div>
-                      @endforeach
+                        @endforeach
+                      </div>
                     </div>
                   @endif
                 </div>
