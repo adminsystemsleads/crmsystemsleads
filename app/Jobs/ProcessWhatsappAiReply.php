@@ -46,9 +46,15 @@ class ProcessWhatsappAiReply implements ShouldQueue
             return;
         }
 
-        // Construir historial
-        $history = WhatsappMessage::where('whatsapp_conversation_id', $this->conversationId)
-            ->whereIn('type', ['text'])
+        // Construir historial — respetando el reset de contexto si existe
+        $historyQuery = WhatsappMessage::where('whatsapp_conversation_id', $this->conversationId)
+            ->whereIn('type', ['text']);
+
+        if ($conversation->ai_context_from) {
+            $historyQuery->where('created_at', '>=', $conversation->ai_context_from);
+        }
+
+        $history = $historyQuery
             ->orderByDesc('id')
             ->limit($assistant->context_messages)
             ->get()

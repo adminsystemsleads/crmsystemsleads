@@ -299,10 +299,25 @@ class WhatsappInboxController extends Controller
                 'messages'         => route('whatsapp.inbox.messages', $conversation),
                 'create_deal'      => route('whatsapp.inbox.deal.create', $conversation),
                 'ai_toggle'        => route('whatsapp.inbox.ai.toggle', $conversation),
+                'ai_reset'         => route('whatsapp.inbox.ai.reset', $conversation),
                 'page'             => route('whatsapp.inbox.show', $conversation),
                 'templates'        => route('whatsapp.inbox.templates', $conversation),
                 'send_template'    => route('whatsapp.inbox.send-template', $conversation),
             ],
+        ]);
+    }
+
+    public function resetAi(WhatsappConversation $conversation)
+    {
+        $team = $this->currentTeam();
+        abort_unless($conversation->team_id === $team->id, 404);
+
+        // Marca el inicio del nuevo contexto: solo mensajes >= ahora se incluirán
+        $conversation->update(['ai_context_from' => now()]);
+
+        return response()->json([
+            'ok'              => true,
+            'ai_context_from' => $conversation->ai_context_from?->toIso8601String(),
         ]);
     }
 

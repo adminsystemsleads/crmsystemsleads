@@ -14,12 +14,14 @@ class WhatsappConversation extends Model
         'contact_phone',
         'status',
         'ai_active',
+        'ai_context_from',
         'last_message_at',
         'last_message_preview',
     ];
 
     protected $casts = [
         'last_message_at' => 'datetime',
+        'ai_context_from' => 'datetime',
         'ai_active'       => 'boolean',
     ];
 

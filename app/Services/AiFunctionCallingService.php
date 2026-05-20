@@ -126,21 +126,67 @@ class AiFunctionCallingService
         $contact = $this->resolveContact($conversation);
         $deal    = $this->resolveDeal($conversation);
 
-        $changed = [];
+        Log::info('AI runUpdateCrm', [
+            'function'   => $fn->name,
+            'properties' => $fn->properties,
+            'args'       => $args,
+            'contact_id' => $contact?->id,
+            'deal_id'    => $deal?->id,
+            'conv_id'    => $conversation->id,
+        ]);
+
+        if (!$contact && !$deal) {
+            return ['ok' => false, 'message' => 'No se encontró contacto ni negociación para actualizar.'];
+        }
+
+        $changed  = [];
+        $skipped  = [];
+
         foreach ((array) $fn->properties as $prop) {
             $key = $this->propertyKey($prop);
-            if (!$key || !array_key_exists($key, $args)) continue;
 
-            $value = $args[$key];
+            // Buscar valor con varias estrategias (por si OpenAI envía la clave distinta)
+            $value = null;
+            if ($key && array_key_exists($key, $args)) {
+                $value = $args[$key];
+            } elseif (array_key_exists($prop, $args)) {
+                $value = $args[$prop]; // formato literal "contact.name"
+            } else {
+                // Buscar por el último segmento (ej: para contact.name busca "name")
+                $segments = explode('.', $prop);
+                $last     = end($segments);
+                if ($last && array_key_exists($last, $args)) {
+                    $value = $args[$last];
+                }
+            }
+
+            if ($value === null) {
+                $skipped[] = "$prop (no en args)";
+                continue;
+            }
             if (is_string($value)) $value = trim($value);
-            if ($value === '' || $value === null) continue;
+            if ($value === '' || $value === null) {
+                $skipped[] = "$prop (valor vacío)";
+                continue;
+            }
 
             // Standard contact field
             if (str_starts_with($prop, 'contact.')) {
                 $field = substr($prop, 8);
-                if ($contact && in_array($field, $this->allowedContactFields(), true)) {
+                if (!$contact) {
+                    $skipped[] = "$prop (sin contacto)";
+                    continue;
+                }
+                if (!in_array($field, $this->allowedContactFields(), true)) {
+                    $skipped[] = "$prop (campo no permitido)";
+                    continue;
+                }
+                try {
                     $contact->update([$field => $value]);
-                    $changed[] = "contact.{$field}";
+                    $changed[] = "contact.{$field}={$value}";
+                } catch (\Throwable $e) {
+                    Log::error("Falló contact->update {$field}: " . $e->getMessage());
+                    $skipped[] = "$prop (error DB)";
                 }
                 continue;
             }
@@ -148,25 +194,36 @@ class AiFunctionCallingService
             // Standard deal field
             if (str_starts_with($prop, 'deal.')) {
                 $field = substr($prop, 5);
-                if ($deal && in_array($field, $this->allowedDealFields(), true)) {
-                    if ($field === 'amount') {
-                        $value = (float) $value;
-                    } elseif ($field === 'close_date') {
-                        try {
-                            $value = \Carbon\Carbon::parse($value)->toDateString();
-                        } catch (\Throwable $e) {
-                            $value = null;
-                        }
+                if (!$deal) {
+                    $skipped[] = "$prop (sin deal abierto)";
+                    continue;
+                }
+                if (!in_array($field, $this->allowedDealFields(), true)) {
+                    $skipped[] = "$prop (campo no permitido)";
+                    continue;
+                }
+                if ($field === 'amount') {
+                    $value = (float) $value;
+                } elseif ($field === 'close_date') {
+                    try {
+                        $value = \Carbon\Carbon::parse($value)->toDateString();
+                    } catch (\Throwable $e) {
+                        $value = null;
                     }
-                    if ($value !== null && $value !== '') {
+                }
+                if ($value !== null && $value !== '') {
+                    try {
                         $deal->update([$field => $value]);
-                        $changed[] = "deal.{$field}";
+                        $changed[] = "deal.{$field}={$value}";
+                    } catch (\Throwable $e) {
+                        Log::error("Falló deal->update {$field}: " . $e->getMessage());
+                        $skipped[] = "$prop (error DB)";
                     }
                 }
                 continue;
             }
 
-            // Custom field: "custom.contact.<id>" o "custom.deal.<id>"
+            // Custom field
             if (preg_match('/^custom\.(contact|deal)\.(\d+)$/', $prop, $m)) {
                 $entity = $m[1];
                 $cfId   = (int) $m[2];
@@ -175,24 +232,47 @@ class AiFunctionCallingService
                     ->where('entity_type', $entity)
                     ->where('is_active', true)
                     ->first();
-                if (!$cf) continue;
+                if (!$cf) {
+                    $skipped[] = "$prop (campo personalizado no encontrado)";
+                    continue;
+                }
 
                 $target = $entity === 'contact' ? $contact : $deal;
-                if (!$target) continue;
+                if (!$target) {
+                    $skipped[] = "$prop (sin " . $entity . ")";
+                    continue;
+                }
 
-                CustomFieldValue::updateOrCreate(
-                    [
-                        'custom_field_id' => $cf->id,
-                        'valuable_type'   => get_class($target),
-                        'valuable_id'     => $target->getKey(),
-                    ],
-                    ['value' => (string) $value]
-                );
-                $changed[] = "custom.{$entity}.{$cf->slug}";
+                try {
+                    CustomFieldValue::updateOrCreate(
+                        [
+                            'custom_field_id' => $cf->id,
+                            'valuable_type'   => get_class($target),
+                            'valuable_id'     => $target->getKey(),
+                        ],
+                        ['value' => (string) $value]
+                    );
+                    $changed[] = "custom.{$entity}.{$cf->slug}={$value}";
+                } catch (\Throwable $e) {
+                    Log::error("Falló customField update: " . $e->getMessage());
+                    $skipped[] = "$prop (error DB)";
+                }
             }
         }
 
-        return ['ok' => true, 'message' => 'CRM actualizado', 'fields' => $changed];
+        Log::info('AI runUpdateCrm resultado', [
+            'changed' => $changed,
+            'skipped' => $skipped,
+        ]);
+
+        return [
+            'ok'      => !empty($changed),
+            'message' => empty($changed)
+                ? 'No se pudo actualizar nada. Skipped: ' . implode(', ', $skipped)
+                : 'Actualizado: ' . implode(', ', $changed),
+            'changed' => $changed,
+            'skipped' => $skipped,
+        ];
     }
 
     private function runChangeStage(AiFunction $fn, WhatsappConversation $conversation): array
@@ -218,21 +298,40 @@ class AiFunctionCallingService
 
     private function resolveContact(WhatsappConversation $conversation): ?Contact
     {
-        $deal = $conversation->deals()->latest()->first();
+        // 1) Primero por deal abierto
+        $deal = $conversation->deals()
+            ->where('status', 'open')
+            ->orderByDesc('whatsapp_conversation_deals.created_at')
+            ->first();
         if ($deal && $deal->contact_id) {
-            return Contact::find($deal->contact_id);
+            $c = Contact::find($deal->contact_id);
+            if ($c) return $c;
         }
 
-        return Contact::firstOrCreate(
-            ['team_id' => $conversation->team_id, 'phone' => $conversation->contact_phone],
-            [
+        // 2) Por teléfono dentro del team
+        $phone = $conversation->contact_phone ?? $conversation->wa_id;
+        if ($phone) {
+            $c = Contact::where('team_id', $conversation->team_id)
+                ->where('phone', $phone)
+                ->first();
+            if ($c) return $c;
+        }
+
+        // 3) Crear uno si no existe
+        try {
+            return Contact::create([
+                'team_id'    => $conversation->team_id,
                 'owner_id'   => $conversation->account?->team?->owner_id ?? 1,
-                'name'       => $conversation->contact_name ?? $conversation->contact_phone ?? 'Contacto WA',
-                'first_name' => $conversation->contact_name ?? $conversation->contact_phone ?? 'Contacto WA',
+                'name'       => $conversation->contact_name ?? $phone ?? 'Contacto WA',
+                'first_name' => $conversation->contact_name ?? $phone ?? 'Contacto WA',
+                'phone'      => $phone,
                 'status'     => 'nuevo',
                 'source'     => 'whatsapp_ai',
-            ]
-        );
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('No se pudo crear contacto desde IA: ' . $e->getMessage());
+            return null;
+        }
     }
 
     private function resolveDeal(WhatsappConversation $conversation): ?\App\Models\Deal

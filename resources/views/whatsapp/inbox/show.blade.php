@@ -456,6 +456,30 @@
         </svg>
       </div>
     </div>
+
+    {{-- Botón reiniciar hilo IA --}}
+    <button type="button"
+            id="aiResetBtn"
+            data-reset-url="{{ route('whatsapp.inbox.ai.reset', $conversation) }}"
+            onclick="resetAiThread(this)"
+            class="w-full px-4 py-2.5 border-b border-gray-100 bg-white hover:bg-amber-50 text-left transition group">
+      <div class="flex items-center gap-2">
+        <svg class="size-4 shrink-0 text-amber-500 group-hover:text-amber-600 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-semibold text-gray-800">Reiniciar hilo IA</p>
+          <p id="aiResetStatus" class="text-[10px] text-gray-500 mt-0.5">
+            @if($conversation->ai_context_from)
+              Último reinicio: {{ $conversation->ai_context_from->diffForHumans() }}
+            @else
+              La IA está usando todo el historial de esta conversación
+            @endif
+          </p>
+        </div>
+      </div>
+    </button>
     @endif
 
     {{-- Negociación vinculada --}}
@@ -1096,7 +1120,25 @@ function setMobilePanel(panel) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
           </svg>
         </div>
-      </div>` : '';
+      </div>
+      <button type="button"
+              id="aiResetBtn"
+              data-reset-url="${escapeHtml(data.urls.ai_reset || '')}"
+              onclick="resetAiThread(this)"
+              class="w-full px-4 py-2.5 border-b border-gray-100 bg-white hover:bg-amber-50 text-left transition group">
+        <div class="flex items-center gap-2">
+          <svg class="size-4 shrink-0 text-amber-500 group-hover:text-amber-600 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-gray-800">Reiniciar hilo IA</p>
+            <p id="aiResetStatus" class="text-[10px] text-gray-500 mt-0.5">
+              La IA olvida el historial previo y empieza fresca.
+            </p>
+          </div>
+        </div>
+      </button>` : '';
 
     let dealHtml;
     if (data.current_deal) {
@@ -1207,6 +1249,41 @@ function setMobilePanel(panel) {
   }
 
   // ── TOGGLE IA POR CONVERSACIÓN ────────────────────────────────────────────
+  // ── REINICIAR HILO IA ─────────────────────────────────────────────────────
+  window.resetAiThread = async function(btn) {
+    const url = btn.dataset.resetUrl;
+    if (!url) return;
+    if (!confirm('¿Reiniciar el hilo de la IA para esta conversación? La IA olvidará los mensajes previos.')) return;
+
+    const status = btn.querySelector('#aiResetStatus');
+    const originalText = status?.textContent;
+    if (status) status.textContent = 'Reiniciando…';
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken,
+        },
+      });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      if (status) status.textContent = '✓ Hilo reiniciado — la IA empezará fresca en el próximo mensaje';
+      if (status) status.className = 'text-[10px] text-green-600 mt-0.5 font-semibold';
+      setTimeout(() => {
+        if (status) {
+          status.textContent = 'Último reinicio: hace unos segundos';
+          status.className = 'text-[10px] text-gray-500 mt-0.5';
+        }
+      }, 3000);
+    } catch (e) {
+      if (status) status.textContent = originalText || 'Error al reiniciar';
+      alert('Error al reiniciar el hilo IA: ' + e.message);
+    }
+  };
+
   window.toggleAiBot = async function(btn) {
     const currentlyActive = btn.dataset.active === '1';
     const newActive = !currentlyActive;
