@@ -48,6 +48,60 @@
     @livewireStyles
     <style>
       [x-cloak]{display:none !important}
+
+      /* =========================================================
+         Paleta navy + gold (override de indigo Tailwind por defecto).
+         Estas reglas vienen después de Tailwind, así que ganan en
+         especificidad de cascada sin necesidad de recompilar.
+         ========================================================= */
+      :root {
+        --brand-navy:        #1E2E48;
+        --brand-navy-dark:   #152139;
+        --brand-navy-light:  #E8ECF2;
+        --brand-gold:        #C9A961;
+        --brand-gold-dark:   #A08544;
+        --brand-gold-light:  #FBF7EC;
+      }
+
+      /* Backgrounds */
+      .bg-indigo-50   { background-color: var(--brand-navy-light) !important; }
+      .bg-indigo-100  { background-color: #D1D9E4 !important; }
+      .bg-indigo-500  { background-color: var(--brand-navy) !important; }
+      .bg-indigo-600  { background-color: var(--brand-navy) !important; }
+      .bg-indigo-700  { background-color: var(--brand-navy-dark) !important; }
+      .hover\:bg-indigo-50:hover   { background-color: var(--brand-navy-light) !important; }
+      .hover\:bg-indigo-100:hover  { background-color: #D1D9E4 !important; }
+      .hover\:bg-indigo-600:hover  { background-color: var(--brand-navy) !important; }
+      .hover\:bg-indigo-700:hover  { background-color: var(--brand-navy-dark) !important; }
+
+      /* Text */
+      .text-indigo-400 { color: #5A6E8F !important; }
+      .text-indigo-500 { color: var(--brand-navy) !important; }
+      .text-indigo-600 { color: var(--brand-navy) !important; }
+      .text-indigo-700 { color: var(--brand-navy-dark) !important; }
+      .text-indigo-900 { color: #0d1726 !important; }
+      .hover\:text-indigo-600:hover { color: var(--brand-navy) !important; }
+      .hover\:text-indigo-700:hover { color: var(--brand-navy-dark) !important; }
+
+      /* Borders */
+      .border-indigo-500 { border-color: var(--brand-navy) !important; }
+      .border-indigo-600 { border-color: var(--brand-navy) !important; }
+      .focus\:border-indigo-500:focus { border-color: var(--brand-navy) !important; }
+      .focus\:border-indigo-300:focus { border-color: #93A4BD !important; }
+
+      /* Rings */
+      .ring-indigo-100 { --tw-ring-color: rgba(30,46,72,.15) !important; }
+      .ring-indigo-500 { --tw-ring-color: var(--brand-navy) !important; }
+      .focus\:ring-indigo-500:focus { --tw-ring-color: var(--brand-navy) !important; }
+      .focus\:ring-indigo-200:focus { --tw-ring-color: rgba(30,46,72,.25) !important; }
+
+      /* Gradients (from-/to-/via-) */
+      .from-indigo-500 { --tw-gradient-from: var(--brand-navy) !important; }
+      .from-indigo-600 { --tw-gradient-from: var(--brand-navy) !important; }
+      .to-indigo-500   { --tw-gradient-to:   var(--brand-navy) !important; }
+      .to-indigo-600   { --tw-gradient-to:   var(--brand-navy) !important; }
+      .via-indigo-500  { --tw-gradient-via:  var(--brand-navy) !important; }
+
       /* Variables de tema oscuro para componentes que no usan Tailwind dinámico */
       .dark body { background-color: #0f172a; }
       .dark .bg-white { background-color: #1e293b !important; }

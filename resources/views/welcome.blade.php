@@ -15,10 +15,14 @@
 
   <style>
     :root {
-      --indigo: #4f46e5;
-      --indigo-dark: #3730a3;
-      --indigo-light: #eef2ff;
-      --violet: #7c3aed;
+      /* Paleta navy + gold (derivada del logo dorado sobre navy #1E2E48) */
+      --indigo: #1E2E48;            /* primario navy (alias por compatibilidad) */
+      --indigo-dark: #152139;       /* navy hover */
+      --indigo-light: #E8ECF2;      /* navy lavado */
+      --violet: #2a3f5f;            /* navy un poco más claro */
+      --gold: #C9A961;              /* dorado del logo */
+      --gold-dark: #A08544;         /* dorado hover */
+      --gold-light: #FBF7EC;        /* dorado lavado */
       --slate-50: #f8fafc;
       --slate-100: #f1f5f9;
       --slate-200: #e2e8f0;
@@ -39,21 +43,23 @@
     .grid-2     { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
     .grid-3     { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
 
-    /* Hero gradient */
+    /* Hero gradient navy con acento dorado sutil */
     .hero-bg {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 35%, #4f46e5 70%, #7c3aed 100%);
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(201,169,97,.18) 0%, transparent 55%),
+        linear-gradient(135deg, #0f172a 0%, #1E2E48 45%, #2a3f5f 100%);
     }
 
     /* Buttons */
     .btn-primary {
       display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
       padding: .7rem 1.6rem; border-radius: 9999px; border: none;
-      background: var(--indigo); color: #fff;
-      font-weight: 600; font-size: .9rem; cursor: pointer;
-      box-shadow: 0 8px 24px rgba(79,70,229,.35);
+      background: var(--gold); color: var(--slate-900);
+      font-weight: 700; font-size: .9rem; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(201,169,97,.4);
       transition: all .15s ease;
     }
-    .btn-primary:hover { background: var(--indigo-dark); transform: translateY(-1px); box-shadow: 0 12px 30px rgba(79,70,229,.4); }
+    .btn-primary:hover { background: var(--gold-dark); color: #fff; transform: translateY(-1px); box-shadow: 0 12px 30px rgba(201,169,97,.5); }
 
     .btn-ghost {
       display: inline-flex; align-items: center; justify-content: center;
@@ -83,6 +89,16 @@
     }
     .btn-nav-solid:hover { background: var(--indigo-dark); }
 
+    /* Variante dorada para CTA secundario en header */
+    .btn-nav-gold {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: .4rem 1.2rem; border-radius: 9999px; border: none;
+      background: var(--gold); color: var(--slate-900);
+      font-size: .8rem; font-weight: 700;
+      transition: all .15s ease;
+    }
+    .btn-nav-gold:hover { background: var(--gold-dark); color: #fff; }
+
     /* Cards */
     .card {
       background: #fff;
@@ -103,11 +119,11 @@
     .section-label {
       display: inline-flex; align-items: center; gap: .4rem;
       padding: .3rem .9rem; border-radius: 9999px;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(201,169,97,.12);
+      border: 1px solid rgba(201,169,97,.35);
       font-size: .7rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: .08em;
-      color: #c7d2fe; margin-bottom: 1rem;
+      color: var(--gold); margin-bottom: 1rem;
     }
     .section-title {
       font-size: clamp(1.6rem, 3vw, 2.2rem);

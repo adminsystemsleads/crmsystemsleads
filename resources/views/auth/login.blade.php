@@ -4,6 +4,15 @@
             <x-authentication-card-logo />
         </x-slot>
 
+        <div class="mb-6 text-center">
+            <h1 class="text-xl font-semibold" style="color: #1E2E48; letter-spacing: -.01em;">
+                {{ __('Bienvenido de vuelta') }}
+            </h1>
+            <p class="mt-1 text-sm text-gray-500">
+                {{ __('Ingresa tus credenciales para acceder a tu cuenta') }}
+            </p>
+        </div>
+
         <x-validation-errors class="mb-4" />
 
         @session('status')
