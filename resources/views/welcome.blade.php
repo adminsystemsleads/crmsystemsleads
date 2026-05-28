@@ -151,7 +151,7 @@
 
     {{-- Logo --}}
     <a href="{{ url('/') }}" style="display:flex; align-items:center; gap:.6rem;">
-      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:2.2rem; width:auto; display:block;">
+      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:2.64rem; width:auto; display:block;">
     </a>
 
     {{-- Nav links --}}
@@ -534,7 +534,7 @@
 <footer style="background:var(--slate-900); border-top:1px solid #1e293b; padding:1.5rem 0;">
   <div class="container" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.75rem;">
     <div style="display:flex; align-items:center; gap:.5rem;">
-      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:1.6rem; width:auto; display:block;">
+      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:1.92rem; width:auto; display:block;">
       <span style="font-size:.75rem; color:#64748b; margin-left:.4rem;">© {{ date('Y') }}</span>
     </div>
     <p style="font-size:.75rem; color:#64748b;">Desarrollado por Systems Leads</p>
