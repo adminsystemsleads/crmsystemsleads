@@ -97,7 +97,7 @@
       <a href="{{ route('dashboard') }}"
          class="flex items-center gap-3 min-w-0"
          title="{{ $teamName }}">
-        <img src="{{ asset('logo_1.png') }}" alt="{{ $teamName }}" class="size-[0.6rem] rounded-full ring-2 ring-indigo-100 shrink-0 object-cover bg-white">
+        <img src="{{ asset('logo_1.png') }}" alt="{{ $teamName }}" class="size-8 rounded-full ring-2 ring-indigo-100 shrink-0 object-cover bg-white">
         <span class="text-sm font-semibold tracking-wide truncate text-gray-900">{{ $teamName }}</span>
       </a>
       <button @click="open = false"
