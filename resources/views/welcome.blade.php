@@ -207,17 +207,17 @@
     <div style="display:flex; flex-direction:column; align-items:center; text-align:center; gap:1.5rem; max-width:700px; margin:0 auto;">
 
       <div class="section-label">
-        <svg width="12" height="12" fill="#c7d2fe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+        <svg width="12" height="12" fill="var(--gold)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
         CRM para equipos de ventas en Perú
       </div>
 
       <h1 style="font-size:clamp(2rem,5vw,3rem); font-weight:800; color:#fff; line-height:1.1; letter-spacing:-.02em;">
         Gestiona tus ventas,<br>
-        <span style="color:#a5b4fc;">contactos y WhatsApp</span><br>
+        <span style="color:var(--gold);">contactos y WhatsApp</span><br>
         desde un solo lugar
       </h1>
 
-      <p style="font-size:1rem; color:#c7d2fe; line-height:1.75; max-width:560px;">
+      <p style="font-size:1rem; color:rgba(255,255,255,.78); line-height:1.75; max-width:560px;">
         QipuCRM es el sistema de gestión comercial hecho para equipos de ventas peruanos.
         Pipeline Kanban, contactos, conversaciones de WhatsApp con IA, productos y
         facturación electrónica SUNAT integrados en una sola plataforma.
@@ -238,7 +238,7 @@
       {{-- Mini stats --}}
       <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center; margin-top:.5rem;">
         @foreach([['Pipeline Kanban','visual e intuitivo'],['WhatsApp + IA','respuestas automáticas'],['Facturación SUNAT','facturas y boletas']] as [$t,$s])
-          <div style="display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:#c7d2fe;">
+          <div style="display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:rgba(255,255,255,.78);">
             <svg width="14" height="14" fill="#6ee7b7" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <span><strong style="color:#fff;">{{ $t }}</strong> — {{ $s }}</span>
           </div>
@@ -257,7 +257,7 @@
             <span style="font-size:.7rem; background:var(--indigo-light); color:var(--indigo); padding:.2rem .6rem; border-radius:9999px; font-weight:600;">12 negociaciones activas</span>
           </div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem;">
-            @foreach([['Prospecto','3','#e0e7ff','#4338ca'],['Propuesta','4','#fef3c7','#d97706'],['Negociación','3','#dbeafe','#1d4ed8'],['Cerrado','2','#dcfce7','#15803d']] as [$col,$n,$bg,$tc])
+            @foreach([['Prospecto','3','#E8ECF2','#1E2E48'],['Propuesta','4','#fef3c7','#d97706'],['Negociación','3','#dbeafe','#1d4ed8'],['Cerrado','2','#dcfce7','#15803d']] as [$col,$n,$bg,$tc])
               <div style="background:{{ $bg }}20; border:1px solid {{ $bg }}; border-radius:.6rem; padding:.6rem;">
                 <p style="font-size:.65rem; font-weight:700; color:{{ $tc }}; margin-bottom:.4rem;">{{ $col }} ({{ $n }})</p>
                 @for($i=0;$i<min((int)$n,2);$i++)
@@ -288,7 +288,7 @@
       {{-- 1 --}}
       <div class="card">
         <div class="card-icon">
-          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
           </svg>
         </div>
@@ -306,7 +306,7 @@
       {{-- 2 --}}
       <div class="card">
         <div class="card-icon">
-          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </div>
@@ -324,7 +324,7 @@
       {{-- 3 --}}
       <div class="card">
         <div class="card-icon">
-          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
           </svg>
         </div>
@@ -342,7 +342,7 @@
       {{-- 4 --}}
       <div class="card">
         <div class="card-icon">
-          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
         </div>
@@ -360,7 +360,7 @@
       {{-- 5 --}}
       <div class="card">
         <div class="card-icon">
-          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
           </svg>
         </div>
@@ -378,7 +378,7 @@
       {{-- 6 --}}
       <div class="card">
         <div class="card-icon">
-          <svg width="20" height="20" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
           </svg>
         </div>
@@ -430,23 +430,23 @@
 </section>
 
 <!-- ===================== VENTAJAS ===================== -->
-<section style="background:linear-gradient(135deg,#1e1b4b,#312e81); color:#fff;">
+<section style="background:radial-gradient(ellipse at 80% 20%, rgba(201,169,97,.12) 0%, transparent 55%), linear-gradient(135deg,#0f172a 0%,#1E2E48 100%); color:#fff;">
   <div class="container">
     <div class="grid-2" style="align-items:center; gap:4rem;">
       <div>
-        <span class="badge" style="background:rgba(255,255,255,.12);color:#c7d2fe; margin-bottom:1rem; display:inline-block; padding:.3rem .9rem; border-radius:9999px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;">
+        <span class="badge" style="background:rgba(201,169,97,.14); border:1px solid rgba(201,169,97,.35); color:var(--gold); margin-bottom:1rem; display:inline-block; padding:.3rem .9rem; border-radius:9999px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;">
           ¿Por qué QipuCRM?
         </span>
         <h2 style="font-size:clamp(1.5rem,3vw,2rem); font-weight:800; line-height:1.2; margin-bottom:1rem;">
           Diseñado para la realidad<br>del negocio peruano
         </h2>
-        <p style="font-size:.9rem; color:#c7d2fe; line-height:1.75; margin-bottom:1.5rem;">
+        <p style="font-size:.9rem; color:rgba(255,255,255,.78); line-height:1.75; margin-bottom:1.5rem;">
           No es una herramienta genérica traducida. QipuCRM incluye facturación electrónica SUNAT,
           integración con WhatsApp Business y todo en soles y dólares.
         </p>
         <ul style="list-style:none; display:flex; flex-direction:column; gap:.8rem;">
           @foreach(['Multi-equipo con roles y permisos','Pipeline visual con etapas personalizadas','WhatsApp Business API integrada','Facturación SUNAT (facturas y boletas)','Asistente IA por conversación','Catálogo de productos reutilizable'] as $item)
-            <li style="display:flex; align-items:center; gap:.7rem; font-size:.85rem; color:#e0e7ff;">
+            <li style="display:flex; align-items:center; gap:.7rem; font-size:.85rem; color:rgba(255,255,255,.85);">
               <svg width="16" height="16" fill="#6ee7b7" viewBox="0 0 24 24" style="flex-shrink:0;">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
@@ -458,9 +458,9 @@
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
         @foreach([['Equipos','Multi-usuario con roles'],['Kanban','Pipelines ilimitados'],['WhatsApp','IA integrada'],['SUNAT','Facturación real']] as [$t,$s])
-          <div style="background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:1rem; padding:1.2rem;">
-            <p style="font-size:1.4rem; font-weight:800; color:#a5b4fc; margin-bottom:.25rem;">{{ $t }}</p>
-            <p style="font-size:.78rem; color:#c7d2fe;">{{ $s }}</p>
+          <div style="background:rgba(255,255,255,.06); border:1px solid rgba(201,169,97,.18); border-radius:1rem; padding:1.2rem;">
+            <p style="font-size:1.4rem; font-weight:800; color:var(--gold); margin-bottom:.25rem;">{{ $t }}</p>
+            <p style="font-size:.78rem; color:rgba(255,255,255,.7);">{{ $s }}</p>
           </div>
         @endforeach
       </div>
@@ -527,14 +527,14 @@
 <!-- ===================== CTA FINAL ===================== -->
 <section style="background:#fff; border-top:1px solid var(--slate-200);">
   <div class="container">
-    <div style="background:linear-gradient(135deg,#1e1b4b,#4f46e5); border-radius:1.5rem; padding:3rem 2.5rem;
+    <div style="background:radial-gradient(ellipse at 85% 10%, rgba(201,169,97,.18) 0%, transparent 55%), linear-gradient(135deg,#0f172a 0%,#1E2E48 60%,#2a3f5f 100%); border-radius:1.5rem; padding:3rem 2.5rem;
                 display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:2rem;
-                box-shadow:0 20px 50px rgba(79,70,229,.3);">
+                box-shadow:0 20px 50px rgba(30,46,72,.45);">
       <div style="max-width:500px;">
         <h2 style="font-size:clamp(1.4rem,3vw,1.9rem); font-weight:800; color:#fff; margin-bottom:.65rem; line-height:1.2;">
           Empieza a organizar tus ventas hoy mismo
         </h2>
-        <p style="font-size:.9rem; color:#c7d2fe; line-height:1.7;">
+        <p style="font-size:.9rem; color:rgba(255,255,255,.78); line-height:1.7;">
           QipuCRM está listo para tu equipo. Pipeline, contactos, WhatsApp con IA y
           facturación electrónica en un solo sistema.
         </p>
