@@ -53,15 +53,17 @@
   @else
     {{-- Compact variant: icon button (header / standalone) --}}
     <button type="button" @click="openLang = !openLang"
-            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50 transition"
+            class="inline-flex items-center rounded-lg border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50 transition"
+            style="gap: .55rem; padding: .5rem .85rem;"
             title="{{ $currentInfo['name'] ?? strtoupper($current) }}">
-      <svg class="size-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="9"/>
-        <path stroke-linecap="round" d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>
+      <svg style="width:18px; height:18px; min-width:18px; color:#64748b;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="9.5"/>
+        <ellipse cx="12" cy="12" rx="4.5" ry="9.5"/>
+        <path stroke-linecap="round" d="M2.5 12h19"/>
       </svg>
-      <span class="text-xs font-semibold uppercase">{{ $current }}</span>
-      <svg class="size-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      <span class="text-xs font-semibold uppercase tracking-wide">{{ $current }}</span>
+      <svg style="width:14px; height:14px; min-width:14px; color:#94a3b8;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/>
       </svg>
     </button>
 
