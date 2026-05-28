@@ -4,7 +4,7 @@
             <x-authentication-card-logo />
         </x-slot>
 
-        <div class="mb-6 text-center">
+        <div class="text-center" style="margin-top: .75rem; margin-bottom: 1.75rem;">
             <h1 class="text-xl font-semibold" style="color: #1E2E48; letter-spacing: -.01em;">
                 {{ __('Bienvenido de vuelta') }}
             </h1>
