@@ -1,4 +1,7 @@
 {
+    "Products": "Produtos",
+    "Invoices": "Faturas",
+    "Custom Fields": "Campos personalizados",
     "Dashboard": "Painel",
     "Profile": "Perfil",
     "Profile Information": "Informações do perfil",
@@ -184,7 +187,7 @@
     "Actividad": "Atividade",
     "Actividades": "Atividades",
     "Fase": "Fase",
-    "Pipeline": "Pipeline",
+    "Pipeline": "Funil",
     "Persona responsable": "Pessoa responsável",
     "Sin contacto": "Sem contato",
     "Sin responsable": "Sem responsável",

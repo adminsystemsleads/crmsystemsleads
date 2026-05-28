@@ -213,34 +213,37 @@
           {{-- Sub-links bajo CRM --}}
           @if ($link['key'] === 'crm')
             <a href="{{ route('products.index') }}"
-               class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
-                      {{ request()->routeIs('products.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-              <svg class="shrink-0 {{ request()->routeIs('products.*') ? 'text-indigo-400' : 'text-gray-400' }}"
-                   style="width:12px;height:12px;min-width:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               class="flex items-center gap-3 rounded-lg py-2 text-sm transition select-none
+                      {{ request()->routeIs('products.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}"
+               style="padding-left: 2.5rem; padding-right: .75rem;">
+              <svg class="shrink-0 {{ request()->routeIs('products.*') ? 'text-indigo-500' : 'text-gray-400' }}"
+                   style="width:20px;height:20px;min-width:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
               </svg>
-              <span class="truncate text-xs">Productos</span>
+              <span class="truncate">{{ __('Products') }}</span>
             </a>
             <a href="{{ route('invoices.index') }}"
-               class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
-                      {{ request()->routeIs('invoices.*') || request()->routeIs('invoice-config.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-              <svg class="shrink-0 {{ request()->routeIs('invoices.*') || request()->routeIs('invoice-config.*') ? 'text-indigo-400' : 'text-gray-400' }}"
-                   style="width:12px;height:12px;min-width:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               class="flex items-center gap-3 rounded-lg py-2 text-sm transition select-none
+                      {{ request()->routeIs('invoices.*') || request()->routeIs('invoice-config.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}"
+               style="padding-left: 2.5rem; padding-right: .75rem;">
+              <svg class="shrink-0 {{ request()->routeIs('invoices.*') || request()->routeIs('invoice-config.*') ? 'text-indigo-500' : 'text-gray-400' }}"
+                   style="width:20px;height:20px;min-width:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
               </svg>
-              <span class="truncate text-xs">Facturas</span>
+              <span class="truncate">{{ __('Invoices') }}</span>
             </a>
             <a href="{{ route('custom-fields.index') }}"
-               class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
-                      {{ request()->routeIs('custom-fields.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-              <svg class="shrink-0 {{ request()->routeIs('custom-fields.*') ? 'text-indigo-400' : 'text-gray-400' }}"
-                   style="width:12px;height:12px;min-width:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               class="flex items-center gap-3 rounded-lg py-2 text-sm transition select-none
+                      {{ request()->routeIs('custom-fields.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}"
+               style="padding-left: 2.5rem; padding-right: .75rem;">
+              <svg class="shrink-0 {{ request()->routeIs('custom-fields.*') ? 'text-indigo-500' : 'text-gray-400' }}"
+                   style="width:20px;height:20px;min-width:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M11 5h2m-1 0v14m-7-7h14"/>
               </svg>
-              <span class="truncate text-xs">Campos personalizados</span>
+              <span class="truncate">{{ __('Custom Fields') }}</span>
             </a>
           @endif
 
@@ -251,17 +254,22 @@
                 $kanbanActive = request()->routeIs('pipelines.kanban') && request()->route('pipeline')?->id === $navPipeline->id;
               @endphp
               <a href="{{ route('pipelines.kanban', $navPipeline) }}"
-                 class="flex items-center gap-2 rounded-lg pl-10 pr-3 py-1.5 transition select-none
-                        {{ $kanbanActive ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700' }}">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 class="flex items-center gap-3 rounded-lg py-2 text-sm transition select-none
+                        {{ $kanbanActive ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}"
+                 style="padding-left: 2.5rem; padding-right: .75rem;"
+                 title="{{ __('Pipeline') }}: {{ $navPipeline->name }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     class="shrink-0 {{ $kanbanActive ? 'text-indigo-400' : 'text-gray-400' }}"
-                     style="width:12px;height:12px;min-width:12px;">
+                     class="shrink-0 {{ $kanbanActive ? 'text-indigo-500' : 'text-gray-400' }}"
+                     style="width:20px;height:20px;min-width:20px;">
                   <rect x="3" y="3" width="5" height="14" rx="1"/>
                   <rect x="10" y="3" width="5" height="9" rx="1"/>
                   <rect x="17" y="3" width="5" height="11" rx="1"/>
                 </svg>
-                <span class="truncate text-xs">{{ $navPipeline->name }}</span>
+                <span class="truncate">
+                  <span class="text-[10px] font-semibold uppercase tracking-wider opacity-60 mr-1">{{ __('Pipeline') }}</span>
+                  {{ $navPipeline->name }}
+                </span>
               </a>
             @endforeach
           @endif
