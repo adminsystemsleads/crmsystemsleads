@@ -3,8 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QipuCRM — CRM inteligente para equipos de ventas</title>
+  <title>QipuCRM — Gestión comercial inteligente</title>
   <meta name="description" content="QipuCRM centraliza tus negociaciones, contactos, WhatsApp y facturación electrónica en un solo sistema. Hecho para equipos de ventas en Perú.">
+
+  {{-- Favicon --}}
+  <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+  <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.png') }}">
+  <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
 
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800" rel="stylesheet"/>
