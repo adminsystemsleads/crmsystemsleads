@@ -94,6 +94,17 @@ class ProcessWhatsappAiReply implements ShouldQueue
             ? $fn->buildTools($assistant)
             : [];
 
+        // Log de diagnóstico
+        Log::info('AI start', [
+            'conv'          => $conversation->id,
+            'assistant'     => $assistant->id,
+            'model'         => $assistant->model,
+            'fc_enabled'    => (bool) $assistant->function_calling_enabled,
+            'tools_count'   => count($tools),
+            'tool_names'    => array_map(fn($t) => $t['function']['name'] ?? '?', $tools),
+            'messages'      => count($openAiMessages),
+        ]);
+
         try {
             if (!empty($tools)) {
                 $reply = $this->chatWithFunctions($openAi, $fn, $assistant, $conversation, $openAiMessages, $tools);
@@ -176,6 +187,14 @@ class ProcessWhatsappAiReply implements ShouldQueue
                 $assistant->temperature,
                 $assistant->max_tokens
             );
+
+            Log::info('AI chatWithTools respuesta', [
+                'iter'           => $iter,
+                'has_content'    => !empty($msg['content']),
+                'content_preview'=> isset($msg['content']) ? mb_substr((string) $msg['content'], 0, 200) : null,
+                'tool_calls'     => !empty($msg['tool_calls']),
+                'tool_count'     => is_array($msg['tool_calls'] ?? null) ? count($msg['tool_calls']) : 0,
+            ]);
 
             // Sanitizar el mensaje del asistente antes de re-enviarlo a OpenAI:
             // solo conservamos campos que la API acepta de vuelta.
