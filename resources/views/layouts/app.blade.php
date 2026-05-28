@@ -22,6 +22,29 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Estado global del sidebar (compartido entre layout y navigation-menu vía Alpine.store) --}}
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.store('sidebar', {
+          open: true,
+          init() {
+            try {
+              const saved = localStorage.getItem('sidebar-open');
+              if (saved !== null) {
+                this.open = saved === 'true';
+              } else {
+                this.open = window.matchMedia('(min-width: 768px)').matches;
+              }
+            } catch (e) {}
+          },
+          toggle() {
+            this.open = !this.open;
+            try { localStorage.setItem('sidebar-open', this.open); } catch (e) {}
+          }
+        });
+      });
+    </script>
+
     @livewireStyles
     <style>
       [x-cloak]{display:none !important}
@@ -63,7 +86,9 @@
   <body class="font-sans antialiased dark:bg-slate-900 dark:text-slate-100">
     <x-banner />
 
-    <div class="min-h-screen bg-gray-100 dark:bg-slate-900 lg:ms-64">
+    <div x-data
+         class="min-h-screen bg-gray-100 dark:bg-slate-900"
+         :style="$store.sidebar.open ? 'margin-left: 16rem; transition: margin-left 200ms ease;' : 'margin-left: 0; transition: margin-left 200ms ease;'">
       @livewire('navigation-menu')
 
       @if (isset($header))

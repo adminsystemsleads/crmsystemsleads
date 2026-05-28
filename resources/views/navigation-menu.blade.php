@@ -71,23 +71,10 @@
   ];
 @endphp
 
-<div x-data="{ open: false }"
-     x-init="$watch('open', v => document.documentElement.classList.toggle('overflow-hidden', v))">
-
-  {{-- Overlay solo mobile --}}
-  <div x-show="open"
-       x-transition:enter="transition ease-out duration-200"
-       x-transition:enter-start="opacity-0"
-       x-transition:enter-end="opacity-100"
-       x-transition:leave="transition ease-in duration-150"
-       x-transition:leave-start="opacity-100"
-       x-transition:leave-end="opacity-0"
-       @click="open = false"
-       class="fixed inset-0 z-40 bg-black/45 lg:hidden"
-       style="display:none;"></div>
+<div x-data>
 
   {{-- Sidebar --}}
-  <aside :class="open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+  <aside :class="$store.sidebar.open ? 'translate-x-0' : '-translate-x-full'"
          class="fixed inset-y-0 left-0 z-50 w-64 flex flex-col
                 bg-white border-r border-gray-200 shadow-lg
                 transition-transform duration-200 ease-in-out">
@@ -100,11 +87,12 @@
         <img src="{{ asset('logo_1.png') }}" alt="{{ $teamName }}" class="rounded-full ring-2 ring-indigo-100 shrink-0 object-cover bg-white" style="width: 40px; height: 40px;">
         <span class="text-sm font-semibold tracking-wide truncate text-gray-900">{{ $teamName }}</span>
       </a>
-      <button @click="open = false"
-              class="lg:hidden p-1.5 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
-              aria-label="Cerrar menú">
+      <button @click="$store.sidebar.toggle()"
+              class="p-1.5 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
+              aria-label="Ocultar menú"
+              title="Ocultar menú">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
         </svg>
       </button>
     </div>
@@ -400,10 +388,13 @@
 
   </aside>
 
-  {{-- Botón hamburguesa (solo mobile, siempre visible) --}}
-  <button @click="open = true"
-          class="lg:hidden fixed top-4 left-4 z-30 p-2 bg-white text-gray-700 rounded-lg border border-gray-300 shadow-md hover:bg-gray-50 transition"
-          aria-label="Abrir menú">
+  {{-- Botón mostrar menú (visible cuando el sidebar está oculto) --}}
+  <button x-show="!$store.sidebar.open"
+          @click="$store.sidebar.toggle()"
+          class="fixed top-4 left-4 z-30 p-2 bg-white text-gray-700 rounded-lg border border-gray-300 shadow-md hover:bg-gray-50 transition"
+          aria-label="Mostrar menú"
+          title="Mostrar menú"
+          style="display: none;">
     <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
     </svg>
