@@ -151,14 +151,7 @@
 
     {{-- Logo --}}
     <a href="{{ url('/') }}" style="display:flex; align-items:center; gap:.6rem;">
-      <div style="width:2rem; height:2rem; border-radius:.6rem; background:linear-gradient(135deg,#4f46e5,#7c3aed); display:flex; align-items:center; justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 3.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-        </svg>
-      </div>
-      <span style="font-size:1.1rem; font-weight:800; color:var(--slate-900); letter-spacing:-.02em;">
-        Qipu<span style="color:var(--indigo);">CRM</span>
-      </span>
+      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:2.2rem; width:auto; display:block;">
     </a>
 
     {{-- Nav links --}}
@@ -541,14 +534,7 @@
 <footer style="background:var(--slate-900); border-top:1px solid #1e293b; padding:1.5rem 0;">
   <div class="container" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.75rem;">
     <div style="display:flex; align-items:center; gap:.5rem;">
-      <div style="width:1.4rem; height:1.4rem; border-radius:.35rem; background:var(--indigo); display:flex; align-items:center; justify-content:center;">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 3.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-        </svg>
-      </div>
-      <span style="font-size:.82rem; font-weight:700; color:#e2e8f0; letter-spacing:-.01em;">
-        Qipu<span style="color:#818cf8;">CRM</span>
-      </span>
+      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:1.6rem; width:auto; display:block;">
       <span style="font-size:.75rem; color:#64748b; margin-left:.4rem;">© {{ date('Y') }}</span>
     </div>
     <p style="font-size:.75rem; color:#64748b;">Desarrollado por Systems Leads</p>
