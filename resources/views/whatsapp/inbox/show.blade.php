@@ -288,13 +288,13 @@
 
       {{-- Banner: ventana de 24h vencida (solo se muestra cuando aplica) --}}
       <div id="windowExpiredBanner" class="{{ $waWindowExpired ? '' : 'hidden' }} mb-2 rounded-lg bg-amber-50 border border-amber-300 px-3 py-2.5">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center gap-4 flex-wrap">
           <svg class="size-5 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
           </svg>
 
-          <div class="flex-1 min-w-0 text-xs text-amber-800">
+          <div class="text-xs text-amber-800" style="max-width: 600px;">
             <p class="font-semibold">Ventana de 24h vencida</p>
             <p class="mt-0.5">El cliente no ha escrito en más de 24 horas. WhatsApp solo permite enviar
               <strong>plantillas aprobadas</strong> en este momento.</p>
