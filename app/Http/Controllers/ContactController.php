@@ -112,7 +112,9 @@ class ContactController extends Controller
 
         \App\Support\CustomFieldsHelper::sync($contact, $customFieldsPayload, $team->id, 'contact');
 
-        return back()->with('status', 'Contacto actualizado correctamente.');
+        // Permanece en la misma ficha de edición tras guardar (no cierra la vista)
+        return redirect()->route('contacts.edit', $contact)
+            ->with('status', 'Contacto actualizado correctamente.');
     }
 
     public function destroy(Contact $contact)
