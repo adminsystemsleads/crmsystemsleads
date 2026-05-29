@@ -2,7 +2,9 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\CrmRole;
 use App\Models\Team;
+use App\Models\TeamMemberProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -51,10 +53,27 @@ class CreateNewUser implements CreatesNewUsers
      */
     protected function createTeam(User $user): void
     {
-        $user->ownedTeams()->save(Team::forceCreate([
+        $team = Team::forceCreate([
             'user_id' => $user->id,
             'name' => explode(' ', $user->name, 2)[0]."'s Team",
             'personal_team' => true,
-        ]));
+        ]);
+
+        $user->ownedTeams()->save($team);
+
+        // Sembrar roles del sistema (Administrador + Editor) para el team nuevo
+        CrmRole::seedDefaultsForTeam($team);
+
+        // Asignar al owner el rol Administrador en su perfil
+        $adminRole = CrmRole::where('team_id', $team->id)
+            ->where('is_default', true)
+            ->first();
+
+        if ($adminRole) {
+            TeamMemberProfile::firstOrCreate(
+                ['team_id' => $team->id, 'user_id' => $user->id],
+                ['correo' => $user->email, 'crm_role_id' => $adminRole->id]
+            );
+        }
     }
 }

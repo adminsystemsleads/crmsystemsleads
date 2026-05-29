@@ -46,4 +46,29 @@ class CrmRole extends Model
         $this->permissions = CrmPermissions::allKeys();
         return $this;
     }
+
+    /**
+     * Crea los roles del sistema por defecto en un team (Administrador + Editor).
+     * Idempotente: si ya existen, no los duplica.
+     */
+    public static function seedDefaultsForTeam(Team $team): void
+    {
+        self::firstOrCreate(
+            ['team_id' => $team->id, 'name' => 'Administrador'],
+            [
+                'description' => 'Acceso total a todas las herramientas del CRM. Rol creado por el sistema.',
+                'is_default'  => true,
+                'permissions' => CrmPermissions::allKeys(),
+            ]
+        );
+
+        self::firstOrCreate(
+            ['team_id' => $team->id, 'name' => 'Editor'],
+            [
+                'description' => 'Puede ver, crear y editar. Sin permisos de eliminar ni de administración.',
+                'is_default'  => false,
+                'permissions' => CrmPermissions::editorDefaultKeys(),
+            ]
+        );
+    }
 }

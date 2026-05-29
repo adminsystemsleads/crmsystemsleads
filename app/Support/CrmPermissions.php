@@ -128,6 +128,60 @@ class CrmPermissions
     }
 
     /**
+     * Permisos por defecto del rol "Editor" — read, create, update.
+     * NO incluye: delete, configure, manage_accounts, manage_team, manage_crm_roles.
+     */
+    public static function editorDefaultKeys(): array
+    {
+        return [
+            // Embudos: ver, crear, editar (no eliminar, no configurar permisos)
+            'pipelines.view_all',
+            'pipelines.create',
+            'pipelines.edit',
+
+            // Negociaciones: ver, crear, editar, importar/exportar (no eliminar)
+            'deals.view_all',
+            'deals.view_own',
+            'deals.create',
+            'deals.edit',
+            'deals.export',
+            'deals.import',
+
+            // Contactos: ver, crear, editar, importar/exportar (no eliminar)
+            'contacts.view_all',
+            'contacts.view_own',
+            'contacts.create',
+            'contacts.edit',
+            'contacts.export',
+            'contacts.import',
+
+            // Productos: ver, crear, editar (no eliminar)
+            'products.view',
+            'products.create',
+            'products.edit',
+
+            // Facturas: ver, crear, editar, exportar (no eliminar ni configurar SUNAT)
+            'invoices.view',
+            'invoices.create',
+            'invoices.edit',
+            'invoices.export',
+
+            // WhatsApp: ver y enviar mensajes, usar IA (no eliminar ni gestionar cuentas)
+            'whatsapp.view_all',
+            'whatsapp.view_own',
+            'whatsapp.send',
+            'whatsapp.use_ai',
+
+            // Campos personalizados: solo ver (manage incluye eliminar)
+            'custom_fields.view',
+
+            // Reportes: ver y exportar
+            'reports.view',
+            'reports.export',
+        ];
+    }
+
+    /**
      * Etiqueta legible de un permiso por su key.
      */
     public static function label(string $key): ?string
