@@ -297,7 +297,8 @@ class DealController extends Controller
 
         \App\Support\CustomFieldsHelper::sync($deal, $data['custom_fields'] ?? null, $team->id, 'deal');
 
-        return redirect()->route('pipelines.kanban', $pipeline)
+        // Permanece en la misma ficha de edición tras guardar (no cierra la vista)
+        return redirect()->route('deals.edit', [$pipeline, $deal])
             ->with('status', 'Negociación actualizada.');
     }
 

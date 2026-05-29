@@ -8,16 +8,18 @@
     <div class="py-8">
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <a href="{{ route('pipelines.kanban', $pipeline) }}"
-               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition bg-white shadow-sm"
-               style="color: #1E2E48; border: 1.5px solid #1E2E48;"
-               onmouseover="this.style.backgroundColor='#E8ECF2'"
-               onmouseout="this.style.backgroundColor='#fff'">
-                <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Volver al Kanban
-            </a>
+            <div style="margin-bottom: 20px;">
+                <a href="{{ route('pipelines.kanban', $pipeline) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition bg-white shadow-sm"
+                   style="color: #1E2E48; border: 1.5px solid #1E2E48;"
+                   onmouseover="this.style.backgroundColor='#E8ECF2'"
+                   onmouseout="this.style.backgroundColor='#fff'">
+                    <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Volver al Kanban
+                </a>
+            </div>
 
             @if(session('status'))
                 <div class="mb-4 text-sm text-green-600">
