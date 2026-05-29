@@ -43,7 +43,7 @@
     <div class="mb-5 flex flex-wrap items-center gap-3">
       <form method="GET" action="{{ route('contacts.index') }}" class="flex flex-1 items-center gap-2 min-w-0">
         <div class="relative flex-1 min-w-0 max-w-sm">
-          <svg class="absolute top-1/2 -translate-y-1/2 size-4 text-gray-400" style="left: 12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="absolute size-4 text-gray-400" style="left: 12px; top: 50%; transform: translateY(-50%);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
           <input type="text" name="q" value="{{ $q }}"
