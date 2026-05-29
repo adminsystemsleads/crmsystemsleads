@@ -64,8 +64,8 @@
                 </div>
             @endif
 
-            {{-- Stats summary --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {{-- Stats summary (3 columnas siempre, inline grid para no depender del build de Tailwind) --}}
+            <div style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:.75rem;">
                 <div class="bg-white rounded-lg p-4 border border-gray-100">
                     <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Total de roles</p>
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ $roles->count() }}</p>
