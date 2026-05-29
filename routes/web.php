@@ -261,6 +261,12 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
         Route::get('/mi-team/perfiles', [TeamMemberProfileController::class, 'index'])
             ->name('team.perfiles.index');
 
+        // Editar perfil + rol de OTRO miembro del team (solo admin)
+        Route::get('/mi-team/perfiles/{member}/edit', [TeamMemberProfileController::class, 'editMember'])
+            ->name('team.perfiles.editMember');
+        Route::put('/mi-team/perfiles/{member}',      [TeamMemberProfileController::class, 'updateMember'])
+            ->name('team.perfiles.updateMember');
+
         // Configurador de Roles y Permisos del CRM
         Route::get   ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'index'])  ->name('team.crm-roles.index');
         Route::get   ('/mi-team/crm-roles/create',         [\App\Http\Controllers\CrmRoleController::class, 'create']) ->name('team.crm-roles.create');

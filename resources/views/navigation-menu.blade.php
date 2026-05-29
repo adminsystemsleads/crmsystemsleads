@@ -21,7 +21,7 @@
   $links = [
     [
       'key'    => 'perfil_unidad',
-      'name'   => __('Mi Perfil de Unidad'),
+      'name'   => __('Mi Perfil'),
       'route'  => 'perfil-unidad.edit',
       'active' => request()->routeIs('perfil-unidad.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1118.88 6.196 7 7 0 015.12 17.804zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',

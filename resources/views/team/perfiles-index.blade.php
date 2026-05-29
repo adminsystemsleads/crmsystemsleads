@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Perfiles de Miembros del Condominio') }}
+                Perfiles de Usuarios del CRM
             </h2>
 
             {{-- Botón Configuración (admin del team) --}}
@@ -39,46 +39,59 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="py-8">
-    <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-      <div class="bg-white shadow sm:rounded-lg">
-        <div class="p-4 border-b">
-          <p class="text-sm text-gray-600">Miembros del team actual y sus perfiles.</p>
-        </div>
+    <div class="py-8">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-        <div class="divide-y">
-          @forelse ($perfiles as $p)
-            <div class="p-4 flex items-center justify-between">
-              <div>
-                <div class="font-medium text-gray-800">{{ $p->user->name }}</div>
-                <div class="text-sm text-gray-500">
-                  Perfil: <strong>{{ $p->perfil ?? '—' }}</strong> ·
-                  Unidad: <strong>{{ $p->unidad ?? '—' }}</strong> ·
-                  Correo: <strong>{{ $p->correo ?? '—' }}</strong> ·
-                  Tel: <strong>{{ $p->telefono ?? '—' }}</strong>
+            @if (session('success'))
+                <div class="mb-4 px-4 py-2 bg-green-50 text-green-700 text-sm rounded-md border border-green-100">
+                    {{ session('success') }}
                 </div>
-                @if ($p->notas)
-                  <div class="text-xs text-gray-500 mt-1">Notas: {{ $p->notas }}</div>
-                @endif
-              </div>
-              <a href="{{ route('perfil-unidad.edit') }}"
-                 class="text-indigo-600 hover:text-indigo-700 text-sm">Ver/Editar</a>
-            </div>
-          @empty
-            <div class="p-6 text-gray-500">No hay perfiles aún.</div>
-          @endforelse
-        </div>
+            @endif
 
-        <div class="p-4">
-          {{ $perfiles->links() }}
-        </div>
-      </div>
-    </div>
-  </div>
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="p-4 border-b flex items-center justify-between">
+                    <p class="text-sm text-gray-600">
+                        Usuarios que pertenecen al sistema. Click en <strong>Ver/Editar</strong> para modificar su perfil y rol.
+                    </p>
+                    @if ($onlyOneUser)
+                        <span class="text-xs px-2.5 py-1 rounded-full"
+                              style="background-color:#FBF7EC; color:#A08544; border:1px solid rgba(201,169,97,.35);">
+                            Solo 1 usuario · Rol bloqueado
+                        </span>
+                    @endif
+                </div>
+
+                <div class="divide-y">
+                    @forelse ($rows as $row)
+                        <div class="p-4 flex items-center justify-between gap-4">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-medium text-gray-900">{{ $row->user->name }}</span>
+                                    @if ($row->is_owner)
+                                        <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">Owner</span>
+                                    @endif
+                                    <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full"
+                                          style="background-color:#E8ECF2; color:#1E2E48;">
+                                        {{ $row->role_name }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-1">
+                                    Correo: <strong>{{ $row->profile?->correo ?? $row->user->email ?? '—' }}</strong>
+                                    · Tel: <strong>{{ $row->profile?->telefono ?? '—' }}</strong>
+                                </div>
+                                @if ($row->profile?->notas)
+                                    <div class="text-xs text-gray-500 mt-1">Notas: {{ $row->profile->notas }}</div>
+                                @endif
+                            </div>
+                            <a href="{{ route('team.perfiles.editMember', $row->user) }}"
+                               class="text-sm font-medium whitespace-nowrap"
+                               style="color: #1E2E48;">Ver/Editar</a>
+                        </div>
+                    @empty
+                        <div class="p-6 text-gray-500 text-sm">No hay usuarios en este equipo.</div>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
-
-
