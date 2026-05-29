@@ -33,16 +33,23 @@ class TeamMemberProfileController extends Controller
         $user = Auth::user();
         $team = $user->currentTeam;
 
-        $perfil = TeamMemberProfile::firstOrCreate(
+        $perfil = TeamMemberProfile::with('crmRole')->firstOrCreate(
             ['team_id' => $team->id, 'user_id' => $user->id],
             [
-                // valores por defecto
                 'perfil' => null, 'unidad' => null, 'correo' => $user->email,
                 'telefono' => null, 'notas' => null
             ]
         );
 
-        return view('team.mi-perfil-unidad', compact('perfil'));
+        // Si el usuario no tiene rol asignado pero es owner/admin del team,
+        // mostramos "Administrador" como rol implícito (sin guardar todavía).
+        $isOwner = ((int) $team->user_id === (int) $user->id);
+        $isAdmin = $isOwner || $user->hasTeamRole($team, 'admin');
+
+        $rolDisplay = $perfil->crmRole?->name
+            ?: ($isAdmin ? 'Administrador (rol por defecto del sistema)' : 'Sin rol asignado');
+
+        return view('team.mi-perfil-unidad', compact('perfil', 'user', 'rolDisplay'));
     }
 
     // Guardar cambios del propio perfil
@@ -52,18 +59,25 @@ class TeamMemberProfileController extends Controller
         $team = $user->currentTeam;
 
         $data = $request->validate([
-            'perfil'   => 'nullable|in:propietario,residente',
-            'unidad'   => 'nullable|string|max:120',
+            'nombre'   => 'required|string|max:255',
             'correo'   => 'nullable|email|max:120',
             'telefono' => 'nullable|string|max:50',
             'notas'    => 'nullable|string|max:2000',
         ]);
 
+        // Nombre se persiste en la tabla users (no en el perfil)
+        $user->forceFill(['name' => $data['nombre']])->save();
+
         $perfil = TeamMemberProfile::firstOrCreate(
             ['team_id' => $team->id, 'user_id' => $user->id]
         );
 
-        $perfil->fill($data)->save();
+        // OJO: NO aceptamos crm_role_id ni perfil ni unidad desde esta vista
+        $perfil->fill([
+            'correo'   => $data['correo']   ?? null,
+            'telefono' => $data['telefono'] ?? null,
+            'notas'    => $data['notas']    ?? null,
+        ])->save();
 
         return back()->with('success', 'Perfil actualizado correctamente.');
     }

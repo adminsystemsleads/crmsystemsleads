@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TeamMemberProfile extends Model
 {
     protected $fillable = [
-        'team_id','user_id','perfil','unidad','correo','telefono','notas'
+        'team_id','user_id','crm_role_id','perfil','unidad','correo','telefono','notas'
     ];
 
     public function team()
@@ -19,6 +19,11 @@ class TeamMemberProfile extends Model
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class);
+    }
+
+    public function crmRole()
+    {
+        return $this->belongsTo(\App\Models\CrmRole::class);
     }
 
     // app/Models/User.php

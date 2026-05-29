@@ -133,17 +133,18 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     // Kanban de negociaciones por pipeline
     Route::get('/pipelines/{pipeline}/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban');
     
-    // Módulos activos por equipo
-    Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit');
-    Route::put('/teams/{team}/modules', [TeamModulesController::class, 'update'])->name('team.modules.update');
+    // Módulos activos por equipo (admin only)
+    Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit')->middleware('team.admin');
+    Route::put('/teams/{team}/modules', [TeamModulesController::class, 'update'])->name('team.modules.update')->middleware('team.admin');
 
-    // Formulario / estado de licencia
+    // Formulario / estado de licencia (visible para no-admin para que vean el mensaje
+    // "licencia inactiva, contacta a tu administrador" sin recibir 403 al ser redirigidos)
     Route::get('/teams/{team}/licencia', [TeamLicenseController::class, 'show'])
         ->name('team.license.form');
 
-    // Activar / renovar
+    // Activar / renovar (solo admin)
     Route::post('/teams/{team}/licencia/activar', [TeamLicenseController::class, 'activate'])
-        ->name('team.license.activate');
+        ->name('team.license.activate')->middleware('team.admin');
 
     // Suscripciones Culqi
     Route::get('/teams/{team}/pagar',                     [PaymentController::class, 'checkout'])->name('payments.checkout');
@@ -174,13 +175,16 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     })->name('importarReporte');
 
 
-    Route::get('/whatsapp/accounts', [WhatsappAccountController::class, 'index'])->name('whatsapp.accounts.index');
-    Route::get('/whatsapp/accounts/create', [WhatsappAccountController::class, 'create'])->name('whatsapp.accounts.create');
-    Route::post('/whatsapp/accounts', [WhatsappAccountController::class, 'store'])->name('whatsapp.accounts.store');
-    Route::get('/whatsapp/accounts/{account}/edit', [WhatsappAccountController::class, 'edit'])->name('whatsapp.accounts.edit');
-    Route::put('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'update'])->name('whatsapp.accounts.update');
-    Route::delete('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'destroy'])->name('whatsapp.accounts.destroy');
-    Route::post('/whatsapp/accounts/detect-waba',  [WhatsappAccountController::class, 'detectWabaId'])->name('whatsapp.accounts.detect-waba');
+    // WhatsApp Accounts (admin only — sección ADMINISTRACIÓN)
+    Route::middleware('team.admin')->group(function () {
+        Route::get('/whatsapp/accounts', [WhatsappAccountController::class, 'index'])->name('whatsapp.accounts.index');
+        Route::get('/whatsapp/accounts/create', [WhatsappAccountController::class, 'create'])->name('whatsapp.accounts.create');
+        Route::post('/whatsapp/accounts', [WhatsappAccountController::class, 'store'])->name('whatsapp.accounts.store');
+        Route::get('/whatsapp/accounts/{account}/edit', [WhatsappAccountController::class, 'edit'])->name('whatsapp.accounts.edit');
+        Route::put('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'update'])->name('whatsapp.accounts.update');
+        Route::delete('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'destroy'])->name('whatsapp.accounts.destroy');
+        Route::post('/whatsapp/accounts/detect-waba',  [WhatsappAccountController::class, 'detectWabaId'])->name('whatsapp.accounts.detect-waba');
+    });
 
     // AI Assistant per account
     Route::get('/whatsapp/accounts/{account}/ai', [\App\Http\Controllers\WhatsappAiAssistantController::class, 'edit'])->name('whatsapp.ai.edit');
@@ -234,9 +238,12 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
 
     Route::resource('contacts', ContactController::class)->only(['index','create','store','edit','update','destroy']);
 
-    Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
-    Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
-    Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
+    // Categorías de Pago (admin only — sección ADMINISTRACIÓN)
+    Route::middleware('team.admin')->group(function () {
+        Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
+        Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');
+        Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
+    });
 
     Route::get('/pipelines/{pipeline}/permissions', [\App\Http\Controllers\PipelinePermissionController::class, 'edit'])
         ->name('pipelines.permissions.edit');
@@ -248,27 +255,30 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/mi-perfil-unidad', [TeamMemberProfileController::class, 'edit'])->name('perfil-unidad.edit');
     Route::post('/mi-perfil-unidad', [TeamMemberProfileController::class, 'update'])->name('perfil-unidad.update');
 
-    // (Opcional) Listado para admin del team actual
-    Route::get('/mi-team/perfiles', [TeamMemberProfileController::class, 'index'])
-        ->name('team.perfiles.index');
+    // Perfiles, Roles CRM y Gastos — todo sección ADMINISTRACIÓN, solo admin
+    Route::middleware('team.admin')->group(function () {
+        // Listado de perfiles del team
+        Route::get('/mi-team/perfiles', [TeamMemberProfileController::class, 'index'])
+            ->name('team.perfiles.index');
 
-    // Configurador de Roles y Permisos del CRM (solo admin del team)
-    Route::get   ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'index'])  ->name('team.crm-roles.index');
-    Route::get   ('/mi-team/crm-roles/create',         [\App\Http\Controllers\CrmRoleController::class, 'create']) ->name('team.crm-roles.create');
-    Route::post  ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'store'])  ->name('team.crm-roles.store');
-    Route::get   ('/mi-team/crm-roles/{role}/edit',    [\App\Http\Controllers\CrmRoleController::class, 'edit'])   ->name('team.crm-roles.edit');
-    Route::put   ('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'update']) ->name('team.crm-roles.update');
-    Route::delete('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'destroy'])->name('team.crm-roles.destroy');
+        // Configurador de Roles y Permisos del CRM
+        Route::get   ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'index'])  ->name('team.crm-roles.index');
+        Route::get   ('/mi-team/crm-roles/create',         [\App\Http\Controllers\CrmRoleController::class, 'create']) ->name('team.crm-roles.create');
+        Route::post  ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'store'])  ->name('team.crm-roles.store');
+        Route::get   ('/mi-team/crm-roles/{role}/edit',    [\App\Http\Controllers\CrmRoleController::class, 'edit'])   ->name('team.crm-roles.edit');
+        Route::put   ('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'update']) ->name('team.crm-roles.update');
+        Route::delete('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'destroy'])->name('team.crm-roles.destroy');
 
-     Route::get('/gastos/importar', [GastoImportController::class, 'create'])
-        ->name('gastos.import.create');
+        // Importar Reporte
+        Route::get ('/gastos/importar', [GastoImportController::class, 'create'])->name('gastos.import.create');
+        Route::post('/gastos/importar', [GastoImportController::class, 'store'])->name('gastos.import.store');
 
-    Route::post('/gastos/importar', [GastoImportController::class, 'store'])
-        ->name('gastos.import.store');
-      Route::get('/gastos', [GastoController::class, 'index'])->name('gastos.index');
-    Route::get('/gastos/{gasto}/edit', [GastoController::class, 'edit'])->name('gastos.edit');
-    Route::put('/gastos/{gasto}', [GastoController::class, 'update'])->name('gastos.update');
-    Route::delete('/gastos/{gasto}', [GastoController::class, 'destroy'])->name('gastos.destroy');
+        // Lista Gastos
+        Route::get   ('/gastos',                 [GastoController::class, 'index'])  ->name('gastos.index');
+        Route::get   ('/gastos/{gasto}/edit',    [GastoController::class, 'edit'])   ->name('gastos.edit');
+        Route::put   ('/gastos/{gasto}',         [GastoController::class, 'update']) ->name('gastos.update');
+        Route::delete('/gastos/{gasto}',         [GastoController::class, 'destroy'])->name('gastos.destroy');
+    });
 
     Route::get('/transparencia-ia', [\App\Http\Controllers\TransparenciaIAController::class, 'index'])
         ->name('transparencia.ia.index');
