@@ -13,11 +13,13 @@ class CrmRole extends Model
         'description',
         'is_default',
         'permissions',
+        'allowed_pipeline_ids',
     ];
 
     protected $casts = [
-        'is_default'  => 'boolean',
-        'permissions' => 'array',
+        'is_default'           => 'boolean',
+        'permissions'          => 'array',
+        'allowed_pipeline_ids' => 'array',
     ];
 
     public function team()
@@ -28,6 +30,19 @@ class CrmRole extends Model
     public function hasPermission(string $key): bool
     {
         return in_array($key, (array) ($this->permissions ?? []), true);
+    }
+
+    /**
+     * Verifica si este rol puede ver un embudo específico.
+     * - Si tiene 'pipelines.view_all' → siempre true
+     * - Si no, mira si el id está en allowed_pipeline_ids
+     */
+    public function canViewPipeline(int $pipelineId): bool
+    {
+        if ($this->hasPermission('pipelines.view_all')) {
+            return true;
+        }
+        return in_array($pipelineId, (array) ($this->allowed_pipeline_ids ?? []), true);
     }
 
     /**

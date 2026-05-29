@@ -60,11 +60,16 @@
             </div>
         @endif
 
-        @php $current = old('permissions', $role->permissions ?? []); @endphp
+        @php
+            $current = old('permissions', $role->permissions ?? []);
+            $allowedIds = array_map('intval', (array) old('allowed_pipeline_ids', $role->allowed_pipeline_ids ?? []));
+            $viewAllInitial = in_array('pipelines.view_all', (array) $current, true) ? 'true' : 'false';
+        @endphp
 
         <div class="space-y-5">
             @foreach ($groups as $groupKey => $group)
-                <div class="border border-gray-100 rounded-lg overflow-hidden">
+                <div class="border border-gray-100 rounded-lg overflow-hidden"
+                     @if ($groupKey === 'pipelines') x-data="{ viewAll: {{ $viewAllInitial }} }" @endif>
                     <div class="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
                         <div class="flex items-center gap-2.5">
                             <svg style="width:18px;height:18px;color:#1E2E48;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -85,6 +90,9 @@
                                 <input type="checkbox" name="permissions[]" value="{{ $permKey }}"
                                        @checked(in_array($permKey, (array) $current, true) || $role->is_default)
                                        @disabled($role->is_default)
+                                       @if ($groupKey === 'pipelines' && $permKey === 'pipelines.view_all')
+                                           @change="viewAll = $event.target.checked"
+                                       @endif
                                        class="mt-0.5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                                 <div class="flex-1">
                                     <div class="text-gray-800">{{ $permLabel }}</div>
@@ -93,6 +101,49 @@
                             </label>
                         @endforeach
                     </div>
+
+                    {{-- Lista expandible de embudos: aparece cuando view_all está apagado --}}
+                    @if ($groupKey === 'pipelines' && ! $role->is_default)
+                        <div x-show="!viewAll"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="border-t border-gray-100 px-4 py-3"
+                             style="background-color:#FBF7EC; display: none;">
+                            <div class="flex items-start gap-2 mb-3">
+                                <svg style="width:16px;height:16px;color:#A08544;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p class="text-xs" style="color:#7a6132;">
+                                    <strong>Acceso restringido por embudo.</strong> Sin <em>Ver todos los embudos</em> activado,
+                                    este rol solo verá los embudos que marques aquí abajo. Si no marcas ninguno, no verá ningún embudo.
+                                </p>
+                            </div>
+
+                            @if (count($teamPipelines) === 0)
+                                <p class="text-xs text-gray-500 italic">
+                                    Este equipo aún no tiene embudos creados.
+                                    <a href="{{ route('pipelines.create') }}" class="underline" style="color:#1E2E48;">Crear el primero</a>.
+                                </p>
+                            @else
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    @foreach ($teamPipelines as $pl)
+                                        <label class="flex items-center gap-2 text-sm cursor-pointer rounded-md px-2 py-1.5 hover:bg-white/60">
+                                            <input type="checkbox"
+                                                   name="allowed_pipeline_ids[]"
+                                                   value="{{ $pl->id }}"
+                                                   @checked(in_array((int) $pl->id, $allowedIds, true))
+                                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                                            <span class="text-gray-800">{{ $pl->name }}</span>
+                                            @unless ($pl->is_active)
+                                                <span class="text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 ml-auto">Inactivo</span>
+                                            @endunless
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             @endforeach
         </div>
