@@ -1,31 +1,31 @@
 <x-guest-layout>
     @php
         // Lista de países (ISO 3166-1 alfa-2 → nombre en español + prefijo telefónico)
-        // El orden pone primero los más relevantes para el mercado objetivo
+        // Ordenados alfabéticamente por nombre
         $countries = [
-            ['iso' => 'PE', 'name' => 'Perú',              'prefix' => '+51'],
-            ['iso' => 'CO', 'name' => 'Colombia',          'prefix' => '+57'],
-            ['iso' => 'MX', 'name' => 'México',            'prefix' => '+52'],
-            ['iso' => 'ES', 'name' => 'España',            'prefix' => '+34'],
             ['iso' => 'AR', 'name' => 'Argentina',         'prefix' => '+54'],
-            ['iso' => 'CL', 'name' => 'Chile',             'prefix' => '+56'],
-            ['iso' => 'EC', 'name' => 'Ecuador',           'prefix' => '+593'],
             ['iso' => 'BO', 'name' => 'Bolivia',           'prefix' => '+591'],
-            ['iso' => 'VE', 'name' => 'Venezuela',         'prefix' => '+58'],
-            ['iso' => 'UY', 'name' => 'Uruguay',           'prefix' => '+598'],
-            ['iso' => 'PY', 'name' => 'Paraguay',          'prefix' => '+595'],
-            ['iso' => 'PA', 'name' => 'Panamá',            'prefix' => '+507'],
+            ['iso' => 'BR', 'name' => 'Brasil',            'prefix' => '+55'],
+            ['iso' => 'CA', 'name' => 'Canadá',            'prefix' => '+1'],
+            ['iso' => 'CL', 'name' => 'Chile',             'prefix' => '+56'],
+            ['iso' => 'CO', 'name' => 'Colombia',          'prefix' => '+57'],
             ['iso' => 'CR', 'name' => 'Costa Rica',        'prefix' => '+506'],
+            ['iso' => 'CU', 'name' => 'Cuba',              'prefix' => '+53'],
+            ['iso' => 'EC', 'name' => 'Ecuador',           'prefix' => '+593'],
+            ['iso' => 'SV', 'name' => 'El Salvador',       'prefix' => '+503'],
+            ['iso' => 'ES', 'name' => 'España',            'prefix' => '+34'],
+            ['iso' => 'US', 'name' => 'Estados Unidos',    'prefix' => '+1'],
             ['iso' => 'GT', 'name' => 'Guatemala',         'prefix' => '+502'],
             ['iso' => 'HN', 'name' => 'Honduras',          'prefix' => '+504'],
-            ['iso' => 'SV', 'name' => 'El Salvador',       'prefix' => '+503'],
+            ['iso' => 'MX', 'name' => 'México',            'prefix' => '+52'],
             ['iso' => 'NI', 'name' => 'Nicaragua',         'prefix' => '+505'],
-            ['iso' => 'CU', 'name' => 'Cuba',              'prefix' => '+53'],
-            ['iso' => 'DO', 'name' => 'Rep. Dominicana',   'prefix' => '+1'],
+            ['iso' => 'PA', 'name' => 'Panamá',            'prefix' => '+507'],
+            ['iso' => 'PY', 'name' => 'Paraguay',          'prefix' => '+595'],
+            ['iso' => 'PE', 'name' => 'Perú',              'prefix' => '+51'],
             ['iso' => 'PR', 'name' => 'Puerto Rico',       'prefix' => '+1'],
-            ['iso' => 'BR', 'name' => 'Brasil',            'prefix' => '+55'],
-            ['iso' => 'US', 'name' => 'Estados Unidos',    'prefix' => '+1'],
-            ['iso' => 'CA', 'name' => 'Canadá',            'prefix' => '+1'],
+            ['iso' => 'DO', 'name' => 'Rep. Dominicana',   'prefix' => '+1'],
+            ['iso' => 'UY', 'name' => 'Uruguay',           'prefix' => '+598'],
+            ['iso' => 'VE', 'name' => 'Venezuela',         'prefix' => '+58'],
         ];
         $defaultPrefix = old('country_code', '+51');
     @endphp
