@@ -144,11 +144,18 @@
                                     @endif
                                 </div>
 
-                                {{-- Contador de permisos (card vertical con número grande + label) --}}
-                                <div class="hidden sm:flex items-center justify-center flex-col rounded-lg flex-shrink-0"
-                                     style="width:64px; height:54px; background-color:#1E2E48; color:#fff;">
-                                    <span class="text-lg font-bold leading-none">{{ $role->permission_count }}</span>
-                                    <span class="text-[9px] uppercase tracking-wider opacity-80 mt-0.5">permisos</span>
+                                {{-- Contador de permisos --}}
+                                @php $totalPerms = count(\App\Support\CrmPermissions::allKeys()); @endphp
+                                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full flex-shrink-0"
+                                     style="background-color:#E8ECF2; border:1px solid rgba(30,46,72,.10);"
+                                     title="{{ $role->permission_count }} de {{ $totalPerms }} permisos del sistema">
+                                    <svg style="width:13px;height:13px;color:#1E2E48;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="text-sm font-semibold tabular-nums" style="color:#1E2E48;">
+                                        {{ $role->permission_count }}
+                                        <span class="text-xs font-normal opacity-60">/ {{ $totalPerms }}</span>
+                                    </span>
                                 </div>
 
                                 {{-- Acciones --}}
