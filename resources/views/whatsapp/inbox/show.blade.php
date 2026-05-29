@@ -67,15 +67,17 @@
 
       {{-- Buscador por nombre/teléfono --}}
       <div class="relative">
-        <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="absolute top-1/2 -translate-y-1/2 size-4 text-gray-400" style="left: 10px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
         <input type="text" id="sidebarSearchInput" value="{{ $search ?? '' }}"
                autocomplete="off"
                placeholder="Buscar por nombre o número…"
-               class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pl-8 pr-8 text-gray-700">
+               class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 text-gray-700"
+               style="padding-left: 32px; padding-right: 30px;">
         <button type="button" id="sidebarSearchClear"
-                class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-0.5">
+                class="hidden absolute top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 p-0.5"
+                style="right: 8px;">
           <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -84,7 +86,8 @@
 
       {{-- Cuenta WhatsApp --}}
       <select id="sidebarAccountFilter"
-              class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
+              class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 text-gray-700"
+              style="padding-left: 10px; padding-right: 28px;">
         <option value="">Todas las cuentas</option>
         @foreach($accounts as $a)
           <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
@@ -96,7 +99,8 @@
       {{-- Filtro por etiqueta --}}
       @if($allTags->isNotEmpty())
         <select id="sidebarTagFilter"
-                class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
+                class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 text-gray-700"
+                style="padding-left: 10px; padding-right: 28px;">
           <option value="">Todas las etiquetas</option>
           @foreach($allTags as $t)
             <option value="{{ $t->id }}" {{ (string)$tagId === (string)$t->id ? 'selected' : '' }}>🏷 {{ $t->name }}</option>
@@ -284,23 +288,26 @@
 
       {{-- Banner: ventana de 24h vencida (solo se muestra cuando aplica) --}}
       <div id="windowExpiredBanner" class="{{ $waWindowExpired ? '' : 'hidden' }} mb-2 rounded-lg bg-amber-50 border border-amber-300 px-3 py-2.5">
-        <div class="flex items-start gap-2">
-          <svg class="size-4 shrink-0 text-amber-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="flex items-center gap-3">
+          <svg class="size-5 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
           </svg>
-          <div class="flex-1 text-xs text-amber-800">
+
+          <div class="flex-1 min-w-0 text-xs text-amber-800">
             <p class="font-semibold">Ventana de 24h vencida</p>
             <p class="mt-0.5">El cliente no ha escrito en más de 24 horas. WhatsApp solo permite enviar
               <strong>plantillas aprobadas</strong> en este momento.</p>
-            <button type="button" onclick="openTemplatesModal()"
-                    class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 transition">
-              <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-              </svg>
-              Enviar plantilla
-            </button>
           </div>
+
+          <button type="button" onclick="openTemplatesModal()"
+                  class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 transition whitespace-nowrap"
+                  style="min-width: max-content;">
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Enviar plantilla
+          </button>
         </div>
       </div>
 

@@ -43,15 +43,17 @@
     <div class="mb-5 flex flex-wrap items-center gap-3">
       <form method="GET" action="{{ route('contacts.index') }}" class="flex flex-1 items-center gap-2 min-w-0">
         <div class="relative flex-1 min-w-0 max-w-sm">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="absolute top-1/2 -translate-y-1/2 size-4 text-gray-400" style="left: 12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
           <input type="text" name="q" value="{{ $q }}"
                  placeholder="Buscar por nombre, email, teléfono…"
-                 class="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:ring-indigo-400 focus:border-indigo-400">
+                 class="w-full py-2 text-sm border border-gray-200 rounded-lg bg-white focus:ring-indigo-400 focus:border-indigo-400"
+                 style="padding-left: 38px; padding-right: 12px;">
         </div>
         <select name="status" onchange="this.form.submit()"
-                class="text-sm border border-gray-200 rounded-lg py-2 px-3 bg-white text-gray-700">
+                class="text-sm border border-gray-200 rounded-lg py-2 bg-white text-gray-700"
+                style="padding-left: 12px; padding-right: 32px;">
           <option value="">Todos los estados</option>
           @foreach(['nuevo' => 'Nuevo', 'activo' => 'Activo', 'cliente' => 'Cliente', 'inactivo' => 'Inactivo', 'perdido' => 'Perdido'] as $val => $label)
             <option value="{{ $val }}" {{ $status === $val ? 'selected' : '' }}>{{ $label }}</option>

@@ -267,7 +267,7 @@
                                 </div>
 
                                 {{-- Botón + --}}
-                                <div class="px-4 pb-2">
+                                <div class="px-4 pb-2" style="padding-top: 14px;">
                                     <a href="{{ route('deals.create', [$pipeline, 'stage' => $stage->id]) }}"
                                        class="w-full text-xs py-1.5 rounded-full border border-dashed border-gray-300 text-gray-500 hover:bg-gray-50 flex items-center justify-center">
                                         + Nueva negociación
