@@ -252,6 +252,14 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::get('/mi-team/perfiles', [TeamMemberProfileController::class, 'index'])
         ->name('team.perfiles.index');
 
+    // Configurador de Roles y Permisos del CRM (solo admin del team)
+    Route::get   ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'index'])  ->name('team.crm-roles.index');
+    Route::get   ('/mi-team/crm-roles/create',         [\App\Http\Controllers\CrmRoleController::class, 'create']) ->name('team.crm-roles.create');
+    Route::post  ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'store'])  ->name('team.crm-roles.store');
+    Route::get   ('/mi-team/crm-roles/{role}/edit',    [\App\Http\Controllers\CrmRoleController::class, 'edit'])   ->name('team.crm-roles.edit');
+    Route::put   ('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'update']) ->name('team.crm-roles.update');
+    Route::delete('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'destroy'])->name('team.crm-roles.destroy');
+
      Route::get('/gastos/importar', [GastoImportController::class, 'create'])
         ->name('gastos.import.create');
 

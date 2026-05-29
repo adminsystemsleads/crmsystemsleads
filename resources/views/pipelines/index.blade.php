@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Pipelines
+            {{ __('Pipelines') }}
         </h2>
     </x-slot>
 
@@ -16,7 +16,7 @@
             <div class="flex justify-end mb-4">
                 <a href="{{ route('pipelines.create') }}"
                    class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                    + Nuevo pipeline
+                    + {{ __('New pipeline') }}
                 </a>
             </div>
 
