@@ -9,8 +9,14 @@
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <a href="{{ route('pipelines.kanban', $pipeline) }}"
-               class="text-sm text-gray-600 hover:text-gray-900">
-                ← Volver al Kanban
+               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition bg-white shadow-sm"
+               style="color: #1E2E48; border: 1.5px solid #1E2E48;"
+               onmouseover="this.style.backgroundColor='#E8ECF2'"
+               onmouseout="this.style.backgroundColor='#fff'">
+                <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Volver al Kanban
             </a>
 
             @if(session('status'))
@@ -43,9 +49,25 @@
 
                         {{-- Contacto (Select2) --}}
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700">
-                                Contacto
-                            </label>
+                            <div class="flex items-center justify-between mb-1" style="gap:8px;">
+                                <label class="text-sm font-medium text-gray-700">
+                                    Contacto
+                                </label>
+                                @if ($deal->contact_id)
+                                    <a href="{{ route('contacts.edit', $deal->contact_id) }}"
+                                       target="_blank" rel="noopener"
+                                       class="inline-flex items-center text-xs font-medium rounded transition"
+                                       style="color:#1E2E48; gap:4px; padding:3px 8px; border:1px solid #1E2E48; background:#fff;"
+                                       onmouseover="this.style.backgroundColor='#E8ECF2'"
+                                       onmouseout="this.style.backgroundColor='#fff'"
+                                       title="Abrir la ficha del contacto en una nueva pestaña">
+                                        <svg style="width:12px;height:12px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-2M15 3h6m0 0v6m0-6L10 14"/>
+                                        </svg>
+                                        Ver ficha
+                                    </a>
+                                @endif
+                            </div>
                             <select name="contact_id"
                                     id="contact_id_edit"
                                     class="select2-contact mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -201,8 +223,14 @@
 
                         <div class="flex justify-between items-center">
                             <a href="{{ route('pipelines.kanban', $pipeline) }}"
-                               class="text-sm text-gray-600 hover:text-gray-900">
-                                ← Volver al Kanban
+                               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition bg-white shadow-sm"
+                               style="color: #1E2E48; border: 1.5px solid #1E2E48;"
+                               onmouseover="this.style.backgroundColor='#E8ECF2'"
+                               onmouseout="this.style.backgroundColor='#fff'">
+                                <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                                Volver al Kanban
                             </a>
                             <button type="submit"
                                     class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
@@ -654,9 +682,12 @@
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-base font-bold text-gray-900">Comprobantes electrónicos</h3>
                 <a href="{{ route('invoices.create', [$pipeline, $deal]) }}"
-                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
-                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                   class="inline-flex items-center text-white text-xs font-medium rounded-lg transition whitespace-nowrap"
+                   style="background-color:#1E2E48; padding:8px 14px; gap:6px; line-height:1;"
+                   onmouseover="this.style.backgroundColor='#152139'"
+                   onmouseout="this.style.backgroundColor='#1E2E48'">
+                  <svg style="width:14px; height:14px; flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                   </svg>
                   Nueva factura / boleta
                 </a>
