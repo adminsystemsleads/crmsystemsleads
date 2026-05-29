@@ -21,8 +21,9 @@
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ route('team.perfiles.index') }}"
-                   class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition px-3 py-2 rounded-md hover:bg-gray-100">
-                    <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                   class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-md transition bg-white hover:bg-gray-50"
+                   style="color:#1E2E48; border:1.5px solid #1E2E48;">
+                    <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                     </svg>
                     Volver a Perfiles
@@ -143,16 +144,11 @@
                                     @endif
                                 </div>
 
-                                {{-- Contador de permisos --}}
-                                <div class="hidden sm:flex flex-col items-end flex-shrink-0">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
-                                          style="background-color:#E8ECF2; color:#1E2E48;">
-                                        <svg style="width:12px;height:12px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        {{ $role->permission_count }}
-                                    </span>
-                                    <span class="text-[10px] text-gray-400 mt-0.5">permisos</span>
+                                {{-- Contador de permisos (card vertical con número grande + label) --}}
+                                <div class="hidden sm:flex items-center justify-center flex-col rounded-lg flex-shrink-0"
+                                     style="width:64px; height:54px; background-color:#1E2E48; color:#fff;">
+                                    <span class="text-lg font-bold leading-none">{{ $role->permission_count }}</span>
+                                    <span class="text-[9px] uppercase tracking-wider opacity-80 mt-0.5">permisos</span>
                                 </div>
 
                                 {{-- Acciones --}}

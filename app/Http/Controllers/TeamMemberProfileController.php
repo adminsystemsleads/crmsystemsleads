@@ -173,11 +173,23 @@ class TeamMemberProfileController extends Controller
         $team = $user->currentTeam;
 
         $data = $request->validate([
-            'nombre'   => 'required|string|max:255',
-            'correo'   => 'nullable|email|max:120',
-            'telefono' => 'nullable|string|max:50',
-            'notas'    => 'nullable|string|max:2000',
+            'nombre'       => 'required|string|max:255',
+            'correo'       => 'nullable|email|max:120',
+            'telefono'     => 'nullable|string|max:50',
+            'notas'        => 'nullable|string|max:2000',
+            'photo'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'remove_photo' => 'nullable|in:0,1',
+        ], [
+            'photo.image' => 'El archivo debe ser una imagen válida (JPG, PNG, GIF o WEBP).',
+            'photo.max'   => 'La foto no puede pesar más de 2 MB.',
         ]);
+
+        // Foto de perfil (delegado a Jetstream/HasProfilePhoto)
+        if ($request->hasFile('photo')) {
+            $user->updateProfilePhoto($request->file('photo'));
+        } elseif (($data['remove_photo'] ?? '0') === '1') {
+            $user->deleteProfilePhoto();
+        }
 
         // Nombre se persiste en la tabla users (no en el perfil)
         $user->forceFill(['name' => $data['nombre']])->save();
