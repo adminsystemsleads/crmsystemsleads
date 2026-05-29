@@ -27,6 +27,15 @@
                      x-transition:enter-end="opacity-100 translate-y-0"
                      class="absolute right-0 mt-1 w-64 bg-white rounded-lg shadow-xl ring-1 ring-black/5 py-1 z-50"
                      style="display: none;">
+                    <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}"
+                       class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
+                        <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                        </svg>
+                        <span>Agregar usuario nuevo</span>
+                    </a>
+                    <div class="border-t border-gray-100 my-1"></div>
                     <a href="{{ route('team.crm-roles.index') }}"
                        class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
                         <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
