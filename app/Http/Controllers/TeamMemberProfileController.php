@@ -96,11 +96,16 @@ class TeamMemberProfileController extends Controller
         }
 
         $data = $request->validate([
-            'nombre'      => 'required|string|max:255',
-            'correo'      => 'nullable|email|max:120',
-            'telefono'    => 'nullable|string|max:50',
-            'notas'       => 'nullable|string|max:2000',
-            'crm_role_id' => 'nullable|exists:crm_roles,id',
+            'nombre'       => 'required|string|max:255',
+            'correo'       => 'nullable|email|max:120',
+            'telefono'     => 'nullable|string|max:50',
+            'notas'        => 'nullable|string|max:2000',
+            'crm_role_id'  => 'nullable|exists:crm_roles,id',
+            'photo'        => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'remove_photo' => 'nullable|in:0,1',
+        ], [
+            'photo.image' => 'El archivo debe ser una imagen válida (JPG, PNG, GIF o WEBP).',
+            'photo.max'   => 'La foto no puede pesar más de 2 MB.',
         ]);
 
         // Regla anti-bloqueo: si solo hay 1 usuario en el team, no permitir cambiar el rol
@@ -109,6 +114,13 @@ class TeamMemberProfileController extends Controller
 
         // Tampoco permitir que el admin se cambie su propio rol (a sí mismo)
         $isEditingSelf = ((int) $user->id === (int) $member->id);
+
+        // Foto de perfil del miembro (delegado a Jetstream/HasProfilePhoto)
+        if ($request->hasFile('photo')) {
+            $member->updateProfilePhoto($request->file('photo'));
+        } elseif (($data['remove_photo'] ?? '0') === '1') {
+            $member->deleteProfilePhoto();
+        }
 
         $member->forceFill(['name' => $data['nombre']])->save();
 

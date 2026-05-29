@@ -58,14 +58,14 @@
                                  style="width:112px; height:112px;"
                                  alt="{{ $user->name }}">
 
-                            {{-- Botón cámara superpuesto --}}
+                            {{-- Botón cámara superpuesto (dentro del círculo, esquina inferior derecha) --}}
                             <button type="button" @click="selectFile()"
-                                    class="absolute -bottom-1 -right-1 rounded-full p-2.5 shadow-lg transition"
-                                    style="background-color:#1E2E48;"
+                                    class="absolute rounded-full p-2 shadow-lg transition ring-2 ring-white"
+                                    style="background-color:#1E2E48; bottom:4px; right:4px;"
                                     onmouseover="this.style.backgroundColor='#152139'"
                                     onmouseout="this.style.backgroundColor='#1E2E48'"
                                     title="Cambiar foto">
-                                <svg style="width:16px;height:16px;color:#fff;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg style="width:14px;height:14px;color:#fff;display:block;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
@@ -80,7 +80,7 @@
                         <input type="hidden" name="remove_photo" :value="removePhoto ? '1' : '0'">
 
                         {{-- Acciones de foto --}}
-                        <div class="mt-3 flex items-center gap-3 text-xs">
+                        <div class="mt-5 flex items-center gap-3 text-xs">
                             <button type="button" @click="selectFile()"
                                     class="font-medium underline"
                                     style="color:#1E2E48;">
