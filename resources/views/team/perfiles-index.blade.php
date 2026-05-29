@@ -73,6 +73,12 @@
                 <div class="divide-y">
                     @forelse ($rows as $row)
                         <div class="p-4 flex items-center justify-between gap-4">
+                            {{-- Burbuja de foto de perfil --}}
+                            <img src="{{ $row->user->profile_photo_url }}"
+                                 alt="{{ $row->user->name }}"
+                                 class="rounded-full object-cover ring-2 ring-white shadow-sm flex-shrink-0"
+                                 style="width:48px; height:48px; background-color:#E8ECF2;">
+
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="font-medium text-gray-900">{{ $row->user->name }}</span>
