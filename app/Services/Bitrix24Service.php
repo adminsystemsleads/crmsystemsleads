@@ -33,13 +33,29 @@ class Bitrix24Service
         }
 
         try {
-            $contactId = $this->createContact($user);
-            $dealId    = $this->createDeal($user, $contactId);
+            // 1) Buscar contacto existente por teléfono o email (anti-duplicados)
+            $fullPhone = $this->fullPhone($user);
+            $existingId = $this->findExistingContact($fullPhone, $user->email);
 
-            Log::info('Bitrix24: contacto y negociación creados', [
-                'user_id'    => $user->id,
-                'contact_id' => $contactId,
-                'deal_id'    => $dealId,
+            if ($existingId !== null) {
+                $contactId = $existingId;
+                Log::info('Bitrix24: contacto existente reutilizado', [
+                    'user_id'    => $user->id,
+                    'contact_id' => $contactId,
+                    'matched_by' => 'phone_or_email',
+                ]);
+            } else {
+                $contactId = $this->createContact($user);
+            }
+
+            // 2) Crear la negociación vinculada (siempre se crea, aunque el contacto sea viejo)
+            $dealId = $this->createDeal($user, $contactId);
+
+            Log::info('Bitrix24: sincronización completada', [
+                'user_id'         => $user->id,
+                'contact_id'      => $contactId,
+                'contact_reused'  => $existingId !== null,
+                'deal_id'         => $dealId,
             ]);
 
             return ['contact_id' => $contactId, 'deal_id' => $dealId, 'error' => null];
@@ -54,8 +70,72 @@ class Bitrix24Service
     }
 
     /* ============================================================
-     *  CONTACTO
+     *  CONTACTO — búsqueda y creación
      * ============================================================ */
+
+    /**
+     * Busca un contacto existente por teléfono o email usando
+     * crm.duplicate.findbycomm. Retorna el ID del primero encontrado
+     * o null si no hay match.
+     *
+     * Prioridad: primero phone (más confiable), luego email.
+     * Si el API falla por algún motivo, devuelve null (fallback = crear nuevo).
+     */
+    protected function findExistingContact(?string $phone, ?string $email): ?int
+    {
+        // 1) Buscar por teléfono
+        if ($phone) {
+            $id = $this->findContactByComm('PHONE', $phone);
+            if ($id !== null) return $id;
+        }
+
+        // 2) Si no se encontró, buscar por email
+        if ($email) {
+            $id = $this->findContactByComm('EMAIL', $email);
+            if ($id !== null) return $id;
+        }
+
+        return null;
+    }
+
+    /**
+     * Llamada a crm.duplicate.findbycomm para un tipo (PHONE o EMAIL) y un valor.
+     * Devuelve el primer CONTACT ID encontrado o null.
+     */
+    protected function findContactByComm(string $type, string $value): ?int
+    {
+        try {
+            $response = Http::asJson()
+                ->timeout(15)
+                ->post($this->webhookUrl . 'crm.duplicate.findbycomm.json', [
+                    'type'        => $type,
+                    'values'      => [$value],
+                    'entity_type' => 'CONTACT',
+                ]);
+
+            if (! $response->successful()) {
+                Log::warning('Bitrix24: findbycomm devolvió HTTP no exitoso', [
+                    'type'   => $type,
+                    'value'  => $value,
+                    'status' => $response->status(),
+                ]);
+                return null;
+            }
+
+            $contacts = $response->json('result.CONTACT') ?? [];
+            if (empty($contacts)) return null;
+
+            // Bitrix24 puede devolver múltiples — tomamos el primero (más antiguo)
+            return (int) $contacts[0];
+        } catch (\Throwable $e) {
+            Log::warning('Bitrix24: error buscando duplicados, se creará contacto nuevo', [
+                'type'  => $type,
+                'value' => $value,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
 
     protected function createContact(User $user): int
     {
