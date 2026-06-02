@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Jobs\SendUserToBitrix24;
 use App\Models\CrmRole;
 use App\Models\Team;
 use App\Models\TeamMemberProfile;
@@ -35,7 +36,7 @@ class CreateNewUser implements CreatesNewUsers
             'phone.regex' => __('El teléfono solo puede contener números, espacios y guiones.'),
         ])->validate();
 
-        return DB::transaction(function () use ($input) {
+        $user = DB::transaction(function () use ($input) {
             return tap(User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
@@ -46,6 +47,21 @@ class CreateNewUser implements CreatesNewUsers
                 $this->createTeam($user);
             });
         });
+
+        // Sincronizar con Bitrix24 (async via cola). El job tiene retries y
+        // captura sus propios errores; si Bitrix está caído NO falla el registro.
+        try {
+            SendUserToBitrix24::dispatch($user);
+        } catch (\Throwable $e) {
+            // Fail-safe: si el dispatch mismo falla (ej. conexión a la cola),
+            // registramos pero seguimos. El registro del usuario YA fue exitoso.
+            \Illuminate\Support\Facades\Log::error('No se pudo despachar SendUserToBitrix24', [
+                'user_id' => $user->id,
+                'error'   => $e->getMessage(),
+            ]);
+        }
+
+        return $user;
     }
 
     /**
