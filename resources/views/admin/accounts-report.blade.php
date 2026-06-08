@@ -114,7 +114,7 @@
                       @csrf
                       <input type="hidden" name="team_id" value="{{ $team->id }}">
                       <input type="hidden" name="days" value="7">
-                      <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#4f46e5;">
+                      <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#2563eb;">
                         + Prórroga 7 días
                       </button>
                     </form>
