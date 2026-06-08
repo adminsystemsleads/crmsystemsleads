@@ -56,7 +56,7 @@ class PipelineController extends Controller
 
         $sortOrder = Pipeline::where('team_id', $team->id)->max('sort_order') + 1;
 
-        Pipeline::create([
+        $pipeline = Pipeline::create([
             'team_id'     => $team->id,
             'name'        => $data['name'],
             'description' => $data['description'] ?? null,
@@ -65,8 +65,30 @@ class PipelineController extends Controller
             'is_active'   => true,
         ]);
 
+        // Etapas por defecto para todo embudo nuevo
+        $defaultStages = [
+            ['name' => 'Nuevo',           'probability' => 10,  'color' => '#3b82f6', 'is_won' => false, 'is_lost' => false],
+            ['name' => 'En desarrollo',   'probability' => 40,  'color' => '#6366f1', 'is_won' => false, 'is_lost' => false],
+            ['name' => 'Seguimiento',     'probability' => 70,  'color' => '#f59e0b', 'is_won' => false, 'is_lost' => false],
+            ['name' => 'Cerrado Ganada',  'probability' => 100, 'color' => '#16a34a', 'is_won' => true,  'is_lost' => false],
+            ['name' => 'Cerrado Perdido', 'probability' => 0,   'color' => '#dc2626', 'is_won' => false, 'is_lost' => true],
+        ];
+
+        foreach ($defaultStages as $i => $s) {
+            PipelineStage::create([
+                'pipeline_id' => $pipeline->id,
+                'name'        => $s['name'],
+                'slug'        => \Str::slug($s['name']),
+                'sort_order'  => $i + 1,
+                'probability' => $s['probability'],
+                'color'       => $s['color'],
+                'is_won'      => $s['is_won'],
+                'is_lost'     => $s['is_lost'],
+            ]);
+        }
+
         return redirect()->route('pipelines.index')
-            ->with('status', 'Pipeline creado correctamente.');
+            ->with('status', 'Pipeline creado con sus etapas por defecto.');
     }
 
     // EDITAR PIPELINE (y sus fases)
