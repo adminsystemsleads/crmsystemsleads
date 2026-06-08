@@ -27,6 +27,11 @@ class TeamLicenseManager
         return "team_license_status:{$team->id}";
     }
 
+    /** Invalida el estado cacheado de la licencia del team. */
+    public function forget(Team $team): void {
+        Cache::forget($this->cacheKey($team));
+    }
+
     public function status(Team $team, bool $forceRefresh = false): array
     {
         return Cache::remember($this->cacheKey($team), $forceRefresh ? 0 : now()->addMinutes(5), function () use ($team) {

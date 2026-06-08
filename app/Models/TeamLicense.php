@@ -9,12 +9,13 @@ use Illuminate\Support\Carbon;
 class TeamLicense extends Model
 {
     protected $fillable = [
-        'team_id','license_key','grant_type',
+        'team_id','license_key','grant_type','first_started_at',
         'trial_starts_at','trial_ends_at',
         'active_from','active_until',
         'is_active','meta'
     ];
     protected $casts = [
+        'first_started_at'=>'datetime',
         'trial_starts_at'=>'datetime',
         'trial_ends_at'=>'datetime',
         'active_from'=>'datetime',

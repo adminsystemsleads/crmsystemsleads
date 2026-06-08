@@ -120,4 +120,70 @@ class LicenseCodeController extends Controller
 
         return back()->with('success', 'Código eliminado.');
     }
+
+    /**
+     * Reporte total de todas las cuentas (equipos) de la base.
+     */
+    public function accountsReport(Request $request)
+    {
+        $teams = Team::with(['owner', 'license'])
+            ->orderByDesc('id')
+            ->paginate(40);
+
+        return view('admin.accounts-report', ['teams' => $teams]);
+    }
+
+    /**
+     * Bloquea una cuenta manualmente (conserva fechas para poder restaurarla).
+     */
+    public function blockAccount(Request $request, Team $team, TeamLicenseManager $svc)
+    {
+        $data = $request->validate([
+            'note' => ['required', 'string', 'max:500'],
+        ], [], ['note' => 'nota']);
+
+        $lic = TeamLicense::firstOrCreate(['team_id' => $team->id], ['is_active' => true]);
+        $lic->is_active = false;
+        $lic->meta = $this->pushNote($lic->meta, 'bloqueo', $data['note']);
+        $lic->save();
+
+        $svc->forget($team);
+
+        return back()->with('success', "Cuenta #{$team->id} bloqueada.");
+    }
+
+    /**
+     * Habilita (desbloquea) una cuenta: restaura su licencia conservando las
+     * fechas de vencimiento que tenía (licencia, prueba o prórroga vigente).
+     */
+    public function enableAccount(Request $request, Team $team, TeamLicenseManager $svc)
+    {
+        $data = $request->validate([
+            'note' => ['required', 'string', 'max:500'],
+        ], [], ['note' => 'nota']);
+
+        $lic = TeamLicense::firstOrCreate(['team_id' => $team->id], ['is_active' => true]);
+        $lic->is_active = true;
+        $lic->meta = $this->pushNote($lic->meta, 'habilitacion', $data['note']);
+        $lic->save();
+
+        $svc->forget($team);
+
+        return back()->with('success', "Cuenta #{$team->id} habilitada.");
+    }
+
+    /** Agrega una nota al historial guardado en meta. */
+    private function pushNote(?array $meta, string $action, string $note): array
+    {
+        $meta ??= [];
+        $meta['notes'][] = [
+            'action' => $action,
+            'note'   => $note,
+            'at'     => now()->toDateTimeString(),
+            'by'     => Auth::user()?->email,
+        ];
+        $meta['last_note'] = $note;
+
+        return $meta;
+    }
 }

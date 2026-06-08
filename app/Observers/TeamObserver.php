@@ -27,10 +27,11 @@ class TeamObserver
         TeamLicense::firstOrCreate(
             ['team_id' => $team->id],
             [
-                'trial_starts_at' => now(),
-                'trial_ends_at'   => $ends,
-                'grant_type'      => 'trial',
-                'is_active'       => true,
+                'first_started_at' => now(),
+                'trial_starts_at'  => now(),
+                'trial_ends_at'    => $ends,
+                'grant_type'       => 'trial',
+                'is_active'        => true,
             ]
         );
     }

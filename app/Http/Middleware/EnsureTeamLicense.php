@@ -6,7 +6,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Services\TeamLicenseManager;
 
 class EnsureTeamLicense
 {
@@ -44,20 +44,26 @@ class EnsureTeamLicense
         // 2) Revisa la licencia del team
         $license = $team->license; // relación Team::license()
 
-        // Helper para redirigir **siempre con el parámetro {team}**
-        $goToLicense = function (string $msg) use ($team) {
-            return redirect()->route('team.license.form', ['team' => $team->id])
-                ->withErrors($msg);
-        };
-
+        // Bloqueo manual (is_active=false) o sin licencia -> vista bloqueada.
+        // Tiene prioridad: un bloqueo manual NO debe disparar prórroga automática.
         if (!$license || !$license->is_active) {
-            return $goToLicense('Licencia inactiva.');
+            return response()->view('licencia.bloqueada', ['team' => $team], 403);
         }
 
-        // Vigente si está dentro del periodo de prueba (semanas) o de la licencia (meses).
-        // is_expired = no está en trial NI tiene licencia pagada vigente.
+        // Si venció una LICENCIA pagada (meses), se otorga automáticamente un periodo
+        // de prórroga de 7 días (una sola vez) para que el cliente exporte su data.
+        // Una prueba vencida NO genera prórroga.
         if ($license->is_expired) {
-            return $goToLicense('Tu licencia ha expirado.');
+            $wasPaidLicense = $license->grant_type === 'license'
+                || ($license->grant_type === null && $license->active_until !== null);
+
+            if ($wasPaidLicense) {
+                app(TeamLicenseManager::class)->grantProrroga($team, 7);
+                return $next($request);
+            }
+
+            // Prueba o prórroga vencida -> cuenta bloqueada.
+            return response()->view('licencia.bloqueada', ['team' => $team], 403);
         }
 
         return $next($request);

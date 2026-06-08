@@ -1,8 +1,18 @@
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      Generar Códigos de Licencia
-    </h2>
+    <div class="flex items-center justify-between">
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        Generar Códigos de Licencia
+      </h2>
+      <a href="{{ route('admin.accounts.index') }}"
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition"
+         style="background-color:#4f46e5;">
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m4 6V7m4 10v-4M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        Reporte de cuentas
+      </a>
+    </div>
   </x-slot>
 
   <div class="max-w-5xl mx-auto py-8 px-4 space-y-8">
@@ -241,7 +251,7 @@
                 @php $ptz = $lic->team?->effectiveTimezone() ?? \App\Models\Team::DEFAULT_TIMEZONE; @endphp
                 <tr class="hover:bg-gray-50">
                   <td class="px-6 py-2 font-mono text-gray-700">{{ $lic->team_id }}</td>
-                  <td class="px-6 py-2 text-gray-800">{{ $lic->team?->name ?? '—' }}</td>
+                  <td class="px-6 py-2 text-gray-800">{{ ($lic->team?->name ?? 'Sin nombre') . ' - ' . $lic->team_id }}</td>
                   <td class="px-6 py-2 text-gray-700">
                     {{ $lic->trial_ends_at?->copy()->setTimezone($ptz)->format('Y-m-d H:i') ?? '—' }}
                   </td>
@@ -273,7 +283,7 @@
                 @php $ptz = $lic->team?->effectiveTimezone() ?? \App\Models\Team::DEFAULT_TIMEZONE; @endphp
                 <tr class="hover:bg-gray-50">
                   <td class="px-6 py-2 font-mono text-gray-700">{{ $lic->team_id }}</td>
-                  <td class="px-6 py-2 text-gray-800">{{ $lic->team?->name ?? '—' }}</td>
+                  <td class="px-6 py-2 text-gray-800">{{ ($lic->team?->name ?? 'Sin nombre') . ' - ' . $lic->team_id }}</td>
                   <td class="px-6 py-2 text-gray-700">
                     {{ $lic->trial_ends_at?->copy()->setTimezone($ptz)->format('Y-m-d H:i') ?? '—' }}
                   </td>
