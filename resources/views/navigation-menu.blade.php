@@ -128,7 +128,8 @@
       @if ($isAdmin)
         <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Administración</p>
 
-        @if ($team->moduleEnabled('gastos_import'))
+        {{-- Ocultas temporalmente: funcionalidad no ofrecida por ahora (Importar Reporte). Cambia `false` por la condición para reactivar. --}}
+        @if (false && $team->moduleEnabled('gastos_import'))
           <a href="{{ route('gastos.import.create') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('gastos.import.create') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -140,7 +141,8 @@
           </a>
         @endif
 
-        @if ($team->moduleEnabled('gastos'))
+        {{-- Ocultas temporalmente: funcionalidad no ofrecida por ahora (Lista Gastos). Cambia `false` por la condición para reactivar. --}}
+        @if (false && $team->moduleEnabled('gastos'))
           <a href="{{ route('gastos.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('gastos.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -168,7 +170,8 @@
           </a>
         @endif
 
-        @if ($team->moduleEnabled('categorias'))
+        {{-- Ocultas temporalmente: funcionalidad no ofrecida por ahora (Categorías de Pago). Cambia `false` por la condición para reactivar. --}}
+        @if (false && $team->moduleEnabled('categorias'))
           <a href="{{ route('categorias.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('categorias.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
