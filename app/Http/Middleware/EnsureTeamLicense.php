@@ -51,9 +51,17 @@ class EnsureTeamLicense
         // 2) Revisa la licencia del team
         $license = $team->license; // relación Team::license()
 
-        // Bloqueo manual (is_active=false) o sin licencia -> vista bloqueada.
+        // Autorrecuperación: si la cuenta quedó SIN licencia (p. ej. porque la
+        // prueba inicial no se creó al crearla), se le genera su prueba ahora y
+        // se le deja pasar. Así ninguna cuenta queda atrapada en "sin licencia".
+        if (!$license) {
+            app(TeamLicenseManager::class)->ensureTrial($team);
+            return $next($request);
+        }
+
+        // Bloqueo manual (is_active=false) -> vista bloqueada.
         // Tiene prioridad: un bloqueo manual NO debe disparar prórroga automática.
-        if (!$license || !$license->is_active) {
+        if (!$license->is_active) {
             return response()->view('licencia.bloqueada', ['team' => $team], 403);
         }
 

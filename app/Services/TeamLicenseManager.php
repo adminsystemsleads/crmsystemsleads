@@ -176,4 +176,36 @@ class TeamLicenseManager
 
         return ['ok' => true, 'license' => $lic];
     }
+
+    /**
+     * Garantiza que el equipo tenga su periodo de prueba inicial.
+     * Si ya tiene cualquier licencia, no hace nada. Si no, crea la prueba
+     * (15 días la primera cuenta del usuario, 7 días las siguientes).
+     * Sirve para crear la prueba al crear la cuenta y para autorrecuperar
+     * cuentas que quedaron "sin licencia".
+     */
+    public function ensureTrial(Team $team): TeamLicense
+    {
+        $existing = TeamLicense::where('team_id', $team->id)->first();
+        if ($existing) {
+            return $existing;
+        }
+
+        $owned = Team::where('user_id', $team->user_id)->count();
+        $days  = $owned <= 1 ? 15 : 7;
+        $ends  = self::endOfDayForStorage(now()->setTimezone($team->effectiveTimezone())->addDays($days));
+
+        $lic = TeamLicense::create([
+            'team_id'          => $team->id,
+            'first_started_at' => now(),
+            'trial_starts_at'  => now(),
+            'trial_ends_at'    => $ends,
+            'grant_type'       => 'trial',
+            'is_active'        => true,
+        ]);
+
+        Cache::forget($this->cacheKey($team));
+
+        return $lic;
+    }
 }
