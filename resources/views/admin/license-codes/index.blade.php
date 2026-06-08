@@ -104,7 +104,23 @@
           <tbody class="divide-y divide-gray-100">
             @forelse ($codes as $code)
               <tr class="hover:bg-gray-50">
-                <td class="px-6 py-3 font-mono font-semibold text-gray-900">{{ $code->code }}</td>
+                <td class="px-6 py-3">
+                  <div class="flex items-center gap-2" x-data="{ copied: false }">
+                    <span class="font-mono font-semibold text-gray-900">{{ $code->code }}</span>
+                    <button type="button"
+                            @click="navigator.clipboard.writeText('{{ $code->code }}'); copied = true; setTimeout(() => copied = false, 1500)"
+                            class="shrink-0 text-gray-400 hover:text-indigo-600 transition"
+                            title="Copiar código">
+                      <svg x-show="!copied" style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                      </svg>
+                      <svg x-show="copied" x-cloak style="width:16px;height:16px;" class="text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </button>
+                    <span x-show="copied" x-cloak class="text-xs text-green-600">Copiado</span>
+                  </div>
+                </td>
                 <td class="px-6 py-3">
                   @if ($code->is_prorroga)
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Prórroga</span>

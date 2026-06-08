@@ -38,16 +38,27 @@
     };
 
     if (! $isValid) {
+        // Vencida / sin licencia -> rojo fuerte
         $estadoLabel = $license ? 'Licencia vencida' : 'Sin licencia activa';
-        $estadoPill  = 'bg-red-100 text-red-700';
-    } elseif ($remaining !== null && $remaining <= $soonThreshold) {
-        $dias = (int) ceil($remaining);
-        $venceTxt = $dias <= 0 ? 'vence hoy' : 'faltan ' . $dias . ' ' . ($dias === 1 ? 'día' : 'días');
-        $estadoLabel = $baseLabel . ' · Por vencer (' . $venceTxt . ')';
-        $estadoPill  = 'bg-amber-100 text-amber-700';
+        $estadoPill  = 'bg-red-600 text-white';
     } else {
+        // Color de la píldora según el tipo:
+        //   prueba -> amarillo | prórroga -> rojo claro | licencia -> verde
+        $effectiveType = $grant ?: ($reason === 'trial' ? 'trial' : 'license');
+        $estadoPill = match ($effectiveType) {
+            'trial'    => 'bg-yellow-100 text-yellow-800',
+            'prorroga' => 'bg-red-100 text-red-500',
+            default    => 'bg-green-100 text-green-700',
+        };
+
         $estadoLabel = $baseLabel;
-        $estadoPill  = 'bg-green-100 text-green-700';
+
+        // Indicador "por vencer" en el texto (sin cambiar el color del tipo)
+        if ($remaining !== null && $remaining <= $soonThreshold) {
+            $dias = (int) ceil($remaining);
+            $venceTxt = $dias <= 0 ? 'vence hoy' : 'faltan ' . $dias . ' ' . ($dias === 1 ? 'día' : 'días');
+            $estadoLabel .= ' · Por vencer (' . $venceTxt . ')';
+        }
     }
 @endphp
 
