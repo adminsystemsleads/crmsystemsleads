@@ -145,10 +145,75 @@
   <body class="font-sans antialiased dark:bg-slate-900 dark:text-slate-100">
     <x-banner />
 
+    @php
+      // Aviso de licencia próxima a vencer / prórroga activa (cuenta del cliente).
+      $licenseBanner = null;
+      $bu = Auth::user();
+      $bt = $bu?->currentTeam;
+      if ($bt && !$bu->isSuperAdmin() && !($bt->owner && $bt->owner->isSuperAdmin())) {
+          $bl = $bt->license;
+          if ($bl && $bl->is_active && !$bl->is_expired) {
+              $brem  = $bl->remaining_days;
+              $bdays = $brem !== null ? max(0, (int) ceil($brem)) : null;
+              $btoday = now()->setTimezone($bt->effectiveTimezone())->format('Y-m-d');
+              if ($bl->grant_type === 'prorroga') {
+                  $licenseBanner = ['type' => 'prorroga', 'days' => $bdays, 'key' => "licbanner-{$bt->id}-prorroga-{$btoday}"];
+              } elseif ($bdays !== null && $bdays >= 1 && $bdays <= 7) {
+                  $licenseBanner = ['type' => 'soon', 'days' => $bdays, 'key' => "licbanner-{$bt->id}-soon-{$btoday}"];
+              }
+          }
+      }
+    @endphp
+
     <div x-data
          class="min-h-screen bg-gray-100 dark:bg-slate-900"
          :style="$store.sidebar.open ? 'margin-left: 16rem; transition: margin-left 200ms ease;' : 'margin-left: 0; transition: margin-left 200ms ease;'">
       @livewire('navigation-menu')
+
+      {{-- Aviso elegante de licencia (próxima a vencer / prórroga), cerrable por día --}}
+      @if ($licenseBanner)
+        @php
+          $lbDays   = $licenseBanner['days'];
+          $lbDayTxt = $lbDays === 1 ? '1 día' : "{$lbDays} días";
+          if ($licenseBanner['type'] === 'prorroga') {
+              $lbBg='#fee2e2'; $lbFg='#991b1b'; $lbBtn='#dc2626'; $lbBorder='#fecaca';
+              $lbTitle='Periodo de prórroga activo';
+              $lbMsg="Tu licencia finalizó y se activó una prórroga de la cual te queda(n) {$lbDayTxt} para que exportes tu data o realices el proceso que desees. Al finalizar la prórroga, tu cuenta quedará bloqueada automáticamente y perderás el acceso. Comunícate con soporte para renovar tu servicio o recibir la ayuda que necesites.";
+          } else {
+              $lbBg='#fef3c7'; $lbFg='#92400e'; $lbBtn='#d97706'; $lbBorder='#fde68a';
+              $lbTitle='Tu licencia está próxima a vencer';
+              $lbMsg="La licencia de esta cuenta vence pronto: te queda(n) {$lbDayTxt}. Comunícate con soporte para renovar tu servicio y evitar que tu cuenta se bloquee.";
+          }
+        @endphp
+        <div x-data="{ show: (function(){ try { return localStorage.getItem('{{ $licenseBanner['key'] }}') !== '1'; } catch(e){ return true; } })() }"
+             x-show="show" x-cloak
+             style="background:{{ $lbBg }};border-bottom:1px solid {{ $lbBorder }};">
+          <div style="max-width:1180px;margin:0 auto;padding:11px 18px;display:flex;align-items:center;gap:14px;">
+            <svg style="width:24px;height:24px;color:{{ $lbBtn }};flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
+            </svg>
+            <p style="flex:1;min-width:0;color:{{ $lbFg }};font-size:13px;line-height:1.45;margin:0;">
+              <span style="font-weight:800;">{{ $lbTitle }}.</span>
+              {{ $lbMsg }}
+            </p>
+            <a href="{{ route('soporte') }}"
+               style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;background:{{ $lbBtn }};color:#fff;font-size:12.5px;font-weight:700;padding:8px 15px;border-radius:9px;text-decoration:none;white-space:nowrap;">
+              <svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v6m-3.536 1.464a5 5 0 107.072 0"/>
+              </svg>
+              Comunicarme con soporte
+            </a>
+            <button type="button"
+                    @click="show=false; try{ localStorage.setItem('{{ $licenseBanner['key'] }}','1'); }catch(e){}"
+                    title="Cerrar"
+                    style="flex-shrink:0;background:transparent;border:none;cursor:pointer;color:{{ $lbFg }};opacity:.65;padding:4px;line-height:0;">
+              <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      @endif
 
       @if (isset($header))
         <header class="bg-white shadow dark:bg-slate-800">
