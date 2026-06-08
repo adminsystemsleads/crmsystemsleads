@@ -41,6 +41,13 @@ class EnsureTeamLicense
                 ->withErrors('No hay equipo activo.');
         }
 
+        // Las cuentas cuyo DUEÑO es Super Administrador no se bloquean por licencia,
+        // así los usuarios agregados a esos equipos pueden acceder con normalidad
+        // (solo tendrán oculta el área de Super Administrador en el menú).
+        if ($team->owner && $team->owner->isSuperAdmin()) {
+            return $next($request);
+        }
+
         // 2) Revisa la licencia del team
         $license = $team->license; // relación Team::license()
 
