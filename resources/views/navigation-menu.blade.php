@@ -26,6 +26,11 @@
       'active' => request()->routeIs('perfil-unidad.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1118.88 6.196 7 7 0 015.12 17.804zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
     ],
+    /*
+     * Ocultas temporalmente: funcionalidades no ofrecidas por ahora
+     * (Mis Finanzas, Pagos, Transparencia IA). Para reactivarlas,
+     * descomenta el bloque correspondiente.
+     *
     [
       'key'    => 'finanzas',
       'name'   => __('Mis Finanzas'),
@@ -47,6 +52,7 @@
       'active' => request()->routeIs('transparencia.ia.index'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
     ],
+    */
     [
       'key'    => 'crm',
       'name'   => __('CRM'),
@@ -252,17 +258,6 @@
               </svg>
               <span class="truncate">{{ __('Invoices') }}</span>
             </a>
-            <a href="{{ route('custom-fields.index') }}"
-               class="flex items-center gap-3 rounded-lg py-2 text-sm transition select-none
-                      {{ request()->routeIs('custom-fields.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}"
-               style="padding-left: 2.5rem; padding-right: .75rem;">
-              <svg class="shrink-0 {{ request()->routeIs('custom-fields.*') ? 'text-indigo-500' : 'text-gray-400' }}"
-                   style="width:20px;height:20px;min-width:20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11 5h2m-1 0v14m-7-7h14"/>
-              </svg>
-              <span class="truncate">{{ __('Custom Fields') }}</span>
-            </a>
           @endif
 
           {{-- Accesos rápidos al Kanban bajo el módulo CRM --}}
@@ -407,6 +402,15 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
                 <span>Permisos de Acceso CRM</span>
+              </a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="{{ route('custom-fields.index') }}"
+                 class="flex items-center gap-2 px-4 py-2 text-sm transition
+                        {{ request()->routeIs('custom-fields.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+                <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5h2m-1 0v14m-7-7h14"/>
+                </svg>
+                <span>Campos personalizados</span>
               </a>
             </div>
           </div>
