@@ -23,17 +23,43 @@
     // Variables de conveniencia
     $isValid = $status['valid'] ?? false;
     $reason  = $status['reason'] ?? 'paid'; // 'trial' | 'paid'
+    $grant   = $license?->grant_type;        // 'license' | 'trial' | 'prorroga' | null
+
+    // Días restantes hasta el vencimiento (puede ser float; negativo si ya venció)
+    $remaining = $isValid ? $license?->remaining_days : null;
+    $soonThreshold = 3; // "por vencer" cuando faltan 3 días o menos
+
+    // Etiqueta base según el tipo de licencia
+    $baseLabel = match ($grant) {
+        'trial'    => 'Modo de Prueba activo',
+        'prorroga' => 'Prórroga activa',
+        'license'  => 'Licencia activa',
+        default    => ($reason === 'trial' ? 'Modo de Prueba activo' : 'Licencia activa'),
+    };
+
+    if (! $isValid) {
+        $estadoLabel = $license ? 'Licencia vencida' : 'Sin licencia activa';
+        $estadoPill  = 'bg-red-100 text-red-700';
+    } elseif ($remaining !== null && $remaining <= $soonThreshold) {
+        $dias = (int) ceil($remaining);
+        $venceTxt = $dias <= 0 ? 'vence hoy' : 'faltan ' . $dias . ' ' . ($dias === 1 ? 'día' : 'días');
+        $estadoLabel = $baseLabel . ' · Por vencer (' . $venceTxt . ')';
+        $estadoPill  = 'bg-amber-100 text-amber-700';
+    } else {
+        $estadoLabel = $baseLabel;
+        $estadoPill  = 'bg-green-100 text-green-700';
+    }
 @endphp
 
 
     <div class="mb-4 text-sm text-gray-700">
-  <p><b>Estado:</b>
-    <span class="{{ $isValid ? 'text-green-600' : 'text-red-600' }}">
-      {{ $isValid ? ($reason === 'trial' ? 'Modo de Prueba activo' : 'Licencia activada') : 'Sin licencia activa / Vencida' }}
+  <p class="flex items-center gap-2"><b>Estado:</b>
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $estadoPill }}">
+      {{ $estadoLabel }}
     </span>
   </p>
 
-  <p><b>Vence:</b>
+  <p class="mt-1"><b>Vence:</b>
     {{ $license?->expires_at ? $license->expires_at->copy()->setTimezone($team->effectiveTimezone())->format('Y-m-d H:i') : '-' }}
     <span class="text-xs text-gray-400">({{ $team->effectiveTimezone() }})</span>
   </p>
