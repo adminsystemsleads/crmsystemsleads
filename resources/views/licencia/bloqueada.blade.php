@@ -19,14 +19,21 @@
     body{
       font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
       min-height:100vh;
-      background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 55%,#312e81 100%);
+      background:
+        radial-gradient(ellipse at 80% 10%, rgba(201,169,97,.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, rgba(201,169,97,.10) 0%, transparent 50%),
+        linear-gradient(135deg, #0f172a 0%, #1E2E48 50%, #2a3f5f 100%);
       color:#0f172a;
-      display:flex;align-items:center;justify-content:center;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
       padding:24px;position:relative;
     }
+    .brand{ text-align:center; margin-bottom:20px; }
+    .brand img{ height:62px; width:auto; filter:drop-shadow(0 6px 14px rgba(0,0,0,.4)); }
+    .brand .name{ color:#C9A961; font-weight:800; font-size:22px; letter-spacing:.02em; margin-top:6px; }
     .card{
-      background:#fff;border-radius:20px;max-width:520px;width:100%;
+      background:#fff;border-radius:16px;max-width:520px;width:100%;
       padding:40px 36px;text-align:center;
+      border-top:4px solid #C9A961;
       box-shadow:0 25px 60px rgba(0,0,0,.45);
     }
     .lock{
@@ -43,8 +50,8 @@
       font-size:14px;font-weight:700;border:none;cursor:pointer;
       padding:12px 22px;border-radius:12px;text-decoration:none;transition:.15s;
     }
-    .btn-primary{background:#4f46e5;color:#fff;width:100%;margin-top:18px;}
-    .btn-primary:hover{background:#4338ca;}
+    .btn-primary{background:#0ea5e9;color:#fff;width:100%;margin-top:18px;box-shadow:0 8px 20px rgba(14,165,233,.35);}
+    .btn-primary:hover{background:#0284c7;}
     .divider{height:1px;background:#e5e7eb;margin:26px 0 20px;}
     .sub{font-size:13px;font-weight:600;color:#334155;margin-bottom:10px;}
     .code-row{display:flex;gap:8px;}
@@ -98,6 +105,12 @@
 
   {{-- ID de la cuenta bloqueada (esquina superior derecha) --}}
   <div class="acct-id">ID de la Cuenta: {{ $team->id }}</div>
+
+  {{-- Logo QipuCRM --}}
+  <div class="brand">
+    <img src="{{ asset('logo_1.png') }}" alt="QipuCRM">
+    <div class="name">QipuCRM</div>
+  </div>
 
   {{-- Tarjeta central --}}
   <div class="card">
