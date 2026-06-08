@@ -40,15 +40,15 @@
     if (! $isValid) {
         // Vencida / sin licencia -> rojo fuerte
         $estadoLabel = $license ? 'Licencia vencida' : 'Sin licencia activa';
-        $estadoPill  = 'bg-red-600 text-white';
+        $estadoStyle = 'background-color:#dc2626;color:#ffffff;';
     } else {
         // Color de la píldora según el tipo:
         //   prueba -> amarillo | prórroga -> rojo claro | licencia -> verde
         $effectiveType = $grant ?: ($reason === 'trial' ? 'trial' : 'license');
-        $estadoPill = match ($effectiveType) {
-            'trial'    => 'bg-yellow-100 text-yellow-800',
-            'prorroga' => 'bg-red-100 text-red-500',
-            default    => 'bg-green-100 text-green-700',
+        $estadoStyle = match ($effectiveType) {
+            'trial'    => 'background-color:#fef08a;color:#854d0e;',
+            'prorroga' => 'background-color:#fee2e2;color:#ef4444;',
+            default    => 'background-color:#dcfce7;color:#15803d;',
         };
 
         $estadoLabel = $baseLabel;
@@ -60,12 +60,16 @@
             $estadoLabel .= ' · Por vencer (' . $venceTxt . ')';
         }
     }
+
+    // Sombra para todas las píldoras
+    $estadoStyle .= 'box-shadow:0 1px 2px rgba(0,0,0,.15);';
 @endphp
 
 
     <div class="mb-4 text-sm text-gray-700">
   <p class="flex items-center gap-2"><b>Estado:</b>
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $estadoPill }}">
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+          style="{{ $estadoStyle }}">
       {{ $estadoLabel }}
     </span>
   </p>
