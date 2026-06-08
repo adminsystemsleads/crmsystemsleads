@@ -1,5 +1,7 @@
 <x-app-layout>
-  <x-slot name="header">
+  <div class="w-full py-8 px-6 space-y-4">
+
+    {{-- Encabezado alineado con los bordes de la tabla --}}
     <div class="flex items-center justify-between">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         Reporte de Cuentas
@@ -12,9 +14,6 @@
         Volver a códigos
       </a>
     </div>
-  </x-slot>
-
-  <div class="w-full py-8 px-6 space-y-4">
 
     @if (session('success'))
       <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{{ session('success') }}</div>
@@ -38,15 +37,15 @@
         <table class="w-full text-xs">
           <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider">
             <tr>
-              <th class="text-left px-4 py-3 font-semibold">ID</th>
-              <th class="text-left px-4 py-3 font-semibold">Cuenta</th>
-              <th class="text-left px-4 py-3 font-semibold">Correo creador</th>
-              <th class="text-left px-4 py-3 font-semibold">Creada</th>
-              <th class="text-left px-4 py-3 font-semibold">1ª licencia</th>
-              <th class="text-left px-4 py-3 font-semibold">Inicio actual</th>
-              <th class="text-left px-4 py-3 font-semibold">Vence</th>
-              <th class="text-left px-4 py-3 font-semibold">Estado</th>
-              <th class="text-left px-4 py-3 font-semibold">Última nota</th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">ID<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Cuenta<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Correo creador<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Creada<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">1ª licencia<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Inicio actual<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Vence<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
               <th class="text-right px-4 py-3 font-semibold">Acciones</th>
             </tr>
           </thead>
@@ -135,4 +134,40 @@
       @endif
     </div>
   </div>
+
+  <script>
+    function sortTable(th) {
+      const table = th.closest('table');
+      const tbody = table.tBodies[0];
+      if (!tbody) return;
+      const idx = th.cellIndex;
+      const dir = th.getAttribute('data-dir') === 'asc' ? 'desc' : 'asc';
+
+      // Limpia indicadores de las demás columnas
+      table.querySelectorAll('thead th').forEach(h => {
+        if (h !== th) { h.removeAttribute('data-dir'); const a = h.querySelector('.sort-arrow'); if (a) a.textContent = ''; }
+      });
+      th.setAttribute('data-dir', dir);
+      const arrow = th.querySelector('.sort-arrow');
+      if (arrow) arrow.textContent = dir === 'asc' ? ' ▲' : ' ▼';
+
+      const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.querySelectorAll('td').length > 1);
+      const val = (r) => { const c = r.children[idx]; return c ? c.innerText.trim() : ''; };
+      const isNum = (s) => /^-?\d+(\.\d+)?$/.test(s);
+
+      rows.sort((a, b) => {
+        const x = val(a), y = val(b);
+        const ex = (x === '' || x === '—'), ey = (y === '' || y === '—');
+        if (ex && ey) return 0;
+        if (ex) return 1;   // vacíos siempre al final
+        if (ey) return -1;
+        let cmp;
+        if (isNum(x) && isNum(y)) cmp = parseFloat(x) - parseFloat(y);
+        else cmp = x.localeCompare(y, 'es', { numeric: true });
+        return dir === 'asc' ? cmp : -cmp;
+      });
+
+      rows.forEach(r => tbody.appendChild(r));
+    }
+  </script>
 </x-app-layout>
