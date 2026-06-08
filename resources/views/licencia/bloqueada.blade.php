@@ -69,16 +69,26 @@
     /* Esquina inferior izquierda */
     .corner{
       position:fixed;bottom:18px;left:22px;
-      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;
     }
-    .corner select{
-      background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.25);
-      border-radius:10px;padding:9px 12px;font-size:13px;color:#0f172a;cursor:pointer;max-width:220px;
+    .switcher{
+      background:rgba(255,255,255,.97);border-radius:14px;padding:10px 12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.35);min-width:240px;
     }
+    .switcher-label{
+      display:flex;align-items:center;gap:6px;
+      font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+      color:#475569;margin-bottom:6px;
+    }
+    .switcher select{
+      width:100%;background:#f8fafc;border:1.5px solid #c7d2fe;
+      border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;color:#0f172a;cursor:pointer;
+    }
+    .switcher select:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.25);}
     .corner a{
       display:inline-flex;align-items:center;gap:6px;
       background:rgba(255,255,255,.12);color:#e2e8f0;border:1px solid rgba(255,255,255,.2);
-      padding:9px 14px;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none;
+      padding:11px 16px;border-radius:12px;font-size:13px;font-weight:600;text-decoration:none;
     }
     .corner a:hover{background:rgba(255,255,255,.2);}
     .ic{width:18px;height:18px;}
@@ -87,7 +97,7 @@
 <body>
 
   {{-- ID de la cuenta bloqueada (esquina superior derecha) --}}
-  <div class="acct-id">Cuenta #{{ $team->id }}</div>
+  <div class="acct-id">ID de la Cuenta: {{ $team->id }}</div>
 
   {{-- Tarjeta central --}}
   <div class="card">
@@ -138,17 +148,24 @@
   {{-- Esquina inferior izquierda: cambiar de cuenta (si hay más de una) + soporte --}}
   <div class="corner">
     @if ($allTeams->count() > 1)
-      <form method="POST" action="{{ route('current-team.update') }}" id="switchForm">
-        @csrf @method('PUT')
-        <select name="team_id" onchange="document.getElementById('switchForm').submit()">
-          <option value="" disabled selected>Cambiar de cuenta…</option>
-          @foreach ($allTeams as $t)
-            <option value="{{ $t->id }}" @selected($t->id === $team->id)>
-              {{ $t->name }} (#{{ $t->id }}){{ $t->id === $team->id ? ' · actual' : '' }}
-            </option>
-          @endforeach
-        </select>
-      </form>
+      <div class="switcher">
+        <span class="switcher-label">
+          <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3m4-14h2m-2 4h2m-2 4h2m4-8h2m-2 4h2m-2 4h2"/>
+          </svg>
+          Selecciona tu cuenta
+        </span>
+        <form method="POST" action="{{ route('current-team.update') }}" id="switchForm">
+          @csrf @method('PUT')
+          <select name="team_id" onchange="document.getElementById('switchForm').submit()">
+            @foreach ($allTeams as $t)
+              <option value="{{ $t->id }}" @selected($t->id === $team->id)>
+                {{ $t->name }} (ID {{ $t->id }}){{ $t->id === $team->id ? ' · actual' : '' }}
+              </option>
+            @endforeach
+          </select>
+        </form>
+      </div>
     @endif
 
     <a href="{{ route('soporte') }}">

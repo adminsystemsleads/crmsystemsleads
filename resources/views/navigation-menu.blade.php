@@ -8,6 +8,16 @@
 
   $isAdmin = $team && Auth::user()->hasTeamRole($team, 'admin');
 
+  // ¿La cuenta actual está bloqueada por licencia? (mismo criterio que el middleware)
+  // Si lo está, el menú se reduce: solo Licencia, selector de cuenta, idioma, soporte y perfil.
+  $licenseBlocked = (function () use ($team) {
+    $user = Auth::user();
+    if (!$team || $user->isSuperAdmin()) return false;
+    if ($team->owner && $team->owner->isSuperAdmin()) return false;
+    $lic = $team->license;
+    return !$lic || !$lic->is_active || $lic->is_expired;
+  })();
+
   // Pipelines marcados como acceso rápido que el usuario puede ver
   $navPipelines = $team
     ? \App\Models\Pipeline::where('team_id', $team->id)
@@ -155,7 +165,7 @@
           </a>
         @endif
 
-        @if ($team->moduleEnabled('perfiles'))
+        @if (!$licenseBlocked && $team->moduleEnabled('perfiles'))
           <a href="{{ route('team.perfiles.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('team.perfiles.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -184,7 +194,7 @@
           </a>
         @endif
 
-        @if ($team->moduleEnabled('whatsapp_cuentas'))
+        @if (!$licenseBlocked && $team->moduleEnabled('whatsapp_cuentas'))
           <a href="{{ route('whatsapp.accounts.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('whatsapp.accounts.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -210,6 +220,7 @@
             <span class="truncate">Licencia</span>
           </a>
 
+          @if (!$licenseBlocked)
           <a href="{{ route('team.modules.edit', ['team' => $teamId]) }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('team.modules.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -221,13 +232,17 @@
             </svg>
             <span class="truncate">Módulos</span>
           </a>
+          @endif
         @endif
 
-        <div class="my-2 border-t border-gray-100"></div>
-        <p class="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">General</p>
+        @if (!$licenseBlocked)
+          <div class="my-2 border-t border-gray-100"></div>
+          <p class="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">General</p>
+        @endif
       @endif
 
-      {{-- Menú general (filtrado por módulos) --}}
+      {{-- Menú general (filtrado por módulos) — oculto si la cuenta está bloqueada --}}
+      @if (!$licenseBlocked)
       @foreach ($links as $link)
         @if ($team->moduleEnabled($link['key']))
           <a href="{{ route($link['route']) }}"
@@ -291,6 +306,7 @@
           @endif
         @endif
       @endforeach
+      @endif
 
     </nav>
 
@@ -362,8 +378,8 @@
           @endif
         </div>
 
-        {{-- Botón Configuración de la cuenta (admin del team) --}}
-        @if ($isAdmin)
+        {{-- Botón Configuración de la cuenta (admin del team; oculto si la cuenta está bloqueada) --}}
+        @if ($isAdmin && !$licenseBlocked)
           <div class="relative mt-1">
             <button type="button" @click="openCfg = !openCfg"
                     class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg hover:bg-gray-100 text-gray-700 transition"
@@ -421,11 +437,13 @@
       </div>
     @endif
 
-    {{-- Tema --}}
+    {{-- Tema (oculto si la cuenta está bloqueada) --}}
+    @if (!$licenseBlocked)
     <div class="px-3 py-2 border-t border-gray-100 shrink-0">
       <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Tema</p>
       <x-theme-toggle variant="sidebar" />
     </div>
+    @endif
 
     {{-- Idioma --}}
     <div class="px-3 py-2 border-t border-gray-100 shrink-0">
