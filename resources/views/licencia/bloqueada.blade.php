@@ -109,7 +109,6 @@
   {{-- Logo QipuCRM --}}
   <div class="brand">
     <img src="{{ asset('logo_1.png') }}" alt="QipuCRM">
-    <div class="name">QipuCRM</div>
   </div>
 
   {{-- Tarjeta central --}}

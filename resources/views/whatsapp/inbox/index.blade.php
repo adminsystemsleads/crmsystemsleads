@@ -11,10 +11,15 @@
 <div class="flex flex-col bg-white" style="height:100vh;">
 
   {{-- BARRA SUPERIOR --}}
-  {{-- Reserva espacio a la izquierda cuando el menú lateral está minimizado,
-       para que el botón flotante de despliegue no tape el ícono/título. --}}
-  <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4"
-       :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
+  <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4">
+    {{-- Toggle del menú lateral global (solo cuando está minimizado), alineado en la barra --}}
+    <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
+            class="shrink-0 p-1.5 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
+            title="Mostrar menú" style="display:none;">
+      <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
     <div class="w-8 lg:hidden shrink-0"></div>
     <svg class="size-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
