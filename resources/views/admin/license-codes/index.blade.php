@@ -82,7 +82,7 @@
         </div>
 
         <div class="sm:col-span-2 lg:col-span-4">
-          <button class="inline-flex items-center gap-2 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition" style="background-color:#2563eb;">
+          <button class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
@@ -220,7 +220,7 @@
           </div>
           <div class="sm:col-span-2 lg:col-span-2">
             <button type="submit"
-                    class="inline-flex items-center gap-2 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition" style="background-color:#2563eb;">
+                    class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
               <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
@@ -293,7 +293,7 @@
                       <input type="hidden" name="team_id" value="{{ $lic->team_id }}">
                       <input type="number" name="days" min="1" max="60" value="7"
                              class="w-16 border border-gray-300 rounded-md px-2 py-1 text-xs">
-                      <button type="submit" class="text-xs px-2.5 py-1 rounded-md text-white transition" style="background-color:#2563eb;">
+                      <button type="submit" class="text-xs px-2.5 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition">
                         Reactivar
                       </button>
                     </form>
