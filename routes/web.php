@@ -156,6 +156,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::middleware('super.admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/codigos-licencia',                   [LicenseCodeController::class, 'index'])->name('license-codes.index');
         Route::post('/codigos-licencia',                  [LicenseCodeController::class, 'store'])->name('license-codes.store');
+        Route::post('/codigos-licencia/prorroga',         [LicenseCodeController::class, 'grantProrroga'])->name('prorrogas.store');
         Route::patch('/codigos-licencia/{licenseCode}/toggle', [LicenseCodeController::class, 'toggle'])->name('license-codes.toggle');
         Route::delete('/codigos-licencia/{licenseCode}',  [LicenseCodeController::class, 'destroy'])->name('license-codes.destroy');
     });

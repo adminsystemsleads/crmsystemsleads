@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\LicenseCode;
+use App\Models\Team;
+use App\Models\TeamLicense;
+use App\Services\TeamLicenseManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,10 +33,42 @@ class LicenseCodeController extends Controller
             ->latest()
             ->paginate(25);
 
+        // Cuentas con prórroga: separadas en vigentes y vencidas (cuenta bloqueada).
+        $prorrogas = TeamLicense::with('team')
+            ->where('grant_type', 'prorroga')
+            ->get();
+
+        $prorrogasActivas  = $prorrogas->reject->is_expired->values();
+        $prorrogasVencidas = $prorrogas->filter->is_expired->values();
+
         return view('admin.license-codes.index', [
-            'codes'   => $codes,
-            'presets' => self::PRESETS,
+            'codes'             => $codes,
+            'presets'           => self::PRESETS,
+            'prorrogasActivas'  => $prorrogasActivas,
+            'prorrogasVencidas' => $prorrogasVencidas,
         ]);
+    }
+
+    /**
+     * Habilita un periodo de prórroga directamente para una cuenta (equipo) por su ID.
+     */
+    public function grantProrroga(Request $request, TeamLicenseManager $svc)
+    {
+        $data = $request->validate([
+            'team_id' => ['required', 'integer', 'exists:teams,id'],
+            'days'    => ['required', 'integer', 'min:1', 'max:60'],
+        ], [], [
+            'team_id' => 'ID de cuenta',
+            'days'    => 'días',
+        ]);
+
+        $team = Team::findOrFail($data['team_id']);
+        $svc->grantProrroga($team, (int) $data['days']);
+
+        return back()->with(
+            'success',
+            "Prórroga de {$data['days']} días habilitada para la cuenta #{$team->id} ({$team->name})."
+        );
     }
 
     public function store(Request $request)

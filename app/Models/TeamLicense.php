@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 class TeamLicense extends Model
 {
     protected $fillable = [
-        'team_id','license_key',
+        'team_id','license_key','grant_type',
         'trial_starts_at','trial_ends_at',
         'active_from','active_until',
         'is_active','meta'

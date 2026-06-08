@@ -111,6 +111,7 @@ class TeamLicenseManager
         }
 
         $lic->license_key = $code->code;
+        $lic->grant_type  = $mode; // 'license' | 'trial' | 'prorroga'
         $lic->is_active   = true;
         $lic->save();
 
@@ -126,5 +127,37 @@ class TeamLicenseManager
         Cache::forget($this->cacheKey($team));
 
         return ['ok' => true, 'mode' => $mode, 'license' => $lic];
+    }
+
+    /**
+     * Habilita un periodo de prórroga (en días) directamente para un equipo,
+     * sin necesidad de un código. Pensado para reactivar cuentas bloqueadas
+     * cuyo periodo venció (p. ej. para que terminen de exportar su data).
+     *
+     * El vencimiento cae a las 23:59 del día correspondiente en la zona del cliente.
+     * Si la cuenta aún tiene prueba/prórroga vigente, extiende desde ese vencimiento.
+     */
+    public function grantProrroga(Team $team, int $days): array
+    {
+        $lic = TeamLicense::firstOrCreate(['team_id' => $team->id], ['is_active' => true]);
+
+        $tz    = $team->effectiveTimezone();
+        $nowTz = now()->setTimezone($tz);
+
+        $baseTz = optional($lic->trial_ends_at)->isFuture()
+            ? $lic->trial_ends_at->copy()->setTimezone($tz)
+            : $nowTz->copy();
+
+        $lic->trial_starts_at = $lic->trial_starts_at ?: now();
+        $lic->trial_ends_at   = $baseTz->copy()->addDays($days)->endOfDay();
+        $lic->active_from     = null;
+        $lic->active_until    = null;
+        $lic->grant_type      = 'prorroga';
+        $lic->is_active       = true;
+        $lic->save();
+
+        Cache::forget($this->cacheKey($team));
+
+        return ['ok' => true, 'license' => $lic];
     }
 }

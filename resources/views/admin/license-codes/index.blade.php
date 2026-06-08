@@ -166,5 +166,121 @@
       @endif
     </div>
 
+    {{-- ===================== Periodo de Prórrogas ===================== --}}
+    <div class="bg-white rounded-xl shadow border border-gray-100">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-bold text-gray-900">Periodo de Prórrogas</h3>
+        <p class="text-xs text-gray-500">
+          Habilita un periodo de prórroga directamente con el ID de la cuenta. Útil para reactivar
+          cuentas bloqueadas cuyo periodo venció (para que terminen de exportar su data).
+        </p>
+      </div>
+
+      {{-- Formulario: habilitar prórroga por ID de cuenta --}}
+      <div class="px-6 py-5 border-b border-gray-100">
+        <form method="POST" action="{{ route('admin.prorrogas.store') }}"
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+          @csrf
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">ID de la cuenta</label>
+            <input type="number" name="team_id" min="1" required
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-purple-500 focus:border-purple-500"
+                   placeholder="Ej: 2">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Días de prórroga</label>
+            <input type="number" name="days" min="1" max="60" value="7" required
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-purple-500 focus:border-purple-500">
+          </div>
+          <div class="sm:col-span-2 lg:col-span-2">
+            <button class="inline-flex items-center gap-2 bg-purple-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-purple-700 transition">
+              <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Habilitar prórroga
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
+
+        {{-- Cuentas actualmente en prórroga --}}
+        <div>
+          <div class="px-6 py-3 bg-gray-50 flex items-center gap-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">En prórroga</span>
+            <span class="text-xs text-gray-500">vigentes</span>
+          </div>
+          <table class="min-w-full text-sm">
+            <thead class="text-gray-500 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="text-left px-6 py-2 font-semibold">ID</th>
+                <th class="text-left px-6 py-2 font-semibold">Cuenta</th>
+                <th class="text-left px-6 py-2 font-semibold">Vence</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @forelse ($prorrogasActivas as $lic)
+                @php $ptz = $lic->team?->effectiveTimezone() ?? \App\Models\Team::DEFAULT_TIMEZONE; @endphp
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-2 font-mono text-gray-700">{{ $lic->team_id }}</td>
+                  <td class="px-6 py-2 text-gray-800">{{ $lic->team?->name ?? '—' }}</td>
+                  <td class="px-6 py-2 text-gray-700">
+                    {{ $lic->trial_ends_at?->copy()->setTimezone($ptz)->format('Y-m-d H:i') ?? '—' }}
+                  </td>
+                </tr>
+              @empty
+                <tr><td colspan="3" class="px-6 py-6 text-center text-gray-400 text-sm">Ninguna cuenta en prórroga.</td></tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+
+        {{-- Cuentas con prórroga vencida (bloqueadas) --}}
+        <div>
+          <div class="px-6 py-3 bg-gray-50 flex items-center gap-2">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Prórroga vencida</span>
+            <span class="text-xs text-gray-500">cuenta bloqueada</span>
+          </div>
+          <table class="min-w-full text-sm">
+            <thead class="text-gray-500 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="text-left px-6 py-2 font-semibold">ID</th>
+                <th class="text-left px-6 py-2 font-semibold">Cuenta</th>
+                <th class="text-left px-6 py-2 font-semibold">Venció</th>
+                <th class="text-right px-6 py-2 font-semibold">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @forelse ($prorrogasVencidas as $lic)
+                @php $ptz = $lic->team?->effectiveTimezone() ?? \App\Models\Team::DEFAULT_TIMEZONE; @endphp
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-2 font-mono text-gray-700">{{ $lic->team_id }}</td>
+                  <td class="px-6 py-2 text-gray-800">{{ $lic->team?->name ?? '—' }}</td>
+                  <td class="px-6 py-2 text-gray-700">
+                    {{ $lic->trial_ends_at?->copy()->setTimezone($ptz)->format('Y-m-d H:i') ?? '—' }}
+                  </td>
+                  <td class="px-6 py-2">
+                    <form method="POST" action="{{ route('admin.prorrogas.store') }}" class="flex items-center justify-end gap-1">
+                      @csrf
+                      <input type="hidden" name="team_id" value="{{ $lic->team_id }}">
+                      <input type="number" name="days" min="1" max="60" value="7"
+                             class="w-16 border border-gray-300 rounded-md px-2 py-1 text-xs">
+                      <button class="text-xs px-2.5 py-1 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition">
+                        Reactivar
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              @empty
+                <tr><td colspan="4" class="px-6 py-6 text-center text-gray-400 text-sm">Ninguna cuenta con prórroga vencida.</td></tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </x-app-layout>
