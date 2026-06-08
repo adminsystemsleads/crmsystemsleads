@@ -28,6 +28,7 @@ use App\Http\Controllers\QuickReplyController;
 use App\Http\Controllers\ChatTagController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\LicenseCodeController;
+use App\Http\Controllers\TeamSettingsController;
 
 
 Route::get('/', function () {
@@ -137,6 +138,10 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     // Módulos activos por equipo (admin only)
     Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit')->middleware('team.admin');
     Route::put('/teams/{team}/modules', [TeamModulesController::class, 'update'])->name('team.modules.update')->middleware('team.admin');
+
+    // Zona horaria de la cuenta (admin only)
+    Route::put('/teams/{team}/timezone', [TeamSettingsController::class, 'updateTimezone'])
+        ->name('team.timezone.update')->middleware('team.admin');
 
     // Formulario / estado de licencia (visible para no-admin para que vean el mensaje
     // "licencia inactiva, contacta a tu administrador" sin recibir 403 al ser redirigidos)

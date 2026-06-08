@@ -43,14 +43,22 @@ class TeamLicenseController extends Controller
         $res = $svc->redeemCode($team, $data['license_key']);
 
         if (!$res['ok']) {
-            return back()->with('error', $res['error'] ?? 'No se pudo activar la licencia.');
+            $error = $res['error'] ?? 'No se pudo activar la licencia.';
+
+            return back()
+                ->with('error', $error)
+                ->with('flash', ['banner' => $error, 'bannerStyle' => 'danger']);
         }
 
-        $message = ($res['mode'] ?? 'license') === 'trial'
-            ? 'Modo de Prueba activo.'
-            : 'Licencia activada.';
+        $message = match ($res['mode'] ?? 'license') {
+            'trial'    => 'Código canjeado exitosamente — Modo de Prueba activo.',
+            'prorroga' => 'Código canjeado exitosamente — Prórroga activada.',
+            default    => 'Código canjeado exitosamente — Licencia activa.',
+        };
 
-        return redirect()->route('dashboard')->with('success', $message);
+        return redirect()->route('dashboard')
+            ->with('success', $message)
+            ->with('flash', ['banner' => $message, 'bannerStyle' => 'success']);
     }
    public function show(Team $team, TeamLicenseManager $svc)
 {
@@ -64,10 +72,18 @@ class TeamLicenseController extends Controller
 
     $status = $svc->status($team, true);
 
+    // Historial de códigos canjeados por esta cuenta (reporte)
+    $redeemedCodes = \App\Models\LicenseCode::with('redeemedTeam')
+        ->where('redeemed_by_team_id', $team->id)
+        ->whereNotNull('redeemed_at')
+        ->orderByDesc('redeemed_at')
+        ->get();
+
     return view('teams.license', [
-        'team'    => $team,
-        'license' => $license,
-        'status'  => $status,
+        'team'          => $team,
+        'license'       => $license,
+        'status'        => $status,
+        'redeemedCodes' => $redeemedCodes,
     ]);
 }
 }

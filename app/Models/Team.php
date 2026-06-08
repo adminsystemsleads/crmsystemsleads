@@ -20,9 +20,19 @@ class Team extends JetstreamTeam
      */
     protected $fillable = [
         'name',
+        'timezone',
         'personal_team',
         'settings',
     ];
+
+    /** Zona horaria por defecto (GMT-5). */
+    public const DEFAULT_TIMEZONE = 'America/Lima';
+
+    /** Zona horaria efectiva del equipo (con respaldo al valor por defecto). */
+    public function effectiveTimezone(): string
+    {
+        return $this->timezone ?: self::DEFAULT_TIMEZONE;
+    }
 
     // Modules enabled by default when no settings exist yet
     protected array $defaultModules = [

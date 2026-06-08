@@ -70,10 +70,10 @@ class TeamLicenseManager
         $code = LicenseCode::where('code', trim($rawCode))->first();
 
         if (! $code) {
-            return ['ok' => false, 'error' => 'El código ingresado no es válido.'];
+            return ['ok' => false, 'error' => 'Código equivocado — verifica el código e inténtalo de nuevo.'];
         }
         if (! $code->is_active) {
-            return ['ok' => false, 'error' => 'Este código está desactivado.'];
+            return ['ok' => false, 'error' => 'Código desactivado — solicita uno nuevo al administrador.'];
         }
         if ($code->used_count >= $code->max_uses) {
             return ['ok' => false, 'error' => 'Este código ya fue utilizado.'];
@@ -81,20 +81,33 @@ class TeamLicenseManager
 
         $lic = TeamLicense::firstOrCreate(['team_id' => $team->id], ['is_active' => true]);
 
-        if ($code->duration_unit === 'weeks') {
-            // Periodo de prueba (semanas) -> Modo de Prueba activo
-            $lic->trial_starts_at = now();
-            $lic->trial_ends_at   = now()->addWeeks($code->duration_value);
-            $lic->active_from     = null;
-            $lic->active_until    = null;
-            $mode = 'trial';
-        } else {
+        // Zona horaria del cliente: el vencimiento cae a las 23:59 del día en su zona.
+        $tz    = $team->effectiveTimezone();
+        $nowTz = now()->setTimezone($tz);
+
+        if ($code->duration_unit === 'months') {
             // Licencia (meses) -> Licencia activada
             $lic->active_from     = now();
-            $lic->active_until    = now()->addMonths($code->duration_value);
+            $lic->active_until    = $nowTz->copy()->addMonths($code->duration_value)->endOfDay();
             $lic->trial_starts_at = null;
             $lic->trial_ends_at   = null;
             $mode = 'license';
+        } else {
+            // Periodo de prueba (semanas) o prórroga (días) -> acceso temporal.
+            // Se extiende desde el vencimiento actual si aún es futuro.
+            $baseTz = optional($lic->trial_ends_at)->isFuture()
+                ? $lic->trial_ends_at->copy()->setTimezone($tz)
+                : $nowTz->copy();
+
+            $ends = $code->duration_unit === 'days'
+                ? $baseTz->copy()->addDays($code->duration_value)->endOfDay()
+                : $baseTz->copy()->addWeeks($code->duration_value)->endOfDay();
+
+            $lic->trial_starts_at = $lic->trial_starts_at ?: now();
+            $lic->trial_ends_at   = $ends;
+            $lic->active_from     = null;
+            $lic->active_until    = null;
+            $mode = $code->type; // 'trial' | 'prorroga'
         }
 
         $lic->license_key = $code->code;

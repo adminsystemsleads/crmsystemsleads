@@ -50,6 +50,11 @@
             <optgroup label="Modo de prueba (semanas)">
               <option value="trial_1w">Prueba · 1 semana</option>
               <option value="trial_2w">Prueba · 2 semanas</option>
+              <option value="trial_3w">Prueba · 3 semanas</option>
+              <option value="trial_4w">Prueba · 4 semanas</option>
+            </optgroup>
+            <optgroup label="Prórroga (días)">
+              <option value="prorroga_7d">Prórroga · 7 días</option>
             </optgroup>
           </select>
         </div>
@@ -91,6 +96,7 @@
               <th class="text-left px-6 py-3 font-semibold">Tipo</th>
               <th class="text-left px-6 py-3 font-semibold">Duración</th>
               <th class="text-left px-6 py-3 font-semibold">Estado</th>
+              <th class="text-left px-6 py-3 font-semibold">ID Cuenta</th>
               <th class="text-left px-6 py-3 font-semibold">Nota</th>
               <th class="text-right px-6 py-3 font-semibold">Acciones</th>
             </tr>
@@ -100,7 +106,9 @@
               <tr class="hover:bg-gray-50">
                 <td class="px-6 py-3 font-mono font-semibold text-gray-900">{{ $code->code }}</td>
                 <td class="px-6 py-3">
-                  @if ($code->is_trial)
+                  @if ($code->is_prorroga)
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Prórroga</span>
+                  @elseif ($code->is_trial)
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Prueba</span>
                   @else
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">Licencia</span>
@@ -117,6 +125,9 @@
                   @else
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Disponible</span>
                   @endif
+                </td>
+                <td class="px-6 py-3 font-mono text-gray-700">
+                  {{ $code->redeemed_by_team_id ?? '—' }}
                 </td>
                 <td class="px-6 py-3 text-gray-500">{{ $code->label ?: '—' }}</td>
                 <td class="px-6 py-3">
@@ -139,7 +150,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="6" class="px-6 py-8 text-center text-gray-400 text-sm">
+                <td colspan="7" class="px-6 py-8 text-center text-gray-400 text-sm">
                   Aún no has generado ningún código.
                 </td>
               </tr>

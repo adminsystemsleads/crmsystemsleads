@@ -13,12 +13,15 @@ class LicenseCodeController extends Controller
      * clave => [type, duration_unit, duration_value, etiqueta]
      */
     public const PRESETS = [
-        'license_1'  => ['license', 'months', 1,  'Licencia · 1 mes'],
-        'license_3'  => ['license', 'months', 3,  'Licencia · 3 meses'],
-        'license_6'  => ['license', 'months', 6,  'Licencia · 6 meses'],
-        'license_12' => ['license', 'months', 12, 'Licencia · 12 meses'],
-        'trial_1w'   => ['trial',   'weeks',  1,  'Prueba · 1 semana'],
-        'trial_2w'   => ['trial',   'weeks',  2,  'Prueba · 2 semanas'],
+        'license_1'   => ['license',  'months', 1,  'Licencia · 1 mes'],
+        'license_3'   => ['license',  'months', 3,  'Licencia · 3 meses'],
+        'license_6'   => ['license',  'months', 6,  'Licencia · 6 meses'],
+        'license_12'  => ['license',  'months', 12, 'Licencia · 12 meses'],
+        'trial_1w'    => ['trial',    'weeks',  1,  'Prueba · 1 semana'],
+        'trial_2w'    => ['trial',    'weeks',  2,  'Prueba · 2 semanas'],
+        'trial_3w'    => ['trial',    'weeks',  3,  'Prueba · 3 semanas'],
+        'trial_4w'    => ['trial',    'weeks',  4,  'Prueba · 4 semanas'],
+        'prorroga_7d' => ['prorroga', 'days',   7,  'Prórroga · 7 días'],
     ];
 
     public function index(Request $request)

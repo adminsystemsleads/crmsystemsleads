@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class LicenseCode extends Model
@@ -37,12 +38,53 @@ class LicenseCode extends Model
         return $this->type === 'trial';
     }
 
-    /** Etiqueta legible: "12 meses" / "2 semanas". */
+    /** Es un código de prórroga (días). */
+    public function getIsProrrogaAttribute(): bool
+    {
+        return $this->type === 'prorroga';
+    }
+
+    /** Etiqueta del tipo: "Licencia" / "Prueba" / "Prórroga". */
+    public function getTypeLabelAttribute(): string
+    {
+        return match ($this->type) {
+            'trial'    => 'Prueba',
+            'prorroga' => 'Prórroga',
+            default    => 'Licencia',
+        };
+    }
+
+    /**
+     * Fecha en que vence la licencia/prueba que activó este código,
+     * calculada desde la fecha de canje + su duración. Null si no se ha canjeado.
+     */
+    public function getActivatedUntilAttribute(): ?Carbon
+    {
+        if (! $this->redeemed_at) {
+            return null;
+        }
+
+        // Vence a las 23:59 del día correspondiente en la zona horaria de la cuenta.
+        $tz    = $this->redeemedTeam?->effectiveTimezone() ?? Team::DEFAULT_TIMEZONE;
+        $start = $this->redeemed_at->copy()->setTimezone($tz);
+
+        $end = match ($this->duration_unit) {
+            'days'  => $start->addDays($this->duration_value),
+            'weeks' => $start->addWeeks($this->duration_value),
+            default => $start->addMonths($this->duration_value),
+        };
+
+        return $end->endOfDay();
+    }
+
+    /** Etiqueta legible: "12 meses" / "2 semanas" / "7 días". */
     public function getDurationLabelAttribute(): string
     {
-        $unit = $this->duration_unit === 'weeks'
-            ? ($this->duration_value === 1 ? 'semana' : 'semanas')
-            : ($this->duration_value === 1 ? 'mes' : 'meses');
+        $unit = match ($this->duration_unit) {
+            'days'  => $this->duration_value === 1 ? 'día' : 'días',
+            'weeks' => $this->duration_value === 1 ? 'semana' : 'semanas',
+            default => $this->duration_value === 1 ? 'mes' : 'meses',
+        };
 
         return "{$this->duration_value} {$unit}";
     }

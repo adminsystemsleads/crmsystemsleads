@@ -34,7 +34,8 @@
   </p>
 
   <p><b>Vence:</b>
-    {{ optional($license?->expires_at)->format('Y-m-d') ?? '-' }}
+    {{ $license?->expires_at ? $license->expires_at->copy()->setTimezone($team->effectiveTimezone())->format('Y-m-d H:i') : '-' }}
+    <span class="text-xs text-gray-400">({{ $team->effectiveTimezone() }})</span>
   </p>
 </div>
 
@@ -81,6 +82,48 @@
           Activar
         </button>
       </form>
+    </div>
+  </div>
+
+  {{-- Reporte de códigos utilizados en esta cuenta --}}
+  <div class="max-w-2xl mx-auto mt-6 bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+      <h3 class="text-sm font-bold text-gray-900">Códigos utilizados</h3>
+      <p class="text-xs text-gray-500">Historial de códigos canjeados en esta cuenta.</p>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+          <tr>
+            <th class="text-left px-6 py-3 font-semibold">Código</th>
+            <th class="text-left px-6 py-3 font-semibold">Tipo</th>
+            <th class="text-left px-6 py-3 font-semibold">Canjeado</th>
+            <th class="text-left px-6 py-3 font-semibold">Vence</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @php $tz = $team->effectiveTimezone(); @endphp
+          @forelse ($redeemedCodes as $code)
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-3 font-mono font-semibold text-gray-900">{{ $code->code }}</td>
+              <td class="px-6 py-3 text-gray-700">{{ $code->type_label }} · {{ $code->duration_label }}</td>
+              <td class="px-6 py-3 text-gray-700">
+                {{ $code->redeemed_at ? $code->redeemed_at->copy()->setTimezone($tz)->format('Y-m-d H:i') : '—' }}
+              </td>
+              <td class="px-6 py-3 text-gray-700">
+                {{ optional($code->activated_until)->format('Y-m-d H:i') ?? '—' }}
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="4" class="px-6 py-8 text-center text-gray-400 text-sm">
+                Aún no se ha canjeado ningún código en esta cuenta.
+              </td>
+            </tr>
+          @endforelse
+        </tbody>
+      </table>
     </div>
   </div>
 </x-app-layout>
