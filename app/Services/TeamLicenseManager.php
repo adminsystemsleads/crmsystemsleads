@@ -12,6 +12,17 @@ use Illuminate\Support\Carbon;
 
 class TeamLicenseManager
 {
+    /**
+     * Fija las 23:59:59 del día (en la zona del cliente) y devuelve el instante
+     * en la zona de la app (UTC) para que Eloquent lo guarde correctamente.
+     * Sin esto, Eloquent guarda el "wall-clock" y al leerlo como UTC el
+     * vencimiento se mostraría adelantado (p. ej. 18:59 en vez de 23:59).
+     */
+    public static function endOfDayForStorage(Carbon $tzDate): Carbon
+    {
+        return $tzDate->copy()->endOfDay()->setTimezone(config('app.timezone'));
+    }
+
     protected function cacheKey(Team $team): string {
         return "team_license_status:{$team->id}";
     }
@@ -88,7 +99,7 @@ class TeamLicenseManager
         if ($code->duration_unit === 'months') {
             // Licencia (meses) -> Licencia activada
             $lic->active_from     = now();
-            $lic->active_until    = $nowTz->copy()->addMonths($code->duration_value)->endOfDay();
+            $lic->active_until    = self::endOfDayForStorage($nowTz->copy()->addMonths($code->duration_value));
             $lic->trial_starts_at = null;
             $lic->trial_ends_at   = null;
             $mode = 'license';
@@ -100,8 +111,8 @@ class TeamLicenseManager
                 : $nowTz->copy();
 
             $ends = $code->duration_unit === 'days'
-                ? $baseTz->copy()->addDays($code->duration_value)->endOfDay()
-                : $baseTz->copy()->addWeeks($code->duration_value)->endOfDay();
+                ? self::endOfDayForStorage($baseTz->copy()->addDays($code->duration_value))
+                : self::endOfDayForStorage($baseTz->copy()->addWeeks($code->duration_value));
 
             $lic->trial_starts_at = $lic->trial_starts_at ?: now();
             $lic->trial_ends_at   = $ends;
@@ -149,7 +160,7 @@ class TeamLicenseManager
             : $nowTz->copy();
 
         $lic->trial_starts_at = $lic->trial_starts_at ?: now();
-        $lic->trial_ends_at   = $baseTz->copy()->addDays($days)->endOfDay();
+        $lic->trial_ends_at   = self::endOfDayForStorage($baseTz->copy()->addDays($days));
         $lic->active_from     = null;
         $lic->active_until    = null;
         $lic->grant_type      = 'prorroga';

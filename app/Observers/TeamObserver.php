@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Team;
 use App\Models\TeamLicense;
+use App\Services\TeamLicenseManager;
 
 class TeamObserver
 {
@@ -21,7 +22,7 @@ class TeamObserver
 
         // El periodo vence a las 23:59 del último día, en la zona horaria de la cuenta.
         $tz   = $team->effectiveTimezone();
-        $ends = now()->setTimezone($tz)->addDays($days)->endOfDay();
+        $ends = TeamLicenseManager::endOfDayForStorage(now()->setTimezone($tz)->addDays($days));
 
         TeamLicense::firstOrCreate(
             ['team_id' => $team->id],

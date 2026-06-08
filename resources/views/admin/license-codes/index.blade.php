@@ -211,7 +211,7 @@
           <div class="sm:col-span-2 lg:col-span-2">
             <button type="submit"
                     class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition"
-                    style="background-color:#7c3aed;color:#ffffff;">
+                    style="background-color:#4f46e5;color:#ffffff;">
               <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
@@ -285,7 +285,7 @@
                       <input type="number" name="days" min="1" max="60" value="7"
                              class="w-16 border border-gray-300 rounded-md px-2 py-1 text-xs">
                       <button type="submit" class="text-xs px-2.5 py-1 rounded-md transition"
-                              style="background-color:#7c3aed;color:#ffffff;">
+                              style="background-color:#4f46e5;color:#ffffff;">
                         Reactivar
                       </button>
                     </form>
