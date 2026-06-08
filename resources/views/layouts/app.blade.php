@@ -151,7 +151,7 @@
       $bu = Auth::user();
       $bt = $bu?->currentTeam;
       if ($bt && !$bu->isSuperAdmin() && !($bt->owner && $bt->owner->isSuperAdmin())) {
-          $bl = $bt->license;
+          $bl = \App\Models\TeamLicense::where('team_id', $bt->id)->first();
           if ($bl && $bl->is_active && !$bl->is_expired) {
               $brem  = $bl->remaining_days;
               $bdays = $brem !== null ? max(0, (int) ceil($brem)) : null;

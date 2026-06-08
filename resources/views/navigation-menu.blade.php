@@ -14,7 +14,10 @@
     $user = Auth::user();
     if (!$team || $user->isSuperAdmin()) return false;
     if ($team->owner && $team->owner->isSuperAdmin()) return false;
-    $lic = $team->license;
+    // Consulta fresca (no la relación cacheada): si la prueba se acaba de crear
+    // en el middleware en este mismo request, debe reflejarse de inmediato y no
+    // mostrar el menú reducido hasta recargar.
+    $lic = \App\Models\TeamLicense::where('team_id', $team->id)->first();
     return !$lic || !$lic->is_active || $lic->is_expired;
   })();
 
