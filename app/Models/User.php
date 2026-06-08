@@ -68,6 +68,26 @@ class User extends Authenticatable
     }
 
     /**
+     * ¿Es administrador de este team? True si es dueño/admin de Jetstream
+     * o si su rol de CRM tiene permisos de administración (rol "Administrador").
+     * Así, cambiar el rol de CRM a Administrador habilita la vista de admin.
+     */
+    public function isCrmAdminFor($team): bool
+    {
+        if (! $team) {
+            return false;
+        }
+
+        if ((int) $team->user_id === (int) $this->id || $this->hasTeamRole($team, 'admin')) {
+            return true;
+        }
+
+        $role = $this->crmRoleFor($team);
+
+        return $role && $role->hasPermission('admin.manage_team');
+    }
+
+    /**
      * ¿Puede ver este embudo?
      *  - Dueño/admin del team y roles con 'pipelines.view_all' (Administrador, Editor)
      *    ven TODOS los embudos (incluidos los nuevos).

@@ -24,12 +24,9 @@ class EnsureTeamAdmin
             abort(403, 'No hay equipo activo.');
         }
 
-        // El owner del team siempre cuenta como admin (Jetstream a veces no incluye
-        // al owner en el pivot team_user, así que lo verificamos explícitamente).
-        $isOwner = ((int) $team->user_id === (int) $user->id);
-        $isAdmin = $isOwner || $user->hasTeamRole($team, 'admin');
-
-        if (! $isAdmin) {
+        // Admin si es dueño/admin de Jetstream o tiene el rol de CRM "Administrador".
+        // (isCrmAdminFor cubre dueño, admin de Jetstream y rol CRM con permisos de admin.)
+        if (! $user->isCrmAdminFor($team)) {
             abort(403, 'Solo los administradores del equipo pueden acceder a esta sección.');
         }
 

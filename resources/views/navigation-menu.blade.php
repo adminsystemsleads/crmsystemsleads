@@ -6,7 +6,7 @@
     ? $team->name
     : config('app.name', 'Laravel');
 
-  $isAdmin = $team && Auth::user()->hasTeamRole($team, 'admin');
+  $isAdmin = $team && Auth::user()->isCrmAdminFor($team);
 
   // ¿La cuenta actual está bloqueada por licencia? (mismo criterio que el middleware)
   // Si lo está, el menú se reduce: solo Licencia, selector de cuenta, idioma, soporte y perfil.
