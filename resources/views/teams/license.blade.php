@@ -29,16 +29,12 @@
     <div class="mb-4 text-sm text-gray-700">
   <p><b>Estado:</b>
     <span class="{{ $isValid ? 'text-green-600' : 'text-red-600' }}">
-      {{ $isValid ? ($reason === 'trial' ? 'Prueba' : 'Activa') : 'Vencida' }}
+      {{ $isValid ? ($reason === 'trial' ? 'Modo de Prueba activo' : 'Licencia activada') : 'Sin licencia activa / Vencida' }}
     </span>
   </p>
 
-  <p><b>Inicio:</b>
-    {{ optional($license?->starts_at)->format('Y-m-d') ?? '-' }}
-  </p>
-
   <p><b>Vence:</b>
-    {{ optional($license?->active_until)->format('Y-m-d') ?? '-' }}
+    {{ optional($license?->expires_at)->format('Y-m-d') ?? '-' }}
   </p>
 </div>
 
@@ -67,21 +63,24 @@
       </div>
     </div>
 
-    <details class="mb-3">
-      <summary class="text-xs text-gray-500 cursor-pointer">¿Tienes una clave de licencia manual?</summary>
+    {{-- Activar con código de licencia / prueba --}}
+    <div class="p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
+      <h3 class="text-sm font-bold text-gray-900 mb-1">Activar con un código</h3>
+      <p class="text-xs text-gray-600 mb-3">
+        Ingresa el código que recibiste para activar tu <b>licencia</b> o tu <b>periodo de prueba</b>.
+      </p>
 
-      <form method="POST" action="{{ route('team.license.activate', $team) }}" class="space-y-3 mt-3">
+      <form method="POST" action="{{ route('team.license.activate', $team) }}" class="space-y-3">
         @csrf
-        <label class="block text-sm font-medium text-gray-700">Clave de licencia</label>
-        <input type="text" name="license_key" class="w-full border rounded px-3 py-2" placeholder="Pega aquí tu clave" required>
+        <label class="block text-sm font-medium text-gray-700">Código de licencia</label>
+        <input type="text" name="license_key"
+               class="w-full border border-gray-300 rounded-lg px-3 py-2 font-mono uppercase tracking-wide"
+               placeholder="SL-XXXX-XXXX-XXXX" required>
 
-        <label class="block text-sm font-medium text-gray-700">Meses a activar (opcional)</label>
-        <input type="number" name="months" min="1" max="36" class="w-32 border rounded px-3 py-2" value="1">
-
-        <button class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">
-          Activar/Renovar manualmente
+        <button class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition">
+          Activar
         </button>
       </form>
-    </details>
+    </div>
   </div>
 </x-app-layout>

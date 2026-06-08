@@ -27,6 +27,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuickReplyController;
 use App\Http\Controllers\ChatTagController;
 use App\Http\Controllers\CustomFieldController;
+use App\Http\Controllers\LicenseCodeController;
 
 
 Route::get('/', function () {
@@ -145,6 +146,14 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     // Activar / renovar (solo admin)
     Route::post('/teams/{team}/licencia/activar', [TeamLicenseController::class, 'activate'])
         ->name('team.license.activate')->middleware('team.admin');
+
+    // Generar Códigos de Licencia (solo Super Administrador de plataforma)
+    Route::middleware('super.admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/codigos-licencia',                   [LicenseCodeController::class, 'index'])->name('license-codes.index');
+        Route::post('/codigos-licencia',                  [LicenseCodeController::class, 'store'])->name('license-codes.store');
+        Route::patch('/codigos-licencia/{licenseCode}/toggle', [LicenseCodeController::class, 'toggle'])->name('license-codes.toggle');
+        Route::delete('/codigos-licencia/{licenseCode}',  [LicenseCodeController::class, 'destroy'])->name('license-codes.destroy');
+    });
 
     // Suscripciones Culqi
     Route::get('/teams/{team}/pagar',                     [PaymentController::class, 'checkout'])->name('payments.checkout');

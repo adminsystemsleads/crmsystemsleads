@@ -36,44 +36,33 @@ class TeamLicenseController extends Controller
 
         $data = $request->validate([
             'license_key' => 'required|string',
-            'months'      => 'nullable|integer|min:1|max:36'
+        ], [], [
+            'license_key' => 'código de licencia',
         ]);
 
-        $months = (int)($data['months'] ?? 1);
-
-        $res = $svc->activate($team, $data['license_key'], $months);
+        $res = $svc->redeemCode($team, $data['license_key']);
 
         if (!$res['ok']) {
-            return back()->with('error', 'No se pudo activar la licencia.');
+            return back()->with('error', $res['error'] ?? 'No se pudo activar la licencia.');
         }
 
-        return redirect()->route('dashboard')->with('success', 'Licencia activada/renovada correctamente.');
+        $message = ($res['mode'] ?? 'license') === 'trial'
+            ? 'Modo de Prueba activo.'
+            : 'Licencia activada.';
+
+        return redirect()->route('dashboard')->with('success', $message);
     }
-   public function show(Team $team)
+   public function show(Team $team, TeamLicenseManager $svc)
 {
 
     if (!Auth::user()->belongsToTeam($team)) {
         abort(403);
     }
-    // (opcional) seguridad extra si manejas equipos
-    // abort_unless(Auth::user()->belongsToTeam($team), 403);
 
-    // Crea licencia si no existe (30 días de prueba)
-    $license = $team->license()->firstOrCreate([], [
-        'starts_at'    => now(),
-        'active_until' => now()->addDays(30),
-        'is_active'    => true,
-    ]);
+    // No crea ninguna licencia automáticamente: el cliente la activa con un código.
+    $license = $team->license; // puede ser null si nunca se activó
 
-    // Cálculo simple de estado
-    $isTrial = $license->starts_at && $license->active_until
-                ? $license->starts_at->diffInDays($license->active_until) <= 31
-                : false;
-
-    $status = [
-        'valid'  => $license->is_active && optional($license->active_until)->isFuture(),
-        'reason' => $isTrial ? 'trial' : 'paid',
-    ];
+    $status = $svc->status($team, true);
 
     return view('teams.license', [
         'team'    => $team,

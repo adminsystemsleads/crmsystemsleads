@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\EnsureTeamLicense;
 use App\Http\Middleware\EnsureTeamAdmin;
+use App\Http\Middleware\EnsureSuperAdmin;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'team.license' => EnsureTeamLicense::class,
             'team.admin'   => EnsureTeamAdmin::class,
+            'super.admin'  => EnsureSuperAdmin::class,
         ]);
 
         // Debe ir DENTRO del grupo web para que la sesión esté iniciada

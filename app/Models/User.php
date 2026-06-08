@@ -33,7 +33,23 @@ class User extends Authenticatable
         'password',
         'country_code',
         'phone',
+        'is_super_admin',
     ];
+
+    /**
+     * Correo con privilegios de Super Administrador de plataforma.
+     * Sirve como respaldo aunque la columna is_super_admin se reinicie.
+     */
+    public const SUPER_ADMIN_EMAIL = 'admin@systemsleads.com';
+
+    /**
+     * ¿Es Super Administrador de la plataforma? (acceso a "Generar Códigos de Licencia")
+     */
+    public function isSuperAdmin(): bool
+    {
+        return (bool) ($this->is_super_admin ?? false)
+            || strcasecmp((string) $this->email, self::SUPER_ADMIN_EMAIL) === 0;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

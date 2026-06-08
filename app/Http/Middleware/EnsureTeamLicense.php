@@ -12,16 +12,22 @@ class EnsureTeamLicense
 {
     public function handle(Request $request, Closure $next)
     {
-        // Permitir login, logout, y páginas de activación
+        // Permitir login, logout, páginas de activación y el panel del Super Admin
         if ($request->routeIs([
             'team.license.form',     // coincide también si viene con {team}
             'team.license.activate',
+            'admin.license-codes.*', // generación de códigos (Super Admin)
             'login', 'logout', 'password.*'
         ])) {
             return $next($request);
         }
 
         $user = Auth::user();
+
+        // El Super Administrador nunca queda bloqueado por licencia de team
+        if ($user && $user->isSuperAdmin()) {
+            return $next($request);
+        }
 
         // 1) Resuelve el team desde la ruta o desde el usuario
         //    (si tu ruta es /teams/{team}/..., route('team') será el modelo Team por binding)
@@ -47,7 +53,9 @@ class EnsureTeamLicense
             return $goToLicense('Licencia inactiva.');
         }
 
-        if ($license->active_until && Carbon::now()->gt($license->active_until)) {
+        // Vigente si está dentro del periodo de prueba (semanas) o de la licencia (meses).
+        // is_expired = no está en trial NI tiene licencia pagada vigente.
+        if ($license->is_expired) {
             return $goToLicense('Tu licencia ha expirado.');
         }
 
