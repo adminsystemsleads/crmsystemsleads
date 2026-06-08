@@ -17,6 +17,7 @@ class EnsureTeamLicense
             'team.license.form',     // coincide también si viene con {team}
             'team.license.activate',
             'admin.license-codes.*', // generación de códigos (Super Admin)
+            'soporte',               // soporte accesible aunque la licencia esté vencida
             'login', 'logout', 'password.*'
         ])) {
             return $next($request);

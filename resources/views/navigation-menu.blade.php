@@ -433,6 +433,20 @@
       <x-language-switcher variant="sidebar" />
     </div>
 
+    {{-- Soporte --}}
+    <div class="px-2 py-2 border-t border-gray-100 shrink-0">
+      <a href="{{ route('soporte') }}"
+         class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                {{ request()->routeIs('soporte') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+        <svg class="size-5 shrink-0 {{ request()->routeIs('soporte') ? 'text-indigo-500' : 'text-gray-400' }}"
+             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M18.364 5.636a9 9 0 11-12.728 0M12 3v6m-3.536 1.464a5 5 0 107.072 0"/>
+        </svg>
+        <span class="truncate">{{ __('Soporte') }}</span>
+      </a>
+    </div>
+
     {{-- Perfil / Logout --}}
     <div class="p-3 border-t border-gray-200 shrink-0 space-y-0.5">
       <a href="{{ route('profile.show') }}"

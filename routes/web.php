@@ -143,6 +143,9 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
     Route::put('/teams/{team}/timezone', [TeamSettingsController::class, 'updateTimezone'])
         ->name('team.timezone.update')->middleware('team.admin');
 
+    // Soporte (chat en vivo + formulario Bitrix24). Accesible aunque la licencia esté vencida.
+    Route::view('/soporte', 'soporte.index')->name('soporte');
+
     // Formulario / estado de licencia (visible para no-admin para que vean el mensaje
     // "licencia inactiva, contacta a tu administrador" sin recibir 403 al ser redirigidos)
     Route::get('/teams/{team}/licencia', [TeamLicenseController::class, 'show'])
