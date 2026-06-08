@@ -68,8 +68,8 @@
 
     <div class="mb-4 text-sm text-gray-700">
   <p class="flex items-center gap-2"><b>Estado:</b>
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
-          style="{{ $estadoStyle }}">
+    <span class="inline-flex items-center rounded-full font-bold whitespace-nowrap"
+          style="{{ $estadoStyle }}padding:5px 14px;font-size:12px;line-height:1;">
       {{ $estadoLabel }}
     </span>
   </p>
