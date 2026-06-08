@@ -14,7 +14,7 @@
     </div>
   </x-slot>
 
-  <div class="max-w-7xl mx-auto py-8 px-4 space-y-4">
+  <div class="w-full py-8 px-6 space-y-4">
 
     @if (session('success'))
       <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{{ session('success') }}</div>
@@ -35,7 +35,7 @@
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-full text-xs whitespace-nowrap">
+        <table class="w-full text-xs">
           <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider">
             <tr>
               <th class="text-left px-4 py-3 font-semibold">ID</th>
@@ -84,7 +84,8 @@
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($inicio) }}</td>
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($lic?->expires_at) }}</td>
                 <td class="px-4 py-3">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-semibold" style="{{ $estadoStyle }}">
+                  <span class="inline-flex items-center rounded-full font-bold whitespace-nowrap"
+                        style="{{ $estadoStyle }}padding:5px 12px;font-size:11.5px;line-height:1;">
                     {{ $estadoLabel }}
                   </span>
                 </td>
