@@ -22,6 +22,22 @@
             </div>
         </div>
 
+        <!-- ID de la cuenta general (equipo) — solo lectura -->
+        <div class="col-span-6 sm:col-span-4">
+            <x-label for="team_id" value="{{ __('ID de la cuenta general') }}" />
+
+            <x-input id="team_id"
+                        type="text"
+                        class="mt-1 block w-full bg-gray-100 text-gray-600 cursor-not-allowed font-mono"
+                        :value="$team->id"
+                        readonly
+                        disabled />
+
+            <p class="mt-1 text-xs text-gray-500">
+                {{ __('Identificador único del equipo general. No editable.') }}
+            </p>
+        </div>
+
         <!-- Team Name -->
         <div class="col-span-6 sm:col-span-4">
             <x-label for="name" value="{{ __('Team Name') }}" />
