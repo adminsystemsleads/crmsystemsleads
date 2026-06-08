@@ -18,14 +18,14 @@
     return !$lic || !$lic->is_active || $lic->is_expired;
   })();
 
-  // Pipelines marcados como acceso rápido que el usuario puede ver
+  // Todos los embudos activos que el usuario puede ver (según su rol de CRM).
+  // Admin/Editor (pipelines.view_all) ven todos; otros roles solo los permitidos.
   $navPipelines = $team
     ? \App\Models\Pipeline::where('team_id', $team->id)
-        ->where('show_in_nav', true)
         ->where('is_active', true)
         ->orderBy('sort_order')
         ->get()
-        ->filter(fn($p) => $p->userCan(Auth::user(), 'view'))
+        ->filter(fn($p) => Auth::user()->canViewPipeline($p))
     : collect();
 
   $links = [
@@ -278,8 +278,10 @@
             </a>
           @endif
 
-          {{-- Accesos rápidos al Kanban bajo el módulo CRM --}}
+          {{-- Sección Embudos: lista todos los embudos que el usuario puede ver --}}
           @if ($link['key'] === 'crm' && $navPipelines->isNotEmpty())
+            <p class="pt-1 pb-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400"
+               style="padding-left: 2.5rem;">{{ __('Pipelines') }}</p>
             @foreach ($navPipelines as $navPipeline)
               @php
                 $kanbanActive = request()->routeIs('pipelines.kanban') && request()->route('pipeline')?->id === $navPipeline->id;
@@ -297,10 +299,7 @@
                   <rect x="10" y="3" width="5" height="9" rx="1"/>
                   <rect x="17" y="3" width="5" height="11" rx="1"/>
                 </svg>
-                <span class="truncate">
-                  <span class="text-[10px] font-semibold uppercase tracking-wider opacity-60 mr-1">{{ __('Pipeline') }}</span>
-                  {{ $navPipeline->name }}
-                </span>
+                <span class="truncate">{{ $navPipeline->name }}</span>
               </a>
             @endforeach
           @endif

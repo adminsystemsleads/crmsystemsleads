@@ -52,6 +52,44 @@ class User extends Authenticatable
     }
 
     /**
+     * Rol de CRM del usuario en un team (vía su perfil de miembro).
+     */
+    public function crmRoleFor($team): ?\App\Models\CrmRole
+    {
+        if (! $team) {
+            return null;
+        }
+
+        return optional(
+            \App\Models\TeamMemberProfile::where('team_id', $team->id)
+                ->where('user_id', $this->id)
+                ->first()
+        )->crmRole;
+    }
+
+    /**
+     * ¿Puede ver este embudo?
+     *  - Dueño/admin del team y roles con 'pipelines.view_all' (Administrador, Editor)
+     *    ven TODOS los embudos (incluidos los nuevos).
+     *  - Otros roles solo ven los embudos marcados en allowed_pipeline_ids.
+     */
+    public function canViewPipeline(\App\Models\Pipeline $pipeline): bool
+    {
+        $team = $pipeline->team;
+
+        if ($team && ((int) $team->user_id === (int) $this->id || $this->hasTeamRole($team, 'admin'))) {
+            return true;
+        }
+
+        $role = $this->crmRoleFor($team);
+        if (! $role) {
+            return false;
+        }
+
+        return $role->canViewPipeline($pipeline->id);
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
