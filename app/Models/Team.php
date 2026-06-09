@@ -30,6 +30,24 @@ class Team extends JetstreamTeam
     /** Zona horaria por defecto (GMT-5). */
     public const DEFAULT_TIMEZONE = 'America/Lima';
 
+    /** Días que una cuenta eliminada permanece antes de borrarse por completo. */
+    public const PURGE_AFTER_DAYS = 45;
+
+    /**
+     * Días que faltan para que una cuenta eliminada se borre definitivamente.
+     * Null si la cuenta no está eliminada.
+     */
+    public function daysUntilPurge(): ?int
+    {
+        if (! $this->trashed() || ! $this->deleted_at) {
+            return null;
+        }
+
+        $elapsed = (int) $this->deleted_at->diffInDays(now());
+
+        return max(0, self::PURGE_AFTER_DAYS - $elapsed);
+    }
+
     /** Zona horaria efectiva del equipo (con respaldo al valor por defecto). */
     public function effectiveTimezone(): string
     {

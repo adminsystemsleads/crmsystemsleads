@@ -165,6 +165,9 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityContro
         Route::get('/cuentas',                    [LicenseCodeController::class, 'accountsReport'])->name('accounts.index');
         Route::post('/cuentas/{team}/bloquear',   [LicenseCodeController::class, 'blockAccount'])->name('accounts.block');
         Route::post('/cuentas/{team}/habilitar',  [LicenseCodeController::class, 'enableAccount'])->name('accounts.enable');
+        // Cuentas eliminadas: restaurar o borrar definitivamente (id plano para alcanzar las soft-deleted)
+        Route::post('/cuentas/{teamId}/restaurar',          [LicenseCodeController::class, 'restoreAccount'])->name('accounts.restore');
+        Route::delete('/cuentas/{teamId}/eliminar-definitivo', [LicenseCodeController::class, 'forceDeleteAccount'])->name('accounts.force-delete');
         Route::patch('/codigos-licencia/{licenseCode}/toggle', [LicenseCodeController::class, 'toggle'])->name('license-codes.toggle');
         Route::delete('/codigos-licencia/{licenseCode}',  [LicenseCodeController::class, 'destroy'])->name('license-codes.destroy');
     });

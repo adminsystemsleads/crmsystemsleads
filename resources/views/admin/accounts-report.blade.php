@@ -46,6 +46,28 @@
       </div>
     @endif
 
+    {{-- Notificación de cuentas eliminadas (solo en esta vista) --}}
+    @if ($deletedAccounts->isNotEmpty())
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:14px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <svg style="width:18px;height:18px;color:#c2410c;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          <span style="font-weight:800;color:#9a3412;font-size:13.5px;">
+            {{ $deletedAccounts->count() }} cuenta(s) eliminada(s) — se borrarán por completo de la base a los {{ \App\Models\Team::PURGE_AFTER_DAYS }} días de su eliminación.
+          </span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          @foreach ($deletedAccounts as $da)
+            @php $dl = $da->daysUntilPurge(); @endphp
+            <span style="background:#ffedd5;color:#9a3412;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;">
+              #{{ $da->id }} {{ $da->name }} — quedan {{ $dl }} {{ $dl === 1 ? 'día' : 'días' }}
+            </span>
+          @endforeach
+        </div>
+      </div>
+    @endif
+
     <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-100">
         <h3 class="text-sm font-bold text-gray-900">Todas las cuentas ({{ $teams->total() }})</h3>
@@ -66,6 +88,7 @@
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Fecha eliminada<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Días p/ borrado<span class="sort-arrow"></span></th>
               <th class="text-right px-4 py-3 font-semibold">Acciones</th>
             </tr>
           </thead>
@@ -115,7 +138,33 @@
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($team->deleted_at) }}</td>
                 <td class="px-4 py-3">
                   @if ($isDeleted)
-                    <div class="text-xs text-gray-400 italic" style="min-width:210px;">Cuenta eliminada — sin acciones</div>
+                    @php $daysLeft = $team->daysUntilPurge(); @endphp
+                    <span class="inline-flex items-center rounded-full font-bold whitespace-nowrap"
+                          style="{{ $daysLeft <= 5 ? 'background:#fee2e2;color:#b91c1c;' : 'background:#ffedd5;color:#9a3412;' }}padding:4px 10px;font-size:11px;">
+                      {{ $daysLeft }} / {{ \App\Models\Team::PURGE_AFTER_DAYS }} días
+                    </span>
+                  @else
+                    <span class="text-gray-400">—</span>
+                  @endif
+                </td>
+                <td class="px-4 py-3">
+                  @if ($isDeleted)
+                    <div class="flex flex-col items-stretch gap-1.5" style="min-width:210px;">
+                      <form method="POST" action="{{ route('admin.accounts.restore', $team->id) }}">
+                        @csrf
+                        <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#16a34a;"
+                                title="Restaurar la cuenta y habilitar 7 días de prórroga">
+                          ↺ Restaurar cuenta
+                        </button>
+                      </form>
+                      <form method="POST" action="{{ route('admin.accounts.force-delete', $team->id) }}"
+                            onsubmit="return confirm('¿Eliminar DEFINITIVAMENTE la cuenta #{{ $team->id }} y todos sus datos? Esta acción no se puede deshacer.');">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#991b1b;">
+                          ✕ Eliminar por completo
+                        </button>
+                      </form>
+                    </div>
                   @else
                   <div class="flex flex-col items-stretch gap-1.5" style="min-width:210px;">
                     {{-- Bloquear / Habilitar (nota obligatoria) --}}
@@ -149,7 +198,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="11" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
+              <tr><td colspan="12" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
             @endforelse
           </tbody>
         </table>

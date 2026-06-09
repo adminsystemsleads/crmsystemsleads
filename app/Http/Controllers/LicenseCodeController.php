@@ -133,7 +133,52 @@ class LicenseCodeController extends Controller
             ->orderByDesc('id')
             ->paginate(40);
 
-        return view('admin.accounts-report', ['teams' => $teams]);
+        // Cuentas eliminadas (para la notificación superior con días restantes).
+        $deletedAccounts = Team::onlyTrashed()
+            ->with('owner')
+            ->orderBy('deleted_at')
+            ->get();
+
+        return view('admin.accounts-report', [
+            'teams'           => $teams,
+            'deletedAccounts' => $deletedAccounts,
+        ]);
+    }
+
+    /**
+     * Restaura una cuenta eliminada y le habilita un periodo de prórroga de 7 días.
+     */
+    public function restoreAccount($teamId, TeamLicenseManager $svc)
+    {
+        $team = Team::withTrashed()->findOrFail($teamId);
+
+        if ($team->trashed()) {
+            $team->restore();
+
+            // Re-vincula al dueño como miembro (Jetstream quita el pivote al eliminar).
+            $owner = $team->owner;
+            if ($owner && ! $team->hasUser($owner)) {
+                $team->users()->attach($owner, ['role' => 'admin']);
+            }
+
+            // Al restaurar se habilita una prórroga de 7 días.
+            $svc->grantProrroga($team, 7);
+        }
+
+        return back()->with('success', "Cuenta #{$team->id} restaurada. Se habilitó una prórroga de 7 días.");
+    }
+
+    /**
+     * Elimina por completo una cuenta de la base de datos (no recuperable).
+     */
+    public function forceDeleteAccount($teamId)
+    {
+        $team = Team::withTrashed()->findOrFail($teamId);
+        $id   = $team->id;
+
+        $team->forceDelete(); // borra definitivamente; las FKs en cascada limpian su data
+
+        return back()->with('success', "Cuenta #{$id} eliminada por completo de la base de datos.");
     }
 
     /**
