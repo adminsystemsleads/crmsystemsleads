@@ -1,16 +1,14 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Kanban – {{ $pipeline->name }}
-            </h2>
-
-            
-        </div>
-    </x-slot>
-
-    <div class="py-6">
+    <div class="pt-4 pb-6">
         <div class="w-full px-4 sm:px-6">
+            {{-- Título alineado a la izquierda; reserva espacio si el menú está minimizado --}}
+            <div class="flex items-center mb-4" style="min-height:40px;"
+                 :style="!$store.sidebar.open ? 'padding-left:3.25rem;' : ''">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Kanban – {{ $pipeline->name }}
+                </h2>
+            </div>
+
             {{-- Toggle de vista --}}
             <div class="inline-flex rounded-xl border border-gray-200 bg-white p-1 text-sm">
                 <a href="{{ route('pipelines.kanban', $pipeline) }}"
