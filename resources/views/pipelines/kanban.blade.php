@@ -1,8 +1,8 @@
 <x-app-layout>
-    <div class="pt-4 pb-6">
+    <div class="pt-6 pb-6">
         <div class="w-full px-4 sm:px-6">
             {{-- Título alineado a la izquierda; reserva espacio si el menú está minimizado --}}
-            <div class="flex items-center mb-4" style="min-height:40px;"
+            <div class="flex items-center mb-5" style="min-height:40px;"
                  :style="!$store.sidebar.open ? 'padding-left:3.25rem;' : ''">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Kanban – {{ $pipeline->name }}

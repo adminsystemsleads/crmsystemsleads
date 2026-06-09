@@ -1,5 +1,5 @@
 <x-app-layout>
-  <div class="w-full pt-4 pb-8 px-6 space-y-4">
+  <div class="w-full pt-6 pb-8 px-6 space-y-4">
 
     {{-- Encabezado alineado con los bordes de la tabla.
          Reserva espacio a la izquierda cuando el menú está minimizado para que
