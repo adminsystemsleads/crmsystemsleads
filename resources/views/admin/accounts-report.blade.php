@@ -101,8 +101,11 @@
 
                 $inicio = $lic?->active_from ?? $lic?->trial_starts_at;
                 $isDeleted = $team->trashed();
+                $isPurged  = $team->isPurged();
 
-                if ($isDeleted) {
+                if ($isPurged) {
+                    $estadoLabel = 'Eliminada permanentemente'; $estadoStyle = 'background:#111827;color:#ffffff;';
+                } elseif ($isDeleted) {
                     $estadoLabel = 'Eliminada'; $estadoStyle = 'background:#374151;color:#ffffff;';
                 } elseif (! $lic) {
                     $estadoLabel = 'Sin licencia'; $estadoStyle = 'background:#f3f4f6;color:#6b7280;';
@@ -137,7 +140,9 @@
                 <td class="px-4 py-3 text-gray-500 truncate" style="max-width:180px;" title="{{ $lastNote }}">{{ $lastNote ?? '—' }}</td>
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($team->deleted_at) }}</td>
                 <td class="px-4 py-3">
-                  @if ($isDeleted)
+                  @if ($isPurged)
+                    <span class="text-gray-400">borrada</span>
+                  @elseif ($isDeleted)
                     @php $daysLeft = $team->daysUntilPurge(); @endphp
                     <span class="inline-flex items-center rounded-full font-bold whitespace-nowrap"
                           style="{{ $daysLeft <= 5 ? 'background:#fee2e2;color:#b91c1c;' : 'background:#ffedd5;color:#9a3412;' }}padding:4px 10px;font-size:11px;">
@@ -148,7 +153,9 @@
                   @endif
                 </td>
                 <td class="px-4 py-3">
-                  @if ($isDeleted)
+                  @if ($isPurged)
+                    <div class="text-xs text-gray-400 italic" style="min-width:210px;">Eliminada permanentemente — sin acciones</div>
+                  @elseif ($isDeleted)
                     <div class="flex flex-col items-stretch gap-1.5" style="min-width:210px;">
                       <form method="POST" action="{{ route('admin.accounts.restore', $team->id) }}">
                         @csrf
@@ -158,7 +165,7 @@
                         </button>
                       </form>
                       <form method="POST" action="{{ route('admin.accounts.force-delete', $team->id) }}"
-                            onsubmit="return confirm('¿Eliminar DEFINITIVAMENTE la cuenta #{{ $team->id }} y todos sus datos? Esta acción no se puede deshacer.');">
+                            onsubmit="return confirm('¿Eliminar PERMANENTEMENTE los datos de la cuenta #{{ $team->id }}? Se conservará el registro pero no se podrá recuperar.');">
                         @csrf @method('DELETE')
                         <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#991b1b;">
                           ✕ Eliminar por completo

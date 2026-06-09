@@ -16,16 +16,18 @@ class PurgeDeletedTeams extends Command
     {
         $cutoff = now()->subDays(Team::PURGE_AFTER_DAYS);
 
+        // Solo las que aún no han sido purgadas y ya pasaron los 45 días.
         $teams = Team::onlyTrashed()
+            ->whereNull('purged_at')
             ->where('deleted_at', '<=', $cutoff)
             ->get();
 
         foreach ($teams as $team) {
-            $this->line("Eliminando definitivamente la cuenta #{$team->id} ({$team->name})");
-            $team->forceDelete();
+            $this->line("Eliminando permanentemente los datos de la cuenta #{$team->id} ({$team->name})");
+            $team->purgeData();
         }
 
-        $this->info("Cuentas eliminadas por completo: {$teams->count()}");
+        $this->info("Cuentas eliminadas permanentemente: {$teams->count()}");
 
         return self::SUCCESS;
     }

@@ -133,8 +133,10 @@ class LicenseCodeController extends Controller
             ->orderByDesc('id')
             ->paginate(40);
 
-        // Cuentas eliminadas (para la notificación superior con días restantes).
+        // Cuentas eliminadas aún en periodo de retención (no purgadas) para la
+        // notificación superior con días restantes.
         $deletedAccounts = Team::onlyTrashed()
+            ->whereNull('purged_at')
             ->with('owner')
             ->orderBy('deleted_at')
             ->get();
@@ -151,6 +153,10 @@ class LicenseCodeController extends Controller
     public function restoreAccount($teamId, TeamLicenseManager $svc)
     {
         $team = Team::withTrashed()->findOrFail($teamId);
+
+        if ($team->isPurged()) {
+            return back()->with('error', "La cuenta #{$team->id} fue eliminada permanentemente y ya no se puede restaurar.");
+        }
 
         if ($team->trashed()) {
             $team->restore();
@@ -169,16 +175,19 @@ class LicenseCodeController extends Controller
     }
 
     /**
-     * Elimina por completo una cuenta de la base de datos (no recuperable).
+     * Elimina permanentemente los DATOS de la cuenta (libera recursos), pero
+     * conserva el registro en el reporte con estado "Eliminada permanentemente".
+     * No recuperable.
      */
     public function forceDeleteAccount($teamId)
     {
         $team = Team::withTrashed()->findOrFail($teamId);
-        $id   = $team->id;
 
-        $team->forceDelete(); // borra definitivamente; las FKs en cascada limpian su data
+        if (! $team->isPurged()) {
+            $team->purgeData();
+        }
 
-        return back()->with('success', "Cuenta #{$id} eliminada por completo de la base de datos.");
+        return back()->with('success', "Cuenta #{$team->id} eliminada permanentemente. Sus datos se borraron y el registro queda como referencia.");
     }
 
     /**
