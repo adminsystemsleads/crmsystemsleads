@@ -1,14 +1,20 @@
 <x-app-layout>
   <div class="w-full pt-6 pb-8 px-6 space-y-4">
 
-    {{-- Encabezado alineado con los bordes de la tabla.
-         Reserva espacio a la izquierda cuando el menú está minimizado para que
-         el botón flotante de despliegue no tape el título. --}}
-    <div class="flex items-center justify-between"
-         :style="!$store.sidebar.open ? 'min-height:40px;padding-left:3.5rem;' : 'min-height:40px;'">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Reporte de Cuentas
-      </h2>
+    {{-- Encabezado: botón de despliegue en la misma línea del título --}}
+    <div class="flex items-center justify-between" style="min-height:40px;">
+      <div class="flex items-center gap-3">
+        <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
+                class="shrink-0 p-1.5 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
+                title="Mostrar menú" style="display:none;">
+          <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+          Reporte de Cuentas
+        </h2>
+      </div>
       <a href="{{ route('admin.license-codes.index') }}"
          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 border border-gray-300 hover:bg-gray-50 transition">
         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
