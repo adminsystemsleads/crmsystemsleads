@@ -158,20 +158,34 @@ class LicenseCodeController extends Controller
             return back()->with('error', "La cuenta #{$team->id} fue eliminada permanentemente y ya no se puede restaurar.");
         }
 
-        if ($team->trashed()) {
-            $team->restore();
-
-            // Re-vincula al dueño como miembro (Jetstream quita el pivote al eliminar).
-            $owner = $team->owner;
-            if ($owner && ! $team->hasUser($owner)) {
-                $team->users()->attach($owner, ['role' => 'admin']);
-            }
-
-            // Al restaurar se habilita una prórroga de 7 días.
-            $svc->grantProrroga($team, 7);
+        if (! $team->trashed()) {
+            return back()->with('error', "La cuenta #{$team->id} no está eliminada.");
         }
 
-        return back()->with('success', "Cuenta #{$team->id} restaurada. Se habilitó una prórroga de 7 días.");
+        $team->restore();
+
+        // Re-vincula al dueño como miembro (Jetstream quita el pivote al eliminar).
+        $owner = $team->owner;
+        if ($owner && ! $team->hasUser($owner)) {
+            $team->users()->attach($owner, ['role' => 'admin']);
+        }
+
+        // Si su licencia seguía VIGENTE, se conserva tal cual (misma fecha de
+        // vencimiento). Si estaba vencida, bloqueada o sin licencia, se le
+        // habilita un periodo de prórroga de 7 días.
+        $lic = TeamLicense::where('team_id', $team->id)->first();
+        $licenciaVigente = $lic && $lic->is_active && ! $lic->is_expired;
+
+        $svc->forget($team);
+
+        if ($licenciaVigente) {
+            $vence = optional($lic->expires_at)->setTimezone($team->effectiveTimezone())->format('Y-m-d');
+            return back()->with('success', "Cuenta #{$team->id} restaurada conservando su licencia vigente (vence {$vence}).");
+        }
+
+        $svc->grantProrroga($team, 7);
+
+        return back()->with('success', "Cuenta #{$team->id} restaurada. Su licencia estaba vencida o bloqueada, se habilitó una prórroga de 7 días.");
     }
 
     /**
