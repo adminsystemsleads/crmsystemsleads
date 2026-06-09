@@ -74,6 +74,35 @@
         <p class="text-xs text-gray-500">Estado de licencia, fechas y acciones de administración de cada cuenta.</p>
       </div>
 
+      {{-- Filtros (por estado y correo del creador) --}}
+      <div class="px-6 py-3 border-b border-gray-100 bg-gray-50 flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</label>
+          <select id="filterEstado" onchange="filterAccounts()" class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs">
+            <option value="">Todos</option>
+            <option>Licencia activa</option>
+            <option>Modo de prueba</option>
+            <option>Prórroga</option>
+            <option>Vencida</option>
+            <option>Bloqueada</option>
+            <option>Sin licencia</option>
+            <option>Eliminada</option>
+            <option>Eliminada permanentemente</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2 flex-1" style="min-width:220px;">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Correo</label>
+          <input id="filterEmail" type="text" oninput="filterAccounts()" placeholder="Buscar por correo del creador…"
+                 class="flex-1 border border-gray-300 rounded-lg px-2 py-1.5 text-xs">
+        </div>
+        <button type="button"
+                onclick="document.getElementById('filterEstado').value='';document.getElementById('filterEmail').value='';filterAccounts()"
+                class="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
+          Limpiar
+        </button>
+        <span id="filterCount" class="text-xs text-gray-400"></span>
+      </div>
+
       <div class="overflow-x-auto">
         <table class="w-full text-xs">
           <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider">
@@ -88,11 +117,12 @@
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Fecha eliminada<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Borrado permanente<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Días p/ borrado<span class="sort-arrow"></span></th>
               <th class="text-right px-4 py-3 font-semibold">Acciones</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-gray-100" id="accountsTbody">
             @forelse ($teams as $team)
               @php
                 $lic = $team->license;
@@ -123,7 +153,9 @@
                 }
                 $lastNote = data_get($lic, 'meta.last_note');
               @endphp
-              <tr class="hover:bg-gray-50 {{ $isDeleted ? 'opacity-70' : '' }}">
+              <tr class="hover:bg-gray-50 {{ $isDeleted ? 'opacity-70' : '' }}"
+                  data-estado="{{ $estadoLabel }}"
+                  data-email="{{ strtolower($team->owner?->email ?? '') }}">
                 <td class="px-4 py-3 font-mono text-gray-700">{{ $team->id }}</td>
                 <td class="px-4 py-3 font-medium text-gray-900">{{ $team->name }}</td>
                 <td class="px-4 py-3 text-gray-700">{{ $team->owner?->email ?? '—' }}</td>
@@ -139,6 +171,7 @@
                 </td>
                 <td class="px-4 py-3 text-gray-500 truncate" style="max-width:180px;" title="{{ $lastNote }}">{{ $lastNote ?? '—' }}</td>
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($team->deleted_at) }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ $fmt($team->purged_at) }}</td>
                 <td class="px-4 py-3">
                   @if ($isPurged)
                     <span class="text-gray-400">borrada</span>
@@ -205,7 +238,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="12" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
+              <tr><td colspan="13" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -220,6 +253,23 @@
   </div>
 
   <script>
+    function filterAccounts() {
+      const estado = (document.getElementById('filterEstado').value || '').toLowerCase();
+      const email  = (document.getElementById('filterEmail').value || '').trim().toLowerCase();
+      let visibles = 0;
+      document.querySelectorAll('#accountsTbody tr[data-estado]').forEach(tr => {
+        const e = (tr.getAttribute('data-estado') || '').toLowerCase();
+        const m = (tr.getAttribute('data-email') || '').toLowerCase();
+        const okEstado = !estado || e === estado;
+        const okEmail  = !email || m.includes(email);
+        const show = okEstado && okEmail;
+        tr.style.display = show ? '' : 'none';
+        if (show) visibles++;
+      });
+      const cnt = document.getElementById('filterCount');
+      if (cnt) cnt.textContent = (estado || email) ? (visibles + ' resultado(s)') : '';
+    }
+
     function sortTable(th) {
       const table = th.closest('table');
       const tbody = table.tBodies[0];
