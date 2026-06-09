@@ -2,8 +2,8 @@
     <div class="pt-6 pb-6">
         <div class="w-full px-4 sm:px-6">
             {{-- Título alineado a la izquierda; reserva espacio si el menú está minimizado --}}
-            <div class="flex items-center mb-5" style="min-height:40px;"
-                 :style="!$store.sidebar.open ? 'padding-left:3.25rem;' : ''">
+            <div class="flex items-center mb-5"
+                 :style="!$store.sidebar.open ? 'min-height:40px;padding-left:3.5rem;' : 'min-height:40px;'">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Kanban – {{ $pipeline->name }}
                 </h2>
