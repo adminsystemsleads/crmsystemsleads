@@ -1,8 +1,11 @@
 <x-app-layout>
   <div class="w-full py-8 px-6 space-y-4">
 
-    {{-- Encabezado alineado con los bordes de la tabla --}}
-    <div class="flex items-center justify-between">
+    {{-- Encabezado alineado con los bordes de la tabla.
+         Reserva espacio a la izquierda cuando el menú está minimizado para que
+         el botón flotante de despliegue no tape el título. --}}
+    <div class="flex items-center justify-between"
+         :style="!$store.sidebar.open ? 'padding-left:3.25rem;' : ''">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         Reporte de Cuentas
       </h2>

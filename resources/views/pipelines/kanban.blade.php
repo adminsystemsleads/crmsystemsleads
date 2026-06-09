@@ -10,7 +10,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="w-full px-4 sm:px-6">
             {{-- Toggle de vista --}}
             <div class="inline-flex rounded-xl border border-gray-200 bg-white p-1 text-sm">
                 <a href="{{ route('pipelines.kanban', $pipeline) }}"
