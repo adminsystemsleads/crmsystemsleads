@@ -104,7 +104,7 @@
       </div>
 
       <div class="overflow-x-auto">
-        <table class="w-full text-xs">
+        <table class="w-full text-xs text-center">
           <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider">
             <tr>
               <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">ID<span class="sort-arrow"></span></th>
@@ -255,7 +255,8 @@
        @fd-open.window="open=true; action=$event.detail.action; label=$event.detail.label"
        @keydown.escape.window="open=false"
        x-show="open" x-cloak
-       style="position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.55);padding:16px;">
+       class="fixed inset-0 flex items-center justify-center"
+       style="z-index:80;background:rgba(15,23,42,.55);padding:16px;">
     <div @click.outside="open=false"
          style="background:#fff;border-radius:16px;max-width:440px;width:100%;padding:28px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.45);">
       <div style="width:60px;height:60px;border-radius:50%;background:#fee2e2;color:#dc2626;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
