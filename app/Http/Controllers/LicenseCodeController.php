@@ -126,7 +126,10 @@ class LicenseCodeController extends Controller
      */
     public function accountsReport(Request $request)
     {
-        $teams = Team::with(['owner', 'license'])
+        // Incluye cuentas eliminadas (soft delete) para que sigan apareciendo
+        // en el reporte con estado "Eliminada" y su fecha de eliminación.
+        $teams = Team::withTrashed()
+            ->with(['owner', 'license'])
             ->orderByDesc('id')
             ->paginate(40);
 

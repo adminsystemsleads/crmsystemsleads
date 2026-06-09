@@ -65,6 +65,7 @@
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Vence<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
               <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Fecha eliminada<span class="sort-arrow"></span></th>
               <th class="text-right px-4 py-3 font-semibold">Acciones</th>
             </tr>
           </thead>
@@ -76,8 +77,11 @@
                 $fmt = fn ($d) => $d ? $d->copy()->setTimezone($tz)->format('Y-m-d H:i') : '—';
 
                 $inicio = $lic?->active_from ?? $lic?->trial_starts_at;
+                $isDeleted = $team->trashed();
 
-                if (! $lic) {
+                if ($isDeleted) {
+                    $estadoLabel = 'Eliminada'; $estadoStyle = 'background:#374151;color:#ffffff;';
+                } elseif (! $lic) {
                     $estadoLabel = 'Sin licencia'; $estadoStyle = 'background:#f3f4f6;color:#6b7280;';
                 } elseif (! $lic->is_active) {
                     $estadoLabel = 'Bloqueada'; $estadoStyle = 'background:#fecaca;color:#7f1d1d;';
@@ -93,7 +97,7 @@
                 }
                 $lastNote = data_get($lic, 'meta.last_note');
               @endphp
-              <tr class="hover:bg-gray-50">
+              <tr class="hover:bg-gray-50 {{ $isDeleted ? 'opacity-70' : '' }}">
                 <td class="px-4 py-3 font-mono text-gray-700">{{ $team->id }}</td>
                 <td class="px-4 py-3 font-medium text-gray-900">{{ $team->name }}</td>
                 <td class="px-4 py-3 text-gray-700">{{ $team->owner?->email ?? '—' }}</td>
@@ -108,7 +112,11 @@
                   </span>
                 </td>
                 <td class="px-4 py-3 text-gray-500 truncate" style="max-width:180px;" title="{{ $lastNote }}">{{ $lastNote ?? '—' }}</td>
+                <td class="px-4 py-3 text-gray-600">{{ $fmt($team->deleted_at) }}</td>
                 <td class="px-4 py-3">
+                  @if ($isDeleted)
+                    <div class="text-xs text-gray-400 italic" style="min-width:210px;">Cuenta eliminada — sin acciones</div>
+                  @else
                   <div class="flex flex-col items-stretch gap-1.5" style="min-width:210px;">
                     {{-- Bloquear / Habilitar (nota obligatoria) --}}
                     <form method="POST" class="flex items-center gap-1.5">
@@ -137,10 +145,11 @@
                       </button>
                     </form>
                   </div>
+                  @endif
                 </td>
               </tr>
             @empty
-              <tr><td colspan="10" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
+              <tr><td colspan="11" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
             @endforelse
           </tbody>
         </table>
