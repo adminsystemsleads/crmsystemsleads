@@ -80,7 +80,9 @@
   </p>
 </div>
 
-    {{-- Pagar con tarjeta (Culqi) --}}
+    {{-- Pagar con tarjeta (Culqi) — oculto por ahora (aún no habilitado; se trabaja con códigos).
+         Cambia `false` por `true` para reactivarlo. --}}
+    @if (false)
     <div class="mb-6 p-4 rounded-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-violet-50">
       <div class="flex items-start gap-4">
         <div class="size-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
@@ -104,6 +106,7 @@
         </div>
       </div>
     </div>
+    @endif
 
     {{-- Activar con código de licencia / prueba --}}
     <div class="p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
