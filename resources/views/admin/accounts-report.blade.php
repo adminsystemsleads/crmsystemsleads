@@ -107,19 +107,19 @@
         <table class="w-full text-xs">
           <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider">
             <tr>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">ID<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Cuenta<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Correo creador<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Creada<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">1ª licencia<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Inicio actual<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Vence<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Fecha eliminada<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Borrado permanente<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-left px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Días p/ borrado<span class="sort-arrow"></span></th>
-              <th class="text-right px-4 py-3 font-semibold">Acciones</th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">ID<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Cuenta<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Correo creador<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Creada<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">1ª licencia<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Inicio actual<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Vence<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Fecha eliminada<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Borrado permanente<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Días p/ borrado<span class="sort-arrow"></span></th>
+              <th class="text-center px-4 py-3 font-semibold">Acciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="accountsTbody">
@@ -156,7 +156,7 @@
               <tr class="hover:bg-gray-50 {{ $isDeleted ? 'opacity-70' : '' }}"
                   data-estado="{{ $estadoLabel }}"
                   data-email="{{ strtolower($team->owner?->email ?? '') }}">
-                <td class="px-4 py-3 font-mono text-gray-700">{{ $team->id }}</td>
+                <td class="px-4 py-3 font-mono text-gray-700 text-center">{{ $team->id }}</td>
                 <td class="px-4 py-3 font-medium text-gray-900">{{ $team->name }}</td>
                 <td class="px-4 py-3 text-gray-700">{{ $team->owner?->email ?? '—' }}</td>
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($team->created_at) }}</td>
@@ -197,13 +197,11 @@
                           ↺ Restaurar cuenta
                         </button>
                       </form>
-                      <form method="POST" action="{{ route('admin.accounts.force-delete', $team->id) }}"
-                            onsubmit="return confirm('¿Eliminar PERMANENTEMENTE los datos de la cuenta #{{ $team->id }}? Se conservará el registro pero no se podrá recuperar.');">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#991b1b;">
-                          ✕ Eliminar por completo
-                        </button>
-                      </form>
+                      <button type="button"
+                              @click="$dispatch('fd-open', { action: @js(route('admin.accounts.force-delete', $team->id)), label: @js('#'.$team->id.' '.$team->name) })"
+                              class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#991b1b;">
+                        ✕ Eliminar por completo
+                      </button>
                     </div>
                   @else
                   <div class="flex flex-col items-stretch gap-1.5" style="min-width:210px;">
@@ -249,6 +247,40 @@
           {{ $teams->links() }}
         </div>
       @endif
+    </div>
+  </div>
+
+  {{-- Modal de confirmación: eliminar por completo --}}
+  <div x-data="{ open:false, action:'', label:'' }"
+       @fd-open.window="open=true; action=$event.detail.action; label=$event.detail.label"
+       @keydown.escape.window="open=false"
+       x-show="open" x-cloak
+       style="position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.55);padding:16px;">
+    <div @click.outside="open=false"
+         style="background:#fff;border-radius:16px;max-width:440px;width:100%;padding:28px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.45);">
+      <div style="width:60px;height:60px;border-radius:50%;background:#fee2e2;color:#dc2626;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg style="width:30px;height:30px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </div>
+      <h3 style="font-size:18px;font-weight:800;color:#111827;margin-bottom:8px;">¿Eliminar permanentemente?</h3>
+      <p style="font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:6px;">
+        Vas a borrar por completo los datos de la cuenta <b x-text="label"></b>.
+      </p>
+      <p style="font-size:13px;color:#b91c1c;font-weight:700;margin-bottom:22px;">Esta acción NO se puede deshacer.</p>
+      <div style="display:flex;gap:10px;">
+        <button type="button" @click="open=false"
+                style="flex:1;padding:11px;border-radius:10px;border:1px solid #d1d5db;background:#fff;color:#374151;font-weight:600;cursor:pointer;">
+          Cancelar
+        </button>
+        <form :action="action" method="POST" style="flex:1;">
+          @csrf @method('DELETE')
+          <button type="submit"
+                  style="width:100%;padding:11px;border-radius:10px;border:none;background:#991b1b;color:#fff;font-weight:700;cursor:pointer;">
+            Sí, eliminar
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
