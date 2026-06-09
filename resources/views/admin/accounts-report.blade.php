@@ -78,7 +78,7 @@
       <div class="px-6 py-3 border-b border-gray-100 bg-gray-50 flex flex-wrap items-center gap-3">
         <div class="flex items-center gap-2">
           <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</label>
-          <select id="filterEstado" onchange="filterAccounts()" class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs">
+          <select id="filterEstado" onchange="filterAccounts()" class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs" style="min-width:220px;">
             <option value="">Todos</option>
             <option>Licencia activa</option>
             <option>Modo de prueba</option>
@@ -90,10 +90,10 @@
             <option>Eliminada permanentemente</option>
           </select>
         </div>
-        <div class="flex items-center gap-2 flex-1" style="min-width:220px;">
+        <div class="flex items-center gap-2">
           <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Correo</label>
-          <input id="filterEmail" type="text" oninput="filterAccounts()" placeholder="Buscar por correo del creador…"
-                 class="flex-1 border border-gray-300 rounded-lg px-2 py-1.5 text-xs">
+          <input id="filterEmail" type="text" oninput="filterAccounts()" placeholder="Buscar por correo…"
+                 class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs" style="width:240px;">
         </div>
         <button type="button"
                 onclick="document.getElementById('filterEstado').value='';document.getElementById('filterEmail').value='';filterAccounts()"
