@@ -23,6 +23,8 @@ class TeamModulesController extends Controller
         ['key' => 'gastos_import',    'label' => 'Importar Reporte',         'desc' => 'Carga masiva de reportes de gastos',      'admin_only' => true,  'hidden' => true],
         ['key' => 'perfiles',         'label' => 'Perfiles (Admin)',         'desc' => 'Gestión de perfiles de miembros',         'admin_only' => true],
         ['key' => 'categorias',       'label' => 'Categorías de Pago',       'desc' => 'Administración de tipos de pago',         'admin_only' => true,  'hidden' => true],
+        // 'coming_soon' => true: se muestra pero bloqueado con etiqueta "Próximamente".
+        ['key' => 'invoices',         'label' => 'Facturas',                 'desc' => 'Facturación electrónica (SUNAT)',         'admin_only' => false, 'coming_soon' => true],
     ];
 
     /** Módulos visibles en la pantalla de configuración (sin los ocultos). */
@@ -52,8 +54,12 @@ class TeamModulesController extends Controller
             403
         );
 
-        // Solo procesa los módulos visibles; los ocultos conservan su valor actual.
-        $keys = array_column($this->visibleModules(), 'key');
+        // Solo procesa los módulos visibles y disponibles (no "próximamente"); los
+        // ocultos y los bloqueados conservan su valor actual.
+        $keys = array_column(
+            array_filter($this->visibleModules(), fn ($m) => empty($m['coming_soon'])),
+            'key'
+        );
 
         $settings = $team->settings ?? [];
         $enabled  = $settings['modules'] ?? [];

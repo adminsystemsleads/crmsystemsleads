@@ -28,11 +28,19 @@
 
         <ul class="divide-y divide-gray-100">
           @foreach ($modules as $module)
-            <li class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50 transition">
+            @php $comingSoon = ! empty($module['coming_soon']); @endphp
+            <li class="flex items-center justify-between gap-4 px-6 py-4 transition {{ $comingSoon ? 'opacity-70' : 'hover:bg-gray-50' }}">
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span class="text-sm font-medium text-gray-900">{{ $module['label'] }}</span>
-                  @if ($module['admin_only'])
+                  @if ($comingSoon)
+                    <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">
+                      <svg style="width:11px;height:11px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      Próximamente
+                    </span>
+                  @elseif ($module['admin_only'])
                     <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">
                       Admin
                     </span>
@@ -41,23 +49,33 @@
                 <p class="mt-0.5 text-xs text-gray-500">{{ $module['desc'] }}</p>
               </div>
 
-              {{-- Toggle switch --}}
-              <label class="relative inline-flex items-center cursor-pointer shrink-0"
-                     title="{{ $module['label'] }}">
-                <input type="checkbox"
-                       name="{{ $module['key'] }}"
-                       value="1"
-                       class="sr-only peer"
-                       {{ $team->moduleEnabled($module['key']) ? 'checked' : '' }}>
-                <div class="w-11 h-6 bg-gray-200 rounded-full peer
-                            peer-checked:bg-indigo-500
-                            peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300
-                            after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                            after:bg-white after:rounded-full after:h-5 after:w-5
-                            after:transition-all
-                            peer-checked:after:translate-x-full">
+              @if ($comingSoon)
+                {{-- Bloqueado: toggle deshabilitado con candado --}}
+                <div class="shrink-0 inline-flex items-center justify-center w-11 h-6 rounded-full bg-gray-100 ring-1 ring-inset ring-gray-200"
+                     title="Disponible próximamente">
+                  <svg class="size-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
                 </div>
-              </label>
+              @else
+                {{-- Toggle switch --}}
+                <label class="relative inline-flex items-center cursor-pointer shrink-0"
+                       title="{{ $module['label'] }}">
+                  <input type="checkbox"
+                         name="{{ $module['key'] }}"
+                         value="1"
+                         class="sr-only peer"
+                         {{ $team->moduleEnabled($module['key']) ? 'checked' : '' }}>
+                  <div class="w-11 h-6 bg-gray-200 rounded-full peer
+                              peer-checked:bg-indigo-500
+                              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300
+                              after:content-[''] after:absolute after:top-[2px] after:left-[2px]
+                              after:bg-white after:rounded-full after:h-5 after:w-5
+                              after:transition-all
+                              peer-checked:after:translate-x-full">
+                  </div>
+                </label>
+              @endif
             </li>
           @endforeach
         </ul>

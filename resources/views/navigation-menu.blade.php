@@ -268,6 +268,8 @@
               </svg>
               <span class="truncate">{{ __('Products') }}</span>
             </a>
+            {{-- Facturas oculto por defecto (funcionalidad "próximamente"). Cambia `false` por `true` para reactivar. --}}
+            @if (false)
             <a href="{{ route('invoices.index') }}"
                class="flex items-center gap-3 rounded-lg py-2 text-sm transition select-none
                       {{ request()->routeIs('invoices.*') || request()->routeIs('invoice-config.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800' }}"
@@ -279,6 +281,7 @@
               </svg>
               <span class="truncate">{{ __('Invoices') }}</span>
             </a>
+            @endif
           @endif
 
           {{-- Sección Embudos: lista todos los embudos que el usuario puede ver --}}
