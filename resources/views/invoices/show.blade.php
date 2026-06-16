@@ -21,17 +21,17 @@
       @if($invoice->deal)
         <a href="{{ route('deals.edit', [$invoice->deal->pipeline_id, $invoice->deal]) }}"
            class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 transition">
-          Ver negociación
+          {{ __('Ver negociación') }}
         </a>
       @endif
       <a href="{{ route('invoices.print', $invoice) }}" target="_blank"
          class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 transition">
-        Imprimir / PDF
+        {{ __('Imprimir / PDF') }}
       </a>
       @if($invoice->xml_path)
         <a href="{{ route('invoices.download-xml', $invoice) }}"
            class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 transition">
-          Descargar XML
+          {{ __('Descargar XML') }}
         </a>
       @endif
     </div>
@@ -57,35 +57,35 @@
 
     {{-- Info comprobante --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-2 text-sm">
-      <h2 class="font-bold text-gray-800 border-b pb-2 text-xs uppercase tracking-wide text-gray-500">Comprobante</h2>
-      <div class="flex justify-between"><span class="text-gray-500">Número</span><span class="font-mono font-semibold">{{ $invoice->numero }}</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Emisión</span><span>{{ $invoice->fecha_emision->format('d/m/Y') }}</span></div>
+      <h2 class="font-bold text-gray-800 border-b pb-2 text-xs uppercase tracking-wide text-gray-500">{{ __('Comprobante') }}</h2>
+      <div class="flex justify-between"><span class="text-gray-500">{{ __('Número') }}</span><span class="font-mono font-semibold">{{ $invoice->numero }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">{{ __('Emisión') }}</span><span>{{ $invoice->fecha_emision->format('d/m/Y') }}</span></div>
       @if($invoice->fecha_vencimiento)
-        <div class="flex justify-between"><span class="text-gray-500">Vencimiento</span><span>{{ $invoice->fecha_vencimiento->format('d/m/Y') }}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">{{ __('Vencimiento') }}</span><span>{{ $invoice->fecha_vencimiento->format('d/m/Y') }}</span></div>
       @endif
-      <div class="flex justify-between"><span class="text-gray-500">Moneda</span><span>{{ $invoice->moneda }}</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">IGV</span><span>{{ $invoice->igv_porcentaje }}%</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">{{ __('Moneda') }}</span><span>{{ $invoice->moneda }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">{{ __('IGV') }}</span><span>{{ $invoice->igv_porcentaje }}%</span></div>
     </div>
 
     {{-- Emisor --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 text-sm space-y-1">
-      <h2 class="font-bold text-gray-800 border-b pb-2 text-xs uppercase tracking-wide text-gray-500">Emisor</h2>
+      <h2 class="font-bold text-gray-800 border-b pb-2 text-xs uppercase tracking-wide text-gray-500">{{ __('Emisor') }}</h2>
       @if($config)
         <p class="font-semibold text-gray-900">{{ $config->razon_social }}</p>
-        <p class="text-gray-500">RUC: {{ $config->ruc }}</p>
+        <p class="text-gray-500">{{ __('RUC:') }} {{ $config->ruc }}</p>
         <p class="text-gray-500 text-xs">{{ $config->direccion }}</p>
         <p class="text-gray-500 text-xs">{{ $config->distrito }}, {{ $config->provincia }}</p>
       @else
-        <p class="text-gray-400 text-xs">Sin configuración de emisor.</p>
+        <p class="text-gray-400 text-xs">{{ __('Sin configuración de emisor.') }}</p>
       @endif
     </div>
 
     {{-- Cliente --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 text-sm space-y-1">
-      <h2 class="font-bold text-gray-800 border-b pb-2 text-xs uppercase tracking-wide text-gray-500">Cliente</h2>
+      <h2 class="font-bold text-gray-800 border-b pb-2 text-xs uppercase tracking-wide text-gray-500">{{ __('Cliente') }}</h2>
       <p class="font-semibold text-gray-900">{{ $invoice->cliente_razon_social }}</p>
       <p class="text-gray-500">
-        {{ match($invoice->cliente_tipo_doc) {'1'=>'DNI','6'=>'RUC','4'=>'CE',default=>'Doc'} }}:
+        {{ match($invoice->cliente_tipo_doc) {'1'=>__('DNI'),'6'=>__('RUC'),'4'=>__('CE'),default=>__('Doc')} }}:
         {{ $invoice->cliente_num_doc }}
       </p>
       @if($invoice->cliente_direccion)
@@ -99,11 +99,11 @@
     <table class="w-full text-sm">
       <thead>
         <tr class="bg-gray-50 border-b border-gray-200">
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Descripción</th>
-          <th class="px-4 py-3 text-center font-semibold text-gray-600">Und.</th>
-          <th class="px-4 py-3 text-right font-semibold text-gray-600">Cant.</th>
-          <th class="px-4 py-3 text-right font-semibold text-gray-600">P.Unit</th>
-          <th class="px-4 py-3 text-right font-semibold text-gray-600">Total</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Descripción') }}</th>
+          <th class="px-4 py-3 text-center font-semibold text-gray-600">{{ __('Und.') }}</th>
+          <th class="px-4 py-3 text-right font-semibold text-gray-600">{{ __('Cant.') }}</th>
+          <th class="px-4 py-3 text-right font-semibold text-gray-600">{{ __('P.Unit') }}</th>
+          <th class="px-4 py-3 text-right font-semibold text-gray-600">{{ __('Total') }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
@@ -122,27 +122,27 @@
     {{-- Totales --}}
     <div class="border-t border-gray-200 p-4 space-y-1 text-sm">
       <div class="flex justify-between text-gray-600 max-w-xs ml-auto">
-        <span>Op. Gravadas</span>
+        <span>{{ __('Op. Gravadas') }}</span>
         <span>{{ $invoice->moneda }} {{ number_format($invoice->op_gravadas, 2) }}</span>
       </div>
       @if($invoice->op_exoneradas > 0)
         <div class="flex justify-between text-gray-600 max-w-xs ml-auto">
-          <span>Op. Exoneradas</span>
+          <span>{{ __('Op. Exoneradas') }}</span>
           <span>{{ $invoice->moneda }} {{ number_format($invoice->op_exoneradas, 2) }}</span>
         </div>
       @endif
       @if($invoice->op_inafectas > 0)
         <div class="flex justify-between text-gray-600 max-w-xs ml-auto">
-          <span>Op. Inafectas</span>
+          <span>{{ __('Op. Inafectas') }}</span>
           <span>{{ $invoice->moneda }} {{ number_format($invoice->op_inafectas, 2) }}</span>
         </div>
       @endif
       <div class="flex justify-between text-gray-600 max-w-xs ml-auto">
-        <span>IGV ({{ $invoice->igv_porcentaje }}%)</span>
+        <span>{{ __('IGV') }} ({{ $invoice->igv_porcentaje }}%)</span>
         <span>{{ $invoice->moneda }} {{ number_format($invoice->igv, 2) }}</span>
       </div>
       <div class="flex justify-between font-bold text-gray-900 text-base max-w-xs ml-auto border-t pt-1">
-        <span>TOTAL</span>
+        <span>{{ __('TOTAL') }}</span>
         <span>{{ $invoice->moneda }} {{ number_format($invoice->total, 2) }}</span>
       </div>
     </div>
@@ -150,15 +150,15 @@
 
   @if($invoice->observaciones)
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 text-sm text-gray-600">
-      <strong class="text-gray-800">Observaciones:</strong> {{ $invoice->observaciones }}
+      <strong class="text-gray-800">{{ __('Observaciones:') }}</strong> {{ $invoice->observaciones }}
     </div>
   @endif
 
   {{-- Acciones SUNAT --}}
   @if($config && $config->test_mode)
     <div class="mb-4 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
-      <strong>Modo prueba activo</strong> — los envíos a SUNAT son simulados. Desactívalo en
-      <a href="{{ route('invoice-config.edit') }}" class="underline font-semibold">Configuración</a> para producción.
+      <strong>{{ __('Modo prueba activo') }}</strong> {{ __('— los envíos a SUNAT son simulados. Desactívalo en') }}
+      <a href="{{ route('invoice-config.edit') }}" class="underline font-semibold">{{ __('Configuración') }}</a> {{ __('para producción.') }}
     </div>
   @endif
 
@@ -169,18 +169,18 @@
           @csrf
           <button type="submit"
                   class="px-4 py-2 rounded-lg border border-blue-300 bg-blue-50 text-blue-700 text-sm font-medium hover:bg-blue-100 transition">
-            Firmar XML
+            {{ __('Firmar XML') }}
           </button>
         </form>
       @endif
 
       @if($config && ($config->sol_user || $config->test_mode) && in_array($invoice->estado, ['draft','signed','rejected']))
         <form method="POST" action="{{ route('invoices.send-sunat', $invoice) }}"
-              onsubmit="return confirm('¿Enviar a SUNAT?')">
+              onsubmit="return confirm('{{ __('¿Enviar a SUNAT?') }}')">
           @csrf
           <button type="submit"
                   class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-            Enviar a SUNAT
+            {{ __('Enviar a SUNAT') }}
           </button>
         </form>
       @endif

@@ -3,21 +3,21 @@
 
   <div class="flex flex-wrap items-center justify-between gap-3 mb-6"
        :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
-    <h1 class="text-xl font-bold text-gray-900">Catálogo de productos</h1>
+    <h1 class="text-xl font-bold text-gray-900">{{ __('Catálogo de productos') }}</h1>
     <div class="flex flex-wrap gap-2">
       <a href="{{ route('products.import.form') }}"
          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
         </svg>
-        Importar CSV
+        {{ __('Importar CSV') }}
       </a>
       <button onclick="document.getElementById('modalNewProduct').classList.remove('hidden')"
               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Nuevo producto
+        {{ __('Nuevo producto') }}
       </button>
     </div>
   </div>
@@ -34,7 +34,7 @@
   @endif
   @if($errors->any())
     <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-      <p class="font-semibold mb-1">Hay errores de validación:</p>
+      <p class="font-semibold mb-1">{{ __('Hay errores de validación:') }}</p>
       <ul class="list-disc list-inside space-y-0.5">
         @foreach($errors->all() as $error)
           <li>{{ $error }}</li>
@@ -48,10 +48,10 @@
       <thead>
         <tr class="bg-gray-50 border-b border-gray-200">
           <th class="px-4 py-3 text-left font-semibold text-gray-600 w-16"></th>
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Nombre</th>
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Unidad</th>
-          <th class="px-4 py-3 text-right font-semibold text-gray-600">Precio</th>
-          <th class="px-4 py-3 text-center font-semibold text-gray-600">Activo</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Nombre') }}</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Unidad') }}</th>
+          <th class="px-4 py-3 text-right font-semibold text-gray-600">{{ __('Precio') }}</th>
+          <th class="px-4 py-3 text-center font-semibold text-gray-600">{{ __('Activo') }}</th>
           <th class="px-4 py-3"></th>
         </tr>
       </thead>
@@ -82,9 +82,9 @@
             </td>
             <td class="px-4 py-3 text-center">
               @if($p->is_active)
-                <span class="inline-flex items-center rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-semibold">Sí</span>
+                <span class="inline-flex items-center rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-semibold">{{ __('Sí') }}</span>
               @else
-                <span class="inline-flex items-center rounded-full bg-gray-100 text-gray-500 px-2 py-0.5 text-xs font-semibold">No</span>
+                <span class="inline-flex items-center rounded-full bg-gray-100 text-gray-500 px-2 py-0.5 text-xs font-semibold">{{ __('No') }}</span>
               @endif
             </td>
             <td class="px-4 py-3 text-right">
@@ -98,18 +98,18 @@
                       data-currency="{{ $p->currency }}"
                       data-active="{{ $p->is_active ? '1' : '0' }}"
                       data-image-url="{{ $p->image_url ?? '' }}">
-                Editar
+                {{ __('Editar') }}
               </button>
               <form method="POST" action="{{ route('products.destroy', $p) }}" class="inline"
-                    onsubmit="return confirm('¿Eliminar producto?')">
+                    onsubmit="return confirm('{{ __('¿Eliminar producto?') }}')">
                 @csrf @method('DELETE')
-                <button type="submit" class="text-xs text-red-500 hover:text-red-700 font-medium">Eliminar</button>
+                <button type="submit" class="text-xs text-red-500 hover:text-red-700 font-medium">{{ __('Eliminar') }}</button>
               </form>
             </td>
           </tr>
         @empty
           <tr>
-            <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">Sin productos. Crea el primero.</td>
+            <td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">{{ __('Sin productos. Crea el primero.') }}</td>
           </tr>
         @endforelse
       </tbody>
@@ -120,14 +120,14 @@
 {{-- Modal nuevo producto --}}
 <div id="modalNewProduct" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 max-h-[90vh] overflow-y-auto">
-    <h2 class="text-base font-bold text-gray-900 mb-4">Nuevo producto</h2>
+    <h2 class="text-base font-bold text-gray-900 mb-4">{{ __('Nuevo producto') }}</h2>
     <form method="POST" action="{{ route('products.store') }}" class="space-y-3" enctype="multipart/form-data">
       @csrf
       @include('products._form')
       <div class="flex gap-2 pt-2">
-        <button type="submit" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">Guardar</button>
+        <button type="submit" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">{{ __('Guardar') }}</button>
         <button type="button" onclick="document.getElementById('modalNewProduct').classList.add('hidden')"
-                class="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+                class="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">{{ __('Cancelar') }}</button>
       </div>
     </form>
   </div>
@@ -136,7 +136,7 @@
 {{-- Modal editar producto --}}
 <div id="modalEditProduct" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6 max-h-[90vh] overflow-y-auto">
-    <h2 class="text-base font-bold text-gray-900 mb-4">Editar producto</h2>
+    <h2 class="text-base font-bold text-gray-900 mb-4">{{ __('Editar producto') }}</h2>
 
     {{-- Errores inline (se llenan por JS al fallar el submit) --}}
     <div id="editProductErrors" class="hidden mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700"></div>
@@ -148,10 +148,10 @@
       <div class="flex gap-2 pt-2">
         <button type="submit" id="editProductSubmit"
                 class="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition disabled:bg-gray-300">
-          Actualizar
+          {{ __('Actualizar') }}
         </button>
         <button type="button" onclick="document.getElementById('modalEditProduct').classList.add('hidden')"
-                class="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+                class="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">{{ __('Cancelar') }}</button>
       </div>
     </form>
   </div>

@@ -1,6 +1,6 @@
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="text-lg font-semibold text-gray-800">Módulos activos</h2>
+    <h2 class="text-lg font-semibold text-gray-800">{{ __('Módulos activos') }}</h2>
   </x-slot>
 
   <div class="py-8 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
@@ -10,15 +10,14 @@
         <svg class="size-5 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
         </svg>
-        Módulos actualizados correctamente.
+        {{ __('Módulos actualizados correctamente.') }}
       </div>
     @endif
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
       <div class="px-6 py-5 border-b border-gray-100">
         <p class="text-sm text-gray-500">
-          Activa o desactiva las secciones que aparecen en el menú lateral.
-          Los cambios aplican a todos los miembros del equipo.
+          {{ __('Activa o desactiva las secciones que aparecen en el menú lateral. Los cambios aplican a todos los miembros del equipo.') }}
         </p>
       </div>
 
@@ -38,11 +37,11 @@
                       <svg style="width:11px;height:11px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                       </svg>
-                      Próximamente
+                      {{ __('Próximamente') }}
                     </span>
                   @elseif ($module['admin_only'])
                     <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">
-                      Admin
+                      {{ __('Admin') }}
                     </span>
                   @endif
                 </div>
@@ -52,7 +51,7 @@
               @if ($comingSoon)
                 {{-- Bloqueado: toggle deshabilitado con candado --}}
                 <div class="shrink-0 inline-flex items-center justify-center w-11 h-6 rounded-full bg-gray-100 ring-1 ring-inset ring-gray-200"
-                     title="Disponible próximamente">
+                     title="{{ __('Disponible próximamente') }}">
                   <svg class="size-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                   </svg>
@@ -86,7 +85,7 @@
             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
-            Guardar cambios
+            {{ __('Guardar cambios') }}
           </button>
         </div>
       </form>

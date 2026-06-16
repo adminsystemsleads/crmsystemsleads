@@ -10,7 +10,7 @@
 
       @if(!($metrics ?? null))
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center text-gray-500">
-          No se pudo cargar el dashboard. Asegúrate de tener un equipo seleccionado.
+          {{ __('No se pudo cargar el dashboard. Asegúrate de tener un equipo seleccionado.') }}
         </div>
       @else
 
@@ -32,9 +32,9 @@
               </svg>
             </div>
             <p class="text-3xl font-bold text-gray-900">{{ number_format($metrics['contacts']['total']) }}</p>
-            <p class="text-xs text-gray-500 mt-1">Contactos totales</p>
+            <p class="text-xs text-gray-500 mt-1">{{ __('Contactos totales') }}</p>
             @if($metrics['contacts']['month'] > 0)
-              <p class="text-[11px] text-green-600 font-semibold mt-1">+{{ $metrics['contacts']['month'] }} este mes</p>
+              <p class="text-[11px] text-green-600 font-semibold mt-1">+{{ $metrics['contacts']['month'] }} {{ __('este mes') }}</p>
             @endif
           </a>
 
@@ -47,8 +47,8 @@
               </svg>
             </div>
             <p class="text-3xl font-bold text-gray-900">{{ number_format($metrics['deals']['open']) }}</p>
-            <p class="text-xs text-gray-500 mt-1">Negociaciones abiertas</p>
-            <p class="text-[11px] text-gray-400 mt-1">de {{ number_format($metrics['deals']['total']) }} totales</p>
+            <p class="text-xs text-gray-500 mt-1">{{ __('Negociaciones abiertas') }}</p>
+            <p class="text-[11px] text-gray-400 mt-1">{{ __('de') }} {{ number_format($metrics['deals']['total']) }} {{ __('totales') }}</p>
           </div>
 
           {{-- Ganadas --}}
@@ -60,13 +60,13 @@
               </svg>
             </div>
             <p class="text-3xl font-bold text-gray-900">{{ number_format($metrics['deals']['won']) }}</p>
-            <p class="text-xs text-gray-500 mt-1">Ganadas</p>
+            <p class="text-xs text-gray-500 mt-1">{{ __('Ganadas') }}</p>
             @if($metrics['deals']['won_by_currency']->isNotEmpty())
               <p class="text-[11px] text-green-600 font-semibold mt-1">
                 @foreach($metrics['deals']['won_by_currency'] as $cur => $amt)
                   {{ $cur }} {{ number_format($amt, 0) }}@if(!$loop->last)  · @endif
                 @endforeach
-                <span class="text-gray-400 font-normal">/ mes</span>
+                <span class="text-gray-400 font-normal">/ {{ __('mes') }}</span>
               </p>
             @endif
           </div>
@@ -86,8 +86,8 @@
               </svg>
             </div>
             <p class="text-3xl font-bold text-gray-900">{{ number_format($metrics['conversations']['open']) }}</p>
-            <p class="text-xs text-gray-500 mt-1">Conversaciones abiertas</p>
-            <p class="text-[11px] text-gray-400 mt-1">de {{ number_format($metrics['conversations']['total']) }} totales</p>
+            <p class="text-xs text-gray-500 mt-1">{{ __('Conversaciones abiertas') }}</p>
+            <p class="text-[11px] text-gray-400 mt-1">{{ __('de') }} {{ number_format($metrics['conversations']['total']) }} {{ __('totales') }}</p>
           </a>
         </div>
 
@@ -95,8 +95,8 @@
         @if($metrics['funnels']->isNotEmpty())
           <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-bold text-gray-900">Negociaciones por embudo</h3>
-              <span class="text-xs text-gray-500">Solo abiertas, agrupadas por fase</span>
+              <h3 class="text-lg font-bold text-gray-900">{{ __('Negociaciones por embudo') }}</h3>
+              <span class="text-xs text-gray-500">{{ __('Solo abiertas, agrupadas por fase') }}</span>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -108,12 +108,12 @@
                       {{ $funnel['name'] }}
                     </a>
                     <span class="inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 px-2.5 py-0.5 text-xs font-semibold">
-                      {{ $funnel['total_deals'] }} abiertas
+                      {{ $funnel['total_deals'] }} {{ __('abiertas') }}
                     </span>
                   </div>
 
                   @if($funnel['stages']->isEmpty())
-                    <p class="text-sm text-gray-400 italic text-center py-3">Pipeline sin fases</p>
+                    <p class="text-sm text-gray-400 italic text-center py-3">{{ __('Pipeline sin fases') }}</p>
                   @else
                     {{-- Gráfico de barras verticales --}}
                     <div class="relative">
@@ -147,7 +147,7 @@
                                  style="height: {{ $hPct }}%;
                                         background: linear-gradient(180deg, {{ $stage['color'] }} 0%, {{ $stage['color'] }}CC 100%);
                                         min-height: {{ $stage['count'] > 0 ? '8px' : '4px' }};"
-                                 title="{{ $stage['name'] }}: {{ $stage['count'] }} negociaciones{{ $stage['total'] > 0 ? ' — Monto: ' . number_format($stage['total'], 2) : '' }}">
+                                 title="{{ $stage['name'] }}: {{ $stage['count'] }} {{ __('negociaciones') }}{{ $stage['total'] > 0 ? ' — ' . __('Monto:') . ' ' . number_format($stage['total'], 2) : '' }}">
                               {{-- brillo top sutil --}}
                               <span class="absolute inset-x-0 top-0 h-1/3 bg-white/15 pointer-events-none"></span>
                             </div>
@@ -164,9 +164,9 @@
                               {{ $stage['name'] }}
                             </span>
                             @if($stage['is_won'])
-                              <span class="font-bold text-green-600 mt-0.5 truncate w-full leading-tight" style="font-size:8px;">GANADA</span>
+                              <span class="font-bold text-green-600 mt-0.5 truncate w-full leading-tight" style="font-size:8px;">{{ __('GANADA') }}</span>
                             @elseif($stage['is_lost'])
-                              <span class="font-bold text-red-600 mt-0.5 truncate w-full leading-tight" style="font-size:8px;">PERDIDA</span>
+                              <span class="font-bold text-red-600 mt-0.5 truncate w-full leading-tight" style="font-size:8px;">{{ __('PERDIDA') }}</span>
                             @endif
                           </div>
                         @endforeach
@@ -184,9 +184,9 @@
 
           {{-- Top contactos con más negociaciones --}}
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h3 class="text-base font-bold text-gray-900 mb-3">🏆 Top contactos</h3>
+            <h3 class="text-base font-bold text-gray-900 mb-3">🏆 {{ __('Top contactos') }}</h3>
             @if($metrics['top_contacts']->isEmpty())
-              <p class="text-sm text-gray-400 italic py-4 text-center">Aún no hay contactos.</p>
+              <p class="text-sm text-gray-400 italic py-4 text-center">{{ __('Aún no hay contactos.') }}</p>
             @else
               <div class="divide-y divide-gray-100">
                 @foreach($metrics['top_contacts'] as $idx => $c)
@@ -202,7 +202,7 @@
                       </p>
                     </div>
                     <span class="text-xs font-bold text-indigo-600 shrink-0">
-                      {{ $c->deals_count }} {{ $c->deals_count === 1 ? 'deal' : 'deals' }}
+                      {{ $c->deals_count }} {{ $c->deals_count === 1 ? __('deal') : __('deals') }}
                     </span>
                   </a>
                 @endforeach
@@ -212,9 +212,9 @@
 
           {{-- Negociaciones recientes --}}
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <h3 class="text-base font-bold text-gray-900 mb-3">📋 Negociaciones recientes</h3>
+            <h3 class="text-base font-bold text-gray-900 mb-3">📋 {{ __('Negociaciones recientes') }}</h3>
             @if($metrics['recent_deals']->isEmpty())
-              <p class="text-sm text-gray-400 italic py-4 text-center">Aún no hay negociaciones.</p>
+              <p class="text-sm text-gray-400 italic py-4 text-center">{{ __('Aún no hay negociaciones.') }}</p>
             @else
               <div class="divide-y divide-gray-100">
                 @foreach($metrics['recent_deals'] as $deal)
@@ -225,8 +225,8 @@
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-semibold text-gray-900 truncate">{{ $deal->title }}</p>
                       <p class="text-[11px] text-gray-400 truncate">
-                        {{ $deal->contact?->name ?? 'Sin contacto' }} ·
-                        {{ $deal->stage?->name ?? 'Sin fase' }}
+                        {{ $deal->contact?->name ?? __('Sin contacto') }} ·
+                        {{ $deal->stage?->name ?? __('Sin fase') }}
                       </p>
                     </div>
                     @if($deal->amount)

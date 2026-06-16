@@ -1,7 +1,7 @@
 <x-app-layout> 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Editar negociación – {{ $deal->title }}
+            {{ __('Editar negociación') }} – {{ $deal->title }}
         </h2>
     </x-slot>
 
@@ -17,7 +17,7 @@
                     <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                     </svg>
-                    Volver al Kanban
+                    {{ __('Volver al Kanban') }}
                 </a>
             </div>
 
@@ -39,7 +39,7 @@
                         {{-- Título --}}
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">
-                                Título de la negociación
+                                {{ __('Título de la negociación') }}
                             </label>
                             <input type="text" name="title"
                                    value="{{ old('title', $deal->title) }}"
@@ -53,7 +53,7 @@
                         <div class="mb-4">
                             <div class="flex items-center justify-between mb-1" style="gap:8px;">
                                 <label class="text-sm font-medium text-gray-700">
-                                    Contacto
+                                    {{ __('Contacto') }}
                                 </label>
                                 @if ($deal->contact_id)
                                     <a href="{{ route('contacts.edit', $deal->contact_id) }}"
@@ -62,18 +62,18 @@
                                        style="color:#1E2E48; gap:4px; padding:3px 8px; border:1px solid #1E2E48; background:#fff;"
                                        onmouseover="this.style.backgroundColor='#E8ECF2'"
                                        onmouseout="this.style.backgroundColor='#fff'"
-                                       title="Abrir la ficha del contacto en una nueva pestaña">
+                                       title="{{ __('Abrir la ficha del contacto en una nueva pestaña') }}">
                                         <svg style="width:12px;height:12px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-2M15 3h6m0 0v6m0-6L10 14"/>
                                         </svg>
-                                        Ver ficha
+                                        {{ __('Ver ficha') }}
                                     </a>
                                 @endif
                             </div>
                             <select name="contact_id"
                                     id="contact_id_edit"
                                     class="select2-contact mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                                <option value="">-- Sin contacto --</option>
+                                <option value="">{{ __('-- Sin contacto --') }}</option>
                                 @foreach($contacts as $contact)
                                     <option value="{{ $contact->id }}"
                                         {{ (old('contact_id', $deal->contact_id) == $contact->id) ? 'selected' : '' }}>
@@ -90,12 +90,12 @@
                         {{-- Persona responsable (Select2) --}}
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">
-                                Persona responsable
+                                {{ __('Persona responsable') }}
                             </label>
                             <select name="responsible_id"
                                     id="responsible_id_edit"
                                     class="select2-responsible mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                                <option value="">-- Sin responsable --</option>
+                                <option value="">{{ __('-- Sin responsable --') }}</option>
                                 @foreach($teamMembers as $member)
                                     <option value="{{ $member->id }}"
                                         {{ old('responsible_id', $deal->responsible_id) == $member->id ? 'selected' : '' }}>
@@ -112,7 +112,7 @@
                         <div class="mb-4 grid grid-cols-3 gap-3">
                             <div class="col-span-2">
                                 <label class="block text-sm font-medium text-gray-700">
-                                    Monto
+                                    {{ __('Monto') }}
                                 </label>
                                 <input type="number" step="0.01" name="amount"
                                        value="{{ old('amount', $deal->amount) }}"
@@ -123,7 +123,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">
-                                    Moneda
+                                    {{ __('Moneda') }}
                                 </label>
                                 <input type="text" name="currency"
                                        value="{{ old('currency', $deal->currency ?? 'PEN') }}"
@@ -138,7 +138,7 @@
                         <div class="mb-4 grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">
-                                    Pipeline
+                                    {{ __('Pipeline') }}
                                 </label>
                                 <input type="text" disabled
                                        value="{{ $pipeline->name }}"
@@ -146,7 +146,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">
-                                    Fase
+                                    {{ __('Fase') }}
                                 </label>
                                 <select name="stage_id"
                                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
@@ -166,18 +166,18 @@
                         {{-- Estado --}}
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">
-                                Estado
+                                {{ __('Estado') }}
                             </label>
                             <select name="status"
                                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="open" {{ old('status', $deal->status) === 'open' ? 'selected' : '' }}>
-                                    Abierta
+                                    {{ __('Abierta') }}
                                 </option>
                                 <option value="won" {{ old('status', $deal->status) === 'won' ? 'selected' : '' }}>
-                                    Ganada
+                                    {{ __('Ganada') }}
                                 </option>
                                 <option value="lost" {{ old('status', $deal->status) === 'lost' ? 'selected' : '' }}>
-                                    Perdida
+                                    {{ __('Perdida') }}
                                 </option>
                             </select>
                             @error('status')
@@ -188,7 +188,7 @@
                         {{-- Fecha de cierre --}}
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">
-                                Fecha estimada de cierre
+                                {{ __('Fecha estimada de cierre') }}
                             </label>
                             <input type="date" name="close_date"
                                    value="{{ old('close_date', $deal->close_date ? $deal->close_date->format('Y-m-d') : '') }}"
@@ -201,7 +201,7 @@
                         {{-- Descripción --}}
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">
-                                Descripción / notas
+                                {{ __('Descripción / notas') }}
                             </label>
                             <textarea name="description" rows="3"
                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">{{ old('description', $deal->description) }}</textarea>
@@ -217,7 +217,7 @@
                                     <svg class="size-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-7-7h14"/>
                                     </svg>
-                                    Campos personalizados
+                                    {{ __('Campos personalizados') }}
                                 </h3>
                                 @include('custom-fields._inputs', ['customFields' => $customFields, 'customValues' => $customValues ?? []])
                             </div>
@@ -232,11 +232,11 @@
                                 <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                                 </svg>
-                                Volver al Kanban
+                                {{ __('Volver al Kanban') }}
                             </a>
                             <button type="submit"
                                     class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
-                                Guardar cambios
+                                {{ __('Guardar cambios') }}
                             </button>
                         </div>
                     </form>
@@ -271,7 +271,7 @@
                                     ? 'border-indigo-600 text-indigo-600 font-semibold'
                                     : 'border-transparent text-gray-500'"
                                 @click="tab = 'comments'">
-                            Comentario
+                            {{ __('Comentario') }}
                         </button>
                         <button type="button"
                                 class="pb-2 border-b-2"
@@ -279,7 +279,7 @@
                                     ? 'border-indigo-600 text-indigo-600 font-semibold'
                                     : 'border-transparent text-gray-500'"
                                 @click="tab = 'activity'">
-                            Actividad
+                            {{ __('Actividad') }}
                         </button>
                     </div>
 
@@ -291,18 +291,18 @@
                               class="mb-4">
                             @csrf
                             <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Deje un comentario
+                                {{ __('Deje un comentario') }}
                             </label>
                             <textarea name="body" rows="2"
                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm"
-                                      placeholder="Escriba un comentario...">{{ old('body') }}</textarea>
+                                      placeholder="{{ __('Escriba un comentario...') }}">{{ old('body') }}</textarea>
                             @error('body')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
                             <div class="flex justify-end mt-2">
                                 <button type="submit"
                                         class="px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-md hover:bg-indigo-700">
-                                    Agregar comentario
+                                    {{ __('Agregar comentario') }}
                                 </button>
                             </div>
                         </form>
@@ -319,18 +319,18 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700">
-                                        Tipo
+                                        {{ __('Tipo') }}
                                     </label>
                                     <select name="type"
                                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                        <option value="call">Llamada</option>
-                                        <option value="meeting">Reunión</option>
-                                        <option value="task">Tarea</option>
+                                        <option value="call">{{ __('Llamada') }}</option>
+                                        <option value="meeting">{{ __('Reunión') }}</option>
+                                        <option value="task">{{ __('Tarea') }}</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700">
-                                        Fecha y hora
+                                        {{ __('Fecha y hora') }}
                                     </label>
                                     <input type="datetime-local" name="due_at"
                                            value="{{ old('due_at') }}"
@@ -340,27 +340,27 @@
 
                             <div>
                                 <label class="block text-xs font-medium text-gray-700">
-                                    Asunto
+                                    {{ __('Asunto') }}
                                 </label>
                                 <input type="text" name="subject"
                                        value="{{ old('subject') }}"
                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm"
-                                       placeholder="Ej. Reunión de demo, llamada de seguimiento...">
+                                       placeholder="{{ __('Ej. Reunión de demo, llamada de seguimiento...') }}">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-medium text-gray-700">
-                                    Notas
+                                    {{ __('Notas') }}
                                 </label>
                                 <textarea name="notes" rows="2"
                                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm"
-                                          placeholder="Detalles de la actividad...">{{ old('notes') }}</textarea>
+                                          placeholder="{{ __('Detalles de la actividad...') }}">{{ old('notes') }}</textarea>
                             </div>
 
                             <div class="flex justify-end pt-2">
                                 <button type="submit"
                                         class="px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-md hover:bg-indigo-700">
-                                    Guardar actividad
+                                    {{ __('Guardar actividad') }}
                                 </button>
                             </div>
                         </form>
@@ -374,8 +374,8 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                           d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
-                                <p class="text-sm">No hay conversaciones de WhatsApp vinculadas.</p>
-                                <p class="text-xs mt-1">Se vinculan automáticamente cuando llega un mensaje.</p>
+                                <p class="text-sm">{{ __('No hay conversaciones de WhatsApp vinculadas.') }}</p>
+                                <p class="text-xs mt-1">{{ __('Se vinculan automáticamente cuando llega un mensaje.') }}</p>
                             </div>
                         @else
                             <ul class="space-y-2">
@@ -393,7 +393,7 @@
                                                 </span>
                                                 <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold shrink-0
                                                     {{ $conv->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500' }}">
-                                                    {{ $conv->status === 'open' ? 'Abierta' : 'Cerrada' }}
+                                                    {{ $conv->status === 'open' ? __('Abierta') : __('Cerrada') }}
                                                 </span>
                                             </div>
                                             <p class="text-xs text-gray-400 truncate mt-0.5">
@@ -435,7 +435,7 @@
 
                     <div class="mt-6 pt-4 border-t">
                         <h3 class="text-sm font-semibold text-gray-800 mb-3">
-                            Historial
+                            {{ __('Historial') }}
                         </h3>
 
                         <div class="space-y-3 max-h-[360px] overflow-y-auto text-xs">
@@ -450,7 +450,7 @@
                                                     COM
                                                 </span>
                                                 <span class="font-semibold text-gray-800">
-                                                    {{ $comment->user->name ?? 'Usuario' }}
+                                                    {{ $comment->user->name ?? __('Usuario') }}
                                                 </span>
                                             </div>
                                             <span class="text-[10px] text-gray-500">
@@ -487,14 +487,14 @@
                                             </div>
                                         @endif
                                         <div class="mt-1 text-[10px] text-gray-500">
-                                            Creado por {{ $activity->user->name ?? 'Usuario' }}
-                                            • Estado: {{ $activity->status }}
+                                            {{ __('Creado por') }} {{ $activity->user->name ?? __('Usuario') }}
+                                            • {{ __('Estado:') }} {{ $activity->status }}
                                         </div>
                                     </div>
                                 @endif
                             @empty
                                 <p class="text-[11px] text-gray-400">
-                                    Aún no hay comentarios ni actividades en esta negociación.
+                                    {{ __('Aún no hay comentarios ni actividades en esta negociación.') }}
                                 </p>
                             @endforelse
                         </div>
@@ -517,16 +517,16 @@
 
               {{-- Cabecera --}}
               <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-bold text-gray-900">Productos / Servicios</h3>
+                <h3 class="text-sm font-bold text-gray-900">{{ __('Productos / Servicios') }}</h3>
                 <div class="flex items-center gap-2">
                   <a href="{{ route('products.index') }}" target="_blank"
-                     class="text-xs text-gray-400 hover:text-indigo-600 underline">Gestionar catálogo</a>
+                     class="text-xs text-gray-400 hover:text-indigo-600 underline">{{ __('Gestionar catálogo') }}</a>
                   <button type="button" @click="addOpen = true"
                           class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
                     <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
-                    Agregar
+                    {{ __('Agregar') }}
                   </button>
                 </div>
               </div>
@@ -538,11 +538,11 @@
                 {{-- Buscador del catálogo --}}
                 <div>
                   <label class="block text-xs font-semibold text-gray-600 mb-1">
-                    Buscar en catálogo
-                    <span class="font-normal text-gray-400">(opcional — o escribe el nombre abajo)</span>
+                    {{ __('Buscar en catálogo') }}
+                    <span class="font-normal text-gray-400">{{ __('(opcional — o escribe el nombre abajo)') }}</span>
                   </label>
                   <input type="text" x-model="query" @input="filterCatalog()"
-                         placeholder="Buscar producto..."
+                         placeholder="{{ __('Buscar producto...') }}"
                          class="w-full rounded-lg border-gray-200 bg-white text-sm py-1.5 mb-2">
 
                   <div x-show="filtered.length > 0"
@@ -557,7 +557,7 @@
                     </template>
                   </div>
                   <p x-show="query && filtered.length === 0"
-                     class="text-xs text-gray-400 mt-1">Sin resultados en catálogo.</p>
+                     class="text-xs text-gray-400 mt-1">{{ __('Sin resultados en catálogo.') }}</p>
                 </div>
 
                 <form method="POST" action="{{ route('deals.products.store', [$pipeline, $deal]) }}">
@@ -566,28 +566,28 @@
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div class="md:col-span-2">
-                      <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre *</label>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Nombre *') }}</label>
                       <input type="text" name="name" required maxlength="255" x-model="addName"
-                             placeholder="Nombre del producto o servicio"
+                             placeholder="{{ __('Nombre del producto o servicio') }}"
                              class="w-full rounded-lg border-gray-200 bg-white text-sm py-1.5">
                     </div>
                     <div>
-                      <label class="block text-xs font-semibold text-gray-600 mb-1">Unidad</label>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Unidad') }}</label>
                       <input type="text" name="unit" maxlength="50" x-model="addUnit"
                              class="w-full rounded-lg border-gray-200 bg-white text-sm py-1.5">
                     </div>
                     <div>
-                      <label class="block text-xs font-semibold text-gray-600 mb-1">Cantidad *</label>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Cantidad *') }}</label>
                       <input type="number" name="quantity" required min="0.01" step="0.01" x-model="qty"
                              class="w-full rounded-lg border-gray-200 bg-white text-sm py-1.5">
                     </div>
                     <div>
-                      <label class="block text-xs font-semibold text-gray-600 mb-1">Precio unitario *</label>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Precio unitario *') }}</label>
                       <input type="number" name="unit_price" required min="0" step="0.01" x-model="unitPrice"
                              class="w-full rounded-lg border-gray-200 bg-white text-sm py-1.5">
                     </div>
                     <div>
-                      <label class="block text-xs font-semibold text-gray-600 mb-1">Descuento %</label>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Descuento %') }}</label>
                       <input type="number" name="discount" min="0" max="100" step="0.01" x-model="disc"
                              class="w-full rounded-lg border-gray-200 bg-white text-sm py-1.5">
                     </div>
@@ -595,7 +595,7 @@
 
                   <div class="flex items-center justify-between mt-3">
                     <p class="text-sm font-semibold text-gray-700">
-                      Total:
+                      {{ __('Total:') }}
                       <span class="text-indigo-700"
                             x-text="'{{ $currency }} ' + (qty * unitPrice * (1 - disc / 100)).toFixed(2)">
                       </span>
@@ -603,11 +603,11 @@
                     <div class="flex gap-2">
                       <button type="submit"
                               class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
-                        Agregar
+                        {{ __('Agregar') }}
                       </button>
                       <button type="button" @click="close()"
                               class="px-4 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-medium hover:bg-gray-200 transition">
-                        Cancelar
+                        {{ __('Cancelar') }}
                       </button>
                     </div>
                   </div>
@@ -620,12 +620,12 @@
                 <table class="w-full text-sm">
                   <thead>
                     <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500">
-                      <th class="px-4 py-2 text-left">Producto</th>
-                      <th class="px-3 py-2 text-center">Unidad</th>
-                      <th class="px-3 py-2 text-right">Cant.</th>
-                      <th class="px-3 py-2 text-right">P. Unit.</th>
-                      <th class="px-3 py-2 text-right">Desc.%</th>
-                      <th class="px-3 py-2 text-right">Total</th>
+                      <th class="px-4 py-2 text-left">{{ __('Producto') }}</th>
+                      <th class="px-3 py-2 text-center">{{ __('Unidad') }}</th>
+                      <th class="px-3 py-2 text-right">{{ __('Cant.') }}</th>
+                      <th class="px-3 py-2 text-right">{{ __('P. Unit.') }}</th>
+                      <th class="px-3 py-2 text-right">{{ __('Desc.%') }}</th>
+                      <th class="px-3 py-2 text-right">{{ __('Total') }}</th>
                       <th class="px-3 py-2"></th>
                     </tr>
                   </thead>
@@ -648,7 +648,7 @@
                       <td class="px-3 py-2 text-right">
                         <form method="POST"
                               action="{{ route('deals.products.destroy', [$pipeline, $deal, $dp]) }}"
-                              onsubmit="return confirm('¿Eliminar esta línea?')">
+                              onsubmit="return confirm('{{ __("¿Eliminar esta línea?") }}')">
                           @csrf @method('DELETE')
                           <button type="submit"
                                   class="text-red-400 hover:text-red-600 transition font-medium">✕</button>
@@ -660,7 +660,7 @@
                   <tfoot>
                     <tr class="bg-indigo-50 border-t-2 border-indigo-100">
                       <td colspan="5" class="px-4 py-2.5 text-right text-sm font-bold text-gray-700">
-                        Total negociación
+                        {{ __('Total negociación') }}
                       </td>
                       <td class="px-3 py-2.5 text-right text-sm font-bold text-indigo-700">
                         {{ $currency }} {{ number_format($dealProducts->sum('total'),2) }}
@@ -672,7 +672,7 @@
               </div>
               @else
               <div class="rounded-xl border border-dashed border-gray-200 py-8 text-center text-sm text-gray-400">
-                Sin productos. Haz clic en <strong>Agregar</strong> para añadir el primero.
+                {{ __('Sin productos. Haz clic en') }} <strong>{{ __('Agregar') }}</strong> {{ __('para añadir el primero.') }}
               </div>
               @endif
 
@@ -682,7 +682,7 @@
             {{-- ====== SECCIÓN FACTURAS / BOLETAS ====== --}}
             <div class="mt-6 bg-white shadow-sm sm:rounded-lg p-6">
               <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-bold text-gray-900">Comprobantes electrónicos</h3>
+                <h3 class="text-base font-bold text-gray-900">{{ __('Comprobantes electrónicos') }}</h3>
                 <a href="{{ route('invoices.create', [$pipeline, $deal]) }}"
                    class="inline-flex items-center text-white text-xs font-medium rounded-lg transition whitespace-nowrap"
                    style="background-color:#1E2E48; padding:8px 14px; gap:6px; line-height:1;"
@@ -691,7 +691,7 @@
                   <svg style="width:14px; height:14px; flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                   </svg>
-                  Nueva factura / boleta
+                  {{ __('Nueva factura / boleta') }}
                 </a>
               </div>
 
@@ -702,11 +702,11 @@
                   <table class="w-full text-sm">
                     <thead>
                       <tr class="bg-gray-50 border-b border-gray-200">
-                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">Número</th>
-                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">Tipo</th>
-                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">Emisión</th>
-                        <th class="px-3 py-2.5 text-right text-xs font-semibold text-gray-600">Total</th>
-                        <th class="px-3 py-2.5 text-center text-xs font-semibold text-gray-600">Estado</th>
+                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">{{ __('Número') }}</th>
+                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">{{ __('Tipo') }}</th>
+                        <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">{{ __('Emisión') }}</th>
+                        <th class="px-3 py-2.5 text-right text-xs font-semibold text-gray-600">{{ __('Total') }}</th>
+                        <th class="px-3 py-2.5 text-center text-xs font-semibold text-gray-600">{{ __('Estado') }}</th>
                         <th class="px-3 py-2.5"></th>
                       </tr>
                     </thead>
@@ -731,7 +731,7 @@
                           </td>
                           <td class="px-3 py-2.5 text-right">
                             <a href="{{ route('invoices.show', $inv) }}"
-                               class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Ver</a>
+                               class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">{{ __('Ver') }}</a>
                           </td>
                         </tr>
                       @endforeach
@@ -740,7 +740,7 @@
                 </div>
               @else
                 <div class="rounded-xl border border-dashed border-gray-200 py-6 text-center text-sm text-gray-400">
-                  Sin comprobantes. Haz clic en <strong>Nueva factura / boleta</strong> para generar el primero.
+                  {{ __('Sin comprobantes. Haz clic en') }} <strong>{{ __('Nueva factura / boleta') }}</strong> {{ __('para generar el primero.') }}
                 </div>
               @endif
             </div>
@@ -757,13 +757,13 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             $('.select2-contact').select2({
-                placeholder: '-- Sin contacto --',
+                placeholder: '{{ __('-- Sin contacto --') }}',
                 allowClear: true,
                 width: '100%'
             });
 
             $('.select2-responsible').select2({
-                placeholder: '-- Sin responsable --',
+                placeholder: '{{ __('-- Sin responsable --') }}',
                 allowClear: true,
                 width: '100%'
             });

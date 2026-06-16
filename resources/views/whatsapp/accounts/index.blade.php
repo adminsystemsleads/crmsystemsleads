@@ -1,10 +1,10 @@
 <x-app-layout>
   <x-slot name="header">
     <div class="page-head flex items-center justify-between">
-      <h2 class="page-head-title font-semibold text-xl text-gray-800 leading-tight">WhatsApp – Cuentas</h2>
+      <h2 class="page-head-title font-semibold text-xl text-gray-800 leading-tight">WhatsApp – {{ __('Cuentas') }}</h2>
       <a href="{{ route('whatsapp.accounts.create') }}"
          class="page-head-actions text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
-        + Conectar cuenta
+        + {{ __('Conectar cuenta') }}
       </a>
     </div>
   </x-slot>
@@ -23,12 +23,12 @@
           <table class="min-w-full text-sm">
             <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 border-b">
               <tr>
-                <th class="px-5 py-3">Nombre</th>
+                <th class="px-5 py-3">{{ __('Nombre') }}</th>
                 <th class="px-5 py-3">Phone Number ID</th>
                 <th class="px-5 py-3">Pipeline</th>
-                <th class="px-5 py-3">Estado</th>
-                <th class="px-5 py-3">Asistente IA</th>
-                <th class="px-5 py-3 text-right">Acciones</th>
+                <th class="px-5 py-3">{{ __('Estado') }}</th>
+                <th class="px-5 py-3">{{ __('Asistente IA') }}</th>
+                <th class="px-5 py-3 text-right">{{ __('Acciones') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -41,7 +41,7 @@
                   <td class="px-5 py-3">
                     <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium
                       {{ $a->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                      {{ $a->is_active ? 'Activo' : 'Inactivo' }}
+                      {{ $a->is_active ? __('Activo') : __('Inactivo') }}
                     </span>
                   </td>
                   <td class="px-5 py-3">
@@ -52,7 +52,7 @@
                       </span>
                     @elseif($ai)
                       <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500">
-                        IA pausada
+                        {{ __('IA pausada') }}
                       </span>
                     @else
                       <span class="text-xs text-gray-400">—</span>
@@ -66,22 +66,22 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
                         </svg>
-                        IA
+                        {{ __('IA') }}
                       </a>
                       <a href="{{ route('whatsapp.accounts.edit', $a) }}"
-                         class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Editar</a>
+                         class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">{{ __('Editar') }}</a>
                       <form class="inline" method="POST" action="{{ route('whatsapp.accounts.destroy', $a) }}"
-                            onsubmit="return confirm('¿Eliminar esta cuenta?');">
+                            onsubmit="return confirm('{{ __('¿Eliminar esta cuenta?') }}');">
                         @csrf
                         @method('DELETE')
-                        <button class="text-xs text-red-500 hover:text-red-700 font-medium" type="submit">Eliminar</button>
+                        <button class="text-xs text-red-500 hover:text-red-700 font-medium" type="submit">{{ __('Eliminar') }}</button>
                       </form>
                     </div>
                   </td>
                 </tr>
               @empty
                 <tr>
-                  <td class="px-5 py-6 text-center text-gray-400" colspan="6">No hay cuentas conectadas.</td>
+                  <td class="px-5 py-6 text-center text-gray-400" colspan="6">{{ __('No hay cuentas conectadas.') }}</td>
                 </tr>
               @endforelse
             </tbody>
@@ -90,7 +90,7 @@
 
         <div class="px-5 py-4 border-t border-gray-100 bg-gray-50">
           <a href="{{ route('whatsapp.inbox.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
-            Ir al Inbox →
+            {{ __('Ir al Inbox') }} →
           </a>
         </div>
       </div>

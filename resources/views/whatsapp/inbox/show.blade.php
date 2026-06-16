@@ -26,14 +26,14 @@
     {{-- Toggle del menú lateral global (solo cuando está minimizado), alineado en la barra --}}
     <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
             class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
-            title="Mostrar menú" style="display:none;">
+            title="{{ __('Mostrar menú') }}" style="display:none;">
       <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
     </button>
     {{-- Botón hamburger – solo visible en mobile cuando el panel container ya está montado --}}
     <button onclick="setMobilePanel('sidebar')"
-            class="wa-mobile-btn shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Ver conversaciones">
+            class="wa-mobile-btn shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="{{ __('Ver conversaciones') }}">
       <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
@@ -50,7 +50,7 @@
               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
-      Cuentas
+      {{ __('Cuentas') }}
     </a>
   </div>
 
@@ -64,7 +64,7 @@
 
     {{-- Cabecera --}}
     <div class="h-12 px-3 flex items-center border-b border-gray-100 bg-gray-50">
-      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">Conversaciones</span>
+      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Conversaciones') }}</span>
     </div>
 
     {{-- Búsqueda + filtros (live AJAX, sin recargar) --}}
@@ -80,7 +80,7 @@
         </svg>
         <input type="text" id="sidebarSearchInput" value="{{ $search ?? '' }}"
                autocomplete="off"
-               placeholder="Buscar por nombre o número…"
+               placeholder="{{ __('Buscar por nombre o número…') }}"
                class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 text-gray-700"
                style="padding-left: 32px; padding-right: 30px;">
         <button type="button" id="sidebarSearchClear"
@@ -96,7 +96,7 @@
       <select id="sidebarAccountFilter"
               class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 text-gray-700"
               style="padding-left: 10px; padding-right: 28px;">
-        <option value="">Todas las cuentas</option>
+        <option value="">{{ __('Todas las cuentas') }}</option>
         @foreach($accounts as $a)
           <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
             {{ $a->name }}
@@ -109,7 +109,7 @@
         <select id="sidebarTagFilter"
                 class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 text-gray-700"
                 style="padding-left: 10px; padding-right: 28px;">
-          <option value="">Todas las etiquetas</option>
+          <option value="">{{ __('Todas las etiquetas') }}</option>
           @foreach($allTags as $t)
             <option value="{{ $t->id }}" {{ (string)$tagId === (string)$t->id ? 'selected' : '' }}>🏷 {{ $t->name }}</option>
           @endforeach
@@ -118,13 +118,13 @@
 
       <button type="button" id="sidebarClearAll"
               class="{{ ($search || $tagId) ? '' : 'hidden' }} block w-full text-center text-[11px] text-indigo-600 hover:text-indigo-800">
-        Limpiar filtros
+        {{ __('Limpiar filtros') }}
       </button>
     </div>
 
     {{-- Tabs: Todo / Abierto / Cerrado --}}
     <div class="flex border-b border-gray-100 bg-white shrink-0">
-      @foreach(['all' => 'Todo', 'open' => 'Abierto', 'closed' => 'Cerrado'] as $val => $label)
+      @foreach(['all' => __('Todo'), 'open' => __('Abierto'), 'closed' => __('Cerrado')] as $val => $label)
         <a href="{{ route('whatsapp.inbox.show', $conversation) }}?status={{ $val }}{{ $accountId ? '&account_id='.$accountId : '' }}"
            class="flex-1 py-2 text-center text-xs font-medium transition
                   {{ $status === $val ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700' }}">
@@ -187,7 +187,7 @@
           </div>
         </a>
       @empty
-        <div class="p-6 text-center text-sm text-gray-400">No hay conversaciones.</div>
+        <div class="p-6 text-center text-sm text-gray-400">{{ __('No hay conversaciones.') }}</div>
       @endforelse
     </div>
 
@@ -201,7 +201,7 @@
     {{-- Cabecera del chat --}}
     <div id="chatHeader" class="h-14 px-3 md:px-4 flex items-center gap-2 md:gap-3 border-b border-gray-200 bg-white shrink-0">
       {{-- Botón volver al sidebar (solo mobile) --}}
-      <button onclick="setMobilePanel('sidebar')" class="wa-mobile-btn shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Conversaciones">
+      <button onclick="setMobilePanel('sidebar')" class="wa-mobile-btn shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="{{ __('Conversaciones') }}">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -215,21 +215,21 @@
       </div>
       <span id="chatHeaderStatus" class="ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0
           {{ $conversation->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
-        {{ $conversation->status === 'open' ? 'Abierta' : 'Cerrada' }}
+        {{ $conversation->status === 'open' ? __('Abierta') : __('Cerrada') }}
       </span>
       @if(isset($aiAssistant) && $aiAssistant?->is_active)
-        <span id="aiBadge" title="Asistente IA ({{ $aiAssistant->model }})"
+        <span id="aiBadge" title="{{ __('Asistente IA') }} ({{ $aiAssistant->model }})"
               class="ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0
                      {{ $conversation->ai_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-500' }}">
           <span class="size-1.5 rounded-full inline-block {{ $conversation->ai_active ? 'bg-green-500 animate-pulse' : 'bg-red-400' }}"></span>
-          {{ $conversation->ai_active ? 'IA' : 'IA pausada' }}
+          {{ $conversation->ai_active ? __('IA') : __('IA pausada') }}
         </span>
       @else
         <span id="aiBadge" class="hidden"></span>
       @endif
       <span id="chatHeaderAccount" class="hidden lg:block text-xs text-gray-400">{{ $conversation->account?->name ?? '' }}</span>
       {{-- Botón detalles contacto (solo mobile) --}}
-      <button onclick="setMobilePanel('info')" class="wa-mobile-btn ml-auto shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Detalles del contacto">
+      <button onclick="setMobilePanel('info')" class="wa-mobile-btn ml-auto shrink-0 p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="{{ __('Detalles del contacto') }}">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
         </svg>
@@ -250,7 +250,7 @@
             @if($type === 'image' && !empty($m->public_url))
               @if(!empty($m->caption))<div class="whitespace-pre-line mb-1.5 text-xs">{{ $m->caption }}</div>@endif
               <a href="{{ $m->public_url }}" target="_blank" rel="noopener">
-                <img src="{{ $m->public_url }}" alt="imagen"
+                <img src="{{ $m->public_url }}" alt="{{ __('imagen') }}"
                      class="rounded-lg object-cover cursor-zoom-in"
                      style="max-width:240px;max-height:200px;display:block;"/>
               </a>
@@ -265,7 +265,7 @@
               @if(!empty($m->caption))<div class="whitespace-pre-line mb-1.5 text-xs">{{ $m->caption }}</div>@endif
               <a href="{{ $m->public_url }}" target="_blank" rel="noopener"
                  class="{{ $isOut ? 'text-white underline' : 'text-indigo-700 underline' }}">
-                📎 {{ $m->filename ?? 'Abrir archivo' }}
+                📎 {{ $m->filename ?? __('Abrir archivo') }}
               </a>
             @else
               <div class="whitespace-pre-line">{{ $m->body }}</div>
@@ -303,9 +303,9 @@
           </svg>
 
           <div class="text-xs text-amber-800" style="max-width: 600px;">
-            <p class="font-semibold">Ventana de 24h vencida</p>
-            <p class="mt-0.5">El cliente no ha escrito en más de 24 horas. WhatsApp solo permite enviar
-              <strong>plantillas aprobadas</strong> en este momento.</p>
+            <p class="font-semibold">{{ __('Ventana de 24h vencida') }}</p>
+            <p class="mt-0.5">{{ __('El cliente no ha escrito en más de 24 horas. WhatsApp solo permite enviar') }}
+              <strong>{{ __('plantillas aprobadas') }}</strong> {{ __('en este momento.') }}</p>
           </div>
 
           <button type="button" onclick="openTemplatesModal()"
@@ -314,7 +314,7 @@
             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            Enviar plantilla
+            {{ __('Enviar plantilla') }}
           </button>
         </div>
       </div>
@@ -328,7 +328,7 @@
         {{-- Botón adjuntar --}}
         <button type="button" id="attachBtn"
                 class="shrink-0 p-2 rounded-xl text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
-                title="Adjuntar imagen o video">
+                title="{{ __('Adjuntar imagen o video') }}">
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
@@ -338,7 +338,7 @@
         {{-- Botón plantillas --}}
         <button type="button" onclick="openTemplatesModal()"
                 class="shrink-0 p-2 rounded-xl text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
-                title="Enviar plantilla aprobada">
+                title="{{ __('Enviar plantilla aprobada') }}">
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
@@ -348,7 +348,7 @@
         {{-- Botón respuestas rápidas --}}
         <button type="button" onclick="openQuickRepliesModal()"
                 class="shrink-0 p-2 rounded-xl text-gray-400 hover:text-amber-500 hover:bg-amber-50 transition"
-                title="Respuestas rápidas (también escribe / en el chat)">
+                title="{{ __('Respuestas rápidas (también escribe / en el chat)') }}">
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M13 10V3L4 14h7v7l9-11h-7z"/>
@@ -357,7 +357,7 @@
 
         <textarea id="msgInput" name="message" rows="1"
                   class="flex-1 resize-none rounded-xl border-gray-200 bg-gray-50 text-sm px-3 py-2 focus:ring-indigo-400 focus:border-indigo-400"
-                  placeholder="Escribe un mensaje..."
+                  placeholder="{{ __('Escribe un mensaje...') }}"
                   style="min-height:40px;max-height:120px;"
                   autocomplete="off"></textarea>
 
@@ -369,7 +369,7 @@
           </svg>
         </button>
       </form>
-      <p class="mt-1 text-[10px] text-gray-400">Imágenes: JPG, PNG, GIF, WEBP · Videos: MP4 (máx. 16 MB)</p>
+      <p class="mt-1 text-[10px] text-gray-400">{{ __('Imágenes: JPG, PNG, GIF, WEBP · Videos: MP4 (máx. 16 MB)') }}</p>
     </div>
 
   </div>
@@ -381,12 +381,12 @@
 
     {{-- Header --}}
     <div class="h-14 px-4 flex items-center gap-2 border-b border-gray-100 shrink-0">
-      <button onclick="setMobilePanel('chat')" class="wa-mobile-btn shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="Volver al chat">
+      <button onclick="setMobilePanel('chat')" class="wa-mobile-btn shrink-0 p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition" title="{{ __('Volver al chat') }}">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
-      <span class="text-sm font-semibold text-gray-900">Detalles del contacto</span>
+      <span class="text-sm font-semibold text-gray-900">{{ __('Detalles del contacto') }}</span>
     </div>
 
     {{-- Avatar grande --}}
@@ -397,25 +397,25 @@
       <p class="mt-2 text-sm font-semibold text-gray-900">{{ $convName }}</p>
       <span class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
           {{ $conversation->status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-        {{ $conversation->status === 'open' ? 'Abierta' : 'Cerrada' }}
+        {{ $conversation->status === 'open' ? __('Abierta') : __('Cerrada') }}
       </span>
     </div>
 
     {{-- Campos --}}
     <div class="px-4 py-4 space-y-3 border-b border-gray-100 text-sm">
       <div>
-        <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Teléfono</p>
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{{ __('Teléfono') }}</p>
         <p class="text-gray-800 font-medium">{{ $conversation->contact_phone }}</p>
       </div>
       @if($conversation->account)
         <div>
-          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Cuenta WhatsApp</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{{ __('Cuenta WhatsApp') }}</p>
           <p class="text-gray-800">{{ $conversation->account->name }}</p>
         </div>
       @endif
       @if($conversation->last_message_at)
         <div>
-          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">Último mensaje</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{{ __('Último mensaje') }}</p>
           <p class="text-gray-500 text-xs">{{ $conversation->last_message_at->diffForHumans() }}</p>
         </div>
       @endif
@@ -423,9 +423,9 @@
       {{-- Etiquetas asignadas --}}
       <div>
         <div class="flex items-center justify-between mb-1.5">
-          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Etiquetas</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">{{ __('Etiquetas') }}</p>
           <button type="button" onclick="openTagsModal()"
-                  class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold">+ Editar</button>
+                  class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold">{{ __('+ Editar') }}</button>
         </div>
         <div id="convTagsBox" class="flex flex-wrap gap-1">
           @forelse($conversation->tags as $tg)
@@ -434,7 +434,7 @@
               🏷 {{ $tg->name }}
             </span>
           @empty
-            <span class="text-[11px] text-gray-400 italic">Sin etiquetas</span>
+            <span class="text-[11px] text-gray-400 italic">{{ __('Sin etiquetas') }}</span>
           @endforelse
         </div>
       </div>
@@ -457,12 +457,12 @@
             d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"/>
         </svg>
         <div class="flex-1 min-w-0">
-          <p class="text-xs font-semibold {{ $conversation->ai_active ? 'text-green-800' : 'text-red-700' }}">Asistente IA</p>
+          <p class="text-xs font-semibold {{ $conversation->ai_active ? 'text-green-800' : 'text-red-700' }}">{{ __('Asistente IA') }}</p>
           <p id="aiToggleLabel" class="flex items-center gap-1 text-[10px] font-semibold mt-0.5
                                        {{ $conversation->ai_active ? 'text-green-600' : 'text-red-500' }}">
             <span id="aiToggleDot" class="size-2 rounded-full inline-block
                                           {{ $conversation->ai_active ? 'bg-green-500 animate-pulse' : 'bg-red-400' }}"></span>
-            {{ $conversation->ai_active ? 'Activo — toca para pausar' : 'Pausado — toca para activar' }}
+            {{ $conversation->ai_active ? __('Activo — toca para pausar') : __('Pausado — toca para activar') }}
           </p>
         </div>
         <svg class="size-4 shrink-0 {{ $conversation->ai_active ? 'text-green-400' : 'text-red-300' }}"
@@ -484,12 +484,12 @@
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
         </svg>
         <div class="flex-1 min-w-0">
-          <p class="text-xs font-semibold text-gray-800">Reiniciar hilo IA</p>
+          <p class="text-xs font-semibold text-gray-800">{{ __('Reiniciar hilo IA') }}</p>
           <p id="aiResetStatus" class="text-[10px] text-gray-500 mt-0.5">
             @if($conversation->ai_context_from)
-              Último reinicio: {{ $conversation->ai_context_from->diffForHumans() }}
+              {{ __('Último reinicio:') }} {{ $conversation->ai_context_from->diffForHumans() }}
             @else
-              La IA está usando todo el historial de esta conversación
+              {{ __('La IA está usando todo el historial de esta conversación') }}
             @endif
           </p>
         </div>
@@ -500,7 +500,7 @@
     {{-- Negociación vinculada --}}
     <div class="px-4 py-4">
       <div class="flex items-center justify-between mb-2">
-        <p class="text-xs font-semibold text-gray-700">Negociación</p>
+        <p class="text-xs font-semibold text-gray-700">{{ __('Negociación') }}</p>
       </div>
 
       @if($currentDeal)
@@ -519,7 +519,7 @@
           <div class="flex items-center gap-1.5 shrink-0">
             <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold
                 {{ $currentDeal->status === 'open' ? 'bg-green-100 text-green-700' : ($currentDeal->status === 'won' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-600') }}">
-              {{ match($currentDeal->status) { 'open' => 'Abierto', 'won' => 'Ganado', 'lost' => 'Perdido', default => $currentDeal->status } }}
+              {{ match($currentDeal->status) { 'open' => __('Abierto'), 'won' => __('Ganado'), 'lost' => __('Perdido'), default => $currentDeal->status } }}
             </span>
             <svg class="size-3 text-gray-300 group-hover:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -530,13 +530,13 @@
         <div x-data="{ open: false }" class="space-y-2">
           {{-- Estado vacío + botón --}}
           <div class="rounded-xl border border-dashed border-gray-200 p-3 text-center">
-            <p class="text-xs text-gray-400 mb-2">Sin negociación vinculada.</p>
+            <p class="text-xs text-gray-400 mb-2">{{ __('Sin negociación vinculada.') }}</p>
             <button @click="open = !open"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
               <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
               </svg>
-              Crear negociación
+              {{ __('Crear negociación') }}
             </button>
           </div>
 
@@ -547,11 +547,11 @@
 
               <div>
                 <label class="block text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">
-                  Pipeline
+                  {{ __('Pipeline') }}
                 </label>
                 <select name="pipeline_id" required
                         class="w-full text-xs rounded-lg border-gray-200 bg-white py-1.5 text-gray-800">
-                  <option value="">Selecciona un pipeline…</option>
+                  <option value="">{{ __('Selecciona un pipeline…') }}</option>
                   @foreach($pipelines as $pl)
                     <option value="{{ $pl->id }}"
                       {{ $conversation->account?->pipeline_id == $pl->id ? 'selected' : '' }}>
@@ -563,7 +563,7 @@
 
               <div>
                 <label class="block text-[10px] font-semibold uppercase tracking-wide text-gray-500 mb-1">
-                  Título (opcional)
+                  {{ __('Título (opcional)') }}
                 </label>
                 <input type="text" name="title"
                        placeholder="{{ ($conversation->contact_name ?? $conversation->contact_phone ?? 'WhatsApp') . ' - WhatsApp' }}"
@@ -573,11 +573,11 @@
               <div class="flex gap-2 pt-1">
                 <button type="submit"
                         class="flex-1 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
-                  Crear
+                  {{ __('Crear') }}
                 </button>
                 <button type="button" @click="open = false"
                         class="flex-1 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition">
-                  Cancelar
+                  {{ __('Cancelar') }}
                 </button>
               </div>
             </form>
@@ -1388,10 +1388,10 @@ function setMobilePanel(panel) {
 <div id="templatesModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-      <h3 class="text-base font-bold text-gray-900">Plantillas aprobadas de WhatsApp</h3>
+      <h3 class="text-base font-bold text-gray-900">{{ __('Plantillas aprobadas de WhatsApp') }}</h3>
       <div class="flex items-center gap-2">
         <button type="button" id="reloadTemplatesBtn"
-                class="p-1.5 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition" title="Recargar lista">
+                class="p-1.5 rounded-md text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition" title="{{ __('Recargar lista') }}">
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
@@ -1407,19 +1407,19 @@ function setMobilePanel(panel) {
 
     {{-- Búsqueda --}}
     <div class="px-5 py-3 border-b border-gray-100">
-      <input type="text" id="tplSearch" placeholder="Buscar plantilla por nombre…"
+      <input type="text" id="tplSearch" placeholder="{{ __('Buscar plantilla por nombre…') }}"
              class="w-full rounded-lg border-gray-200 text-sm py-2 px-3">
     </div>
 
     {{-- Listado --}}
     <div id="templatesList" class="flex-1 overflow-y-auto px-5 py-3 space-y-2">
-      <p id="templatesLoading" class="text-center text-sm text-gray-400 py-8">Cargando plantillas…</p>
+      <p id="templatesLoading" class="text-center text-sm text-gray-400 py-8">{{ __('Cargando plantillas…') }}</p>
     </div>
 
     {{-- Formulario de variables (oculto hasta seleccionar) --}}
     <div id="tplFormSection" class="hidden border-t border-gray-200 px-5 py-4 bg-gray-50">
       <div class="mb-3">
-        <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">Plantilla seleccionada</p>
+        <p class="text-xs uppercase tracking-wide text-gray-400 font-semibold">{{ __('Plantilla seleccionada') }}</p>
         <p class="text-sm font-bold text-gray-900" id="tplSelectedName"></p>
         <p class="text-xs text-gray-500" id="tplSelectedLang"></p>
       </div>
@@ -1430,10 +1430,10 @@ function setMobilePanel(panel) {
 
       <div class="flex gap-2 justify-end">
         <button type="button" onclick="resetTemplateSelection()"
-                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">{{ __('Cancelar') }}</button>
         <button type="button" id="sendTplBtn"
                 class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
-          Enviar plantilla
+          {{ __('Enviar plantilla') }}
         </button>
       </div>
     </div>
@@ -1675,7 +1675,7 @@ function setMobilePanel(panel) {
         <svg class="size-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
-        Respuestas rápidas
+        {{ __('Respuestas rápidas') }}
       </h3>
       <button type="button" onclick="closeQuickRepliesModal()"
               class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
@@ -1686,65 +1686,65 @@ function setMobilePanel(panel) {
     </div>
 
     <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
-      <input type="text" id="qrSearch" placeholder="Buscar respuesta…"
+      <input type="text" id="qrSearch" placeholder="{{ __('Buscar respuesta…') }}"
              class="flex-1 rounded-lg border-gray-200 text-sm py-2 px-3">
       <button type="button" onclick="qrShowCreate()"
               class="shrink-0 inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Nueva
+        {{ __('Nueva') }}
       </button>
     </div>
 
     {{-- Listado --}}
     <div id="qrList" class="flex-1 overflow-y-auto px-5 py-3 space-y-2">
-      <p class="text-center text-sm text-gray-400 py-8">Cargando…</p>
+      <p class="text-center text-sm text-gray-400 py-8">{{ __('Cargando…') }}</p>
     </div>
 
     {{-- Formulario crear/editar (oculto) --}}
     <div id="qrFormSection" class="hidden border-t border-gray-200 px-5 py-4 bg-gray-50">
-      <h4 class="text-sm font-bold text-gray-800 mb-3" id="qrFormTitle">Nueva respuesta rápida</h4>
+      <h4 class="text-sm font-bold text-gray-800 mb-3" id="qrFormTitle">{{ __('Nueva respuesta rápida') }}</h4>
       <input type="hidden" id="qrEditingId" value="">
 
       <div class="space-y-3">
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Atajo (opcional)</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Atajo (opcional)') }}</label>
             <div class="flex">
               <span class="inline-flex items-center px-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l-lg text-xs text-gray-500">/</span>
               <input type="text" id="qrShortcut" maxlength="50"
-                     placeholder="saludo"
+                     placeholder="{{ __('saludo') }}"
                      class="flex-1 rounded-r-lg border-gray-200 text-sm py-2">
             </div>
           </div>
           <div class="col-span-2">
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Título *</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Título *') }}</label>
             <input type="text" id="qrTitle" required maxlength="150"
-                   placeholder="Saludo inicial"
+                   placeholder="{{ __('Saludo inicial') }}"
                    class="w-full rounded-lg border-gray-200 text-sm py-2">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Contenido *</label>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Contenido *') }}</label>
           <textarea id="qrContent" rows="4" maxlength="4000" required
-                    placeholder="Hola, gracias por escribirnos. ¿En qué podemos ayudarte?"
+                    placeholder="{{ __('Hola, gracias por escribirnos. ¿En qué podemos ayudarte?') }}"
                     class="w-full rounded-lg border-gray-200 text-sm py-2"></textarea>
         </div>
 
         <label class="flex items-center gap-2 text-xs text-gray-700">
           <input type="checkbox" id="qrTeamWide" checked class="rounded border-gray-300 text-indigo-600">
-          Compartir con todo el equipo
+          {{ __('Compartir con todo el equipo') }}
         </label>
       </div>
 
       <div class="flex gap-2 justify-end mt-4">
         <button type="button" onclick="qrHideForm()"
-                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">{{ __('Cancelar') }}</button>
         <button type="button" id="qrSaveBtn" onclick="qrSave()"
                 class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
-          Guardar
+          {{ __('Guardar') }}
         </button>
       </div>
     </div>
@@ -1990,7 +1990,7 @@ function setMobilePanel(panel) {
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
       <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-        🏷 Etiquetas de la conversación
+        🏷 {{ __('Etiquetas de la conversación') }}
       </h3>
       <button type="button" onclick="closeTagsModal()"
               class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
@@ -2002,40 +2002,40 @@ function setMobilePanel(panel) {
 
     {{-- Crear nueva --}}
     <div class="px-5 py-3 border-b border-gray-100">
-      <label class="block text-xs font-semibold text-gray-600 mb-1">Crear nueva etiqueta</label>
+      <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Crear nueva etiqueta') }}</label>
       <div class="flex gap-2">
-        <input type="text" id="newTagName" maxlength="80" placeholder="Ej: Cliente VIP"
+        <input type="text" id="newTagName" maxlength="80" placeholder="{{ __('Ej: Cliente VIP') }}"
                class="flex-1 rounded-lg border-gray-200 text-sm py-2 px-3">
         <select id="newTagColor" class="rounded-lg border-gray-200 text-sm py-2 px-2">
-          <option value="indigo">🟣 Indigo</option>
-          <option value="red">🔴 Rojo</option>
-          <option value="orange">🟠 Naranja</option>
-          <option value="amber">🟡 Ámbar</option>
-          <option value="green">🟢 Verde</option>
-          <option value="teal">🔵 Teal</option>
-          <option value="blue">🔷 Azul</option>
-          <option value="purple">🟪 Morado</option>
-          <option value="pink">💗 Rosa</option>
-          <option value="gray">⚫ Gris</option>
+          <option value="indigo">🟣 {{ __('Indigo') }}</option>
+          <option value="red">🔴 {{ __('Rojo') }}</option>
+          <option value="orange">🟠 {{ __('Naranja') }}</option>
+          <option value="amber">🟡 {{ __('Ámbar') }}</option>
+          <option value="green">🟢 {{ __('Verde') }}</option>
+          <option value="teal">🔵 {{ __('Teal') }}</option>
+          <option value="blue">🔷 {{ __('Azul') }}</option>
+          <option value="purple">🟪 {{ __('Morado') }}</option>
+          <option value="pink">💗 {{ __('Rosa') }}</option>
+          <option value="gray">⚫ {{ __('Gris') }}</option>
         </select>
         <button type="button" onclick="createTag()"
                 class="px-3 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
-          Crear
+          {{ __('Crear') }}
         </button>
       </div>
     </div>
 
     {{-- Lista checkboxes --}}
     <div class="flex-1 overflow-y-auto px-5 py-3 space-y-1.5" id="tagsCheckboxList">
-      <p class="text-center text-sm text-gray-400 py-4">Cargando…</p>
+      <p class="text-center text-sm text-gray-400 py-4">{{ __('Cargando…') }}</p>
     </div>
 
     <div class="flex gap-2 justify-end px-5 py-3 border-t border-gray-200 bg-gray-50">
       <button type="button" onclick="closeTagsModal()"
-              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">{{ __('Cancelar') }}</button>
       <button type="button" id="saveTagsBtn" onclick="saveConversationTags()"
               class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
-        Guardar
+        {{ __('Guardar') }}
       </button>
     </div>
   </div>

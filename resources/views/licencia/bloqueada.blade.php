@@ -1,9 +1,9 @@
 @php
     $grant = $team->license?->grant_type;
     $titulo = match ($grant) {
-        'prorroga' => 'Tu periodo de prórroga terminó',
-        'trial'    => 'Tu periodo de prueba terminó',
-        default    => 'Tu licencia no está activa',
+        'prorroga' => __('Tu periodo de prórroga terminó'),
+        'trial'    => __('Tu periodo de prueba terminó'),
+        default    => __('Tu licencia no está activa'),
     };
     $allTeams = Auth::user()->allTeams();
 @endphp
@@ -13,7 +13,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Acceso bloqueado — {{ $team->name }}</title>
+  <title>{{ __('Acceso bloqueado') }} — {{ $team->name }}</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{
@@ -104,7 +104,7 @@
 <body>
 
   {{-- ID de la cuenta bloqueada (esquina superior derecha) --}}
-  <div class="acct-id">ID de la Cuenta: {{ $team->id }}</div>
+  <div class="acct-id">{{ __('ID de la Cuenta:') }} {{ $team->id }}</div>
 
   {{-- Logo QipuCRM --}}
   <div class="brand">
@@ -121,24 +121,23 @@
 
     <h1>{{ $titulo }}</h1>
     <p class="msg">
-      El acceso a <b>{{ $team->name }}</b> fue <b>bloqueado</b> porque tu periodo finalizó.
+      {!! __('El acceso a :name fue :blocked porque tu periodo finalizó.', ['name' => '<b>'.e($team->name).'</b>', 'blocked' => '<b>'.__('bloqueado').'</b>']) !!}
     </p>
     <p class="msg">
-      Si necesitas más tiempo o tienes alguna duda, puedes solicitar ayuda
-      comunicándote con nuestro equipo de soporte.
+      {{ __('Si necesitas más tiempo o tienes alguna duda, puedes solicitar ayuda comunicándote con nuestro equipo de soporte.') }}
     </p>
 
     <a href="{{ route('soporte') }}" class="btn btn-primary">
       <svg class="ic" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v6m-3.536 1.464a5 5 0 107.072 0"/>
       </svg>
-      Comunicarme con soporte
+      {{ __('Comunicarme con soporte') }}
     </a>
 
     <div class="divider"></div>
 
     {{-- Activar con un código de licencia --}}
-    <p class="sub">¿Tienes un código de licencia? Actívalo aquí</p>
+    <p class="sub">{{ __('¿Tienes un código de licencia? Actívalo aquí') }}</p>
 
     @if (session('error'))
       <div class="alert">{{ session('error') }}</div>
@@ -152,7 +151,7 @@
       <div class="code-row">
         <input type="text" name="license_key" class="code-input"
                placeholder="SL-XXXX-XXXX-XXXX" required>
-        <button type="submit" class="btn btn-dark">Activar</button>
+        <button type="submit" class="btn btn-dark">{{ __('Activar') }}</button>
       </div>
     </form>
   </div>
@@ -165,14 +164,14 @@
           <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2M5 21H3m4-14h2m-2 4h2m-2 4h2m4-8h2m-2 4h2m-2 4h2"/>
           </svg>
-          Selecciona tu cuenta
+          {{ __('Selecciona tu cuenta') }}
         </span>
         <form method="POST" action="{{ route('current-team.update') }}" id="switchForm">
           @csrf @method('PUT')
           <select name="team_id" onchange="document.getElementById('switchForm').submit()">
             @foreach ($allTeams as $t)
               <option value="{{ $t->id }}" @selected($t->id === $team->id)>
-                {{ $t->name }} (ID {{ $t->id }}){{ $t->id === $team->id ? ' · actual' : '' }}
+                {{ $t->name }} (ID {{ $t->id }}){{ $t->id === $team->id ? ' · ' . __('actual') : '' }}
               </option>
             @endforeach
           </select>
@@ -184,7 +183,7 @@
       <svg class="ic" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v6m-3.536 1.464a5 5 0 107.072 0"/>
       </svg>
-      Soporte
+      {{ __('Soporte') }}
     </a>
   </div>
 

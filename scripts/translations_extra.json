@@ -1,0 +1,4022 @@
+{
+    "No se pudo cargar el dashboard. Asegúrate de tener un equipo seleccionado.": {
+        "en": "Could not load the dashboard. Make sure you have a team selected.",
+        "pt": "Não foi possível carregar o painel. Certifique-se de ter uma equipe selecionada."
+    },
+    "Contactos totales": {
+        "en": "Total contacts",
+        "pt": "Total de contatos"
+    },
+    "este mes": {
+        "en": "this month",
+        "pt": "este mês"
+    },
+    "Negociaciones abiertas": {
+        "en": "Open deals",
+        "pt": "Negociações abertas"
+    },
+    "de": {
+        "en": "of",
+        "pt": "de"
+    },
+    "totales": {
+        "en": "total",
+        "pt": "no total"
+    },
+    "Ganadas": {
+        "en": "Won",
+        "pt": "Ganhas"
+    },
+    "mes": {
+        "en": "month",
+        "pt": "mês"
+    },
+    "Conversaciones abiertas": {
+        "en": "Open conversations",
+        "pt": "Conversas abertas"
+    },
+    "Negociaciones por embudo": {
+        "en": "Deals by funnel",
+        "pt": "Negociações por funil"
+    },
+    "Solo abiertas, agrupadas por fase": {
+        "en": "Open only, grouped by stage",
+        "pt": "Apenas abertas, agrupadas por fase"
+    },
+    "abiertas": {
+        "en": "open",
+        "pt": "abertas"
+    },
+    "Pipeline sin fases": {
+        "en": "Pipeline with no stages",
+        "pt": "Funil sem fases"
+    },
+    "negociaciones": {
+        "en": "deals",
+        "pt": "negociações"
+    },
+    "Monto:": {
+        "en": "Amount:",
+        "pt": "Valor:"
+    },
+    "GANADA": {
+        "en": "WON",
+        "pt": "GANHA"
+    },
+    "PERDIDA": {
+        "en": "LOST",
+        "pt": "PERDIDA"
+    },
+    "Top contactos": {
+        "en": "Top contacts",
+        "pt": "Principais contatos"
+    },
+    "Aún no hay contactos.": {
+        "en": "No contacts yet.",
+        "pt": "Ainda não há contatos."
+    },
+    "deal": {
+        "en": "deal",
+        "pt": "negociação"
+    },
+    "deals": {
+        "en": "deals",
+        "pt": "negociações"
+    },
+    "Negociaciones recientes": {
+        "en": "Recent deals",
+        "pt": "Negociações recentes"
+    },
+    "Aún no hay negociaciones.": {
+        "en": "No deals yet.",
+        "pt": "Ainda não há negociações."
+    },
+    "Sin contacto": {
+        "en": "No contact",
+        "pt": "Sem contato"
+    },
+    "Sin fase": {
+        "en": "No stage",
+        "pt": "Sem fase"
+    },
+    "¿Necesitas ayuda?": {
+        "en": "Need help?",
+        "pt": "Precisa de ajuda?"
+    },
+    "Escríbenos por el chat en vivo (botón flotante en la esquina) o déjanos tus datos en el formulario y nuestro equipo de soporte te contactará.": {
+        "en": "Message us through the live chat (floating button in the corner) or leave your details in the form and our support team will contact you.",
+        "pt": "Fale conosco pelo chat ao vivo (botão flutuante no canto) ou deixe seus dados no formulário e nossa equipe de suporte entrará em contato."
+    },
+    "Tu periodo de prórroga terminó": {
+        "en": "Your extension period has ended",
+        "pt": "Seu período de prorrogação terminou"
+    },
+    "Tu periodo de prueba terminó": {
+        "en": "Your trial period has ended",
+        "pt": "Seu período de teste terminou"
+    },
+    "Tu licencia no está activa": {
+        "en": "Your license is not active",
+        "pt": "Sua licença não está ativa"
+    },
+    "Acceso bloqueado": {
+        "en": "Access blocked",
+        "pt": "Acesso bloqueado"
+    },
+    "ID de la Cuenta:": {
+        "en": "Account ID:",
+        "pt": "ID da Conta:"
+    },
+    "El acceso a :name fue :blocked porque tu periodo finalizó.": {
+        "en": "Access to :name was :blocked because your period ended.",
+        "pt": "O acesso a :name foi :blocked porque seu período terminou."
+    },
+    "bloqueado": {
+        "en": "blocked",
+        "pt": "bloqueado"
+    },
+    "Si necesitas más tiempo o tienes alguna duda, puedes solicitar ayuda comunicándote con nuestro equipo de soporte.": {
+        "en": "If you need more time or have any questions, you can request help by contacting our support team.",
+        "pt": "Se precisar de mais tempo ou tiver alguma dúvida, você pode solicitar ajuda entrando em contato com nossa equipe de suporte."
+    },
+    "Comunicarme con soporte": {
+        "en": "Contact support",
+        "pt": "Falar com o suporte"
+    },
+    "¿Tienes un código de licencia? Actívalo aquí": {
+        "en": "Have a license code? Activate it here",
+        "pt": "Tem um código de licença? Ative-o aqui"
+    },
+    "Activar": {
+        "en": "Activate",
+        "pt": "Ativar"
+    },
+    "Selecciona tu cuenta": {
+        "en": "Select your account",
+        "pt": "Selecione sua conta"
+    },
+    "actual": {
+        "en": "current",
+        "pt": "atual"
+    },
+    "Soporte": {
+        "en": "Support",
+        "pt": "Suporte"
+    },
+    "Gestión comercial inteligente": {
+        "en": "Smart sales management",
+        "pt": "Gestão comercial inteligente"
+    },
+    "1 día": {
+        "en": "1 day",
+        "pt": "1 dia"
+    },
+    ":days días": {
+        "en": ":days days",
+        "pt": ":days dias"
+    },
+    "Periodo de prórroga activo": {
+        "en": "Extension period active",
+        "pt": "Período de prorrogação ativo"
+    },
+    "Tu licencia finalizó y se activó una prórroga de la cual te queda(n) :days para que exportes tu data o realices el proceso que desees. Al finalizar la prórroga, tu cuenta quedará bloqueada automáticamente y perderás el acceso. Comunícate con soporte para renovar tu servicio o recibir la ayuda que necesites.": {
+        "en": "Your license has ended and an extension was activated, of which you have :days left to export your data or complete whatever process you need. When the extension ends, your account will be automatically blocked and you will lose access. Contact support to renew your service or get the help you need.",
+        "pt": "Sua licença terminou e uma prorrogação foi ativada, da qual restam :days para você exportar seus dados ou realizar o processo que desejar. Ao terminar a prorrogação, sua conta será bloqueada automaticamente e você perderá o acesso. Entre em contato com o suporte para renovar seu serviço ou receber a ajuda de que precisar."
+    },
+    "Tu licencia está próxima a vencer": {
+        "en": "Your license is about to expire",
+        "pt": "Sua licença está prestes a vencer"
+    },
+    "La licencia de esta cuenta vence pronto: te queda(n) :days. Comunícate con soporte para renovar tu servicio y evitar que tu cuenta se bloquee.": {
+        "en": "This account's license expires soon: you have :days left. Contact support to renew your service and prevent your account from being blocked.",
+        "pt": "A licença desta conta vence em breve: restam :days. Entre em contato com o suporte para renovar seu serviço e evitar que sua conta seja bloqueada."
+    },
+    "Cerrar": {
+        "en": "Close",
+        "pt": "Fechar"
+    },
+    "Tema oscuro": {
+        "en": "Dark theme",
+        "pt": "Tema escuro"
+    },
+    "Tema claro": {
+        "en": "Light theme",
+        "pt": "Tema claro"
+    },
+    "Mostrar menú": {
+        "en": "Show menu",
+        "pt": "Mostrar menu"
+    },
+    "Reporte de Cuentas": {
+        "en": "Accounts Report",
+        "pt": "Relatório de Contas"
+    },
+    "Actualizar lista": {
+        "en": "Refresh list",
+        "pt": "Atualizar lista"
+    },
+    "Volver a códigos": {
+        "en": "Back to codes",
+        "pt": "Voltar aos códigos"
+    },
+    "cuenta(s) eliminada(s) — se borrarán por completo de la base a los": {
+        "en": "deleted account(s) — they will be permanently removed from the database after",
+        "pt": "conta(s) excluída(s) — serão removidas totalmente do banco de dados após"
+    },
+    "días de su eliminación.": {
+        "en": "days from their deletion.",
+        "pt": "dias da sua exclusão."
+    },
+    "quedan": {
+        "en": "remaining",
+        "pt": "restam"
+    },
+    "día": {
+        "en": "day",
+        "pt": "dia"
+    },
+    "días": {
+        "en": "days",
+        "pt": "dias"
+    },
+    "Todas las cuentas": {
+        "en": "All accounts",
+        "pt": "Todas as contas"
+    },
+    "Estado de licencia, fechas y acciones de administración de cada cuenta.": {
+        "en": "License status, dates and administration actions for each account.",
+        "pt": "Status da licença, datas e ações de administração de cada conta."
+    },
+    "Estado": {
+        "en": "Status",
+        "pt": "Status"
+    },
+    "Todos": {
+        "en": "All",
+        "pt": "Todos"
+    },
+    "Licencia activa": {
+        "en": "Active license",
+        "pt": "Licença ativa"
+    },
+    "Modo de prueba": {
+        "en": "Trial mode",
+        "pt": "Modo de teste"
+    },
+    "Prórroga": {
+        "en": "Extension",
+        "pt": "Prorrogação"
+    },
+    "Vencida": {
+        "en": "Expired",
+        "pt": "Vencida"
+    },
+    "Bloqueada": {
+        "en": "Blocked",
+        "pt": "Bloqueada"
+    },
+    "Sin licencia": {
+        "en": "No license",
+        "pt": "Sem licença"
+    },
+    "Eliminada": {
+        "en": "Deleted",
+        "pt": "Excluída"
+    },
+    "Eliminada permanentemente": {
+        "en": "Permanently deleted",
+        "pt": "Excluída permanentemente"
+    },
+    "Correo": {
+        "en": "Email",
+        "pt": "E-mail"
+    },
+    "Buscar por correo…": {
+        "en": "Search by email…",
+        "pt": "Buscar por e-mail…"
+    },
+    "Limpiar": {
+        "en": "Clear",
+        "pt": "Limpar"
+    },
+    "ID": {
+        "en": "ID",
+        "pt": "ID"
+    },
+    "Cuenta": {
+        "en": "Account",
+        "pt": "Conta"
+    },
+    "Correo creador": {
+        "en": "Creator email",
+        "pt": "E-mail do criador"
+    },
+    "Creada": {
+        "en": "Created",
+        "pt": "Criada"
+    },
+    "1ª licencia": {
+        "en": "1st license",
+        "pt": "1ª licença"
+    },
+    "Inicio actual": {
+        "en": "Current start",
+        "pt": "Início atual"
+    },
+    "Vence": {
+        "en": "Expires",
+        "pt": "Vence"
+    },
+    "Última nota": {
+        "en": "Last note",
+        "pt": "Última nota"
+    },
+    "Fecha eliminada": {
+        "en": "Date deleted",
+        "pt": "Data de exclusão"
+    },
+    "Borrado permanente": {
+        "en": "Permanent deletion",
+        "pt": "Exclusão permanente"
+    },
+    "Días p/ borrado": {
+        "en": "Days to deletion",
+        "pt": "Dias p/ exclusão"
+    },
+    "Acciones": {
+        "en": "Actions",
+        "pt": "Ações"
+    },
+    "borrada": {
+        "en": "deleted",
+        "pt": "excluída"
+    },
+    "Eliminada permanentemente — sin acciones": {
+        "en": "Permanently deleted — no actions",
+        "pt": "Excluída permanentemente — sem ações"
+    },
+    "Restaurar la cuenta y habilitar 7 días de prórroga": {
+        "en": "Restore the account and enable a 7-day extension",
+        "pt": "Restaurar a conta e habilitar 7 dias de prorrogação"
+    },
+    "Restaurar cuenta": {
+        "en": "Restore account",
+        "pt": "Restaurar conta"
+    },
+    "Eliminar por completo": {
+        "en": "Delete completely",
+        "pt": "Excluir completamente"
+    },
+    "Nota / motivo": {
+        "en": "Note / reason",
+        "pt": "Nota / motivo"
+    },
+    "Bloquear": {
+        "en": "Block",
+        "pt": "Bloquear"
+    },
+    "Habilitar": {
+        "en": "Enable",
+        "pt": "Habilitar"
+    },
+    "Prórroga 7 días": {
+        "en": "7-day extension",
+        "pt": "Prorrogação 7 dias"
+    },
+    "No hay cuentas registradas.": {
+        "en": "No accounts registered.",
+        "pt": "Nenhuma conta registrada."
+    },
+    "¿Eliminar permanentemente?": {
+        "en": "Delete permanently?",
+        "pt": "Excluir permanentemente?"
+    },
+    "Vas a borrar por completo los datos de la cuenta": {
+        "en": "You are about to permanently delete the data of the account",
+        "pt": "Você vai excluir completamente os dados da conta"
+    },
+    "Esta acción NO se puede deshacer.": {
+        "en": "This action CANNOT be undone.",
+        "pt": "Esta ação NÃO pode ser desfeita."
+    },
+    "Cancelar": {
+        "en": "Cancel",
+        "pt": "Cancelar"
+    },
+    "Sí, eliminar": {
+        "en": "Yes, delete",
+        "pt": "Sim, excluir"
+    },
+    "Generar Códigos de Licencia": {
+        "en": "Generate License Codes",
+        "pt": "Gerar Códigos de Licença"
+    },
+    "Reporte de cuentas": {
+        "en": "Accounts report",
+        "pt": "Relatório de contas"
+    },
+    "Crear un nuevo código": {
+        "en": "Create a new code",
+        "pt": "Criar um novo código"
+    },
+    "Los códigos de": {
+        "en": "Codes for",
+        "pt": "Os códigos de"
+    },
+    "meses": {
+        "en": "months",
+        "pt": "meses"
+    },
+    "activan una": {
+        "en": "activate a",
+        "pt": "ativam uma"
+    },
+    "licencia": {
+        "en": "license",
+        "pt": "licença"
+    },
+    "los de": {
+        "en": "those for",
+        "pt": "os de"
+    },
+    "semanas": {
+        "en": "weeks",
+        "pt": "semanas"
+    },
+    "activan un": {
+        "en": "activate a",
+        "pt": "ativam um"
+    },
+    "modo de prueba": {
+        "en": "trial mode",
+        "pt": "modo de teste"
+    },
+    "Tipo y duración": {
+        "en": "Type and duration",
+        "pt": "Tipo e duração"
+    },
+    "Licencia (meses)": {
+        "en": "License (months)",
+        "pt": "Licença (meses)"
+    },
+    "Licencia · 1 mes": {
+        "en": "License · 1 month",
+        "pt": "Licença · 1 mês"
+    },
+    "Licencia · 3 meses": {
+        "en": "License · 3 months",
+        "pt": "Licença · 3 meses"
+    },
+    "Licencia · 6 meses": {
+        "en": "License · 6 months",
+        "pt": "Licença · 6 meses"
+    },
+    "Licencia · 12 meses": {
+        "en": "License · 12 months",
+        "pt": "Licença · 12 meses"
+    },
+    "Modo de prueba (semanas)": {
+        "en": "Trial mode (weeks)",
+        "pt": "Modo de teste (semanas)"
+    },
+    "Prueba · 1 semana": {
+        "en": "Trial · 1 week",
+        "pt": "Teste · 1 semana"
+    },
+    "Prueba · 2 semanas": {
+        "en": "Trial · 2 weeks",
+        "pt": "Teste · 2 semanas"
+    },
+    "Prueba · 3 semanas": {
+        "en": "Trial · 3 weeks",
+        "pt": "Teste · 3 semanas"
+    },
+    "Prueba · 4 semanas": {
+        "en": "Trial · 4 weeks",
+        "pt": "Teste · 4 semanas"
+    },
+    "Prórroga (días)": {
+        "en": "Extension (days)",
+        "pt": "Prorrogação (dias)"
+    },
+    "Prórroga · 7 días": {
+        "en": "Extension · 7 days",
+        "pt": "Prorrogação · 7 dias"
+    },
+    "Cantidad": {
+        "en": "Quantity",
+        "pt": "Quantidade"
+    },
+    "Nota (opcional)": {
+        "en": "Note (optional)",
+        "pt": "Nota (opcional)"
+    },
+    "Cliente / referencia": {
+        "en": "Client / reference",
+        "pt": "Cliente / referência"
+    },
+    "Generar código": {
+        "en": "Generate code",
+        "pt": "Gerar código"
+    },
+    "Códigos generados": {
+        "en": "Generated codes",
+        "pt": "Códigos gerados"
+    },
+    "Código": {
+        "en": "Code",
+        "pt": "Código"
+    },
+    "Tipo": {
+        "en": "Type",
+        "pt": "Tipo"
+    },
+    "Duración": {
+        "en": "Duration",
+        "pt": "Duração"
+    },
+    "ID Cuenta": {
+        "en": "Account ID",
+        "pt": "ID da Conta"
+    },
+    "Nota": {
+        "en": "Note",
+        "pt": "Nota"
+    },
+    "Copiar código": {
+        "en": "Copy code",
+        "pt": "Copiar código"
+    },
+    "Copiado": {
+        "en": "Copied",
+        "pt": "Copiado"
+    },
+    "Prueba": {
+        "en": "Trial",
+        "pt": "Teste"
+    },
+    "Licencia": {
+        "en": "License",
+        "pt": "Licença"
+    },
+    "Desactivado": {
+        "en": "Disabled",
+        "pt": "Desativado"
+    },
+    "Canjeado": {
+        "en": "Redeemed",
+        "pt": "Resgatado"
+    },
+    "Disponible": {
+        "en": "Available",
+        "pt": "Disponível"
+    },
+    "Desactivar": {
+        "en": "Disable",
+        "pt": "Desativar"
+    },
+    "Eliminar": {
+        "en": "Delete",
+        "pt": "Excluir"
+    },
+    "¿Eliminar este código?": {
+        "en": "Delete this code?",
+        "pt": "Excluir este código?"
+    },
+    "Aún no has generado ningún código.": {
+        "en": "You haven't generated any codes yet.",
+        "pt": "Você ainda não gerou nenhum código."
+    },
+    "Periodo de Prórrogas": {
+        "en": "Extension Period",
+        "pt": "Período de Prorrogações"
+    },
+    "Habilita un periodo de prórroga directamente con el ID de la cuenta. Útil para reactivar cuentas bloqueadas cuyo periodo venció (para que terminen de exportar su data).": {
+        "en": "Enable an extension period directly with the account ID. Useful to reactivate blocked accounts whose period expired (so they can finish exporting their data).",
+        "pt": "Habilita um período de prorrogação diretamente com o ID da conta. Útil para reativar contas bloqueadas cujo período venceu (para que terminem de exportar seus dados)."
+    },
+    "ID de la cuenta": {
+        "en": "Account ID",
+        "pt": "ID da conta"
+    },
+    "Ej: 2": {
+        "en": "e.g. 2",
+        "pt": "Ex: 2"
+    },
+    "Días de prórroga": {
+        "en": "Extension days",
+        "pt": "Dias de prorrogação"
+    },
+    "Activar prórroga": {
+        "en": "Activate extension",
+        "pt": "Ativar prorrogação"
+    },
+    "En prórroga": {
+        "en": "On extension",
+        "pt": "Em prorrogação"
+    },
+    "vigentes": {
+        "en": "active",
+        "pt": "vigentes"
+    },
+    "Sin nombre": {
+        "en": "No name",
+        "pt": "Sem nome"
+    },
+    "Ninguna cuenta en prórroga.": {
+        "en": "No accounts on extension.",
+        "pt": "Nenhuma conta em prorrogação."
+    },
+    "Prórroga vencida": {
+        "en": "Extension expired",
+        "pt": "Prorrogação vencida"
+    },
+    "cuenta bloqueada": {
+        "en": "blocked account",
+        "pt": "conta bloqueada"
+    },
+    "Venció": {
+        "en": "Expired on",
+        "pt": "Venceu"
+    },
+    "Acción": {
+        "en": "Action",
+        "pt": "Ação"
+    },
+    "Reactivar": {
+        "en": "Reactivate",
+        "pt": "Reativar"
+    },
+    "Ninguna cuenta con prórroga vencida.": {
+        "en": "No accounts with expired extension.",
+        "pt": "Nenhuma conta com prorrogação vencida."
+    },
+    "Contactos": {
+        "en": "Contacts",
+        "pt": "Contatos"
+    },
+    "Exportar CSV": {
+        "en": "Export CSV",
+        "pt": "Exportar CSV"
+    },
+    "Importar CSV": {
+        "en": "Import CSV",
+        "pt": "Importar CSV"
+    },
+    "Nuevo contacto": {
+        "en": "New contact",
+        "pt": "Novo contato"
+    },
+    "Buscar por nombre, email, teléfono…": {
+        "en": "Search by name, email, phone…",
+        "pt": "Buscar por nome, e-mail, telefone…"
+    },
+    "Todos los estados": {
+        "en": "All statuses",
+        "pt": "Todos os status"
+    },
+    "Nuevo": {
+        "en": "New",
+        "pt": "Novo"
+    },
+    "Activo": {
+        "en": "Active",
+        "pt": "Ativo"
+    },
+    "Cliente": {
+        "en": "Customer",
+        "pt": "Cliente"
+    },
+    "Inactivo": {
+        "en": "Inactive",
+        "pt": "Inativo"
+    },
+    "Perdido": {
+        "en": "Lost",
+        "pt": "Perdido"
+    },
+    "Buscar": {
+        "en": "Search",
+        "pt": "Buscar"
+    },
+    "Contacto": {
+        "en": "Contact",
+        "pt": "Contato"
+    },
+    "Teléfono": {
+        "en": "Phone",
+        "pt": "Telefone"
+    },
+    "Empresa": {
+        "en": "Company",
+        "pt": "Empresa"
+    },
+    "Origen": {
+        "en": "Source",
+        "pt": "Origem"
+    },
+    "Negocios": {
+        "en": "Deals",
+        "pt": "Negócios"
+    },
+    "Editar": {
+        "en": "Edit",
+        "pt": "Editar"
+    },
+    "No se encontraron contactos.": {
+        "en": "No contacts found.",
+        "pt": "Nenhum contato encontrado."
+    },
+    "Crear el primero →": {
+        "en": "Create the first one →",
+        "pt": "Criar o primeiro →"
+    },
+    "Editar contacto": {
+        "en": "Edit contact",
+        "pt": "Editar contato"
+    },
+    "Creado por": {
+        "en": "Created by",
+        "pt": "Criado por"
+    },
+    "Nombre": {
+        "en": "First name",
+        "pt": "Nome"
+    },
+    "Apellido": {
+        "en": "Last name",
+        "pt": "Sobrenome"
+    },
+    "Email": {
+        "en": "Email",
+        "pt": "E-mail"
+    },
+    "Nombre de la empresa": {
+        "en": "Company name",
+        "pt": "Nome da empresa"
+    },
+    "Cargo": {
+        "en": "Position",
+        "pt": "Cargo"
+    },
+    "Ej. Gerente, Director…": {
+        "en": "E.g. Manager, Director…",
+        "pt": "Ex. Gerente, Diretor…"
+    },
+    "Web": {
+        "en": "Web",
+        "pt": "Web"
+    },
+    "Referido": {
+        "en": "Referral",
+        "pt": "Indicação"
+    },
+    "Publicidad": {
+        "en": "Advertising",
+        "pt": "Publicidade"
+    },
+    "Otro": {
+        "en": "Other",
+        "pt": "Outro"
+    },
+    "— Sin especificar —": {
+        "en": "— Not specified —",
+        "pt": "— Não especificado —"
+    },
+    "Notas": {
+        "en": "Notes",
+        "pt": "Notas"
+    },
+    "Información adicional sobre el contacto…": {
+        "en": "Additional information about the contact…",
+        "pt": "Informações adicionais sobre o contato…"
+    },
+    "Campos personalizados": {
+        "en": "Custom fields",
+        "pt": "Campos personalizados"
+    },
+    "¿Eliminar este contacto?": {
+        "en": "Delete this contact?",
+        "pt": "Excluir este contato?"
+    },
+    "Eliminar contacto": {
+        "en": "Delete contact",
+        "pt": "Excluir contato"
+    },
+    "Guardar cambios": {
+        "en": "Save changes",
+        "pt": "Salvar alterações"
+    },
+    "Crear contacto": {
+        "en": "Create contact",
+        "pt": "Criar contato"
+    },
+    "Sin negocios vinculados.": {
+        "en": "No linked deals.",
+        "pt": "Nenhum negócio vinculado."
+    },
+    "Acciones rápidas": {
+        "en": "Quick actions",
+        "pt": "Ações rápidas"
+    },
+    "Enviar WhatsApp": {
+        "en": "Send WhatsApp",
+        "pt": "Enviar WhatsApp"
+    },
+    "Enviar email": {
+        "en": "Send email",
+        "pt": "Enviar e-mail"
+    },
+    "Ver conversaciones": {
+        "en": "View conversations",
+        "pt": "Ver conversas"
+    },
+    "Importar contactos desde CSV": {
+        "en": "Import contacts from CSV",
+        "pt": "Importar contatos de CSV"
+    },
+    "Cómo importar": {
+        "en": "How to import",
+        "pt": "Como importar"
+    },
+    "Descarga la": {
+        "en": "Download the",
+        "pt": "Baixe o"
+    },
+    "plantilla CSV": {
+        "en": "CSV template",
+        "pt": "modelo CSV"
+    },
+    "con ejemplos ya cargados.": {
+        "en": "with examples already loaded.",
+        "pt": "com exemplos já carregados."
+    },
+    "Llénala con tus contactos en Excel o Google Sheets.": {
+        "en": "Fill it with your contacts in Excel or Google Sheets.",
+        "pt": "Preencha com seus contatos no Excel ou Google Sheets."
+    },
+    "Guárdala como": {
+        "en": "Save it as",
+        "pt": "Salve como"
+    },
+    "CSV (delimitado por comas)": {
+        "en": "CSV (comma delimited)",
+        "pt": "CSV (delimitado por vírgulas)"
+    },
+    "Súbela en el formulario de abajo.": {
+        "en": "Upload it in the form below.",
+        "pt": "Envie no formulário abaixo."
+    },
+    "Descargar plantilla CSV": {
+        "en": "Download CSV template",
+        "pt": "Baixar modelo CSV"
+    },
+    "Columnas del CSV": {
+        "en": "CSV columns",
+        "pt": "Colunas do CSV"
+    },
+    "Columna": {
+        "en": "Column",
+        "pt": "Coluna"
+    },
+    "Obligatorio": {
+        "en": "Required",
+        "pt": "Obrigatório"
+    },
+    "Ejemplo": {
+        "en": "Example",
+        "pt": "Exemplo"
+    },
+    "Sí": {
+        "en": "Yes",
+        "pt": "Sim"
+    },
+    "No": {
+        "en": "No",
+        "pt": "Não"
+    },
+    "Correo válido": {
+        "en": "Valid email",
+        "pt": "E-mail válido"
+    },
+    "Con código país recomendado": {
+        "en": "Country code recommended",
+        "pt": "Com código do país recomendado"
+    },
+    "Para facturación": {
+        "en": "For billing",
+        "pt": "Para faturamento"
+    },
+    "Por defecto: nuevo": {
+        "en": "Default: new",
+        "pt": "Padrão: novo"
+    },
+    "Origen del contacto": {
+        "en": "Contact source",
+        "pt": "Origem do contato"
+    },
+    "Texto libre": {
+        "en": "Free text",
+        "pt": "Texto livre"
+    },
+    "Archivo CSV": {
+        "en": "CSV file",
+        "pt": "Arquivo CSV"
+    },
+    "Importar contactos": {
+        "en": "Import contacts",
+        "pt": "Importar contatos"
+    },
+    "Configurar Roles y Permisos de CRM": {
+        "en": "Configure CRM Roles and Permissions",
+        "pt": "Configurar Funções e Permissões do CRM"
+    },
+    "Define qué puede hacer cada miembro del equipo en el CRM.": {
+        "en": "Define what each team member can do in the CRM.",
+        "pt": "Defina o que cada membro da equipe pode fazer no CRM."
+    },
+    "Volver a Perfiles": {
+        "en": "Back to Profiles",
+        "pt": "Voltar aos Perfis"
+    },
+    "Nuevo rol": {
+        "en": "New role",
+        "pt": "Nova função"
+    },
+    "Total de roles": {
+        "en": "Total roles",
+        "pt": "Total de funções"
+    },
+    "Roles del sistema": {
+        "en": "System roles",
+        "pt": "Funções do sistema"
+    },
+    "Roles personalizados": {
+        "en": "Custom roles",
+        "pt": "Funções personalizadas"
+    },
+    "Roles disponibles": {
+        "en": "Available roles",
+        "pt": "Funções disponíveis"
+    },
+    "rol": {
+        "en": "role",
+        "pt": "função"
+    },
+    "roles": {
+        "en": "roles",
+        "pt": "funções"
+    },
+    "No hay roles creados aún": {
+        "en": "No roles created yet",
+        "pt": "Nenhuma função criada ainda"
+    },
+    "Crea tu primer rol para empezar a gestionar accesos del CRM.": {
+        "en": "Create your first role to start managing CRM access.",
+        "pt": "Crie sua primeira função para começar a gerenciar acessos do CRM."
+    },
+    "Crear primer rol": {
+        "en": "Create first role",
+        "pt": "Criar primeira função"
+    },
+    "Sistema": {
+        "en": "System",
+        "pt": "Sistema"
+    },
+    "Sin descripción": {
+        "en": "No description",
+        "pt": "Sem descrição"
+    },
+    "permisos del sistema": {
+        "en": "system permissions",
+        "pt": "permissões do sistema"
+    },
+    "El rol del sistema no se puede eliminar": {
+        "en": "The system role cannot be deleted",
+        "pt": "A função do sistema não pode ser excluída"
+    },
+    "Eliminar rol": {
+        "en": "Delete role",
+        "pt": "Excluir função"
+    },
+    "¿Eliminar el rol": {
+        "en": "Delete the role",
+        "pt": "Excluir a função"
+    },
+    "Los usuarios con este rol quedarán sin rol asignado. Esta acción no se puede deshacer.": {
+        "en": "Users with this role will be left without an assigned role. This action cannot be undone.",
+        "pt": "Os usuários com esta função ficarão sem função atribuída. Esta ação não pode ser desfeita."
+    },
+    "El rol": {
+        "en": "The role",
+        "pt": "A função"
+    },
+    "Administrador": {
+        "en": "Administrator",
+        "pt": "Administrador"
+    },
+    "es creado por el sistema y siempre conserva todos los permisos. Puedes editarle la descripción pero no quitarle accesos ni eliminarlo. El rol": {
+        "en": "is created by the system and always keeps all permissions. You can edit its description but cannot remove its access or delete it. The role",
+        "pt": "é criada pelo sistema e sempre mantém todas as permissões. Você pode editar a descrição, mas não pode remover acessos nem excluí-la. A função"
+    },
+    "Editor": {
+        "en": "Editor",
+        "pt": "Editor"
+    },
+    "viene pre-configurado con permisos de lectura, creación y edición (sin eliminar) — puedes modificarlo o eliminarlo si necesitas.": {
+        "en": "comes pre-configured with read, create, and edit permissions (without delete) — you can modify or delete it if you need to.",
+        "pt": "vem pré-configurada com permissões de leitura, criação e edição (sem exclusão) — você pode modificá-la ou excluí-la se precisar."
+    },
+    "Crear Rol — Configurar Roles y Permisos de CRM": {
+        "en": "Create Role — Configure CRM Roles and Permissions",
+        "pt": "Criar Função — Configurar Funções e Permissões do CRM"
+    },
+    "Editar Rol:": {
+        "en": "Edit Role:",
+        "pt": "Editar Função:"
+    },
+    "— Configurar Roles y Permisos de CRM": {
+        "en": "— Configure CRM Roles and Permissions",
+        "pt": "— Configurar Funções e Permissões do CRM"
+    },
+    "Nombre del rol": {
+        "en": "Role name",
+        "pt": "Nome da função"
+    },
+    "El nombre del rol Administrador no se puede modificar.": {
+        "en": "The Administrator role name cannot be changed.",
+        "pt": "O nome da função Administrador não pode ser alterado."
+    },
+    "Descripción": {
+        "en": "Description",
+        "pt": "Descrição"
+    },
+    "(opcional)": {
+        "en": "(optional)",
+        "pt": "(opcional)"
+    },
+    "Ej: Acceso completo a contactos y embudos, sin facturación": {
+        "en": "E.g.: Full access to contacts and pipelines, without billing",
+        "pt": "Ex.: Acesso completo a contatos e funis, sem faturamento"
+    },
+    "Permisos del rol": {
+        "en": "Role permissions",
+        "pt": "Permissões da função"
+    },
+    "Marca cada acción que este rol puede realizar.": {
+        "en": "Check each action this role can perform.",
+        "pt": "Marque cada ação que esta função pode realizar."
+    },
+    "Marcar todo": {
+        "en": "Select all",
+        "pt": "Marcar tudo"
+    },
+    "Quitar todo": {
+        "en": "Clear all",
+        "pt": "Desmarcar tudo"
+    },
+    "siempre tiene acceso completo. Los permisos están bloqueados para garantizar que el sistema nunca quede sin alguien que pueda administrarlo.": {
+        "en": "always has full access. Permissions are locked to ensure the system is never left without someone who can administer it.",
+        "pt": "sempre tem acesso completo. As permissões estão bloqueadas para garantir que o sistema nunca fique sem alguém que possa administrá-lo."
+    },
+    "Marcar/desmarcar grupo": {
+        "en": "Select/deselect group",
+        "pt": "Marcar/desmarcar grupo"
+    },
+    "Acceso restringido por embudo.": {
+        "en": "Pipeline-restricted access.",
+        "pt": "Acesso restrito por funil."
+    },
+    "Sin": {
+        "en": "Without",
+        "pt": "Sem"
+    },
+    "Ver todos los embudos": {
+        "en": "View all pipelines",
+        "pt": "Ver todos os funis"
+    },
+    "activado, este rol solo verá los embudos que marques aquí abajo. Si no marcas ninguno, no verá ningún embudo.": {
+        "en": "enabled, this role will only see the pipelines you check below. If you check none, it will not see any pipeline.",
+        "pt": "ativado, esta função só verá os funis que você marcar abaixo. Se não marcar nenhum, não verá nenhum funil."
+    },
+    "Este equipo aún no tiene embudos creados.": {
+        "en": "This team has no pipelines created yet.",
+        "pt": "Esta equipe ainda não tem funis criados."
+    },
+    "Crear el primero": {
+        "en": "Create the first one",
+        "pt": "Criar o primeiro"
+    },
+    "Crear rol": {
+        "en": "Create role",
+        "pt": "Criar função"
+    },
+    "Define campos extra para Contactos y Negociaciones (texto, número, fecha o lista).": {
+        "en": "Define extra fields for Contacts and Deals (text, number, date or list).",
+        "pt": "Defina campos extras para Contatos e Negociações (texto, número, data ou lista)."
+    },
+    "Negociaciones": {
+        "en": "Deals",
+        "pt": "Negociações"
+    },
+    "Texto": {
+        "en": "Text",
+        "pt": "Texto"
+    },
+    "Número": {
+        "en": "Number",
+        "pt": "Número"
+    },
+    "Fecha": {
+        "en": "Date",
+        "pt": "Data"
+    },
+    "Lista": {
+        "en": "List",
+        "pt": "Lista"
+    },
+    "Requerido": {
+        "en": "Required",
+        "pt": "Obrigatório"
+    },
+    "Opciones": {
+        "en": "Options",
+        "pt": "Opções"
+    },
+    "(solo para tipo Lista — una por línea)": {
+        "en": "(only for List type — one per line)",
+        "pt": "(apenas para o tipo Lista — uma por linha)"
+    },
+    "Pequeña empresa": {
+        "en": "Small business",
+        "pt": "Pequena empresa"
+    },
+    "Mediana empresa": {
+        "en": "Medium business",
+        "pt": "Média empresa"
+    },
+    "Grande": {
+        "en": "Large",
+        "pt": "Grande"
+    },
+    "Guardar": {
+        "en": "Save",
+        "pt": "Salvar"
+    },
+    "¿Eliminar este campo? Se borrarán todos los valores guardados.": {
+        "en": "Delete this field? All saved values will be removed.",
+        "pt": "Excluir este campo? Todos os valores salvos serão removidos."
+    },
+    "Aún no hay campos personalizados para": {
+        "en": "There are no custom fields yet for",
+        "pt": "Ainda não há campos personalizados para"
+    },
+    "contactos": {
+        "en": "contacts",
+        "pt": "contatos"
+    },
+    "Crea el primero con el formulario de abajo ⬇": {
+        "en": "Create the first one with the form below ⬇",
+        "pt": "Crie o primeiro com o formulário abaixo ⬇"
+    },
+    "Agregar nuevo campo": {
+        "en": "Add new field",
+        "pt": "Adicionar novo campo"
+    },
+    "Nombre *": {
+        "en": "Name *",
+        "pt": "Nome *"
+    },
+    "Ej: RUC, Industria, Fecha de seguimiento": {
+        "en": "e.g. Tax ID, Industry, Follow-up date",
+        "pt": "Ex: CNPJ, Setor, Data de acompanhamento"
+    },
+    "Tipo *": {
+        "en": "Type *",
+        "pt": "Tipo *"
+    },
+    "Lista (desplegable)": {
+        "en": "List (dropdown)",
+        "pt": "Lista (suspensa)"
+    },
+    "Una opción por línea, ej:": {
+        "en": "One option per line, e.g.:",
+        "pt": "Uma opção por linha, ex:"
+    },
+    "Agregar campo": {
+        "en": "Add field",
+        "pt": "Adicionar campo"
+    },
+    "— Seleccionar —": {
+        "en": "— Select —",
+        "pt": "— Selecionar —"
+    },
+    "Catálogo de productos": {
+        "en": "Product catalog",
+        "pt": "Catálogo de produtos"
+    },
+    "Nuevo producto": {
+        "en": "New product",
+        "pt": "Novo produto"
+    },
+    "Hay errores de validación:": {
+        "en": "There are validation errors:",
+        "pt": "Há erros de validação:"
+    },
+    "Unidad": {
+        "en": "Unit",
+        "pt": "Unidade"
+    },
+    "Precio": {
+        "en": "Price",
+        "pt": "Preço"
+    },
+    "¿Eliminar producto?": {
+        "en": "Delete product?",
+        "pt": "Excluir produto?"
+    },
+    "Sin productos. Crea el primero.": {
+        "en": "No products. Create the first one.",
+        "pt": "Sem produtos. Crie o primeiro."
+    },
+    "Editar producto": {
+        "en": "Edit product",
+        "pt": "Editar produto"
+    },
+    "Actualizar": {
+        "en": "Update",
+        "pt": "Atualizar"
+    },
+    "Importar productos desde CSV": {
+        "en": "Import products from CSV",
+        "pt": "Importar produtos a partir de CSV"
+    },
+    "con un ejemplo ya cargado.": {
+        "en": "with an example already loaded.",
+        "pt": "com um exemplo já carregado."
+    },
+    "Llénala con tus productos (puedes editarla en Excel o Google Sheets).": {
+        "en": "Fill it with your products (you can edit it in Excel or Google Sheets).",
+        "pt": "Preencha-o com seus produtos (você pode editá-lo no Excel ou Google Sheets)."
+    },
+    "Nombre del producto": {
+        "en": "Product name",
+        "pt": "Nome do produto"
+    },
+    "Descripción libre": {
+        "en": "Free description",
+        "pt": "Descrição livre"
+    },
+    "unidad / servicio / kg": {
+        "en": "unit / service / kg",
+        "pt": "unidade / serviço / kg"
+    },
+    "Por defecto: unidad": {
+        "en": "Default: unit",
+        "pt": "Padrão: unidade"
+    },
+    "Usar punto decimal": {
+        "en": "Use decimal point",
+        "pt": "Usar ponto decimal"
+    },
+    "Por defecto: PEN": {
+        "en": "Default: PEN",
+        "pt": "Padrão: PEN"
+    },
+    "1 = activo, 0 = inactivo": {
+        "en": "1 = active, 0 = inactive",
+        "pt": "1 = ativo, 0 = inativo"
+    },
+    "Importar productos": {
+        "en": "Import products",
+        "pt": "Importar produtos"
+    },
+    "Imagen (opcional)": {
+        "en": "Image (optional)",
+        "pt": "Imagem (opcional)"
+    },
+    "JPG, PNG o WebP. Máx 2MB.": {
+        "en": "JPG, PNG or WebP. Max 2MB.",
+        "pt": "JPG, PNG ou WebP. Máx 2MB."
+    },
+    "Eliminar imagen actual": {
+        "en": "Remove current image",
+        "pt": "Remover imagem atual"
+    },
+    "Moneda": {
+        "en": "Currency",
+        "pt": "Moeda"
+    },
+    "Precio *": {
+        "en": "Price *",
+        "pt": "Preço *"
+    },
+    "Producto activo": {
+        "en": "Active product",
+        "pt": "Produto ativo"
+    },
+    "Nueva negociación": {
+        "en": "New deal",
+        "pt": "Nova negociação"
+    },
+    "Título": {
+        "en": "Title",
+        "pt": "Título"
+    },
+    "Monto": {
+        "en": "Amount",
+        "pt": "Valor"
+    },
+    "Fecha cierre (opcional)": {
+        "en": "Close date (optional)",
+        "pt": "Data de fechamento (opcional)"
+    },
+    "-- Sin contacto --": {
+        "en": "-- No contact --",
+        "pt": "-- Sem contato --"
+    },
+    "Persona responsable": {
+        "en": "Responsible person",
+        "pt": "Pessoa responsável"
+    },
+    "-- Sin responsable --": {
+        "en": "-- No assignee --",
+        "pt": "-- Sem responsável --"
+    },
+    "+ Crear nuevo contacto": {
+        "en": "+ Create new contact",
+        "pt": "+ Criar novo contato"
+    },
+    "← Usar lista de contactos": {
+        "en": "← Use contact list",
+        "pt": "← Usar lista de contatos"
+    },
+    "Si llenas estos datos, se creará un nuevo contacto y se usará en esta negociación.": {
+        "en": "If you fill in these details, a new contact will be created and used in this deal.",
+        "pt": "Se você preencher estes dados, um novo contato será criado e usado nesta negociação."
+    },
+    "Fase": {
+        "en": "Stage",
+        "pt": "Fase"
+    },
+    "-- Seleccione --": {
+        "en": "-- Select --",
+        "pt": "-- Selecione --"
+    },
+    "Editar negociación": {
+        "en": "Edit deal",
+        "pt": "Editar negociação"
+    },
+    "Volver al Kanban": {
+        "en": "Back to Kanban",
+        "pt": "Voltar ao Kanban"
+    },
+    "Título de la negociación": {
+        "en": "Deal title",
+        "pt": "Título da negociação"
+    },
+    "Abrir la ficha del contacto en una nueva pestaña": {
+        "en": "Open the contact record in a new tab",
+        "pt": "Abrir a ficha do contato em uma nova aba"
+    },
+    "Ver ficha": {
+        "en": "View record",
+        "pt": "Ver ficha"
+    },
+    "Pipeline": {
+        "en": "Pipeline",
+        "pt": "Pipeline"
+    },
+    "Abierta": {
+        "en": "Open",
+        "pt": "Aberta"
+    },
+    "Ganada": {
+        "en": "Won",
+        "pt": "Ganha"
+    },
+    "Perdida": {
+        "en": "Lost",
+        "pt": "Perdida"
+    },
+    "Fecha estimada de cierre": {
+        "en": "Estimated close date",
+        "pt": "Data estimada de fechamento"
+    },
+    "Descripción / notas": {
+        "en": "Description / notes",
+        "pt": "Descrição / notas"
+    },
+    "Comentario": {
+        "en": "Comment",
+        "pt": "Comentário"
+    },
+    "Actividad": {
+        "en": "Activity",
+        "pt": "Atividade"
+    },
+    "Deje un comentario": {
+        "en": "Leave a comment",
+        "pt": "Deixe um comentário"
+    },
+    "Escriba un comentario...": {
+        "en": "Write a comment...",
+        "pt": "Escreva um comentário..."
+    },
+    "Agregar comentario": {
+        "en": "Add comment",
+        "pt": "Adicionar comentário"
+    },
+    "Llamada": {
+        "en": "Call",
+        "pt": "Ligação"
+    },
+    "Reunión": {
+        "en": "Meeting",
+        "pt": "Reunião"
+    },
+    "Tarea": {
+        "en": "Task",
+        "pt": "Tarefa"
+    },
+    "Fecha y hora": {
+        "en": "Date and time",
+        "pt": "Data e hora"
+    },
+    "Asunto": {
+        "en": "Subject",
+        "pt": "Assunto"
+    },
+    "Ej. Reunión de demo, llamada de seguimiento...": {
+        "en": "E.g. Demo meeting, follow-up call...",
+        "pt": "Ex. Reunião de demonstração, ligação de acompanhamento..."
+    },
+    "Detalles de la actividad...": {
+        "en": "Activity details...",
+        "pt": "Detalhes da atividade..."
+    },
+    "Guardar actividad": {
+        "en": "Save activity",
+        "pt": "Salvar atividade"
+    },
+    "No hay conversaciones de WhatsApp vinculadas.": {
+        "en": "No linked WhatsApp conversations.",
+        "pt": "Nenhuma conversa do WhatsApp vinculada."
+    },
+    "Se vinculan automáticamente cuando llega un mensaje.": {
+        "en": "They are linked automatically when a message arrives.",
+        "pt": "Elas são vinculadas automaticamente quando uma mensagem chega."
+    },
+    "Cerrada": {
+        "en": "Closed",
+        "pt": "Fechada"
+    },
+    "Historial": {
+        "en": "History",
+        "pt": "Histórico"
+    },
+    "Usuario": {
+        "en": "User",
+        "pt": "Usuário"
+    },
+    "Estado:": {
+        "en": "Status:",
+        "pt": "Status:"
+    },
+    "Aún no hay comentarios ni actividades en esta negociación.": {
+        "en": "There are no comments or activities in this deal yet.",
+        "pt": "Ainda não há comentários nem atividades nesta negociação."
+    },
+    "Productos / Servicios": {
+        "en": "Products / Services",
+        "pt": "Produtos / Serviços"
+    },
+    "Gestionar catálogo": {
+        "en": "Manage catalog",
+        "pt": "Gerenciar catálogo"
+    },
+    "Agregar": {
+        "en": "Add",
+        "pt": "Adicionar"
+    },
+    "Buscar en catálogo": {
+        "en": "Search catalog",
+        "pt": "Buscar no catálogo"
+    },
+    "(opcional — o escribe el nombre abajo)": {
+        "en": "(optional — or type the name below)",
+        "pt": "(opcional — ou digite o nome abaixo)"
+    },
+    "Buscar producto...": {
+        "en": "Search product...",
+        "pt": "Buscar produto..."
+    },
+    "Sin resultados en catálogo.": {
+        "en": "No results in catalog.",
+        "pt": "Sem resultados no catálogo."
+    },
+    "Nombre del producto o servicio": {
+        "en": "Product or service name",
+        "pt": "Nome do produto ou serviço"
+    },
+    "Cantidad *": {
+        "en": "Quantity *",
+        "pt": "Quantidade *"
+    },
+    "Precio unitario *": {
+        "en": "Unit price *",
+        "pt": "Preço unitário *"
+    },
+    "Descuento %": {
+        "en": "Discount %",
+        "pt": "Desconto %"
+    },
+    "Total:": {
+        "en": "Total:",
+        "pt": "Total:"
+    },
+    "Producto": {
+        "en": "Product",
+        "pt": "Produto"
+    },
+    "Cant.": {
+        "en": "Qty.",
+        "pt": "Qtd."
+    },
+    "P. Unit.": {
+        "en": "Unit P.",
+        "pt": "P. Unit."
+    },
+    "Desc.%": {
+        "en": "Disc.%",
+        "pt": "Desc.%"
+    },
+    "Total": {
+        "en": "Total",
+        "pt": "Total"
+    },
+    "¿Eliminar esta línea?": {
+        "en": "Delete this line?",
+        "pt": "Excluir esta linha?"
+    },
+    "Total negociación": {
+        "en": "Deal total",
+        "pt": "Total da negociação"
+    },
+    "Sin productos. Haz clic en": {
+        "en": "No products. Click",
+        "pt": "Sem produtos. Clique em"
+    },
+    "para añadir el primero.": {
+        "en": "to add the first one.",
+        "pt": "para adicionar o primeiro."
+    },
+    "Comprobantes electrónicos": {
+        "en": "Electronic receipts",
+        "pt": "Comprovantes eletrônicos"
+    },
+    "Nueva factura / boleta": {
+        "en": "New invoice / receipt",
+        "pt": "Nova fatura / recibo"
+    },
+    "Emisión": {
+        "en": "Issue date",
+        "pt": "Emissão"
+    },
+    "Ver": {
+        "en": "View",
+        "pt": "Ver"
+    },
+    "Sin comprobantes. Haz clic en": {
+        "en": "No receipts. Click",
+        "pt": "Sem comprovantes. Clique em"
+    },
+    "para generar el primero.": {
+        "en": "to generate the first one.",
+        "pt": "para gerar o primeiro."
+    },
+    "Detalle negociación": {
+        "en": "Deal detail",
+        "pt": "Detalhe da negociação"
+    },
+    "Pipeline:": {
+        "en": "Pipeline:",
+        "pt": "Pipeline:"
+    },
+    "Fase:": {
+        "en": "Stage:",
+        "pt": "Fase:"
+    },
+    "Contacto:": {
+        "en": "Contact:",
+        "pt": "Contato:"
+    },
+    "Fecha cierre:": {
+        "en": "Close date:",
+        "pt": "Data de fechamento:"
+    },
+    "Descripción:": {
+        "en": "Description:",
+        "pt": "Descrição:"
+    },
+    "Pipelines": {
+        "en": "Pipelines",
+        "pt": "Pipelines"
+    },
+    "Fases": {
+        "en": "Stages",
+        "pt": "Fases"
+    },
+    "fases": {
+        "en": "stages",
+        "pt": "fases"
+    },
+    "¿Eliminar este pipeline?": {
+        "en": "Delete this pipeline?",
+        "pt": "Excluir este pipeline?"
+    },
+    "No hay pipelines creados aún.": {
+        "en": "No pipelines created yet.",
+        "pt": "Nenhum pipeline criado ainda."
+    },
+    "New pipeline": {
+        "en": "New pipeline",
+        "pt": "New pipeline"
+    },
+    "Nuevo pipeline": {
+        "en": "New pipeline",
+        "pt": "Novo pipeline"
+    },
+    "Editar pipeline:": {
+        "en": "Edit pipeline:",
+        "pt": "Editar pipeline:"
+    },
+    "Pipeline activo": {
+        "en": "Active pipeline",
+        "pt": "Pipeline ativo"
+    },
+    "Mostrar en menú lateral como acceso rápido": {
+        "en": "Show in sidebar as quick access",
+        "pt": "Mostrar no menu lateral como acesso rápido"
+    },
+    "Los usuarios con permiso de ver este pipeline podrán acceder al Kanban directamente desde la barra lateral.": {
+        "en": "Users with permission to view this pipeline will be able to access the Kanban directly from the sidebar.",
+        "pt": "Usuários com permissão para ver este pipeline poderão acessar o Kanban diretamente pela barra lateral."
+    },
+    "Fases del pipeline": {
+        "en": "Pipeline stages",
+        "pt": "Fases do pipeline"
+    },
+    "¿Eliminar esta fase?": {
+        "en": "Delete this stage?",
+        "pt": "Excluir esta fase?"
+    },
+    "Orden": {
+        "en": "Order",
+        "pt": "Ordem"
+    },
+    "Color": {
+        "en": "Color",
+        "pt": "Cor"
+    },
+    "Prob.": {
+        "en": "Prob.",
+        "pt": "Prob."
+    },
+    "Click para elegir color": {
+        "en": "Click to choose color",
+        "pt": "Clique para escolher a cor"
+    },
+    "Aún no hay fases definidas.": {
+        "en": "No stages defined yet.",
+        "pt": "Nenhuma fase definida ainda."
+    },
+    "Guardar todas las fases": {
+        "en": "Save all stages",
+        "pt": "Salvar todas as fases"
+    },
+    "Agregar nueva fase": {
+        "en": "Add new stage",
+        "pt": "Adicionar nova fase"
+    },
+    "Slug (opcional)": {
+        "en": "Slug (optional)",
+        "pt": "Slug (opcional)"
+    },
+    "Probabilidad %": {
+        "en": "Probability %",
+        "pt": "Probabilidade %"
+    },
+    "Añadir": {
+        "en": "Add",
+        "pt": "Adicionar"
+    },
+    "Kanban": {
+        "en": "Kanban",
+        "pt": "Kanban"
+    },
+    "Tabla": {
+        "en": "Table",
+        "pt": "Tabela"
+    },
+    "Vista de negociaciones por fases del pipeline.": {
+        "en": "View of deals by pipeline stages.",
+        "pt": "Visão de negociações por fases do pipeline."
+    },
+    "Exportar": {
+        "en": "Export",
+        "pt": "Exportar"
+    },
+    "Todas las negociaciones": {
+        "en": "All deals",
+        "pt": "Todas as negociações"
+    },
+    "Por fase": {
+        "en": "By stage",
+        "pt": "Por fase"
+    },
+    "Por estado": {
+        "en": "By status",
+        "pt": "Por status"
+    },
+    "Solo abiertas": {
+        "en": "Open only",
+        "pt": "Apenas abertas"
+    },
+    "Solo ganadas": {
+        "en": "Won only",
+        "pt": "Apenas ganhas"
+    },
+    "Solo perdidas": {
+        "en": "Lost only",
+        "pt": "Apenas perdidas"
+    },
+    "Configurar fases": {
+        "en": "Configure stages",
+        "pt": "Configurar fases"
+    },
+    "Responsable": {
+        "en": "Owner",
+        "pt": "Responsável"
+    },
+    "Cierre": {
+        "en": "Close",
+        "pt": "Fechamento"
+    },
+    "¿Eliminar esta negociación?": {
+        "en": "Delete this deal?",
+        "pt": "Excluir esta negociação?"
+    },
+    "No hay negociaciones en este embudo.": {
+        "en": "There are no deals in this funnel.",
+        "pt": "Não há negociações neste funil."
+    },
+    "Click para ver / editar": {
+        "en": "Click to view / edit",
+        "pt": "Clique para ver / editar"
+    },
+    "Cierre:": {
+        "en": "Close:",
+        "pt": "Fechamento:"
+    },
+    "Sin negociaciones": {
+        "en": "No deals",
+        "pt": "Sem negociações"
+    },
+    "Permisos del embudo": {
+        "en": "Funnel permissions",
+        "pt": "Permissões do funil"
+    },
+    "Define qué usuarios del equipo pueden ver, editar, eliminar negociaciones y configurar este embudo.": {
+        "en": "Define which team users can view, edit, delete deals and configure this funnel.",
+        "pt": "Defina quais usuários da equipe podem ver, editar, excluir negociações e configurar este funil."
+    },
+    "El propietario del equipo siempre tiene todos los permisos por defecto.": {
+        "en": "The team owner always has all permissions by default.",
+        "pt": "O proprietário da equipe sempre tem todas as permissões por padrão."
+    },
+    "Configurar embudo": {
+        "en": "Configure funnel",
+        "pt": "Configurar funil"
+    },
+    "Owner": {
+        "en": "Owner",
+        "pt": "Owner"
+    },
+    "Admin": {
+        "en": "Admin",
+        "pt": "Admin"
+    },
+    "(Siempre tiene permisos completos)": {
+        "en": "(Always has full permissions)",
+        "pt": "(Sempre tem permissões completas)"
+    },
+    "Guardar permisos": {
+        "en": "Save permissions",
+        "pt": "Salvar permissões"
+    },
+    "Editar usuario:": {
+        "en": "Edit user:",
+        "pt": "Editar usuário:"
+    },
+    "Volver al listado": {
+        "en": "Back to list",
+        "pt": "Voltar à lista"
+    },
+    "Vista previa": {
+        "en": "Preview",
+        "pt": "Pré-visualização"
+    },
+    "Cambiar foto": {
+        "en": "Change photo",
+        "pt": "Alterar foto"
+    },
+    "Eliminar foto": {
+        "en": "Remove photo",
+        "pt": "Remover foto"
+    },
+    "JPG, PNG, GIF o WEBP · máx. 2 MB": {
+        "en": "JPG, PNG, GIF or WEBP · max. 2 MB",
+        "pt": "JPG, PNG, GIF ou WEBP · máx. 2 MB"
+    },
+    "Notas adicionales": {
+        "en": "Additional notes",
+        "pt": "Notas adicionais"
+    },
+    "Información relevante": {
+        "en": "Relevant information",
+        "pt": "Informação relevante"
+    },
+    "Rol asignado": {
+        "en": "Assigned role",
+        "pt": "Função atribuída"
+    },
+    "(no editable)": {
+        "en": "(not editable)",
+        "pt": "(não editável)"
+    },
+    "Administrador (por defecto)": {
+        "en": "Administrator (default)",
+        "pt": "Administrador (padrão)"
+    },
+    "El equipo solo tiene 1 usuario. No se puede modificar su rol porque dejaría al sistema sin administrador. Invita a otro usuario al equipo para poder gestionar roles.": {
+        "en": "The team has only 1 user. Their role cannot be changed because it would leave the system without an administrator. Invite another user to the team to manage roles.",
+        "pt": "A equipe tem apenas 1 usuário. A função não pode ser alterada porque deixaria o sistema sem administrador. Convide outro usuário para a equipe para gerenciar funções."
+    },
+    "No puedes cambiar tu propio rol. Pídele a otro administrador del equipo que lo modifique.": {
+        "en": "You cannot change your own role. Ask another team administrator to modify it.",
+        "pt": "Você não pode alterar sua própria função. Peça a outro administrador da equipe que a modifique."
+    },
+    "Sin rol asignado": {
+        "en": "No role assigned",
+        "pt": "Sem função atribuída"
+    },
+    "(sistema)": {
+        "en": "(system)",
+        "pt": "(sistema)"
+    },
+    "Para crear o modificar roles ve a": {
+        "en": "To create or modify roles go to",
+        "pt": "Para criar ou modificar funções vá para"
+    },
+    "Información relevante adicional": {
+        "en": "Additional relevant information",
+        "pt": "Informação relevante adicional"
+    },
+    "Mi Perfil": {
+        "en": "My Profile",
+        "pt": "Meu Perfil"
+    },
+    "Solo un administrador del equipo puede modificar tu rol desde": {
+        "en": "Only a team administrator can change your role from",
+        "pt": "Apenas um administrador da equipe pode alterar sua função em"
+    },
+    "Perfiles → Configuración → Permisos de Acceso CRM": {
+        "en": "Profiles → Settings → CRM Access Permissions",
+        "pt": "Perfis → Configuração → Permissões de Acesso do CRM"
+    },
+    "Módulos activos": {
+        "en": "Active modules",
+        "pt": "Módulos ativos"
+    },
+    "Módulos actualizados correctamente.": {
+        "en": "Modules updated successfully.",
+        "pt": "Módulos atualizados com sucesso."
+    },
+    "Activa o desactiva las secciones que aparecen en el menú lateral. Los cambios aplican a todos los miembros del equipo.": {
+        "en": "Enable or disable the sections that appear in the sidebar menu. Changes apply to all team members.",
+        "pt": "Ative ou desative as seções que aparecem no menu lateral. As alterações aplicam-se a todos os membros da equipe."
+    },
+    "Próximamente": {
+        "en": "Coming soon",
+        "pt": "Em breve"
+    },
+    "Disponible próximamente": {
+        "en": "Available soon",
+        "pt": "Disponível em breve"
+    },
+    "Perfiles de Usuarios del CRM": {
+        "en": "CRM User Profiles",
+        "pt": "Perfis de Usuários do CRM"
+    },
+    "Configuración": {
+        "en": "Settings",
+        "pt": "Configuração"
+    },
+    "Agregar usuario nuevo": {
+        "en": "Add new user",
+        "pt": "Adicionar novo usuário"
+    },
+    "Permisos de Acceso CRM": {
+        "en": "CRM Access Permissions",
+        "pt": "Permissões de Acesso do CRM"
+    },
+    "Solo 1 usuario · Rol bloqueado": {
+        "en": "Only 1 user · Role locked",
+        "pt": "Apenas 1 usuário · Função bloqueada"
+    },
+    "Usuarios que pertenecen al sistema. Click en": {
+        "en": "Users who belong to the system. Click on",
+        "pt": "Usuários que pertencem ao sistema. Clique em"
+    },
+    "Ver/Editar": {
+        "en": "View/Edit",
+        "pt": "Ver/Editar"
+    },
+    "para modificar su perfil y rol.": {
+        "en": "to modify their profile and role.",
+        "pt": "para modificar seu perfil e função."
+    },
+    "Correo:": {
+        "en": "Email:",
+        "pt": "E-mail:"
+    },
+    "Tel:": {
+        "en": "Phone:",
+        "pt": "Tel:"
+    },
+    "Notas:": {
+        "en": "Notes:",
+        "pt": "Notas:"
+    },
+    "No hay usuarios en este equipo.": {
+        "en": "There are no users in this team.",
+        "pt": "Não há usuários nesta equipe."
+    },
+    "Modo de Prueba activo": {
+        "en": "Trial mode active",
+        "pt": "Modo de teste ativo"
+    },
+    "Prórroga activa": {
+        "en": "Extension active",
+        "pt": "Prorrogação ativa"
+    },
+    "Licencia vencida": {
+        "en": "License expired",
+        "pt": "Licença expirada"
+    },
+    "Sin licencia activa": {
+        "en": "No active license",
+        "pt": "Sem licença ativa"
+    },
+    "vence hoy": {
+        "en": "expires today",
+        "pt": "expira hoje"
+    },
+    "faltan": {
+        "en": "remaining",
+        "pt": "faltam"
+    },
+    "Por vencer": {
+        "en": "Expiring soon",
+        "pt": "A expirar"
+    },
+    "Vence:": {
+        "en": "Expires:",
+        "pt": "Expira:"
+    },
+    "Pagar con tarjeta": {
+        "en": "Pay by card",
+        "pt": "Pagar com cartão"
+    },
+    "Renueva o activa tu licencia pagando directamente con tarjeta Visa, Mastercard, Amex o Diners. Pago seguro vía Culqi.": {
+        "en": "Renew or activate your license by paying directly with a Visa, Mastercard, Amex or Diners card. Secure payment via Culqi.",
+        "pt": "Renove ou ative sua licença pagando diretamente com cartão Visa, Mastercard, Amex ou Diners. Pagamento seguro via Culqi."
+    },
+    "Ir a pagar": {
+        "en": "Go to payment",
+        "pt": "Ir para pagamento"
+    },
+    "Activar con un código": {
+        "en": "Activate with a code",
+        "pt": "Ativar com um código"
+    },
+    "Ingresa el código que recibiste para activar tu": {
+        "en": "Enter the code you received to activate your",
+        "pt": "Insira o código que você recebeu para ativar sua"
+    },
+    "o tu": {
+        "en": "or your",
+        "pt": "ou seu"
+    },
+    "periodo de prueba": {
+        "en": "trial period",
+        "pt": "período de teste"
+    },
+    "Código de licencia": {
+        "en": "License code",
+        "pt": "Código de licença"
+    },
+    "Códigos utilizados": {
+        "en": "Codes used",
+        "pt": "Códigos utilizados"
+    },
+    "Historial de códigos canjeados en esta cuenta.": {
+        "en": "History of codes redeemed in this account.",
+        "pt": "Histórico de códigos resgatados nesta conta."
+    },
+    "Aún no se ha canjeado ningún código en esta cuenta.": {
+        "en": "No code has been redeemed in this account yet.",
+        "pt": "Nenhum código foi resgatado nesta conta ainda."
+    },
+    "Zona horaria": {
+        "en": "Time zone",
+        "pt": "Fuso horário"
+    },
+    "Zona horaria de la cuenta. Las licencias activadas vencen a las 23:59 del día correspondiente en esta zona horaria.": {
+        "en": "Account time zone. Activated licenses expire at 23:59 of the corresponding day in this time zone.",
+        "pt": "Fuso horário da conta. As licenças ativadas expiram às 23:59 do dia correspondente neste fuso horário."
+    },
+    "Por defecto: (GMT-05:00) America/Lima.": {
+        "en": "Default: (GMT-05:00) America/Lima.",
+        "pt": "Padrão: (GMT-05:00) America/Lima."
+    },
+    "Cuentas": {
+        "en": "Accounts",
+        "pt": "Contas"
+    },
+    "Conectar cuenta": {
+        "en": "Connect account",
+        "pt": "Conectar conta"
+    },
+    "Asistente IA": {
+        "en": "AI Assistant",
+        "pt": "Assistente IA"
+    },
+    "IA pausada": {
+        "en": "AI paused",
+        "pt": "IA pausada"
+    },
+    "IA": {
+        "en": "AI",
+        "pt": "IA"
+    },
+    "¿Eliminar esta cuenta?": {
+        "en": "Delete this account?",
+        "pt": "Excluir esta conta?"
+    },
+    "No hay cuentas conectadas.": {
+        "en": "No connected accounts.",
+        "pt": "Nenhuma conta conectada."
+    },
+    "Ir al Inbox": {
+        "en": "Go to Inbox",
+        "pt": "Ir para a Caixa de entrada"
+    },
+    "Conectar WhatsApp Cloud API": {
+        "en": "Connect WhatsApp Cloud API",
+        "pt": "Conectar WhatsApp Cloud API"
+    },
+    "Nombre interno": {
+        "en": "Internal name",
+        "pt": "Nome interno"
+    },
+    "opcional": {
+        "en": "optional",
+        "pt": "opcional"
+    },
+    "para webhook": {
+        "en": "for webhook",
+        "pt": "para webhook"
+    },
+    "Pipeline destino": {
+        "en": "Target pipeline",
+        "pt": "Pipeline de destino"
+    },
+    "Usuarios para asignar negociaciones": {
+        "en": "Users to assign deals",
+        "pt": "Usuários para atribuir negociações"
+    },
+    "Las nuevas negociaciones que entren por este WhatsApp se asignarán automáticamente": {
+        "en": "New deals coming in through this WhatsApp will be assigned automatically",
+        "pt": "As novas negociações que entrarem por este WhatsApp serão atribuídas automaticamente"
+    },
+    "de forma equitativa (round-robin)": {
+        "en": "evenly (round-robin)",
+        "pt": "de forma equitativa (round-robin)"
+    },
+    "entre los usuarios marcados.": {
+        "en": "among the selected users.",
+        "pt": "entre os usuários marcados."
+    },
+    "No hay miembros en este equipo todavía.": {
+        "en": "No members in this team yet.",
+        "pt": "Ainda não há membros nesta equipe."
+    },
+    "Editar cuenta WhatsApp": {
+        "en": "Edit WhatsApp account",
+        "pt": "Editar conta WhatsApp"
+    },
+    "Auto-detectar": {
+        "en": "Auto-detect",
+        "pt": "Detectar automaticamente"
+    },
+    "Ej: 123456789012345": {
+        "en": "E.g.: 123456789012345",
+        "pt": "Ex: 123456789012345"
+    },
+    "⚠ NO es lo mismo que el Phone Number ID. Click \"Auto-detectar\" para obtenerlo automáticamente.": {
+        "en": "⚠ NOT the same as the Phone Number ID. Click \"Auto-detect\" to get it automatically.",
+        "pt": "⚠ NÃO é o mesmo que o Phone Number ID. Clique em \"Detectar automaticamente\" para obtê-lo automaticamente."
+    },
+    "Consultando Meta…": {
+        "en": "Querying Meta…",
+        "pt": "Consultando a Meta…"
+    },
+    "Completa Phone Number ID y Access Token primero.": {
+        "en": "Fill in Phone Number ID and Access Token first.",
+        "pt": "Preencha o Phone Number ID e o Access Token primeiro."
+    },
+    "✓ WABA ID detectado:": {
+        "en": "✓ WABA ID detected:",
+        "pt": "✓ WABA ID detectado:"
+    },
+    "No se pudo detectar.": {
+        "en": "Could not detect.",
+        "pt": "Não foi possível detectar."
+    },
+    "Error:": {
+        "en": "Error:",
+        "pt": "Erro:"
+    },
+    "Volver": {
+        "en": "Back",
+        "pt": "Voltar"
+    },
+    "Errores de validación:": {
+        "en": "Validation errors:",
+        "pt": "Erros de validação:"
+    },
+    "Asistente IA con ChatGPT": {
+        "en": "AI Assistant with ChatGPT",
+        "pt": "Assistente IA com ChatGPT"
+    },
+    "Cuando esté activo, el asistente responderá automáticamente los mensajes de texto entrantes en": {
+        "en": "When active, the assistant will automatically reply to incoming text messages on",
+        "pt": "Quando ativo, o assistente responderá automaticamente às mensagens de texto recebidas em"
+    },
+    "usando tu API Key de OpenAI. Cada cliente usa su propia clave.": {
+        "en": "using your OpenAI API Key. Each client uses its own key.",
+        "pt": "usando sua API Key da OpenAI. Cada cliente usa sua própria chave."
+    },
+    "Activar asistente": {
+        "en": "Enable assistant",
+        "pt": "Ativar assistente"
+    },
+    "Al activar, el bot responderá mensajes automáticamente.": {
+        "en": "Once enabled, the bot will reply to messages automatically.",
+        "pt": "Ao ativar, o bot responderá às mensagens automaticamente."
+    },
+    "API Key de OpenAI": {
+        "en": "OpenAI API Key",
+        "pt": "API Key da OpenAI"
+    },
+    "requerida": {
+        "en": "required",
+        "pt": "obrigatória"
+    },
+    "••••••••••••••••••••••••••• (ya guardada)": {
+        "en": "••••••••••••••••••••••••••• (already saved)",
+        "pt": "••••••••••••••••••••••••••• (já salva)"
+    },
+    "Obtén tu clave en": {
+        "en": "Get your key at",
+        "pt": "Obtenha sua chave em"
+    },
+    "Se almacena cifrada. Déjala vacía para no cambiarla.": {
+        "en": "It is stored encrypted. Leave it empty to keep it unchanged.",
+        "pt": "É armazenada criptografada. Deixe em branco para não alterá-la."
+    },
+    "Modelo de ChatGPT": {
+        "en": "ChatGPT model",
+        "pt": "Modelo do ChatGPT"
+    },
+    "Instrucciones del asistente": {
+        "en": "Assistant instructions",
+        "pt": "Instruções do assistente"
+    },
+    "system prompt": {
+        "en": "system prompt",
+        "pt": "system prompt"
+    },
+    "Eres un asistente de ventas amable y profesional. Responde siempre en español. Cuando el cliente quiera hablar con un humano, dile que un agente lo atenderá pronto.": {
+        "en": "You are a friendly and professional sales assistant. Always reply in Spanish. When the customer wants to talk to a human, tell them an agent will assist them shortly.",
+        "pt": "Você é um assistente de vendas amigável e profissional. Responda sempre em espanhol. Quando o cliente quiser falar com um humano, diga que um agente o atenderá em breve."
+    },
+    "Define el comportamiento, tono y límites del asistente. Máx. 4000 caracteres.": {
+        "en": "Define the assistant's behavior, tone and limits. Max. 4000 characters.",
+        "pt": "Defina o comportamento, o tom e os limites do assistente. Máx. 4000 caracteres."
+    },
+    "Parámetros avanzados": {
+        "en": "Advanced parameters",
+        "pt": "Parâmetros avançados"
+    },
+    "Temperatura (creatividad)": {
+        "en": "Temperature (creativity)",
+        "pt": "Temperatura (criatividade)"
+    },
+    "Preciso (0)": {
+        "en": "Precise (0)",
+        "pt": "Preciso (0)"
+    },
+    "Balanceado (0.7)": {
+        "en": "Balanced (0.7)",
+        "pt": "Balanceado (0,7)"
+    },
+    "Creativo (2)": {
+        "en": "Creative (2)",
+        "pt": "Criativo (2)"
+    },
+    "Longitud máxima de respuesta": {
+        "en": "Maximum response length",
+        "pt": "Comprimento máximo da resposta"
+    },
+    "tokens": {
+        "en": "tokens",
+        "pt": "tokens"
+    },
+    "~75 palabras por cada 100 tokens. Recomendado: 300-800.": {
+        "en": "~75 words per 100 tokens. Recommended: 300-800.",
+        "pt": "~75 palavras a cada 100 tokens. Recomendado: 300-800."
+    },
+    "Mensajes de contexto": {
+        "en": "Context messages",
+        "pt": "Mensagens de contexto"
+    },
+    "Cuántos mensajes previos de la conversación se envían como contexto al modelo.": {
+        "en": "How many previous conversation messages are sent as context to the model.",
+        "pt": "Quantas mensagens anteriores da conversa são enviadas como contexto ao modelo."
+    },
+    "Funciones IA personalizadas": {
+        "en": "Custom AI functions",
+        "pt": "Funções de IA personalizadas"
+    },
+    "Define acciones que la IA ejecutará cuando detecte cierta situación en la conversación.": {
+        "en": "Define actions the AI will run when it detects a certain situation in the conversation.",
+        "pt": "Defina ações que a IA executará quando detectar determinada situação na conversa."
+    },
+    "Cada función es independiente con su propia descripción de cuándo activarla.": {
+        "en": "Each function is independent with its own description of when to trigger it.",
+        "pt": "Cada função é independente com sua própria descrição de quando acioná-la."
+    },
+    "Activar function calling": {
+        "en": "Enable function calling",
+        "pt": "Ativar function calling"
+    },
+    "Nueva función": {
+        "en": "New function",
+        "pt": "Nova função"
+    },
+    "Tip: Funciona mejor con GPT-4o / GPT-4o Mini. La IA decide cuándo llamar a cada función leyendo su descripción.": {
+        "en": "Tip: Works best with GPT-4o / GPT-4o Mini. The AI decides when to call each function by reading its description.",
+        "pt": "Dica: Funciona melhor com GPT-4o / GPT-4o Mini. A IA decide quando chamar cada função lendo sua descrição."
+    },
+    "Guarda primero la configuración del asistente para poder crear funciones.": {
+        "en": "Save the assistant settings first to be able to create functions.",
+        "pt": "Salve primeiro as configurações do assistente para poder criar funções."
+    },
+    "Base de conocimiento": {
+        "en": "Knowledge base",
+        "pt": "Base de conhecimento"
+    },
+    "Sube archivos (TXT, MD, PDF, DOCX) o pega texto. La IA usará esta información para responder con datos oficiales de tu empresa.": {
+        "en": "Upload files (TXT, MD, PDF, DOCX) or paste text. The AI will use this information to reply with your company's official data.",
+        "pt": "Envie arquivos (TXT, MD, PDF, DOCX) ou cole texto. A IA usará essas informações para responder com dados oficiais da sua empresa."
+    },
+    "Subir archivo": {
+        "en": "Upload file",
+        "pt": "Enviar arquivo"
+    },
+    "Pegar texto": {
+        "en": "Paste text",
+        "pt": "Colar texto"
+    },
+    "La IA recibe esta info en cada respuesta. Mantén textos concisos para mejores resultados.": {
+        "en": "The AI receives this info on every reply. Keep texts concise for better results.",
+        "pt": "A IA recebe essas informações em cada resposta. Mantenha textos concisos para melhores resultados."
+    },
+    "¿Eliminar la configuración del asistente IA?": {
+        "en": "Delete the AI assistant configuration?",
+        "pt": "Excluir a configuração do assistente de IA?"
+    },
+    "Eliminar configuración": {
+        "en": "Delete configuration",
+        "pt": "Excluir configuração"
+    },
+    "¿Cómo funciona?": {
+        "en": "How does it work?",
+        "pt": "Como funciona?"
+    },
+    "El asistente sólo responde mensajes de": {
+        "en": "The assistant only replies to messages of",
+        "pt": "O assistente só responde a mensagens de"
+    },
+    "texto": {
+        "en": "text",
+        "pt": "texto"
+    },
+    "entrantes.": {
+        "en": "incoming.",
+        "pt": "recebidas."
+    },
+    "Si el mensaje es una imagen, audio o video,": {
+        "en": "If the message is an image, audio or video,",
+        "pt": "Se a mensagem for uma imagem, áudio ou vídeo,"
+    },
+    "no responde": {
+        "en": "it does not reply",
+        "pt": "não responde"
+    },
+    "automáticamente.": {
+        "en": "automatically.",
+        "pt": "automaticamente."
+    },
+    "Cada respuesta usa tus créditos de OpenAI — revisa tu uso en platform.openai.com.": {
+        "en": "Each reply uses your OpenAI credits — check your usage at platform.openai.com.",
+        "pt": "Cada resposta usa seus créditos da OpenAI — verifique seu uso em platform.openai.com."
+    },
+    "El asistente ve los últimos": {
+        "en": "The assistant sees the last",
+        "pt": "O assistente vê as últimas"
+    },
+    "mensajes": {
+        "en": "messages",
+        "pt": "mensagens"
+    },
+    "de la conversación como contexto.": {
+        "en": "of the conversation as context.",
+        "pt": "da conversa como contexto."
+    },
+    "Los mensajes enviados por el asistente aparecen en el inbox sin nombre de agente.": {
+        "en": "Messages sent by the assistant appear in the inbox without an agent name.",
+        "pt": "As mensagens enviadas pelo assistente aparecem na caixa de entrada sem nome de agente."
+    },
+    "Crear función IA": {
+        "en": "Create AI function",
+        "pt": "Criar função de IA"
+    },
+    "Modo": {
+        "en": "Mode",
+        "pt": "Modo"
+    },
+    "Actualizar CRM (capturar campos)": {
+        "en": "Update CRM (capture fields)",
+        "pt": "Atualizar CRM (capturar campos)"
+    },
+    "Cambiar fase de la negociación": {
+        "en": "Change deal stage",
+        "pt": "Alterar fase da negociação"
+    },
+    "Solo información (responder al cliente)": {
+        "en": "Info only (reply to customer)",
+        "pt": "Apenas informação (responder ao cliente)"
+    },
+    "Nombre interno (snake_case)": {
+        "en": "Internal name (snake_case)",
+        "pt": "Nome interno (snake_case)"
+    },
+    "ej: save_lead_data": {
+        "en": "e.g.: save_lead_data",
+        "pt": "ex: save_lead_data"
+    },
+    "Solo letras minúsculas, números y guiones bajos. Sin espacios.": {
+        "en": "Only lowercase letters, numbers and underscores. No spaces.",
+        "pt": "Apenas letras minúsculas, números e sublinhados. Sem espaços."
+    },
+    "¿Cuándo se activa esta función?": {
+        "en": "When is this function triggered?",
+        "pt": "Quando esta função é acionada?"
+    },
+    "Ej: Llama esta función cuando el cliente comparta su nombre completo, RUC o datos de contacto.": {
+        "en": "E.g.: Call this function when the customer shares their full name, RUC or contact details.",
+        "pt": "Ex: Chame esta função quando o cliente compartilhar seu nome completo, RUC ou dados de contato."
+    },
+    "La IA leerá este texto para decidir cuándo ejecutar la función.": {
+        "en": "The AI will read this text to decide when to run the function.",
+        "pt": "A IA lerá este texto para decidir quando executar a função."
+    },
+    "Campos del CRM a capturar": {
+        "en": "CRM fields to capture",
+        "pt": "Campos do CRM a capturar"
+    },
+    "Recargar campos": {
+        "en": "Reload fields",
+        "pt": "Recarregar campos"
+    },
+    "Cargando campos…": {
+        "en": "Loading fields…",
+        "pt": "Carregando campos…"
+    },
+    "Mantén Ctrl/⌘ para seleccionar varios.": {
+        "en": "Hold Ctrl/⌘ to select multiple.",
+        "pt": "Segure Ctrl/⌘ para selecionar vários."
+    },
+    "Fase destino": {
+        "en": "Target stage",
+        "pt": "Fase de destino"
+    },
+    "Cargar fases": {
+        "en": "Load stages",
+        "pt": "Carregar fases"
+    },
+    "Cargando fases…": {
+        "en": "Loading stages…",
+        "pt": "Carregando fases…"
+    },
+    "Respuesta del bot al ejecutar (opcional)": {
+        "en": "Bot reply when executed (optional)",
+        "pt": "Resposta do bot ao executar (opcional)"
+    },
+    "Ej: ¡Gracias! He registrado tus datos. Te contactaré pronto.": {
+        "en": "E.g.: Thank you! I've saved your details. I'll contact you soon.",
+        "pt": "Ex: Obrigado! Registrei seus dados. Entrarei em contato em breve."
+    },
+    "Función activa": {
+        "en": "Active function",
+        "pt": "Função ativa"
+    },
+    "Subir": {
+        "en": "Upload",
+        "pt": "Enviar"
+    },
+    "Título (opcional)": {
+        "en": "Title (optional)",
+        "pt": "Título (opcional)"
+    },
+    "Ej: Catálogo de servicios": {
+        "en": "E.g.: Services catalog",
+        "pt": "Ex: Catálogo de serviços"
+    },
+    "Archivo": {
+        "en": "File",
+        "pt": "Arquivo"
+    },
+    "Formatos: TXT, MD, CSV, PDF, DOCX. Máx 5 MB.": {
+        "en": "Formats: TXT, MD, CSV, PDF, DOCX. Max 5 MB.",
+        "pt": "Formatos: TXT, MD, CSV, PDF, DOCX. Máx 5 MB."
+    },
+    "Ej: Política de devoluciones": {
+        "en": "E.g.: Returns policy",
+        "pt": "Ex: Política de devoluções"
+    },
+    "Contenido": {
+        "en": "Content",
+        "pt": "Conteúdo"
+    },
+    "Pega aquí información de tu empresa, productos, políticas, FAQs…": {
+        "en": "Paste here information about your company, products, policies, FAQs…",
+        "pt": "Cole aqui informações sobre sua empresa, produtos, políticas, FAQs…"
+    },
+    "Caracteres:": {
+        "en": "Characters:",
+        "pt": "Caracteres:"
+    },
+    "Activo (la IA lo usará)": {
+        "en": "Active (the AI will use it)",
+        "pt": "Ativo (a IA usará)"
+    },
+    "Conversaciones": {
+        "en": "Conversations",
+        "pt": "Conversas"
+    },
+    "Todo": {
+        "en": "All",
+        "pt": "Tudo"
+    },
+    "Abierto": {
+        "en": "Open",
+        "pt": "Aberto"
+    },
+    "Cerrado": {
+        "en": "Closed",
+        "pt": "Fechado"
+    },
+    "No hay conversaciones.": {
+        "en": "No conversations.",
+        "pt": "Não há conversas."
+    },
+    "Selecciona una conversación": {
+        "en": "Select a conversation",
+        "pt": "Selecione uma conversa"
+    },
+    "Elige una conversación de la lista para ver los mensajes.": {
+        "en": "Choose a conversation from the list to see the messages.",
+        "pt": "Escolha uma conversa da lista para ver as mensagens."
+    },
+    "Buscar por nombre o número…": {
+        "en": "Search by name or number…",
+        "pt": "Buscar por nome ou número…"
+    },
+    "Todas las etiquetas": {
+        "en": "All tags",
+        "pt": "Todas as etiquetas"
+    },
+    "Limpiar filtros": {
+        "en": "Clear filters",
+        "pt": "Limpar filtros"
+    },
+    "Detalles del contacto": {
+        "en": "Contact details",
+        "pt": "Detalhes do contato"
+    },
+    "imagen": {
+        "en": "image",
+        "pt": "imagem"
+    },
+    "Abrir archivo": {
+        "en": "Open file",
+        "pt": "Abrir arquivo"
+    },
+    "Ventana de 24h vencida": {
+        "en": "24h window expired",
+        "pt": "Janela de 24h expirada"
+    },
+    "El cliente no ha escrito en más de 24 horas. WhatsApp solo permite enviar": {
+        "en": "The customer hasn't written in over 24 hours. WhatsApp only allows sending",
+        "pt": "O cliente não escreve há mais de 24 horas. O WhatsApp só permite enviar"
+    },
+    "plantillas aprobadas": {
+        "en": "approved templates",
+        "pt": "modelos aprovados"
+    },
+    "en este momento.": {
+        "en": "at this time.",
+        "pt": "neste momento."
+    },
+    "Enviar plantilla": {
+        "en": "Send template",
+        "pt": "Enviar modelo"
+    },
+    "Adjuntar imagen o video": {
+        "en": "Attach image or video",
+        "pt": "Anexar imagem ou vídeo"
+    },
+    "Enviar plantilla aprobada": {
+        "en": "Send approved template",
+        "pt": "Enviar modelo aprovado"
+    },
+    "Respuestas rápidas (también escribe / en el chat)": {
+        "en": "Quick replies (also type / in the chat)",
+        "pt": "Respostas rápidas (também digite / no chat)"
+    },
+    "Escribe un mensaje...": {
+        "en": "Type a message...",
+        "pt": "Escreva uma mensagem..."
+    },
+    "Imágenes: JPG, PNG, GIF, WEBP · Videos: MP4 (máx. 16 MB)": {
+        "en": "Images: JPG, PNG, GIF, WEBP · Videos: MP4 (max. 16 MB)",
+        "pt": "Imagens: JPG, PNG, GIF, WEBP · Vídeos: MP4 (máx. 16 MB)"
+    },
+    "Volver al chat": {
+        "en": "Back to chat",
+        "pt": "Voltar ao chat"
+    },
+    "Cuenta WhatsApp": {
+        "en": "WhatsApp account",
+        "pt": "Conta WhatsApp"
+    },
+    "Último mensaje": {
+        "en": "Last message",
+        "pt": "Última mensagem"
+    },
+    "Etiquetas": {
+        "en": "Tags",
+        "pt": "Etiquetas"
+    },
+    "+ Editar": {
+        "en": "+ Edit",
+        "pt": "+ Editar"
+    },
+    "Sin etiquetas": {
+        "en": "No tags",
+        "pt": "Sem etiquetas"
+    },
+    "Activo — toca para pausar": {
+        "en": "Active — tap to pause",
+        "pt": "Ativo — toque para pausar"
+    },
+    "Pausado — toca para activar": {
+        "en": "Paused — tap to activate",
+        "pt": "Pausado — toque para ativar"
+    },
+    "Reiniciar hilo IA": {
+        "en": "Reset AI thread",
+        "pt": "Reiniciar thread da IA"
+    },
+    "Último reinicio:": {
+        "en": "Last reset:",
+        "pt": "Último reinício:"
+    },
+    "La IA está usando todo el historial de esta conversación": {
+        "en": "The AI is using the full history of this conversation",
+        "pt": "A IA está usando todo o histórico desta conversa"
+    },
+    "Negociación": {
+        "en": "Deal",
+        "pt": "Negociação"
+    },
+    "Ganado": {
+        "en": "Won",
+        "pt": "Ganho"
+    },
+    "Sin negociación vinculada.": {
+        "en": "No linked deal.",
+        "pt": "Sem negociação vinculada."
+    },
+    "Crear negociación": {
+        "en": "Create deal",
+        "pt": "Criar negociação"
+    },
+    "Selecciona un pipeline…": {
+        "en": "Select a pipeline…",
+        "pt": "Selecione um pipeline…"
+    },
+    "Crear": {
+        "en": "Create",
+        "pt": "Criar"
+    },
+    "Plantillas aprobadas de WhatsApp": {
+        "en": "Approved WhatsApp templates",
+        "pt": "Modelos aprovados do WhatsApp"
+    },
+    "Recargar lista": {
+        "en": "Reload list",
+        "pt": "Recarregar lista"
+    },
+    "Buscar plantilla por nombre…": {
+        "en": "Search template by name…",
+        "pt": "Buscar modelo por nome…"
+    },
+    "Cargando plantillas…": {
+        "en": "Loading templates…",
+        "pt": "Carregando modelos…"
+    },
+    "Plantilla seleccionada": {
+        "en": "Selected template",
+        "pt": "Modelo selecionado"
+    },
+    "Respuestas rápidas": {
+        "en": "Quick replies",
+        "pt": "Respostas rápidas"
+    },
+    "Buscar respuesta…": {
+        "en": "Search reply…",
+        "pt": "Buscar resposta…"
+    },
+    "Nueva": {
+        "en": "New",
+        "pt": "Nova"
+    },
+    "Cargando…": {
+        "en": "Loading…",
+        "pt": "Carregando…"
+    },
+    "Nueva respuesta rápida": {
+        "en": "New quick reply",
+        "pt": "Nova resposta rápida"
+    },
+    "Atajo (opcional)": {
+        "en": "Shortcut (optional)",
+        "pt": "Atalho (opcional)"
+    },
+    "saludo": {
+        "en": "greeting",
+        "pt": "saudação"
+    },
+    "Título *": {
+        "en": "Title *",
+        "pt": "Título *"
+    },
+    "Saludo inicial": {
+        "en": "Initial greeting",
+        "pt": "Saudação inicial"
+    },
+    "Contenido *": {
+        "en": "Content *",
+        "pt": "Conteúdo *"
+    },
+    "Hola, gracias por escribirnos. ¿En qué podemos ayudarte?": {
+        "en": "Hi, thanks for reaching out. How can we help you?",
+        "pt": "Olá, obrigado por nos escrever. Como podemos ajudar?"
+    },
+    "Compartir con todo el equipo": {
+        "en": "Share with the whole team",
+        "pt": "Compartilhar com toda a equipe"
+    },
+    "Etiquetas de la conversación": {
+        "en": "Conversation tags",
+        "pt": "Etiquetas da conversa"
+    },
+    "Crear nueva etiqueta": {
+        "en": "Create new tag",
+        "pt": "Criar nova etiqueta"
+    },
+    "Ej: Cliente VIP": {
+        "en": "E.g.: VIP Customer",
+        "pt": "Ex: Cliente VIP"
+    },
+    "Indigo": {
+        "en": "Indigo",
+        "pt": "Índigo"
+    },
+    "Rojo": {
+        "en": "Red",
+        "pt": "Vermelho"
+    },
+    "Naranja": {
+        "en": "Orange",
+        "pt": "Laranja"
+    },
+    "Ámbar": {
+        "en": "Amber",
+        "pt": "Âmbar"
+    },
+    "Verde": {
+        "en": "Green",
+        "pt": "Verde"
+    },
+    "Teal": {
+        "en": "Teal",
+        "pt": "Teal"
+    },
+    "Azul": {
+        "en": "Blue",
+        "pt": "Azul"
+    },
+    "Morado": {
+        "en": "Purple",
+        "pt": "Roxo"
+    },
+    "Rosa": {
+        "en": "Pink",
+        "pt": "Rosa"
+    },
+    "Gris": {
+        "en": "Gray",
+        "pt": "Cinza"
+    },
+    "QipuCRM — Gestión comercial inteligente": {
+        "en": "QipuCRM — Smart sales management",
+        "pt": "QipuCRM — Gestão comercial inteligente"
+    },
+    "QipuCRM centraliza tus negociaciones, contactos, WhatsApp y facturación electrónica en un solo sistema. Hecho para equipos de ventas en Perú.": {
+        "en": "QipuCRM centralizes your deals, contacts, WhatsApp, and electronic invoicing in a single system. Built for sales teams in Peru.",
+        "pt": "O QipuCRM centraliza suas negociações, contatos, WhatsApp e faturação eletrônica num único sistema. Feito para equipes de vendas no Peru."
+    },
+    "Funcionalidades": {
+        "en": "Features",
+        "pt": "Funcionalidades"
+    },
+    "Integraciones": {
+        "en": "Integrations",
+        "pt": "Integrações"
+    },
+    "Preguntas": {
+        "en": "FAQ",
+        "pt": "Perguntas"
+    },
+    "Agendar demo": {
+        "en": "Schedule a demo",
+        "pt": "Agendar demo"
+    },
+    "Dashboard": {
+        "en": "Dashboard",
+        "pt": "Painel"
+    },
+    "Ingresar": {
+        "en": "Sign in",
+        "pt": "Entrar"
+    },
+    "Crear cuenta": {
+        "en": "Sign up",
+        "pt": "Criar conta"
+    },
+    "CRM para equipos de ventas en Perú": {
+        "en": "CRM for sales teams in Peru",
+        "pt": "CRM para equipes de vendas no Peru"
+    },
+    "Gestiona tus ventas,": {
+        "en": "Manage your sales,",
+        "pt": "Gerencie suas vendas,"
+    },
+    "contactos y WhatsApp": {
+        "en": "contacts, and WhatsApp",
+        "pt": "contatos e WhatsApp"
+    },
+    "desde un solo lugar": {
+        "en": "all in one place",
+        "pt": "em um só lugar"
+    },
+    "QipuCRM es el sistema de gestión comercial hecho para equipos de ventas peruanos. Pipeline Kanban, contactos, conversaciones de WhatsApp con IA, productos y facturación electrónica SUNAT integrados en una sola plataforma.": {
+        "en": "QipuCRM is the sales management system built for Peruvian sales teams. Kanban pipeline, contacts, AI-powered WhatsApp conversations, products, and SUNAT electronic invoicing integrated into a single platform.",
+        "pt": "O QipuCRM é o sistema de gestão comercial feito para equipes de vendas peruanas. Pipeline Kanban, contatos, conversas de WhatsApp com IA, produtos e faturação eletrônica SUNAT integrados em uma única plataforma."
+    },
+    "Empezar gratis": {
+        "en": "Start for free",
+        "pt": "Começar grátis"
+    },
+    "Ver demo en vivo": {
+        "en": "Watch live demo",
+        "pt": "Ver demo ao vivo"
+    },
+    "Pipeline Kanban": {
+        "en": "Kanban pipeline",
+        "pt": "Pipeline Kanban"
+    },
+    "visual e intuitivo": {
+        "en": "visual and intuitive",
+        "pt": "visual e intuitivo"
+    },
+    "WhatsApp + IA": {
+        "en": "WhatsApp + AI",
+        "pt": "WhatsApp + IA"
+    },
+    "respuestas automáticas": {
+        "en": "automatic replies",
+        "pt": "respostas automáticas"
+    },
+    "Facturación SUNAT": {
+        "en": "SUNAT invoicing",
+        "pt": "Faturação SUNAT"
+    },
+    "facturas y boletas": {
+        "en": "invoices and receipts",
+        "pt": "faturas e recibos"
+    },
+    "Pipeline de Ventas — Mayo 2025": {
+        "en": "Sales Pipeline — May 2025",
+        "pt": "Pipeline de Vendas — Maio 2025"
+    },
+    "12 negociaciones activas": {
+        "en": "12 active deals",
+        "pt": "12 negociações ativas"
+    },
+    "Prospecto": {
+        "en": "Lead",
+        "pt": "Prospecto"
+    },
+    "Propuesta": {
+        "en": "Proposal",
+        "pt": "Proposta"
+    },
+    "Todo lo que necesita tu equipo de ventas": {
+        "en": "Everything your sales team needs",
+        "pt": "Tudo o que sua equipe de vendas precisa"
+    },
+    "Una plataforma completa, sin apps extra ni integraciones complicadas.": {
+        "en": "A complete platform, with no extra apps or complicated integrations.",
+        "pt": "Uma plataforma completa, sem apps extras nem integrações complicadas."
+    },
+    "Visualiza tus negociaciones en etapas personalizadas. Mueve deals con drag & drop y sabe exactamente en qué fase está cada oportunidad.": {
+        "en": "Visualize your deals in custom stages. Move deals with drag & drop and know exactly which phase each opportunity is in.",
+        "pt": "Visualize suas negociações em etapas personalizadas. Mova deals com arrastar e soltar e saiba exatamente em que fase está cada oportunidade."
+    },
+    "Etapas de venta configurables": {
+        "en": "Configurable sales stages",
+        "pt": "Etapas de venda configuráveis"
+    },
+    "Asignación de responsables": {
+        "en": "Owner assignment",
+        "pt": "Atribuição de responsáveis"
+    },
+    "Múltiples pipelines por equipo": {
+        "en": "Multiple pipelines per team",
+        "pt": "Múltiplos pipelines por equipe"
+    },
+    "Gestión de contactos": {
+        "en": "Contact management",
+        "pt": "Gestão de contatos"
+    },
+    "Base de datos centralizada de clientes y prospectos con historial de interacciones, negociaciones asociadas y datos fiscales para facturación.": {
+        "en": "Centralized database of customers and prospects with interaction history, linked deals, and tax data for invoicing.",
+        "pt": "Base de dados centralizada de clientes e prospectos com histórico de interações, negociações associadas e dados fiscais para faturação."
+    },
+    "Historial completo por contacto": {
+        "en": "Full history per contact",
+        "pt": "Histórico completo por contato"
+    },
+    "RUC / DNI para facturación": {
+        "en": "RUC / DNI for invoicing",
+        "pt": "RUC / DNI para faturação"
+    },
+    "Importación y exportación": {
+        "en": "Import and export",
+        "pt": "Importação e exportação"
+    },
+    "WhatsApp integrado": {
+        "en": "Integrated WhatsApp",
+        "pt": "WhatsApp integrado"
+    },
+    "Bandeja de entrada de WhatsApp directamente en el CRM. Vincula conversaciones a negociaciones y responde desde un solo panel.": {
+        "en": "WhatsApp inbox right inside the CRM. Link conversations to deals and reply from a single panel.",
+        "pt": "Caixa de entrada do WhatsApp diretamente no CRM. Vincule conversas a negociações e responda a partir de um único painel."
+    },
+    "Inbox unificado del equipo": {
+        "en": "Unified team inbox",
+        "pt": "Caixa de entrada unificada da equipe"
+    },
+    "Conversaciones vinculadas a deals": {
+        "en": "Conversations linked to deals",
+        "pt": "Conversas vinculadas a deals"
+    },
+    "Respuestas rápidas plantilla": {
+        "en": "Quick reply templates",
+        "pt": "Respostas rápidas modelo"
+    },
+    "Asistente IA en WhatsApp": {
+        "en": "AI assistant on WhatsApp",
+        "pt": "Assistente IA no WhatsApp"
+    },
+    "Activa un asistente con inteligencia artificial por conversación. Responde consultas frecuentes automáticamente y escala cuando es necesario.": {
+        "en": "Enable an artificial intelligence assistant per conversation. It answers common questions automatically and escalates when needed.",
+        "pt": "Ative um assistente com inteligência artificial por conversa. Responde dúvidas frequentes automaticamente e escala quando necessário."
+    },
+    "IA activable por conversación": {
+        "en": "AI you can enable per conversation",
+        "pt": "IA ativável por conversa"
+    },
+    "Personalización por cuenta WA": {
+        "en": "Customization per WA account",
+        "pt": "Personalização por conta WA"
+    },
+    "Pausable en cualquier momento": {
+        "en": "Pause it anytime",
+        "pt": "Pausável a qualquer momento"
+    },
+    "Crea tu catálogo una vez y reutilízalo en cualquier negociación. Agrega líneas de producto con precios, cantidades y descuentos.": {
+        "en": "Create your catalog once and reuse it in any deal. Add product lines with prices, quantities, and discounts.",
+        "pt": "Crie seu catálogo uma vez e reutilize-o em qualquer negociação. Adicione linhas de produto com preços, quantidades e descontos."
+    },
+    "Catálogo por equipo": {
+        "en": "Catalog per team",
+        "pt": "Catálogo por equipe"
+    },
+    "Precios en PEN o USD": {
+        "en": "Prices in PEN or USD",
+        "pt": "Preços em PEN ou USD"
+    },
+    "Totales automáticos en el deal": {
+        "en": "Automatic totals on the deal",
+        "pt": "Totais automáticos no deal"
+    },
+    "Facturación electrónica SUNAT": {
+        "en": "SUNAT electronic invoicing",
+        "pt": "Faturação eletrônica SUNAT"
+    },
+    "Genera facturas y boletas de venta directamente desde la negociación. Envía a SUNAT, descarga el XML y obtén la respuesta CDR sin salir del CRM.": {
+        "en": "Generate invoices and sales receipts directly from the deal. Send to SUNAT, download the XML, and get the CDR response without leaving the CRM.",
+        "pt": "Gere faturas e recibos de venda diretamente da negociação. Envie à SUNAT, baixe o XML e obtenha a resposta CDR sem sair do CRM."
+    },
+    "Facturas y boletas electrónicas": {
+        "en": "Electronic invoices and receipts",
+        "pt": "Faturas e recibos eletrônicos"
+    },
+    "Envío directo a SUNAT": {
+        "en": "Direct submission to SUNAT",
+        "pt": "Envio direto à SUNAT"
+    },
+    "Modo prueba para testear": {
+        "en": "Test mode for trials",
+        "pt": "Modo de teste para testar"
+    },
+    "Flujo de trabajo": {
+        "en": "Workflow",
+        "pt": "Fluxo de trabalho"
+    },
+    "Del primer contacto a la factura,": {
+        "en": "From first contact to invoice,",
+        "pt": "Do primeiro contato à fatura,"
+    },
+    "sin salir del sistema": {
+        "en": "without leaving the system",
+        "pt": "sem sair do sistema"
+    },
+    "QipuCRM cubre todo el ciclo de ventas en un flujo continuo.": {
+        "en": "QipuCRM covers the entire sales cycle in one continuous flow.",
+        "pt": "O QipuCRM cobre todo o ciclo de vendas em um fluxo contínuo."
+    },
+    "Captura el lead": {
+        "en": "Capture the lead",
+        "pt": "Capture o lead"
+    },
+    "El prospecto llega por WhatsApp o lo creas manualmente. Se vincula al pipeline.": {
+        "en": "The prospect comes in via WhatsApp or you create them manually. They get linked to the pipeline.",
+        "pt": "O prospecto chega pelo WhatsApp ou você o cria manualmente. Fica vinculado ao pipeline."
+    },
+    "Gestiona el deal": {
+        "en": "Manage the deal",
+        "pt": "Gerencie o deal"
+    },
+    "Mueve la negociación en el Kanban, agrega productos, comentarios y actividades.": {
+        "en": "Move the deal across the Kanban, add products, comments, and activities.",
+        "pt": "Mova a negociação no Kanban, adicione produtos, comentários e atividades."
+    },
+    "Cierra la venta": {
+        "en": "Close the sale",
+        "pt": "Feche a venda"
+    },
+    "La IA de WhatsApp ayuda a responder dudas. Haz seguimiento hasta el cierre.": {
+        "en": "The WhatsApp AI helps answer questions. Follow up until closing.",
+        "pt": "A IA do WhatsApp ajuda a responder dúvidas. Faça o acompanhamento até o fechamento."
+    },
+    "Emite el comprobante": {
+        "en": "Issue the document",
+        "pt": "Emita o comprovante"
+    },
+    "Genera la factura o boleta desde la misma negociación y envíala a SUNAT.": {
+        "en": "Generate the invoice or receipt from the same deal and send it to SUNAT.",
+        "pt": "Gere a fatura ou recibo a partir da própria negociação e envie à SUNAT."
+    },
+    "¿Por qué QipuCRM?": {
+        "en": "Why QipuCRM?",
+        "pt": "Por que o QipuCRM?"
+    },
+    "Diseñado para la realidad": {
+        "en": "Designed for the reality",
+        "pt": "Projetado para a realidade"
+    },
+    "del negocio peruano": {
+        "en": "of Peruvian business",
+        "pt": "do negócio peruano"
+    },
+    "No es una herramienta genérica traducida. QipuCRM incluye facturación electrónica SUNAT, integración con WhatsApp Business y todo en soles y dólares.": {
+        "en": "It's not a generic translated tool. QipuCRM includes SUNAT electronic invoicing, WhatsApp Business integration, and everything in soles and dollars.",
+        "pt": "Não é uma ferramenta genérica traduzida. O QipuCRM inclui faturação eletrônica SUNAT, integração com o WhatsApp Business e tudo em soles e dólares."
+    },
+    "Multi-equipo con roles y permisos": {
+        "en": "Multi-team with roles and permissions",
+        "pt": "Multiequipe com funções e permissões"
+    },
+    "Pipeline visual con etapas personalizadas": {
+        "en": "Visual pipeline with custom stages",
+        "pt": "Pipeline visual com etapas personalizadas"
+    },
+    "WhatsApp Business API integrada": {
+        "en": "Integrated WhatsApp Business API",
+        "pt": "API do WhatsApp Business integrada"
+    },
+    "Facturación SUNAT (facturas y boletas)": {
+        "en": "SUNAT invoicing (invoices and receipts)",
+        "pt": "Faturação SUNAT (faturas e recibos)"
+    },
+    "Asistente IA por conversación": {
+        "en": "AI assistant per conversation",
+        "pt": "Assistente IA por conversa"
+    },
+    "Catálogo de productos reutilizable": {
+        "en": "Reusable product catalog",
+        "pt": "Catálogo de produtos reutilizável"
+    },
+    "Equipos": {
+        "en": "Teams",
+        "pt": "Equipes"
+    },
+    "Multi-usuario con roles": {
+        "en": "Multi-user with roles",
+        "pt": "Multiusuário com funções"
+    },
+    "Pipelines ilimitados": {
+        "en": "Unlimited pipelines",
+        "pt": "Pipelines ilimitados"
+    },
+    "WhatsApp": {
+        "en": "WhatsApp",
+        "pt": "WhatsApp"
+    },
+    "IA integrada": {
+        "en": "Built-in AI",
+        "pt": "IA integrada"
+    },
+    "SUNAT": {
+        "en": "SUNAT",
+        "pt": "SUNAT"
+    },
+    "Facturación real": {
+        "en": "Real invoicing",
+        "pt": "Faturação real"
+    },
+    "Preguntas frecuentes": {
+        "en": "Frequently asked questions",
+        "pt": "Perguntas frequentes"
+    },
+    "¿Necesito instalar algo?": {
+        "en": "Do I need to install anything?",
+        "pt": "Preciso instalar algo?"
+    },
+    "No. QipuCRM es 100% web. Funciona desde cualquier navegador en PC o celular, sin instalaciones.": {
+        "en": "No. QipuCRM is 100% web-based. It works from any browser on PC or mobile, with no installations.",
+        "pt": "Não. O QipuCRM é 100% web. Funciona em qualquer navegador no PC ou celular, sem instalações."
+    },
+    "¿Puedo tener varios equipos o empresas?": {
+        "en": "Can I have multiple teams or companies?",
+        "pt": "Posso ter várias equipes ou empresas?"
+    },
+    "Sí. Puedes crear múltiples equipos dentro de tu cuenta, cada uno con sus propios pipelines, contactos y configuración.": {
+        "en": "Yes. You can create multiple teams within your account, each with its own pipelines, contacts, and settings.",
+        "pt": "Sim. Você pode criar várias equipes dentro da sua conta, cada uma com seus próprios pipelines, contatos e configurações."
+    },
+    "¿La facturación electrónica requiere algo especial?": {
+        "en": "Does electronic invoicing require anything special?",
+        "pt": "A faturação eletrônica requer algo especial?"
+    },
+    "Solo necesitas tu RUC, usuario SOL y el certificado digital de SUNAT. También puedes activar el modo prueba para testear sin enviar documentos reales.": {
+        "en": "You only need your RUC, SOL user, and SUNAT digital certificate. You can also enable test mode to try it out without sending real documents.",
+        "pt": "Você só precisa do seu RUC, usuário SOL e o certificado digital da SUNAT. Também pode ativar o modo de teste para experimentar sem enviar documentos reais."
+    },
+    "¿El WhatsApp necesita el número oficial de mi empresa?": {
+        "en": "Does WhatsApp require my company's official number?",
+        "pt": "O WhatsApp precisa do número oficial da minha empresa?"
+    },
+    "Sí, se conecta mediante la API oficial de WhatsApp Business (Meta). Solo funciona con números aprobados por Meta.": {
+        "en": "Yes, it connects via the official WhatsApp Business API (Meta). It only works with numbers approved by Meta.",
+        "pt": "Sim, conecta-se pela API oficial do WhatsApp Business (Meta). Só funciona com números aprovados pela Meta."
+    },
+    "¿La IA de WhatsApp responde sola o necesito supervisión?": {
+        "en": "Does the WhatsApp AI reply on its own or do I need to supervise it?",
+        "pt": "A IA do WhatsApp responde sozinha ou preciso supervisionar?"
+    },
+    "Puedes activarla o pausarla por conversación. Cuando está activa responde automáticamente; cuando la pausas, toma el control el asesor humano.": {
+        "en": "You can enable or pause it per conversation. When active it replies automatically; when you pause it, the human agent takes over.",
+        "pt": "Você pode ativá-la ou pausá-la por conversa. Quando ativa, responde automaticamente; quando você a pausa, o atendente humano assume o controle."
+    },
+    "Demo gratuita": {
+        "en": "Free demo",
+        "pt": "Demo gratuita"
+    },
+    "Agenda una demostración en vivo": {
+        "en": "Schedule a live demo",
+        "pt": "Agende uma demonstração ao vivo"
+    },
+    "Muéstrate el sistema con tus propios datos. Un especialista te guía en 30 minutos y responde todas tus preguntas sobre QipuCRM.": {
+        "en": "See the system with your own data. A specialist guides you in 30 minutes and answers all your questions about QipuCRM.",
+        "pt": "Veja o sistema com seus próprios dados. Um especialista te orienta em 30 minutos e responde a todas as suas perguntas sobre o QipuCRM."
+    },
+    "Empieza a organizar tus ventas hoy mismo": {
+        "en": "Start organizing your sales today",
+        "pt": "Comece a organizar suas vendas hoje mesmo"
+    },
+    "QipuCRM está listo para tu equipo. Pipeline, contactos, WhatsApp con IA y facturación electrónica en un solo sistema.": {
+        "en": "QipuCRM is ready for your team. Pipeline, contacts, WhatsApp with AI, and electronic invoicing in a single system.",
+        "pt": "O QipuCRM está pronto para sua equipe. Pipeline, contatos, WhatsApp com IA e faturação eletrônica em um único sistema."
+    },
+    "Crear mi cuenta": {
+        "en": "Create my account",
+        "pt": "Criar minha conta"
+    },
+    "Ya tengo una cuenta": {
+        "en": "I already have an account",
+        "pt": "Já tenho uma conta"
+    },
+    "Desarrollado por Systems Leads": {
+        "en": "Developed by Systems Leads",
+        "pt": "Desenvolvido pela Systems Leads"
+    },
+    "Administrar Categoria de Pagos": {
+        "en": "Manage Payment Categories",
+        "pt": "Gerenciar Categorias de Pagamento"
+    },
+    "Categorías de Pago": {
+        "en": "Payment Categories",
+        "pt": "Categorias de Pagamento"
+    },
+    "Nueva categoría (ej. Agua, Luz, Mantenimiento)": {
+        "en": "New category (e.g. Water, Electricity, Maintenance)",
+        "pt": "Nova categoria (ex. Água, Luz, Manutenção)"
+    },
+    "Usos en gastos:": {
+        "en": "Uses in expenses:",
+        "pt": "Usos em despesas:"
+    },
+    "Esta acción eliminará la categoría «:nombre».": {
+        "en": "This action will delete the category «:nombre».",
+        "pt": "Esta ação excluirá a categoria «:nombre»."
+    },
+    "Actualmente está vinculada a :count gasto(s). Deberás reasignarlos o eliminarlos antes.": {
+        "en": "It is currently linked to :count expense(s). You must reassign or delete them first.",
+        "pt": "Atualmente está vinculada a :count despesa(s). Você deverá reatribuí-las ou excluí-las antes."
+    },
+    "¿Deseas continuar?": {
+        "en": "Do you want to continue?",
+        "pt": "Deseja continuar?"
+    },
+    "Aún no hay categorías.": {
+        "en": "No categories yet.",
+        "pt": "Ainda não há categorias."
+    },
+    "Mis Finanzas": {
+        "en": "My Finances",
+        "pt": "Minhas Finanças"
+    },
+    "Mes": {
+        "en": "Month",
+        "pt": "Mês"
+    },
+    "Año": {
+        "en": "Year",
+        "pt": "Ano"
+    },
+    "Filtrar": {
+        "en": "Filter",
+        "pt": "Filtrar"
+    },
+    "Categoría": {
+        "en": "Category",
+        "pt": "Categoria"
+    },
+    "Sin pagos verificados en este periodo.": {
+        "en": "No verified payments in this period.",
+        "pt": "Nenhum pagamento verificado neste período."
+    },
+    "Listado de Gastos": {
+        "en": "Expense List",
+        "pt": "Lista de Despesas"
+    },
+    "Todas": {
+        "en": "All",
+        "pt": "Todas"
+    },
+    "Unidad / Perfil": {
+        "en": "Unit / Profile",
+        "pt": "Unidade / Perfil"
+    },
+    "General (sin unidad)": {
+        "en": "General (no unit)",
+        "pt": "Geral (sem unidade)"
+    },
+    "Mes/Año": {
+        "en": "Month/Year",
+        "pt": "Mês/Ano"
+    },
+    "Código Pago": {
+        "en": "Payment Code",
+        "pt": "Código de Pagamento"
+    },
+    "Día de Pago": {
+        "en": "Payment Day",
+        "pt": "Dia de Pagamento"
+    },
+    "Voucher": {
+        "en": "Voucher",
+        "pt": "Comprovante"
+    },
+    "Verificado": {
+        "en": "Verified",
+        "pt": "Verificado"
+    },
+    "General": {
+        "en": "General",
+        "pt": "Geral"
+    },
+    "¿Eliminar este gasto?": {
+        "en": "Delete this expense?",
+        "pt": "Excluir esta despesa?"
+    },
+    "No hay registros.": {
+        "en": "No records.",
+        "pt": "Nenhum registro."
+    },
+    "Editar gasto": {
+        "en": "Edit expense",
+        "pt": "Editar despesa"
+    },
+    "Seleccione…": {
+        "en": "Select…",
+        "pt": "Selecione…"
+    },
+    "Monto (S/)": {
+        "en": "Amount (S/)",
+        "pt": "Valor (S/)"
+    },
+    "Código de pago": {
+        "en": "Payment code",
+        "pt": "Código de pagamento"
+    },
+    "Día de pago": {
+        "en": "Payment day",
+        "pt": "Dia de pagamento"
+    },
+    "Link del voucher": {
+        "en": "Voucher link",
+        "pt": "Link do comprovante"
+    },
+    "Detalles del gasto (opcional)": {
+        "en": "Expense details (optional)",
+        "pt": "Detalhes da despesa (opcional)"
+    },
+    "Pago verificado": {
+        "en": "Payment verified",
+        "pt": "Pagamento verificado"
+    },
+    "Importar Gastos (Excel/CSV)": {
+        "en": "Import Expenses (Excel/CSV)",
+        "pt": "Importar Despesas (Excel/CSV)"
+    },
+    "Aviso:": {
+        "en": "Notice:",
+        "pt": "Aviso:"
+    },
+    "Archivo (.xlsx, .xls, .csv)": {
+        "en": "File (.xlsx, .xls, .csv)",
+        "pt": "Arquivo (.xlsx, .xls, .csv)"
+    },
+    "Instrucciones y formato del archivo": {
+        "en": "File instructions and format",
+        "pt": "Instruções e formato do arquivo"
+    },
+    "El archivo debe estar en formato “ancho”: cada": {
+        "en": "The file must be in “wide” format: each",
+        "pt": "O arquivo deve estar no formato “largo”: cada"
+    },
+    "columna": {
+        "en": "column",
+        "pt": "coluna"
+    },
+    "después de": {
+        "en": "after",
+        "pt": "depois de"
+    },
+    "y opcional": {
+        "en": "and optional",
+        "pt": "e opcional"
+    },
+    "representa una": {
+        "en": "represents a",
+        "pt": "representa uma"
+    },
+    "categoría": {
+        "en": "category",
+        "pt": "categoria"
+    },
+    "existente en el condominio, y cada": {
+        "en": "existing in the condominium, and each",
+        "pt": "existente no condomínio, e cada"
+    },
+    "celda": {
+        "en": "cell",
+        "pt": "célula"
+    },
+    "contiene el": {
+        "en": "contains the",
+        "pt": "contém o"
+    },
+    "monto": {
+        "en": "amount",
+        "pt": "valor"
+    },
+    "para esa categoría.": {
+        "en": "for that category.",
+        "pt": "para essa categoria."
+    },
+    "Encabezados obligatorios:": {
+        "en": "Required headers:",
+        "pt": "Cabeçalhos obrigatórios:"
+    },
+    "Opcional:": {
+        "en": "Optional:",
+        "pt": "Opcional:"
+    },
+    "puede ir vacía: en ese caso el gasto se registra como": {
+        "en": "can be left empty: in that case the expense is recorded as",
+        "pt": "pode ficar vazia: nesse caso a despesa é registrada como"
+    },
+    "general": {
+        "en": "general",
+        "pt": "geral"
+    },
+    "(sin unidad). Si está vacía y hay columna": {
+        "en": "(no unit). If it is empty and there is a column",
+        "pt": "(sem unidade). Se estiver vazia e houver coluna"
+    },
+    "se guardará solo en gastos generales.": {
+        "en": "it will be saved only in general expenses.",
+        "pt": "será salva apenas em despesas gerais."
+    },
+    "acepta nombre": {
+        "en": "accepts name",
+        "pt": "aceita nome"
+    },
+    "Enero… Diciembre": {
+        "en": "January… December",
+        "pt": "Janeiro… Dezembro"
+    },
+    "o número": {
+        "en": "or number",
+        "pt": "ou número"
+    },
+    "En base de datos se guarda como número (1–12).": {
+        "en": "In the database it is stored as a number (1–12).",
+        "pt": "No banco de dados é salvo como número (1–12)."
+    },
+    "debe ser numérico (por ejemplo,": {
+        "en": "must be numeric (for example,",
+        "pt": "deve ser numérico (por exemplo,"
+    },
+    "En base de datos se guarda como entero.": {
+        "en": "In the database it is stored as an integer.",
+        "pt": "No banco de dados é salvo como inteiro."
+    },
+    "Categorías:": {
+        "en": "Categories:",
+        "pt": "Categorias:"
+    },
+    "agrega una columna por cada categoría ya creada en tu condominio. El nombre debe coincidir con el de la categoría; el sistema es tolerante a": {
+        "en": "add a column for each category already created in your condominium. The name must match the category name; the system is tolerant of",
+        "pt": "adicione uma coluna para cada categoria já criada no seu condomínio. O nome deve coincidir com o da categoria; o sistema é tolerante a"
+    },
+    "mayúsculas/acentos/espacios": {
+        "en": "uppercase/accents/spaces",
+        "pt": "maiúsculas/acentos/espaços"
+    },
+    "(se normalizan internamente).": {
+        "en": "(they are normalized internally).",
+        "pt": "(são normalizados internamente)."
+    },
+    "Las celdas vacías o con": {
+        "en": "Cells that are empty or with",
+        "pt": "As células vazias ou com"
+    },
+    "no generan gasto. Las columnas que no coincidan con ninguna categoría existente se ignoran.": {
+        "en": "do not generate an expense. Columns that do not match any existing category are ignored.",
+        "pt": "não geram despesa. As colunas que não coincidirem com nenhuma categoria existente são ignoradas."
+    },
+    "Si": {
+        "en": "If",
+        "pt": "Se"
+    },
+    "tiene un valor que no existe en tu condominio, la fila se omitirá y se reportará en los mensajes de advertencia.": {
+        "en": "has a value that does not exist in your condominium, the row will be skipped and reported in the warning messages.",
+        "pt": "tiver um valor que não existe no seu condomínio, a linha será ignorada e reportada nas mensagens de aviso."
+    },
+    "Ejemplo de encabezados (según tus categorías actuales):": {
+        "en": "Example headers (based on your current categories):",
+        "pt": "Exemplo de cabeçalhos (com base nas suas categorias atuais):"
+    },
+    "Puedes incluir": {
+        "en": "You can include",
+        "pt": "Você pode incluir"
+    },
+    "todas": {
+        "en": "all",
+        "pt": "todas"
+    },
+    "tus categorías como columnas (no hay límite práctico).": {
+        "en": "your categories as columns (there is no practical limit).",
+        "pt": "suas categorias como colunas (não há limite prático)."
+    },
+    "El sistema tomará únicamente las columnas que coincidan con categorías existentes.": {
+        "en": "The system will only take the columns that match existing categories.",
+        "pt": "O sistema considerará apenas as colunas que coincidam com categorias existentes."
+    },
+    "Importar": {
+        "en": "Import",
+        "pt": "Importar"
+    },
+    "Ver todas las categorías del condominio": {
+        "en": "View all condominium categories",
+        "pt": "Ver todas as categorias do condomínio"
+    },
+    "Aún no has creado categorías.": {
+        "en": "You have not created any categories yet.",
+        "pt": "Você ainda não criou categorias."
+    },
+    "Importar Reporte Mensual": {
+        "en": "Import Monthly Report",
+        "pt": "Importar Relatório Mensal"
+    },
+    "Solo visible y accesible para administradores.": {
+        "en": "Only visible and accessible to administrators.",
+        "pt": "Visível e acessível apenas para administradores."
+    },
+    "Configurar": {
+        "en": "Configure",
+        "pt": "Configurar"
+    },
+    "Sin comprobantes. Crea uno desde una negociación.": {
+        "en": "No receipts. Create one from a deal.",
+        "pt": "Sem comprovantes. Crie um a partir de uma negociação."
+    },
+    "Nueva Factura / Boleta": {
+        "en": "New Invoice / Receipt",
+        "pt": "Nova Fatura / Recibo"
+    },
+    "Falta configuración:": {
+        "en": "Configuration missing:",
+        "pt": "Configuração ausente:"
+    },
+    "antes de emitir comprobantes debes": {
+        "en": "before issuing receipts you must",
+        "pt": "antes de emitir comprovantes você deve"
+    },
+    "configurar tus datos SUNAT": {
+        "en": "configure your SUNAT data",
+        "pt": "configurar seus dados SUNAT"
+    },
+    "Comprobante": {
+        "en": "Receipt",
+        "pt": "Comprovante"
+    },
+    "Factura": {
+        "en": "Invoice",
+        "pt": "Fatura"
+    },
+    "Boleta de Venta": {
+        "en": "Sales Receipt",
+        "pt": "Recibo de Venda"
+    },
+    "Moneda *": {
+        "en": "Currency *",
+        "pt": "Moeda *"
+    },
+    "PEN — Soles": {
+        "en": "PEN — Soles",
+        "pt": "PEN — Soles"
+    },
+    "USD — Dólares": {
+        "en": "USD — Dollars",
+        "pt": "USD — Dólares"
+    },
+    "Fecha emisión *": {
+        "en": "Issue date *",
+        "pt": "Data de emissão *"
+    },
+    "Fecha vencimiento": {
+        "en": "Due date",
+        "pt": "Data de vencimento"
+    },
+    "% IGV": {
+        "en": "VAT %",
+        "pt": "% IGV"
+    },
+    "Datos del cliente": {
+        "en": "Customer details",
+        "pt": "Dados do cliente"
+    },
+    "Tipo doc *": {
+        "en": "Doc type *",
+        "pt": "Tipo doc *"
+    },
+    "DNI": {
+        "en": "DNI",
+        "pt": "DNI"
+    },
+    "RUC": {
+        "en": "RUC",
+        "pt": "RUC"
+    },
+    "CE": {
+        "en": "CE",
+        "pt": "CE"
+    },
+    "Otros": {
+        "en": "Other",
+        "pt": "Outros"
+    },
+    "N° documento *": {
+        "en": "Document no. *",
+        "pt": "N° documento *"
+    },
+    "Razón social / Nombre *": {
+        "en": "Legal name / Name *",
+        "pt": "Razão social / Nome *"
+    },
+    "Dirección": {
+        "en": "Address",
+        "pt": "Endereço"
+    },
+    "Observaciones": {
+        "en": "Notes",
+        "pt": "Observações"
+    },
+    "Líneas del comprobante": {
+        "en": "Receipt lines",
+        "pt": "Linhas do comprovante"
+    },
+    "+ Agregar línea": {
+        "en": "+ Add line",
+        "pt": "+ Adicionar linha"
+    },
+    "Descripción *": {
+        "en": "Description *",
+        "pt": "Descrição *"
+    },
+    "P.Unit (c/IGV)": {
+        "en": "Unit price (incl. VAT)",
+        "pt": "Preço unit. (c/IGV)"
+    },
+    "Afectación": {
+        "en": "Tax type",
+        "pt": "Tributação"
+    },
+    "Gravado": {
+        "en": "Taxed",
+        "pt": "Tributado"
+    },
+    "Exonerado": {
+        "en": "Exempt",
+        "pt": "Isento"
+    },
+    "Inafecto": {
+        "en": "Not subject",
+        "pt": "Não tributado"
+    },
+    "Subtotal:": {
+        "en": "Subtotal:",
+        "pt": "Subtotal:"
+    },
+    "Sin líneas. Agrega al menos una.": {
+        "en": "No lines. Add at least one.",
+        "pt": "Sem linhas. Adicione pelo menos uma."
+    },
+    "Op. Gravadas": {
+        "en": "Taxed ops.",
+        "pt": "Op. Tributadas"
+    },
+    "Op. Exoneradas": {
+        "en": "Exempt ops.",
+        "pt": "Op. Isentas"
+    },
+    "Op. Inafectas": {
+        "en": "Non-taxable ops.",
+        "pt": "Op. Não tributadas"
+    },
+    "IGV": {
+        "en": "VAT",
+        "pt": "IGV"
+    },
+    "TOTAL": {
+        "en": "TOTAL",
+        "pt": "TOTAL"
+    },
+    "Generar comprobante": {
+        "en": "Generate receipt",
+        "pt": "Gerar comprovante"
+    },
+    "Debes agregar al menos una línea.": {
+        "en": "You must add at least one line.",
+        "pt": "Você deve adicionar pelo menos uma linha."
+    },
+    "Ver negociación": {
+        "en": "View deal",
+        "pt": "Ver negociação"
+    },
+    "Imprimir / PDF": {
+        "en": "Print / PDF",
+        "pt": "Imprimir / PDF"
+    },
+    "Descargar XML": {
+        "en": "Download XML",
+        "pt": "Baixar XML"
+    },
+    "Vencimiento": {
+        "en": "Due date",
+        "pt": "Vencimento"
+    },
+    "Emisor": {
+        "en": "Issuer",
+        "pt": "Emissor"
+    },
+    "RUC:": {
+        "en": "RUC:",
+        "pt": "RUC:"
+    },
+    "Sin configuración de emisor.": {
+        "en": "No issuer configuration.",
+        "pt": "Sem configuração de emissor."
+    },
+    "Doc": {
+        "en": "Doc",
+        "pt": "Doc"
+    },
+    "Und.": {
+        "en": "Unit",
+        "pt": "Und."
+    },
+    "P.Unit": {
+        "en": "Unit price",
+        "pt": "Preço unit."
+    },
+    "Observaciones:": {
+        "en": "Notes:",
+        "pt": "Observações:"
+    },
+    "Modo prueba activo": {
+        "en": "Test mode active",
+        "pt": "Modo de teste ativo"
+    },
+    "— los envíos a SUNAT son simulados. Desactívalo en": {
+        "en": "— submissions to SUNAT are simulated. Disable it in",
+        "pt": "— os envios à SUNAT são simulados. Desative-o em"
+    },
+    "para producción.": {
+        "en": "for production.",
+        "pt": "para produção."
+    },
+    "Firmar XML": {
+        "en": "Sign XML",
+        "pt": "Assinar XML"
+    },
+    "¿Enviar a SUNAT?": {
+        "en": "Send to SUNAT?",
+        "pt": "Enviar à SUNAT?"
+    },
+    "Enviar a SUNAT": {
+        "en": "Send to SUNAT",
+        "pt": "Enviar à SUNAT"
+    },
+    "Configuración de Facturación Electrónica": {
+        "en": "Electronic Invoicing Settings",
+        "pt": "Configuração de Faturamento Eletrônico"
+    },
+    "Modo prueba (simulado)": {
+        "en": "Test mode (simulated)",
+        "pt": "Modo de teste (simulado)"
+    },
+    "Activa esto para probar la facturación": {
+        "en": "Enable this to test invoicing",
+        "pt": "Ative isto para testar o faturamento"
+    },
+    "sin enviar nada a SUNAT": {
+        "en": "without sending anything to SUNAT",
+        "pt": "sem enviar nada à SUNAT"
+    },
+    "Los comprobantes se marcan como \"Aceptado\" automáticamente. No necesitas certificado ni credenciales reales.": {
+        "en": "Receipts are marked as \"Accepted\" automatically. You don't need a real certificate or credentials.",
+        "pt": "Os comprovantes são marcados como \"Aceito\" automaticamente. Você não precisa de certificado nem credenciais reais."
+    },
+    "Rellenar con datos de prueba": {
+        "en": "Fill with test data",
+        "pt": "Preencher com dados de teste"
+    },
+    "Datos del Emisor (SUNAT)": {
+        "en": "Issuer Data (SUNAT)",
+        "pt": "Dados do Emissor (SUNAT)"
+    },
+    "RUC *": {
+        "en": "RUC *",
+        "pt": "RUC *"
+    },
+    "Razón Social *": {
+        "en": "Legal Name *",
+        "pt": "Razão Social *"
+    },
+    "Nombre Comercial": {
+        "en": "Trade Name",
+        "pt": "Nome Comercial"
+    },
+    "País": {
+        "en": "Country",
+        "pt": "País"
+    },
+    "Dirección *": {
+        "en": "Address *",
+        "pt": "Endereço *"
+    },
+    "Ubigeo *": {
+        "en": "Ubigeo *",
+        "pt": "Ubigeo *"
+    },
+    "Departamento *": {
+        "en": "Department *",
+        "pt": "Departamento *"
+    },
+    "Provincia *": {
+        "en": "Province *",
+        "pt": "Província *"
+    },
+    "Distrito *": {
+        "en": "District *",
+        "pt": "Distrito *"
+    },
+    "Serie Factura": {
+        "en": "Invoice series",
+        "pt": "Série Fatura"
+    },
+    "Serie Boleta": {
+        "en": "Receipt series",
+        "pt": "Série Recibo"
+    },
+    "Credenciales SOL / Ambiente": {
+        "en": "SOL credentials / Environment",
+        "pt": "Credenciais SOL / Ambiente"
+    },
+    "Usuario SOL": {
+        "en": "SOL user",
+        "pt": "Usuário SOL"
+    },
+    "Clave SOL": {
+        "en": "SOL password",
+        "pt": "Senha SOL"
+    },
+    "Ambiente": {
+        "en": "Environment",
+        "pt": "Ambiente"
+    },
+    "Beta (pruebas)": {
+        "en": "Beta (testing)",
+        "pt": "Beta (testes)"
+    },
+    "Producción": {
+        "en": "Production",
+        "pt": "Produção"
+    },
+    "Certificado PEM": {
+        "en": "PEM certificate",
+        "pt": "Certificado PEM"
+    },
+    "Pega aquí el contenido del archivo .pem de tu certificado digital.": {
+        "en": "Paste here the contents of your digital certificate .pem file.",
+        "pt": "Cole aqui o conteúdo do arquivo .pem do seu certificado digital."
+    },
+    "Guardar configuración": {
+        "en": "Save settings",
+        "pt": "Salvar configuração"
+    },
+    "Imprimir / Guardar PDF": {
+        "en": "Print / Save PDF",
+        "pt": "Imprimir / Salvar PDF"
+    },
+    "COMPROBANTE ELECTRÓNICO": {
+        "en": "ELECTRONIC RECEIPT",
+        "pt": "COMPROVANTE ELETRÔNICO"
+    },
+    "ACEPTADO SUNAT": {
+        "en": "ACCEPTED BY SUNAT",
+        "pt": "ACEITO PELA SUNAT"
+    },
+    "Fecha emisión:": {
+        "en": "Issue date:",
+        "pt": "Data de emissão:"
+    },
+    "Vencimiento:": {
+        "en": "Due date:",
+        "pt": "Vencimento:"
+    },
+    "Moneda:": {
+        "en": "Currency:",
+        "pt": "Moeda:"
+    },
+    "P. Unitario": {
+        "en": "Unit price",
+        "pt": "Preço unitário"
+    },
+    "Representación impresa del comprobante electrónico": {
+        "en": "Printed representation of the electronic receipt",
+        "pt": "Representação impressa do comprovante eletrônico"
+    },
+    "Pagos": {
+        "en": "Payments",
+        "pt": "Pagamentos"
+    },
+    "Transparencia": {
+        "en": "Transparency",
+        "pt": "Transparência"
+    },
+    "Suscripción": {
+        "en": "Subscription",
+        "pt": "Assinatura"
+    },
+    "Culqi no está configurado.": {
+        "en": "Culqi is not configured.",
+        "pt": "Culqi não está configurado."
+    },
+    "Define": {
+        "en": "Define",
+        "pt": "Defina"
+    },
+    "y": {
+        "en": "and",
+        "pt": "e"
+    },
+    "en el archivo": {
+        "en": "in the file",
+        "pt": "no arquivo"
+    },
+    "Próximo cobro:": {
+        "en": "Next charge:",
+        "pt": "Próxima cobrança:"
+    },
+    "¿Cancelar la suscripción? La licencia seguirá activa hasta el fin del periodo actual.": {
+        "en": "Cancel the subscription? The license will remain active until the end of the current period.",
+        "pt": "Cancelar a assinatura? A licença permanecerá ativa até o fim do período atual."
+    },
+    "Cancelar suscripción": {
+        "en": "Cancel subscription",
+        "pt": "Cancelar assinatura"
+    },
+    "Elige tu plan": {
+        "en": "Choose your plan",
+        "pt": "Escolha seu plano"
+    },
+    "No hay planes activos.": {
+        "en": "There are no active plans.",
+        "pt": "Não há planos ativos."
+    },
+    "Datos del titular": {
+        "en": "Cardholder details",
+        "pt": "Dados do titular"
+    },
+    "Nombres": {
+        "en": "First name",
+        "pt": "Nome"
+    },
+    "Apellidos": {
+        "en": "Last name",
+        "pt": "Sobrenome"
+    },
+    "Ciudad": {
+        "en": "City",
+        "pt": "Cidade"
+    },
+    "Suscribirme y pagar con tarjeta": {
+        "en": "Subscribe and pay by card",
+        "pt": "Assinar e pagar com cartão"
+    },
+    "Pago y renovación automática gestionados por": {
+        "en": "Payment and automatic renewal managed by",
+        "pt": "Pagamento e renovação automática gerenciados por"
+    },
+    "Puedes cancelar cuando quieras.": {
+        "en": "You can cancel anytime.",
+        "pt": "Você pode cancelar quando quiser."
+    },
+    "Historial de pagos": {
+        "en": "Payment history",
+        "pt": "Histórico de pagamentos"
+    },
+    "Concepto": {
+        "en": "Concept",
+        "pt": "Descrição"
+    },
+    "Pagado": {
+        "en": "Paid",
+        "pt": "Pago"
+    },
+    "Fallido": {
+        "en": "Failed",
+        "pt": "Falhou"
+    },
+    "Pendiente": {
+        "en": "Pending",
+        "pt": "Pendente"
+    },
+    "Reembolsado": {
+        "en": "Refunded",
+        "pt": "Reembolsado"
+    },
+    "suscripción": {
+        "en": "subscription",
+        "pt": "assinatura"
+    },
+    "Error Culqi:": {
+        "en": "Culqi error:",
+        "pt": "Erro Culqi:"
+    },
+    "Pago no completado": {
+        "en": "Payment not completed",
+        "pt": "Pagamento não concluído"
+    },
+    "Transpariencia IA": {
+        "en": "AI Transparency",
+        "pt": "Transparência IA"
+    },
+    "Ej: ¿Cuánto se gastó en Luz en 2025 por unidad?": {
+        "en": "E.g.: How much was spent on Electricity in 2025 per unit?",
+        "pt": "Ex.: Quanto foi gasto em Energia em 2025 por unidade?"
+    },
+    "Consultar": {
+        "en": "Search",
+        "pt": "Consultar"
+    },
+    "Respuesta IA:": {
+        "en": "AI answer:",
+        "pt": "Resposta IA:"
+    },
+    "SQL ejecutado:": {
+        "en": "Executed SQL:",
+        "pt": "SQL executado:"
+    },
+    "Sin resultados.": {
+        "en": "No results.",
+        "pt": "Sem resultados."
+    }
+}

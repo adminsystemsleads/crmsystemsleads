@@ -15,7 +15,7 @@
     {{-- Toggle del menú lateral global (solo cuando está minimizado), alineado en la barra --}}
     <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
             class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
-            title="Mostrar menú" style="display:none;">
+            title="{{ __('Mostrar menú') }}" style="display:none;">
       <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
@@ -33,7 +33,7 @@
               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
-      Cuentas
+      {{ __('Cuentas') }}
     </a>
   </div>
 
@@ -44,7 +44,7 @@
   <div class="w-72 shrink-0 flex flex-col border-r border-gray-200">
 
     <div class="h-12 px-3 flex items-center border-b border-gray-100 bg-gray-50">
-      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">Conversaciones</span>
+      <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Conversaciones') }}</span>
       <a href="{{ route('whatsapp.accounts.index') }}"
          class="ml-auto text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
         <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,7 +52,7 @@
                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
-        Cuentas
+        {{ __('Cuentas') }}
       </a>
     </div>
 
@@ -60,7 +60,7 @@
       <form method="GET" action="{{ route('whatsapp.inbox.index') }}">
         <select name="account_id" onchange="this.form.submit()"
                 class="w-full text-xs rounded-lg border-gray-200 bg-gray-50 py-1.5 pr-6 text-gray-700">
-          <option value="">Todas las cuentas</option>
+          <option value="">{{ __('Todas las cuentas') }}</option>
           @foreach($accounts as $a)
             <option value="{{ $a->id }}" {{ (string)$accountId === (string)$a->id ? 'selected' : '' }}>
               {{ $a->name }}
@@ -71,7 +71,7 @@
     </div>
 
     <div class="flex border-b border-gray-100 bg-white shrink-0">
-      @foreach(['all' => 'Todo', 'open' => 'Abierto', 'closed' => 'Cerrado'] as $val => $label)
+      @foreach(['all' => __('Todo'), 'open' => __('Abierto'), 'closed' => __('Cerrado')] as $val => $label)
         <a href="{{ route('whatsapp.inbox.index') }}?status={{ $val }}{{ $accountId ? '&account_id='.$accountId : '' }}"
            class="flex-1 py-2 text-center text-xs font-medium transition
                   {{ $status === $val ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700' }}">
@@ -112,7 +112,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                   d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
           </svg>
-          <p class="text-sm text-gray-400">No hay conversaciones.</p>
+          <p class="text-sm text-gray-400">{{ __('No hay conversaciones.') }}</p>
         </div>
       @endforelse
     </div>
@@ -127,8 +127,8 @@
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
       </svg>
     </div>
-    <h3 class="text-sm font-semibold text-gray-700 mb-1">Selecciona una conversación</h3>
-    <p class="text-xs text-gray-400">Elige una conversación de la lista para ver los mensajes.</p>
+    <h3 class="text-sm font-semibold text-gray-700 mb-1">{{ __('Selecciona una conversación') }}</h3>
+    <p class="text-xs text-gray-400">{{ __('Elige una conversación de la lista para ver los mensajes.') }}</p>
   </div>
 
   </div>{{-- fin tres paneles --}}

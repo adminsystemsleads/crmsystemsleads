@@ -16,7 +16,7 @@
 
   {{-- Campo Mes --}}
   <div>
-    <label class="block text-sm text-gray-600 mb-1">Mes</label>
+    <label class="block text-sm text-gray-600 mb-1">{{ __('Mes') }}</label>
     <select name="mes" class="border rounded px-3 py-1.5 text-sm w-40">
       @foreach (range(1,12) as $m)
         <option value="{{ $m }}" {{ (int)$mes === (int)$m ? 'selected' : '' }}>
@@ -28,7 +28,7 @@
 
   {{-- Campo Año --}}
   <div>
-    <label class="block text-sm text-gray-600 mb-1">Año</label>
+    <label class="block text-sm text-gray-600 mb-1">{{ __('Año') }}</label>
     <input type="number" name="anio"
            class="border rounded px-3 py-1.5 text-sm w-28"
            value="{{ $anio }}">
@@ -37,7 +37,7 @@
   {{-- Botón --}}
   <div class="pt-5">
     <button class="bg-indigo-600 text-white px-5 py-1.5 rounded text-sm hover:bg-indigo-700">
-      Filtrar
+      {{ __('Filtrar') }}
     </button>
   </div>
 </form>
@@ -51,8 +51,8 @@
           <table class="w-full border text-sm md:text-base">
             <thead class="bg-gray-100">
               <tr>
-                <th class="border px-4 py-3 text-left">Categoría</th>
-                <th class="border px-4 py-3 text-right">Monto</th>
+                <th class="border px-4 py-3 text-left">{{ __('Categoría') }}</th>
+                <th class="border px-4 py-3 text-right">{{ __('Monto') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -68,7 +68,7 @@
               @empty
                 <tr>
                   <td colspan="4" class="text-center text-gray-500 py-6">
-                    Sin pagos verificados en este periodo.
+                    {{ __('Sin pagos verificados en este periodo.') }}
                   </td>
                 </tr>
               @endforelse
@@ -76,7 +76,7 @@
 
             <tfoot>
               <tr class="bg-gray-50 font-semibold">
-                <td colspan="1" class="border px-4 py-3 text-right">Total</td>
+                <td colspan="1" class="border px-4 py-3 text-right">{{ __('Total') }}</td>
                 <td class="border px-4 py-3 text-right">
                   S/ {{ number_format($total, 2) }}
                 </td>

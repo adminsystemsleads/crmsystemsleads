@@ -1,7 +1,7 @@
 <x-app-layout> 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Nueva negociación – {{ $pipeline->name }}
+            {{ __('Nueva negociación') }} – {{ $pipeline->name }}
         </h2>
     </x-slot>
 
@@ -13,7 +13,7 @@
 
                     {{-- Título --}}
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Título</label>
+                        <label class="block text-sm font-medium text-gray-700">{{ __('Título') }}</label>
                         <input type="text" name="title" value="{{ old('title') }}"
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         @error('title')
@@ -24,7 +24,7 @@
                     {{-- Monto / Moneda / Fecha cierre --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Monto</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('Monto') }}</label>
                             <input type="number" step="0.01" name="amount" value="{{ old('amount') }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @error('amount')
@@ -32,7 +32,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Moneda</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('Moneda') }}</label>
                             <input type="text" name="currency" value="{{ old('currency', 'PEN') }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @error('currency')
@@ -40,7 +40,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Fecha cierre (opcional)</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('Fecha cierre (opcional)') }}</label>
                             <input type="date" name="close_date" value="{{ old('close_date') }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @error('close_date')
@@ -51,11 +51,11 @@
 
                     {{-- Contacto existente (Select2) --}}
                     <div class="mb-2" x-show="!showNewContact">
-                        <label class="block text-sm font-medium text-gray-700">Contacto</label>
+                        <label class="block text-sm font-medium text-gray-700">{{ __('Contacto') }}</label>
                         <select name="contact_id"
                                 id="contact_id_create"
                                 class="select2-contact mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                            <option value="">-- Sin contacto --</option>
+                            <option value="">{{ __('-- Sin contacto --') }}</option>
                             @foreach($contacts as $contact)
                                 <option value="{{ $contact->id }}"
                                         {{ old('contact_id') == $contact->id ? 'selected' : '' }}>
@@ -72,12 +72,12 @@
                     {{-- Persona responsable (Select2 con miembros del team) --}}
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">
-                            Persona responsable
+                            {{ __('Persona responsable') }}
                         </label>
                         <select name="responsible_id"
                                 id="responsible_id_create"
                                 class="select2-contact mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                            <option value="">-- Sin responsable --</option>
+                            <option value="">{{ __('-- Sin responsable --') }}</option>
                             @foreach($teamMembers as $member)
                                 <option value="{{ $member->id }}"
                                     {{ old('responsible_id') == $member->id ? 'selected' : '' }}>
@@ -95,42 +95,42 @@
                         <button type="button"
                                 class="text-xs text-indigo-600 hover:text-indigo-800"
                                 @click="showNewContact = !showNewContact">
-                            <span x-show="!showNewContact">+ Crear nuevo contacto</span>
-                            <span x-show="showNewContact">← Usar lista de contactos</span>
+                            <span x-show="!showNewContact">{{ __('+ Crear nuevo contacto') }}</span>
+                            <span x-show="showNewContact">{{ __('← Usar lista de contactos') }}</span>
                         </button>
                     </div>
 
                     {{-- Nuevo contacto (opcional) --}}
                     <div class="mb-4 border rounded-md p-4 bg-gray-50" x-show="showNewContact">
-                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Nuevo contacto</h3>
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">{{ __('Nuevo contacto') }}</h3>
 
                         <div class="mb-3">
-                            <label class="block text-xs font-medium text-gray-700">Nombre</label>
+                            <label class="block text-xs font-medium text-gray-700">{{ __('Nombre') }}</label>
                             <input type="text" name="new_contact_name" value="{{ old('new_contact_name') }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-700">Email</label>
+                                <label class="block text-xs font-medium text-gray-700">{{ __('Email') }}</label>
                                 <input type="email" name="new_contact_email" value="{{ old('new_contact_email') }}"
                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-700">Teléfono</label>
+                                <label class="block text-xs font-medium text-gray-700">{{ __('Teléfono') }}</label>
                                 <input type="text" name="new_contact_phone" value="{{ old('new_contact_phone') }}"
                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
                             </div>
                         </div>
 
                         <p class="mt-2 text-[11px] text-gray-500">
-                            Si llenas estos datos, se creará un nuevo contacto y se usará en esta negociación.
+                            {{ __('Si llenas estos datos, se creará un nuevo contacto y se usará en esta negociación.') }}
                         </p>
                     </div>
 
                     {{-- Fase --}}
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Fase</label>
+                        <label class="block text-sm font-medium text-gray-700">{{ __('Fase') }}</label>
                         <select name="stage_id"
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @foreach($stages as $stage)
@@ -147,7 +147,7 @@
 
                     {{-- Descripción --}}
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Descripción</label>
+                        <label class="block text-sm font-medium text-gray-700">{{ __('Descripción') }}</label>
                         <textarea name="description" rows="3"
                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">{{ old('description') }}</textarea>
                         @error('description')
@@ -159,11 +159,11 @@
                     <div class="flex justify-end space-x-2">
                         <a href="{{ route('pipelines.kanban', $pipeline) }}"
                            class="px-4 py-2 border rounded-md text-gray-700">
-                            Cancelar
+                            {{ __('Cancelar') }}
                         </a>
                         <button type="submit"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Guardar
+                            {{ __('Guardar') }}
                         </button>
                     </div>
                 </form>
@@ -179,7 +179,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             $('.select2-contact').select2({
-                placeholder: '-- Seleccione --',
+                placeholder: '{{ __('-- Seleccione --') }}',
                 allowClear: true,
                 width: '100%'
             });

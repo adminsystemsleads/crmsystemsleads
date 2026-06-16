@@ -36,13 +36,13 @@
 
         @if (session('warning'))
           <div class="mb-4 rounded-md bg-yellow-50 border border-yellow-200 p-3 text-yellow-800 whitespace-pre-line">
-            ⚠️ <strong>Aviso:</strong> {!! session('warning') !!}
+            ⚠️ <strong>{{ __('Aviso:') }}</strong> {!! session('warning') !!}
           </div>
         @endif
 
         @if (session('error'))
           <div class="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-red-800">
-            ❌ <strong>Error:</strong> {{ session('error') }}
+            ❌ <strong>{{ __('Error:') }}</strong> {{ session('error') }}
           </div>
         @endif
 
@@ -50,7 +50,7 @@
           @csrf
 
           <div class="grid gap-2">
-            <label class="text-sm font-medium text-gray-700">Archivo (.xlsx, .xls, .csv)</label>
+            <label class="text-sm font-medium text-gray-700">{{ __('Archivo (.xlsx, .xls, .csv)') }}</label>
             <input type="file" name="file" accept=".xlsx,.xls,.csv" required
                    class="block w-full border rounded px-3 py-2">
             @error('file')
@@ -60,46 +60,45 @@
 
           {{-- Instrucciones / Formato --}}
           <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800">
-            <h3 class="font-semibold mb-2">Instrucciones y formato del archivo</h3>
+            <h3 class="font-semibold mb-2">{{ __('Instrucciones y formato del archivo') }}</h3>
 
             <p class="mb-2">
-              El archivo debe estar en formato “ancho”: cada <b>columna</b> (después de <code>unidad</code>, <code>mes</code>, <code>anio</code> y opcional <code>descripcion</code>)
-              representa una <b>categoría</b> existente en el condominio, y cada <b>celda</b> contiene el <b>monto</b> para esa categoría.
+              {{ __('El archivo debe estar en formato “ancho”: cada') }} <b>{{ __('columna') }}</b> ({{ __('después de') }} <code>unidad</code>, <code>mes</code>, <code>anio</code> {{ __('y opcional') }} <code>descripcion</code>)
+              {{ __('representa una') }} <b>{{ __('categoría') }}</b> {{ __('existente en el condominio, y cada') }} <b>{{ __('celda') }}</b> {{ __('contiene el') }} <b>{{ __('monto') }}</b> {{ __('para esa categoría.') }}
             </p>
 
             <ul class="list-disc ml-5 space-y-1">
               <li>
-                <b>Encabezados obligatorios:</b>
+                <b>{{ __('Encabezados obligatorios:') }}</b>
                 <code class="bg-white/60 px-1.5 py-0.5 rounded border">unidad</code>,
                 <code class="bg-white/60 px-1.5 py-0.5 rounded border">mes</code>,
                 <code class="bg-white/60 px-1.5 py-0.5 rounded border">anio</code>.
-                (Opcional: <code class="bg-white/60 px-1.5 py-0.5 rounded border">descripcion</code>)
+                ({{ __('Opcional:') }} <code class="bg-white/60 px-1.5 py-0.5 rounded border">descripcion</code>)
               </li>
               <li>
-                <b>unidad</b> puede ir vacía: en ese caso el gasto se registra como <b>general</b> (sin unidad). Si está vacía y hay columna
-                <code>descripcion</code>, se guardará solo en gastos generales.
+                <b>unidad</b> {{ __('puede ir vacía: en ese caso el gasto se registra como') }} <b>{{ __('general') }}</b> {{ __('(sin unidad). Si está vacía y hay columna') }}
+                <code>descripcion</code>, {{ __('se guardará solo en gastos generales.') }}
               </li>
               <li>
-                <b>mes</b> acepta nombre (<i>Enero… Diciembre</i>) o número (<i>1…12</i>). En base de datos se guarda como número (1–12).
+                <b>mes</b> {{ __('acepta nombre') }} (<i>{{ __('Enero… Diciembre') }}</i>) {{ __('o número') }} (<i>1…12</i>). {{ __('En base de datos se guarda como número (1–12).') }}
               </li>
               <li>
-                <b>anio</b> debe ser numérico (por ejemplo, <i>2025</i>). En base de datos se guarda como entero.
+                <b>anio</b> {{ __('debe ser numérico (por ejemplo,') }} <i>2025</i>). {{ __('En base de datos se guarda como entero.') }}
               </li>
               <li>
-                <b>Categorías:</b> agrega una columna por cada categoría ya creada en tu condominio. El nombre debe coincidir con el de la
-                categoría; el sistema es tolerante a <i>mayúsculas/acentos/espacios</i> (se normalizan internamente).
+                <b>{{ __('Categorías:') }}</b> {{ __('agrega una columna por cada categoría ya creada en tu condominio. El nombre debe coincidir con el de la categoría; el sistema es tolerante a') }} <i>{{ __('mayúsculas/acentos/espacios') }}</i> {{ __('(se normalizan internamente).') }}
               </li>
               <li>
-                Las celdas vacías o con <i>0</i> no generan gasto. Las columnas que no coincidan con ninguna categoría existente se ignoran.
+                {{ __('Las celdas vacías o con') }} <i>0</i> {{ __('no generan gasto. Las columnas que no coincidan con ninguna categoría existente se ignoran.') }}
               </li>
               <li>
-                Si <b>unidad</b> tiene un valor que no existe en tu condominio, la fila se omitirá y se reportará en los mensajes de advertencia.
+                {{ __('Si') }} <b>unidad</b> {{ __('tiene un valor que no existe en tu condominio, la fila se omitirá y se reportará en los mensajes de advertencia.') }}
               </li>
             </ul>
 
             {{-- Vista previa de encabezados esperados --}}
             <div class="mt-3">
-              <p class="font-semibold mb-1">Ejemplo de encabezados (según tus categorías actuales):</p>
+              <p class="font-semibold mb-1">{{ __('Ejemplo de encabezados (según tus categorías actuales):') }}</p>
               <div class="rounded border bg-white p-3 overflow-x-auto">
                 <code class="whitespace-nowrap">
                   unidad, mes, anio, descripcion
@@ -108,8 +107,8 @@
                 </code>
               </div>
               <p class="text-xs text-gray-600 mt-2">
-                Puedes incluir <b>todas</b> tus categorías como columnas (no hay límite práctico).
-                El sistema tomará únicamente las columnas que coincidan con categorías existentes.
+                {{ __('Puedes incluir') }} <b>{{ __('todas') }}</b> {{ __('tus categorías como columnas (no hay límite práctico).') }}
+                {{ __('El sistema tomará únicamente las columnas que coincidan con categorías existentes.') }}
               </p>
             </div>
           </div>
@@ -117,7 +116,7 @@
           <div class="flex items-center gap-3">
             <button type="submit"
                     class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-              Importar
+              {{ __('Importar') }}
             </button>
           </div>
         </form>
@@ -127,7 +126,7 @@
           <button type="button"
                   @click="open = !open"
                   class="text-indigo-600 hover:text-indigo-700 font-medium">
-            Ver todas las categorías del condominio ({{ count($categorias) }})
+            {{ __('Ver todas las categorías del condominio') }} ({{ count($categorias) }})
           </button>
           <div x-show="open" x-cloak class="mt-2 rounded border border-gray-200 p-3 bg-white">
             @if(count($categorias))
@@ -137,7 +136,7 @@
                 @endforeach
               </div>
             @else
-              <p class="text-gray-500">Aún no has creado categorías.</p>
+              <p class="text-gray-500">{{ __('Aún no has creado categorías.') }}</p>
             @endif
           </div>
         </div>

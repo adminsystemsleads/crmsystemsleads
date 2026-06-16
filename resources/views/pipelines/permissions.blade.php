@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Permisos del embudo – {{ $pipeline->name }}
+            {{ __('Permisos del embudo') }} – {{ $pipeline->name }}
         </h2>
     </x-slot>
 
@@ -10,7 +10,7 @@
 
             <a href="{{ route('pipelines.kanban', $pipeline) }}"
                class="text-sm text-gray-600 hover:text-gray-900">
-                ← Volver al Kanban
+                ← {{ __('Volver al Kanban') }}
             </a>
 
             @if(session('status'))
@@ -27,8 +27,8 @@
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6 mt-4">
                 <p class="text-sm text-gray-600 mb-6">
-                    Define qué usuarios del equipo pueden ver, editar, eliminar negociaciones y configurar este embudo.
-                    El propietario del equipo siempre tiene todos los permisos por defecto.
+                    {{ __('Define qué usuarios del equipo pueden ver, editar, eliminar negociaciones y configurar este embudo.') }}
+                    {{ __('El propietario del equipo siempre tiene todos los permisos por defecto.') }}
                 </p>
 
                 {{-- ✅ IMPORTANTE: EL BOTÓN DEBE ESTAR DENTRO DEL FORM --}}
@@ -40,11 +40,11 @@
                         <table class="min-w-full text-sm">
                             <thead>
                                 <tr class="border-b">
-                                    <th class="text-left py-2 pr-4">Usuario</th>
-                                    <th class="text-center py-2 px-2">Ver</th>
-                                    <th class="text-center py-2 px-2">Editar</th>
-                                    <th class="text-center py-2 px-2">Eliminar</th>
-                                    <th class="text-center py-2 px-2">Configurar embudo</th>
+                                    <th class="text-left py-2 pr-4">{{ __('Usuario') }}</th>
+                                    <th class="text-center py-2 px-2">{{ __('Ver') }}</th>
+                                    <th class="text-center py-2 px-2">{{ __('Editar') }}</th>
+                                    <th class="text-center py-2 px-2">{{ __('Eliminar') }}</th>
+                                    <th class="text-center py-2 px-2">{{ __('Configurar embudo') }}</th>
                                 </tr>
                             </thead>
 
@@ -76,17 +76,17 @@
 
                                                 @if($isOwner)
                                                     <span class="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
-                                                        Owner
+                                                        {{ __('Owner') }}
                                                     </span>
                                                 @elseif($isAdmin)
                                                     <span class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">
-                                                        Admin
+                                                        {{ __('Admin') }}
                                                     </span>
                                                 @endif
                                             </div>
                                             @if($locked)
                                                 <div class="text-[11px] text-gray-500 mt-1">
-                                                    (Siempre tiene permisos completos)
+                                                    {{ __('(Siempre tiene permisos completos)') }}
                                                 </div>
                                             @endif
                                         </td>
@@ -135,7 +135,7 @@
                     <div class="flex justify-end mt-6">
                         <button type="submit"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Guardar permisos
+                            {{ __('Guardar permisos') }}
                         </button>
                     </div>
                 </form>

@@ -8,14 +8,14 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
-    <h1 class="text-xl font-bold text-gray-900">Nueva Factura / Boleta</h1>
+    <h1 class="text-xl font-bold text-gray-900">{{ __('Nueva Factura / Boleta') }}</h1>
     <span class="text-sm text-gray-400">— {{ $deal->title }}</span>
   </div>
 
   @if(!$config)
     <div class="mb-6 rounded-lg bg-amber-50 border border-amber-200 px-4 py-4 text-sm text-amber-800">
-      <strong>Falta configuración:</strong> antes de emitir comprobantes debes
-      <a href="{{ route('invoice-config.edit') }}" class="font-semibold underline">configurar tus datos SUNAT</a>.
+      <strong>{{ __('Falta configuración:') }}</strong> {{ __('antes de emitir comprobantes debes') }}
+      <a href="{{ route('invoice-config.edit') }}" class="font-semibold underline">{{ __('configurar tus datos SUNAT') }}</a>.
     </div>
   @endif
 
@@ -36,40 +36,40 @@
 
         {{-- Tipo de comprobante --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
-          <h2 class="text-sm font-bold text-gray-800">Comprobante</h2>
+          <h2 class="text-sm font-bold text-gray-800">{{ __('Comprobante') }}</h2>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo *</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Tipo *') }}</label>
               <select name="tipo_doc" x-model="tipoDoc" class="w-full rounded-lg border-gray-200 text-sm py-2">
-                <option value="01">Factura</option>
-                <option value="03">Boleta de Venta</option>
+                <option value="01">{{ __('Factura') }}</option>
+                <option value="03">{{ __('Boleta de Venta') }}</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Moneda *</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Moneda *') }}</label>
               <select name="moneda" x-model="moneda" class="w-full rounded-lg border-gray-200 text-sm py-2">
-                <option value="PEN">PEN — Soles</option>
-                <option value="USD">USD — Dólares</option>
+                <option value="PEN">{{ __('PEN — Soles') }}</option>
+                <option value="USD">{{ __('USD — Dólares') }}</option>
               </select>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Fecha emisión *</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Fecha emisión *') }}</label>
               <input type="date" name="fecha_emision" x-model="fechaEmision" required
                      class="w-full rounded-lg border-gray-200 text-sm py-2">
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Fecha vencimiento</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Fecha vencimiento') }}</label>
               <input type="date" name="fecha_vencimiento"
                      class="w-full rounded-lg border-gray-200 text-sm py-2">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">% IGV</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('% IGV') }}</label>
             <input type="number" name="igv_porcentaje" x-model="igvPct"
                    min="0" max="100" step="0.01" @change="recalculate()"
                    class="w-full rounded-lg border-gray-200 text-sm py-2" value="18">
@@ -78,21 +78,21 @@
 
         {{-- Datos del cliente --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
-          <h2 class="text-sm font-bold text-gray-800">Datos del cliente</h2>
+          <h2 class="text-sm font-bold text-gray-800">{{ __('Datos del cliente') }}</h2>
 
           <div class="grid grid-cols-3 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo doc *</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Tipo doc *') }}</label>
               <select name="cliente_tipo_doc" x-model="clienteTipoDoc"
                       class="w-full rounded-lg border-gray-200 text-sm py-2">
-                <option value="1">DNI</option>
-                <option value="6">RUC</option>
-                <option value="4">CE</option>
-                <option value="0">Otros</option>
+                <option value="1">{{ __('DNI') }}</option>
+                <option value="6">{{ __('RUC') }}</option>
+                <option value="4">{{ __('CE') }}</option>
+                <option value="0">{{ __('Otros') }}</option>
               </select>
             </div>
             <div class="col-span-2">
-              <label class="block text-xs font-semibold text-gray-600 mb-1">N° documento *</label>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('N° documento *') }}</label>
               <input type="text" name="cliente_num_doc" x-model="clienteNumDoc"
                      required maxlength="15"
                      class="w-full rounded-lg border-gray-200 text-sm py-2">
@@ -100,20 +100,20 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Razón social / Nombre *</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Razón social / Nombre *') }}</label>
             <input type="text" name="cliente_razon_social" x-model="clienteRazonSocial"
                    required maxlength="250"
                    class="w-full rounded-lg border-gray-200 text-sm py-2">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Dirección</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Dirección') }}</label>
             <input type="text" name="cliente_direccion" maxlength="250"
                    class="w-full rounded-lg border-gray-200 text-sm py-2">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Observaciones</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Observaciones') }}</label>
             <textarea name="observaciones" rows="2" maxlength="1000"
                       class="w-full rounded-lg border-gray-200 text-sm py-2"></textarea>
           </div>
@@ -124,10 +124,10 @@
       <div class="space-y-5">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-sm font-bold text-gray-800">Líneas del comprobante</h2>
+            <h2 class="text-sm font-bold text-gray-800">{{ __('Líneas del comprobante') }}</h2>
             <button type="button" @click="addItem()"
                     class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
-              + Agregar línea
+              {{ __('+ Agregar línea') }}
             </button>
           </div>
 
@@ -136,7 +136,7 @@
               <div class="border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50">
                 <div class="flex items-start gap-2">
                   <div class="flex-1">
-                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Descripción *</label>
+                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">{{ __('Descripción *') }}</label>
                     <input type="text" :name="`items[${idx}][descripcion]`" x-model="item.descripcion"
                            required maxlength="250"
                            class="w-full rounded border-gray-200 text-xs py-1.5">
@@ -151,65 +151,65 @@
 
                 <div class="grid grid-cols-4 gap-2">
                   <div>
-                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Unidad</label>
+                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">{{ __('Unidad') }}</label>
                     <input type="text" :name="`items[${idx}][unidad]`" x-model="item.unidad"
                            maxlength="10" class="w-full rounded border-gray-200 text-xs py-1.5">
                     <input type="hidden" :name="`items[${idx}][cod_producto]`" x-model="item.cod_producto">
                   </div>
                   <div>
-                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Cantidad</label>
+                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">{{ __('Cantidad') }}</label>
                     <input type="number" :name="`items[${idx}][cantidad]`" x-model="item.cantidad"
                            min="0.01" step="0.01" @change="recalculate()"
                            class="w-full rounded border-gray-200 text-xs py-1.5">
                   </div>
                   <div>
-                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">P.Unit (c/IGV)</label>
+                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">{{ __('P.Unit (c/IGV)') }}</label>
                     <input type="number" :name="`items[${idx}][precio_unitario]`" x-model="item.precio_unitario"
                            min="0" step="0.01" @change="recalculate()"
                            class="w-full rounded border-gray-200 text-xs py-1.5">
                   </div>
                   <div>
-                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">Afectación</label>
+                    <label class="block text-[10px] font-semibold text-gray-500 mb-0.5">{{ __('Afectación') }}</label>
                     <select :name="`items[${idx}][tip_afe_igv]`" x-model="item.tip_afe_igv" @change="recalculate()"
                             class="w-full rounded border-gray-200 text-xs py-1.5">
-                      <option value="10">Gravado</option>
-                      <option value="20">Exonerado</option>
-                      <option value="30">Inafecto</option>
+                      <option value="10">{{ __('Gravado') }}</option>
+                      <option value="20">{{ __('Exonerado') }}</option>
+                      <option value="30">{{ __('Inafecto') }}</option>
                     </select>
                   </div>
                 </div>
 
                 <div class="text-right text-xs text-gray-500">
-                  Subtotal: <span class="font-semibold text-gray-800" x-text="moneda + ' ' + itemTotal(item).toFixed(2)"></span>
+                  {{ __('Subtotal:') }} <span class="font-semibold text-gray-800" x-text="moneda + ' ' + itemTotal(item).toFixed(2)"></span>
                 </div>
               </div>
             </template>
 
             <template x-if="items.length === 0">
-              <p class="text-center text-xs text-gray-400 py-4">Sin líneas. Agrega al menos una.</p>
+              <p class="text-center text-xs text-gray-400 py-4">{{ __('Sin líneas. Agrega al menos una.') }}</p>
             </template>
           </div>
 
           {{-- Totales --}}
           <div class="mt-4 border-t pt-3 space-y-1 text-sm">
             <div class="flex justify-between text-gray-600">
-              <span>Op. Gravadas</span>
+              <span>{{ __('Op. Gravadas') }}</span>
               <span x-text="moneda + ' ' + opGravadas.toFixed(2)"></span>
             </div>
             <div class="flex justify-between text-gray-600" x-show="opExoneradas > 0">
-              <span>Op. Exoneradas</span>
+              <span>{{ __('Op. Exoneradas') }}</span>
               <span x-text="moneda + ' ' + opExoneradas.toFixed(2)"></span>
             </div>
             <div class="flex justify-between text-gray-600" x-show="opInafectas > 0">
-              <span>Op. Inafectas</span>
+              <span>{{ __('Op. Inafectas') }}</span>
               <span x-text="moneda + ' ' + opInafectas.toFixed(2)"></span>
             </div>
             <div class="flex justify-between text-gray-600">
-              <span>IGV (<span x-text="igvPct"></span>%)</span>
+              <span>{{ __('IGV') }} (<span x-text="igvPct"></span>%)</span>
               <span x-text="moneda + ' ' + totalIgv.toFixed(2)"></span>
             </div>
             <div class="flex justify-between font-bold text-gray-900 text-base border-t pt-1">
-              <span>TOTAL</span>
+              <span>{{ __('TOTAL') }}</span>
               <span x-text="moneda + ' ' + grandTotal.toFixed(2)"></span>
             </div>
           </div>
@@ -218,11 +218,11 @@
         <div class="flex gap-3 justify-end">
           <a href="{{ route('deals.edit', [$pipeline, $deal]) }}"
              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">
-            Cancelar
+            {{ __('Cancelar') }}
           </a>
           <button type="submit"
                   class="px-6 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition">
-            Generar comprobante
+            {{ __('Generar comprobante') }}
           </button>
         </div>
       </div>
@@ -308,7 +308,7 @@ function invoiceForm() {
     },
     submitForm() {
       if (this.items.length === 0) {
-        alert('Debes agregar al menos una línea.');
+        alert('{{ __('Debes agregar al menos una línea.') }}');
         return;
       }
       this.$el.submit();

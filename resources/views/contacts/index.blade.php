@@ -1,28 +1,28 @@
 <x-app-layout>
   <x-slot name="header">
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-lg font-semibold text-gray-800">Contactos</h2>
+      <h2 class="text-lg font-semibold text-gray-800">{{ __('Contactos') }}</h2>
       <div class="flex flex-wrap gap-2">
         <a href="{{ route('contacts.export', request()->query()) }}"
            class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
           </svg>
-          Exportar CSV
+          {{ __('Exportar CSV') }}
         </a>
         <a href="{{ route('contacts.import.form') }}"
            class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
           </svg>
-          Importar CSV
+          {{ __('Importar CSV') }}
         </a>
         <a href="{{ route('contacts.create') }}"
            class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition">
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
           </svg>
-          Nuevo contacto
+          {{ __('Nuevo contacto') }}
         </a>
       </div>
     </div>
@@ -47,24 +47,24 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
           <input type="text" name="q" value="{{ $q }}"
-                 placeholder="Buscar por nombre, email, teléfono…"
+                 placeholder="{{ __('Buscar por nombre, email, teléfono…') }}"
                  class="w-full py-2 text-sm border border-gray-200 rounded-lg bg-white focus:ring-indigo-400 focus:border-indigo-400"
                  style="padding-left: 38px; padding-right: 12px;">
         </div>
         <select name="status" onchange="this.form.submit()"
                 class="text-sm border border-gray-200 rounded-lg py-2 bg-white text-gray-700"
                 style="padding-left: 12px; padding-right: 32px;">
-          <option value="">Todos los estados</option>
-          @foreach(['nuevo' => 'Nuevo', 'activo' => 'Activo', 'cliente' => 'Cliente', 'inactivo' => 'Inactivo', 'perdido' => 'Perdido'] as $val => $label)
+          <option value="">{{ __('Todos los estados') }}</option>
+          @foreach(['nuevo' => __('Nuevo'), 'activo' => __('Activo'), 'cliente' => __('Cliente'), 'inactivo' => __('Inactivo'), 'perdido' => __('Perdido')] as $val => $label)
             <option value="{{ $val }}" {{ $status === $val ? 'selected' : '' }}>{{ $label }}</option>
           @endforeach
         </select>
         <button type="submit"
                 class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm hover:bg-gray-700 transition">
-          Buscar
+          {{ __('Buscar') }}
         </button>
         @if($q || $status)
-          <a href="{{ route('contacts.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Limpiar</a>
+          <a href="{{ route('contacts.index') }}" class="text-sm text-gray-500 hover:text-gray-700">{{ __('Limpiar') }}</a>
         @endif
       </form>
     </div>
@@ -74,12 +74,12 @@
       <table class="min-w-full divide-y divide-gray-100 text-sm">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Contacto</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden md:table-cell">Teléfono</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden lg:table-cell">Empresa</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden lg:table-cell">Origen</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Estado</th>
-            <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 hidden sm:table-cell">Negocios</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Contacto') }}</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden md:table-cell">{{ __('Teléfono') }}</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden lg:table-cell">{{ __('Empresa') }}</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden lg:table-cell">{{ __('Origen') }}</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Estado') }}</th>
+            <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500 hidden sm:table-cell">{{ __('Negocios') }}</th>
             <th class="px-4 py-3"></th>
           </tr>
         </thead>
@@ -153,7 +153,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                   </svg>
-                  Editar
+                  {{ __('Editar') }}
                 </a>
               </td>
             </tr>
@@ -164,9 +164,9 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <p class="text-sm text-gray-400">No se encontraron contactos.</p>
+                <p class="text-sm text-gray-400">{{ __('No se encontraron contactos.') }}</p>
                 <a href="{{ route('contacts.create') }}" class="mt-2 inline-block text-sm text-indigo-600 hover:underline">
-                  Crear el primero →
+                  {{ __('Crear el primero →') }}
                 </a>
               </td>
             </tr>

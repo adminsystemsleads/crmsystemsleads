@@ -15,21 +15,21 @@
     <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-1">
-                <label for="name" class="block text-sm font-medium text-gray-700">Nombre del rol</label>
+                <label for="name" class="block text-sm font-medium text-gray-700">{{ __('Nombre del rol') }}</label>
                 <input id="name" name="name" type="text" required maxlength="120"
                        value="{{ old('name', $role->name) }}"
                        @if ($role->is_default) readonly @endif
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @if ($role->is_default) bg-gray-50 cursor-not-allowed @endif">
                 @if ($role->is_default)
-                    <p class="text-[11px] text-gray-500 mt-1">El nombre del rol Administrador no se puede modificar.</p>
+                    <p class="text-[11px] text-gray-500 mt-1">{{ __('El nombre del rol Administrador no se puede modificar.') }}</p>
                 @endif
             </div>
             <div class="md:col-span-2">
-                <label for="description" class="block text-sm font-medium text-gray-700">Descripción <span class="text-gray-400 text-xs">(opcional)</span></label>
+                <label for="description" class="block text-sm font-medium text-gray-700">{{ __('Descripción') }} <span class="text-gray-400 text-xs">{{ __('(opcional)') }}</span></label>
                 <input id="description" name="description" type="text" maxlength="255"
                        value="{{ old('description', $role->description) }}"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                       placeholder="Ej: Acceso completo a contactos y embudos, sin facturación">
+                       placeholder="{{ __('Ej: Acceso completo a contactos y embudos, sin facturación') }}">
             </div>
         </div>
     </div>
@@ -38,16 +38,16 @@
     <div class="bg-white shadow-sm sm:rounded-lg p-6">
         <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
             <div>
-                <h3 class="text-sm font-semibold text-gray-900">Permisos del rol</h3>
-                <p class="text-xs text-gray-500 mt-0.5">Marca cada acción que este rol puede realizar.</p>
+                <h3 class="text-sm font-semibold text-gray-900">{{ __('Permisos del rol') }}</h3>
+                <p class="text-xs text-gray-500 mt-0.5">{{ __('Marca cada acción que este rol puede realizar.') }}</p>
             </div>
             @unless ($role->is_default)
                 <div class="flex gap-2 text-xs">
                     <button type="button" @click="selectAll()" class="px-3 py-1.5 rounded-md border border-gray-200 hover:bg-gray-50 text-gray-700">
-                        Marcar todo
+                        {{ __('Marcar todo') }}
                     </button>
                     <button type="button" @click="selectNone()" class="px-3 py-1.5 rounded-md border border-gray-200 hover:bg-gray-50 text-gray-700">
-                        Quitar todo
+                        {{ __('Quitar todo') }}
                     </button>
                 </div>
             @endunless
@@ -56,7 +56,7 @@
         @if ($role->is_default)
             <div class="mb-4 p-3 rounded-md text-xs"
                  style="background-color:#FBF7EC; color:#A08544; border:1px solid rgba(201,169,97,.35);">
-                ⚠️ El rol <strong>Administrador</strong> siempre tiene acceso completo. Los permisos están bloqueados para garantizar que el sistema nunca quede sin alguien que pueda administrarlo.
+                ⚠️ {{ __('El rol') }} <strong>{{ __('Administrador') }}</strong> {{ __('siempre tiene acceso completo. Los permisos están bloqueados para garantizar que el sistema nunca quede sin alguien que pueda administrarlo.') }}
             </div>
         @endif
 
@@ -80,7 +80,7 @@
                         @unless ($role->is_default)
                             <button type="button" @click="toggleGroup('{{ $groupKey }}')"
                                     class="text-xs text-gray-500 hover:text-gray-700">
-                                Marcar/desmarcar grupo
+                                {{ __('Marcar/desmarcar grupo') }}
                             </button>
                         @endunless
                     </div>
@@ -115,15 +115,14 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <p class="text-xs" style="color:#7a6132;">
-                                    <strong>Acceso restringido por embudo.</strong> Sin <em>Ver todos los embudos</em> activado,
-                                    este rol solo verá los embudos que marques aquí abajo. Si no marcas ninguno, no verá ningún embudo.
+                                    <strong>{{ __('Acceso restringido por embudo.') }}</strong> {{ __('Sin') }} <em>{{ __('Ver todos los embudos') }}</em> {{ __('activado, este rol solo verá los embudos que marques aquí abajo. Si no marcas ninguno, no verá ningún embudo.') }}
                                 </p>
                             </div>
 
                             @if (count($teamPipelines) === 0)
                                 <p class="text-xs text-gray-500 italic">
-                                    Este equipo aún no tiene embudos creados.
-                                    <a href="{{ route('pipelines.create') }}" class="underline" style="color:#1E2E48;">Crear el primero</a>.
+                                    {{ __('Este equipo aún no tiene embudos creados.') }}
+                                    <a href="{{ route('pipelines.create') }}" class="underline" style="color:#1E2E48;">{{ __('Crear el primero') }}</a>.
                                 </p>
                             @else
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -136,7 +135,7 @@
                                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                                             <span class="text-gray-800">{{ $pl->name }}</span>
                                             @unless ($pl->is_active)
-                                                <span class="text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 ml-auto">Inactivo</span>
+                                                <span class="text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 ml-auto">{{ __('Inactivo') }}</span>
                                             @endunless
                                         </label>
                                     @endforeach
@@ -154,13 +153,13 @@
            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md transition bg-white"
            style="color:#dc2626; border:1.5px solid #dc2626;"
            onmouseover="this.style.backgroundColor='#fef2f2'"
-           onmouseout="this.style.backgroundColor='#fff'">Cancelar</a>
+           onmouseout="this.style.backgroundColor='#fff'">{{ __('Cancelar') }}</a>
         <button type="submit"
                 class="px-5 py-2 text-white text-sm rounded-md transition"
                 style="background-color: #1E2E48;"
                 onmouseover="this.style.backgroundColor='#152139'"
                 onmouseout="this.style.backgroundColor='#1E2E48'">
-            {{ $role->exists ? 'Guardar cambios' : 'Crear rol' }}
+            {{ $role->exists ? __('Guardar cambios') : __('Crear rol') }}
         </button>
     </div>
 </form>

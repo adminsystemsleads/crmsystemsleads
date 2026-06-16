@@ -1,6 +1,6 @@
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Conectar WhatsApp Cloud API</h2>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Conectar WhatsApp Cloud API') }}</h2>
   </x-slot>
 
   <div class="py-8">
@@ -11,7 +11,7 @@
           @csrf
 
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700">Nombre interno</label>
+            <label class="block text-sm font-medium text-gray-700">{{ __('Nombre interno') }}</label>
             <input name="name" value="{{ old('name') }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
             @error('name') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
           </div>
@@ -24,11 +24,11 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">WABA ID (opcional)</label>
+              <label class="block text-sm font-medium text-gray-700">WABA ID ({{ __('opcional') }})</label>
               <input name="waba_id" value="{{ old('waba_id') }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Business ID (opcional)</label>
+              <label class="block text-sm font-medium text-gray-700">Business ID ({{ __('opcional') }})</label>
               <input name="business_id" value="{{ old('business_id') }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
             </div>
           </div>
@@ -40,13 +40,13 @@
           </div>
 
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700">Verify Token (para webhook)</label>
+            <label class="block text-sm font-medium text-gray-700">Verify Token ({{ __('para webhook') }})</label>
             <input name="verify_token" value="{{ old('verify_token') }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
             @error('verify_token') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
           </div>
 
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700">Pipeline destino</label>
+            <label class="block text-sm font-medium text-gray-700">{{ __('Pipeline destino') }}</label>
             <select name="pipeline_id" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
               @foreach($pipelines as $p)
                 <option value="{{ $p->id }}" {{ old('pipeline_id') == $p->id ? 'selected' : '' }}>
@@ -59,14 +59,14 @@
 
           {{-- Asignación equitativa de negociaciones --}}
           <div class="mb-6 p-4 rounded-lg border border-indigo-100 bg-indigo-50/40">
-            <label class="block text-sm font-semibold text-gray-800 mb-1">Usuarios para asignar negociaciones</label>
+            <label class="block text-sm font-semibold text-gray-800 mb-1">{{ __('Usuarios para asignar negociaciones') }}</label>
             <p class="text-xs text-gray-500 mb-3">
-              Las nuevas negociaciones que entren por este WhatsApp se asignarán automáticamente
-              <strong>de forma equitativa (round-robin)</strong> entre los usuarios marcados.
+              {{ __('Las nuevas negociaciones que entren por este WhatsApp se asignarán automáticamente') }}
+              <strong>{{ __('de forma equitativa (round-robin)') }}</strong> {{ __('entre los usuarios marcados.') }}
             </p>
 
             @if($teamMembers->isEmpty())
-              <p class="text-xs text-gray-400">No hay miembros en este equipo todavía.</p>
+              <p class="text-xs text-gray-400">{{ __('No hay miembros en este equipo todavía.') }}</p>
             @else
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
                 @foreach($teamMembers as $member)
@@ -84,12 +84,12 @@
 
           <div class="mb-6 flex items-center gap-2">
             <input type="checkbox" name="is_active" value="1" {{ old('is_active', 1) ? 'checked' : '' }}>
-            <span class="text-sm text-gray-700">Activo</span>
+            <span class="text-sm text-gray-700">{{ __('Activo') }}</span>
           </div>
 
           <div class="flex justify-end gap-2">
-            <a href="{{ route('whatsapp.accounts.index') }}" class="px-4 py-2 border rounded-md text-gray-700">Cancelar</a>
-            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Guardar</button>
+            <a href="{{ route('whatsapp.accounts.index') }}" class="px-4 py-2 border rounded-md text-gray-700">{{ __('Cancelar') }}</a>
+            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">{{ __('Guardar') }}</button>
           </div>
 
           <p class="mt-4 text-xs text-gray-500">

@@ -5,13 +5,13 @@
             <div class="flex items-center gap-3 mb-5" style="min-height:40px;">
                 <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
                         class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
-                        title="Mostrar menú" style="display:none;">
+                        title="{{ __('Mostrar menú') }}" style="display:none;">
                     <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Kanban – {{ $pipeline->name }}
+                    {{ __('Kanban') }} – {{ $pipeline->name }}
                 </h2>
             </div>
 
@@ -19,18 +19,18 @@
             <div class="inline-flex rounded-xl border border-gray-200 bg-white p-1 text-sm">
                 <a href="{{ route('pipelines.kanban', $pipeline) }}"
                    class="px-3 py-1.5 rounded-lg {{ ($viewMode ?? 'kanban') !== 'table' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Kanban
+                    {{ __('Kanban') }}
                 </a>
                 <a href="{{ route('pipelines.kanban', [$pipeline, 'view' => 'table']) }}"
                    class="px-3 py-1.5 rounded-lg {{ ($viewMode ?? 'kanban') === 'table' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Tabla
+                    {{ __('Tabla') }}
                 </a>
             </div>
             
             <div class="page-head mb-4 flex justify-between items-center gap-3">
 
                 <p class="text-sm text-gray-600">
-                    Vista de negociaciones por fases del pipeline.
+                    {{ __('Vista de negociaciones por fases del pipeline.') }}
                 </p>
 
                 <div class="page-head-actions flex items-center gap-2">
@@ -42,7 +42,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
-                            Exportar
+                            {{ __('Exportar') }}
                         </button>
 
                         <div x-show="open"
@@ -54,10 +54,10 @@
 
                             <a href="{{ route('deals.export', $pipeline) }}"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
-                                📋 Todas las negociaciones
+                                📋 {{ __('Todas las negociaciones') }}
                             </a>
                             <div class="border-t my-1"></div>
-                            <p class="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Por fase</p>
+                            <p class="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">{{ __('Por fase') }}</p>
                             @foreach($stages as $stage)
                                 <a href="{{ route('deals.export', [$pipeline, 'stage_id' => $stage->id]) }}"
                                    class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
@@ -67,25 +67,25 @@
                                 </a>
                             @endforeach
                             <div class="border-t my-1"></div>
-                            <p class="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">Por estado</p>
+                            <p class="px-4 py-1 text-[10px] uppercase tracking-wide text-gray-400 font-semibold">{{ __('Por estado') }}</p>
                             <a href="{{ route('deals.export', [$pipeline, 'status' => 'open']) }}"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
-                                🟢 Solo abiertas
+                                🟢 {{ __('Solo abiertas') }}
                             </a>
                             <a href="{{ route('deals.export', [$pipeline, 'status' => 'won']) }}"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
-                                🏆 Solo ganadas
+                                🏆 {{ __('Solo ganadas') }}
                             </a>
                             <a href="{{ route('deals.export', [$pipeline, 'status' => 'lost']) }}"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
-                                ❌ Solo perdidas
+                                ❌ {{ __('Solo perdidas') }}
                             </a>
                         </div>
                     </div>
 
                     <a href="{{ route('pipelines.edit', $pipeline) }}"
                        class="text-indigo-100 text-xs px-3 py-1 rounded-full bg-indigo-600/80 hover:bg-indigo-700">
-                        Configurar fases
+                        {{ __('Configurar fases') }}
                     </a>
                 </div>
             </div>
@@ -113,13 +113,13 @@
                         <table class="min-w-full text-sm">
                             <thead class="text-left text-gray-600 border-b">
                                 <tr>
-                                    <th class="py-2 pr-4">Título</th>
-                                    <th class="py-2 pr-4">Contacto</th>
-                                    <th class="py-2 pr-4">Responsable</th>
-                                    <th class="py-2 pr-4">Fase</th>
-                                    <th class="py-2 pr-4">Monto</th>
-                                    <th class="py-2 pr-4">Cierre</th>
-                                    <th class="py-2 pr-2 text-right">Acciones</th>
+                                    <th class="py-2 pr-4">{{ __('Título') }}</th>
+                                    <th class="py-2 pr-4">{{ __('Contacto') }}</th>
+                                    <th class="py-2 pr-4">{{ __('Responsable') }}</th>
+                                    <th class="py-2 pr-4">{{ __('Fase') }}</th>
+                                    <th class="py-2 pr-4">{{ __('Monto') }}</th>
+                                    <th class="py-2 pr-4">{{ __('Cierre') }}</th>
+                                    <th class="py-2 pr-2 text-right">{{ __('Acciones') }}</th>
                                 </tr>
                             </thead>
 
@@ -192,18 +192,18 @@
                                             <div class="inline-flex items-center gap-2">
                                                 <a href="{{ route('deals.edit', [$pipeline, $deal]) }}"
                                                    class="text-gray-500 hover:text-indigo-600 text-sm"
-                                                   title="Editar">
+                                                   title="{{ __('Editar') }}">
                                                     ✏
                                                 </a>
 
                                                 <form action="{{ route('deals.destroy', [$pipeline, $deal]) }}"
                                                       method="POST"
-                                                      onsubmit="return confirm('¿Eliminar esta negociación?');">
+                                                      onsubmit="return confirm('{{ __('¿Eliminar esta negociación?') }}');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
                                                             class="text-gray-500 hover:text-red-600 text-sm"
-                                                            title="Eliminar">
+                                                            title="{{ __('Eliminar') }}">
                                                         🗑
                                                     </button>
                                                 </form>
@@ -213,7 +213,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="7" class="py-6 text-center text-gray-400">
-                                            No hay negociaciones en este embudo.
+                                            {{ __('No hay negociaciones en este embudo.') }}
                                         </td>
                                     </tr>
                                 @endforelse
@@ -274,7 +274,7 @@
                                 <div class="px-4 pb-2" style="padding-top: 14px;">
                                     <a href="{{ route('deals.create', [$pipeline, 'stage' => $stage->id]) }}"
                                        class="w-full text-xs py-1.5 rounded-full border border-dashed border-gray-300 text-gray-500 hover:bg-gray-50 flex items-center justify-center">
-                                        + Nueva negociación
+                                        + {{ __('Nueva negociación') }}
                                     </a>
                                 </div>
 
@@ -291,7 +291,7 @@
                                              data-currency="{{ $deal->currency ?? 'PEN' }}"
                                              data-deal-url="{{ route('deals.edit', [$pipeline, $deal]) }}"
                                              onclick="kanbanOpenDeal(event, this)"
-                                             title="Click para ver / editar">
+                                             title="{{ __('Click para ver / editar') }}">
                                             <div class="flex justify-between items-start">
                                                 <div class="font-semibold text-gray-800 text-sm line-clamp-2">
                                                     {{ $deal->title }}
@@ -300,17 +300,17 @@
                                                 <div class="flex items-center space-x-1 kanban-card-actions">
                                                     <a href="{{ route('deals.edit', [$pipeline, $deal]) }}"
                                                        class="text-gray-400 hover:text-indigo-600 text-xs"
-                                                       title="Editar">
+                                                       title="{{ __('Editar') }}">
                                                         ✏
                                                     </a>
                                                     <form action="{{ route('deals.destroy', [$pipeline, $deal]) }}"
                                                           method="POST"
-                                                          onsubmit="return confirm('¿Eliminar esta negociación?');">
+                                                          onsubmit="return confirm('{{ __('¿Eliminar esta negociación?') }}');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
                                                                 class="text-gray-400 hover:text-red-600 text-xs"
-                                                                title="Eliminar">
+                                                                title="{{ __('Eliminar') }}">
                                                             🗑
                                                         </button>
                                                     </form>
@@ -332,7 +332,7 @@
                                             <div class="flex items-center justify-between mt-1">
                                                 @if($deal->close_date)
                                                     <div class="text-[10px] text-gray-500">
-                                                        Cierre:
+                                                        {{ __('Cierre:') }}
                                                         {{ \Carbon\Carbon::parse($deal->close_date)->format('d M Y') }}
                                                     </div>
                                                 @endif
@@ -351,7 +351,7 @@
 
                                     <p data-empty-message
                                        class="text-[1px] text-gray-400 mt-1 italic {{ $deals->isEmpty() ? '' : 'hidden' }}">
-                                        Sin negociaciones
+                                        {{ __('Sin negociaciones') }}
                                     </p>
                                 </div>
                             </div>

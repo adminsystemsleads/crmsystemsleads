@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QipuCRM — Gestión comercial inteligente</title>
-  <meta name="description" content="QipuCRM centraliza tus negociaciones, contactos, WhatsApp y facturación electrónica en un solo sistema. Hecho para equipos de ventas en Perú.">
+  <title>{{ __('QipuCRM — Gestión comercial inteligente') }}</title>
+  <meta name="description" content="{{ __('QipuCRM centraliza tus negociaciones, contactos, WhatsApp y facturación electrónica en un solo sistema. Hecho para equipos de ventas en Perú.') }}">
 
   {{-- Favicon --}}
   <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
@@ -197,10 +197,10 @@
 
     {{-- Nav links --}}
     <nav class="hide-mobile" style="display:flex; align-items:center; gap:1.5rem; font-size:.85rem; color:var(--slate-600);">
-      <a href="#funcionalidades" style="color:var(--slate-600);">Funcionalidades</a>
-      <a href="#integraciones"   style="color:var(--slate-600);">Integraciones</a>
-      <a href="#faq"             style="color:var(--slate-600);">Preguntas</a>
-      <a href="#demo" style="color:var(--indigo); font-weight:600;">📅 Agendar demo</a>
+      <a href="#funcionalidades" style="color:var(--slate-600);">{{ __('Funcionalidades') }}</a>
+      <a href="#integraciones"   style="color:var(--slate-600);">{{ __('Integraciones') }}</a>
+      <a href="#faq"             style="color:var(--slate-600);">{{ __('Preguntas') }}</a>
+      <a href="#demo" style="color:var(--indigo); font-weight:600;">📅 {{ __('Agendar demo') }}</a>
     </nav>
 
     {{-- Auth buttons + idioma + tema --}}
@@ -210,11 +210,11 @@
         <span class="hide-mobile"><x-theme-toggle variant="compact" /></span>
         <span class="lang-wrap"><x-language-switcher variant="compact" /></span>
         @auth
-          <a href="{{ url('/dashboard') }}" class="btn-nav btn-auth">Dashboard</a>
+          <a href="{{ url('/dashboard') }}" class="btn-nav btn-auth">{{ __('Dashboard') }}</a>
         @else
-          <a href="{{ route('login') }}" class="btn-nav btn-auth">Ingresar</a>
+          <a href="{{ route('login') }}" class="btn-nav btn-auth">{{ __('Ingresar') }}</a>
           @if (Route::has('register'))
-            <a href="{{ route('register') }}" class="btn-nav-solid btn-auth">Crear cuenta</a>
+            <a href="{{ route('register') }}" class="btn-nav-solid btn-auth">{{ __('Crear cuenta') }}</a>
           @endif
         @endauth
       </div>
@@ -229,36 +229,34 @@
 
       <div class="section-label">
         <svg width="12" height="12" fill="var(--gold)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-        CRM para equipos de ventas en Perú
+        {{ __('CRM para equipos de ventas en Perú') }}
       </div>
 
       <h1 style="font-size:clamp(2rem,5vw,3rem); font-weight:800; color:#fff; line-height:1.1; letter-spacing:-.02em;">
-        Gestiona tus ventas,<br>
-        <span style="color:var(--gold);">contactos y WhatsApp</span><br>
-        desde un solo lugar
+        {{ __('Gestiona tus ventas,') }}<br>
+        <span style="color:var(--gold);">{{ __('contactos y WhatsApp') }}</span><br>
+        {{ __('desde un solo lugar') }}
       </h1>
 
       <p style="font-size:1rem; color:rgba(255,255,255,.78); line-height:1.75; max-width:560px;">
-        QipuCRM es el sistema de gestión comercial hecho para equipos de ventas peruanos.
-        Pipeline Kanban, contactos, conversaciones de WhatsApp con IA, productos y
-        facturación electrónica SUNAT integrados en una sola plataforma.
+        {{ __('QipuCRM es el sistema de gestión comercial hecho para equipos de ventas peruanos. Pipeline Kanban, contactos, conversaciones de WhatsApp con IA, productos y facturación electrónica SUNAT integrados en una sola plataforma.') }}
       </p>
 
       <div style="display:flex; flex-wrap:wrap; gap:.75rem; justify-content:center;">
         <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-primary">
-          Empezar gratis
+          {{ __('Empezar gratis') }}
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
           </svg>
         </a>
         <a href="#demo" class="btn-ghost">
-          📅 Ver demo en vivo
+          📅 {{ __('Ver demo en vivo') }}
         </a>
       </div>
 
       {{-- Mini stats --}}
       <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center; margin-top:.5rem;">
-        @foreach([['Pipeline Kanban','visual e intuitivo'],['WhatsApp + IA','respuestas automáticas'],['Facturación SUNAT','facturas y boletas']] as [$t,$s])
+        @foreach([[__('Pipeline Kanban'),__('visual e intuitivo')],[__('WhatsApp + IA'),__('respuestas automáticas')],[__('Facturación SUNAT'),__('facturas y boletas')]] as [$t,$s])
           <div style="display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:rgba(255,255,255,.78);">
             <svg width="14" height="14" fill="#6ee7b7" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <span><strong style="color:#fff;">{{ $t }}</strong> — {{ $s }}</span>
@@ -274,16 +272,16 @@
         <div style="background:#fff; border-radius:.9rem; padding:1.25rem; box-shadow:0 20px 60px rgba(0,0,0,.25);">
           {{-- Fake kanban --}}
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
-            <span style="font-size:.8rem; font-weight:700; color:var(--slate-900);">Pipeline de Ventas — Mayo 2025</span>
-            <span style="font-size:.7rem; background:var(--indigo-light); color:var(--indigo); padding:.2rem .6rem; border-radius:9999px; font-weight:600;">12 negociaciones activas</span>
+            <span style="font-size:.8rem; font-weight:700; color:var(--slate-900);">{{ __('Pipeline de Ventas — Mayo 2025') }}</span>
+            <span style="font-size:.7rem; background:var(--indigo-light); color:var(--indigo); padding:.2rem .6rem; border-radius:9999px; font-weight:600;">{{ __('12 negociaciones activas') }}</span>
           </div>
           <div class="grid-4" style="gap:.6rem;">
-            @foreach([['Prospecto','3','#E8ECF2','#1E2E48'],['Propuesta','4','#fef3c7','#d97706'],['Negociación','3','#dbeafe','#1d4ed8'],['Cerrado','2','#dcfce7','#15803d']] as [$col,$n,$bg,$tc])
+            @foreach([[__('Prospecto'),'3','#E8ECF2','#1E2E48'],[__('Propuesta'),'4','#fef3c7','#d97706'],[__('Negociación'),'3','#dbeafe','#1d4ed8'],[__('Cerrado'),'2','#dcfce7','#15803d']] as [$col,$n,$bg,$tc])
               <div style="background:{{ $bg }}20; border:1px solid {{ $bg }}; border-radius:.6rem; padding:.6rem;">
                 <p style="font-size:.65rem; font-weight:700; color:{{ $tc }}; margin-bottom:.4rem;">{{ $col }} ({{ $n }})</p>
                 @for($i=0;$i<min((int)$n,2);$i++)
                   <div style="background:#fff; border-radius:.4rem; padding:.4rem .5rem; margin-bottom:.3rem; font-size:.6rem; color:var(--slate-600); border:1px solid var(--slate-200);">
-                    Negociación #{{ rand(10,99) }} — S/ {{ rand(500,9999) }}
+                    {{ __('Negociación') }} #{{ rand(10,99) }} — S/ {{ rand(500,9999) }}
                   </div>
                 @endfor
               </div>
@@ -299,9 +297,9 @@
 <section id="funcionalidades" style="background:var(--slate-50);">
   <div class="container">
     <div style="text-align:center; max-width:560px; margin:0 auto 3rem;">
-      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Funcionalidades</span>
-      <h2 class="section-title">Todo lo que necesita tu equipo de ventas</h2>
-      <p class="section-sub">Una plataforma completa, sin apps extra ni integraciones complicadas.</p>
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">{{ __('Funcionalidades') }}</span>
+      <h2 class="section-title">{{ __('Todo lo que necesita tu equipo de ventas') }}</h2>
+      <p class="section-sub">{{ __('Una plataforma completa, sin apps extra ni integraciones complicadas.') }}</p>
     </div>
 
     <div class="grid-3">
@@ -313,14 +311,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
           </svg>
         </div>
-        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Pipeline Kanban</h3>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">{{ __('Pipeline Kanban') }}</h3>
         <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
-          Visualiza tus negociaciones en etapas personalizadas. Mueve deals con drag & drop y sabe exactamente en qué fase está cada oportunidad.
+          {{ __('Visualiza tus negociaciones en etapas personalizadas. Mueve deals con drag & drop y sabe exactamente en qué fase está cada oportunidad.') }}
         </p>
         <ul class="pill-list">
-          <li>Etapas de venta configurables</li>
-          <li>Asignación de responsables</li>
-          <li>Múltiples pipelines por equipo</li>
+          <li>{{ __('Etapas de venta configurables') }}</li>
+          <li>{{ __('Asignación de responsables') }}</li>
+          <li>{{ __('Múltiples pipelines por equipo') }}</li>
         </ul>
       </div>
 
@@ -331,14 +329,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </div>
-        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Gestión de contactos</h3>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">{{ __('Gestión de contactos') }}</h3>
         <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
-          Base de datos centralizada de clientes y prospectos con historial de interacciones, negociaciones asociadas y datos fiscales para facturación.
+          {{ __('Base de datos centralizada de clientes y prospectos con historial de interacciones, negociaciones asociadas y datos fiscales para facturación.') }}
         </p>
         <ul class="pill-list">
-          <li>Historial completo por contacto</li>
-          <li>RUC / DNI para facturación</li>
-          <li>Importación y exportación</li>
+          <li>{{ __('Historial completo por contacto') }}</li>
+          <li>{{ __('RUC / DNI para facturación') }}</li>
+          <li>{{ __('Importación y exportación') }}</li>
         </ul>
       </div>
 
@@ -349,14 +347,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
           </svg>
         </div>
-        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">WhatsApp integrado</h3>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">{{ __('WhatsApp integrado') }}</h3>
         <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
-          Bandeja de entrada de WhatsApp directamente en el CRM. Vincula conversaciones a negociaciones y responde desde un solo panel.
+          {{ __('Bandeja de entrada de WhatsApp directamente en el CRM. Vincula conversaciones a negociaciones y responde desde un solo panel.') }}
         </p>
         <ul class="pill-list">
-          <li>Inbox unificado del equipo</li>
-          <li>Conversaciones vinculadas a deals</li>
-          <li>Respuestas rápidas plantilla</li>
+          <li>{{ __('Inbox unificado del equipo') }}</li>
+          <li>{{ __('Conversaciones vinculadas a deals') }}</li>
+          <li>{{ __('Respuestas rápidas plantilla') }}</li>
         </ul>
       </div>
 
@@ -367,14 +365,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
         </div>
-        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Asistente IA en WhatsApp</h3>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">{{ __('Asistente IA en WhatsApp') }}</h3>
         <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
-          Activa un asistente con inteligencia artificial por conversación. Responde consultas frecuentes automáticamente y escala cuando es necesario.
+          {{ __('Activa un asistente con inteligencia artificial por conversación. Responde consultas frecuentes automáticamente y escala cuando es necesario.') }}
         </p>
         <ul class="pill-list">
-          <li>IA activable por conversación</li>
-          <li>Personalización por cuenta WA</li>
-          <li>Pausable en cualquier momento</li>
+          <li>{{ __('IA activable por conversación') }}</li>
+          <li>{{ __('Personalización por cuenta WA') }}</li>
+          <li>{{ __('Pausable en cualquier momento') }}</li>
         </ul>
       </div>
 
@@ -385,14 +383,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
           </svg>
         </div>
-        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Catálogo de productos</h3>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">{{ __('Catálogo de productos') }}</h3>
         <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
-          Crea tu catálogo una vez y reutilízalo en cualquier negociación. Agrega líneas de producto con precios, cantidades y descuentos.
+          {{ __('Crea tu catálogo una vez y reutilízalo en cualquier negociación. Agrega líneas de producto con precios, cantidades y descuentos.') }}
         </p>
         <ul class="pill-list">
-          <li>Catálogo por equipo</li>
-          <li>Precios en PEN o USD</li>
-          <li>Totales automáticos en el deal</li>
+          <li>{{ __('Catálogo por equipo') }}</li>
+          <li>{{ __('Precios en PEN o USD') }}</li>
+          <li>{{ __('Totales automáticos en el deal') }}</li>
         </ul>
       </div>
 
@@ -403,14 +401,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
           </svg>
         </div>
-        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">Facturación electrónica SUNAT</h3>
+        <h3 style="font-size:.95rem; font-weight:700; margin-bottom:.4rem;">{{ __('Facturación electrónica SUNAT') }}</h3>
         <p style="font-size:.83rem; color:var(--slate-600); line-height:1.65;">
-          Genera facturas y boletas de venta directamente desde la negociación. Envía a SUNAT, descarga el XML y obtén la respuesta CDR sin salir del CRM.
+          {{ __('Genera facturas y boletas de venta directamente desde la negociación. Envía a SUNAT, descarga el XML y obtén la respuesta CDR sin salir del CRM.') }}
         </p>
         <ul class="pill-list">
-          <li>Facturas y boletas electrónicas</li>
-          <li>Envío directo a SUNAT</li>
-          <li>Modo prueba para testear</li>
+          <li>{{ __('Facturas y boletas electrónicas') }}</li>
+          <li>{{ __('Envío directo a SUNAT') }}</li>
+          <li>{{ __('Modo prueba para testear') }}</li>
         </ul>
       </div>
 
@@ -422,18 +420,18 @@
 <section id="integraciones" style="background:#fff; border-top:1px solid var(--slate-200);">
   <div class="container">
     <div style="text-align:center; max-width:540px; margin:0 auto 3rem;">
-      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Flujo de trabajo</span>
-      <h2 class="section-title">Del primer contacto a la factura,<br>sin salir del sistema</h2>
-      <p class="section-sub">QipuCRM cubre todo el ciclo de ventas en un flujo continuo.</p>
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">{{ __('Flujo de trabajo') }}</span>
+      <h2 class="section-title">{{ __('Del primer contacto a la factura,') }}<br>{{ __('sin salir del sistema') }}</h2>
+      <p class="section-sub">{{ __('QipuCRM cubre todo el ciclo de ventas en un flujo continuo.') }}</p>
     </div>
 
     <div class="grid-4" style="gap:1.5rem; position:relative;">
       @php
         $steps = [
-          ['01','Captura el lead','El prospecto llega por WhatsApp o lo creas manualmente. Se vincula al pipeline.','#dbeafe','#1d4ed8'],
-          ['02','Gestiona el deal','Mueve la negociación en el Kanban, agrega productos, comentarios y actividades.','#ede9fe','#6d28d9'],
-          ['03','Cierra la venta','La IA de WhatsApp ayuda a responder dudas. Haz seguimiento hasta el cierre.','#d1fae5','#065f46'],
-          ['04','Emite el comprobante','Genera la factura o boleta desde la misma negociación y envíala a SUNAT.','#fef3c7','#92400e'],
+          ['01',__('Captura el lead'),__('El prospecto llega por WhatsApp o lo creas manualmente. Se vincula al pipeline.'),'#dbeafe','#1d4ed8'],
+          ['02',__('Gestiona el deal'),__('Mueve la negociación en el Kanban, agrega productos, comentarios y actividades.'),'#ede9fe','#6d28d9'],
+          ['03',__('Cierra la venta'),__('La IA de WhatsApp ayuda a responder dudas. Haz seguimiento hasta el cierre.'),'#d1fae5','#065f46'],
+          ['04',__('Emite el comprobante'),__('Genera la factura o boleta desde la misma negociación y envíala a SUNAT.'),'#fef3c7','#92400e'],
         ];
       @endphp
       @foreach($steps as [$num,$title,$desc,$bg,$tc])
@@ -456,17 +454,16 @@
     <div class="grid-2" style="align-items:center; gap:4rem;">
       <div>
         <span class="badge" style="background:rgba(201,169,97,.14); border:1px solid rgba(201,169,97,.35); color:var(--gold); margin-bottom:1rem; display:inline-block; padding:.3rem .9rem; border-radius:9999px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;">
-          ¿Por qué QipuCRM?
+          {{ __('¿Por qué QipuCRM?') }}
         </span>
         <h2 style="font-size:clamp(1.5rem,3vw,2rem); font-weight:800; line-height:1.2; margin-bottom:1rem;">
-          Diseñado para la realidad<br>del negocio peruano
+          {{ __('Diseñado para la realidad') }}<br>{{ __('del negocio peruano') }}
         </h2>
         <p style="font-size:.9rem; color:rgba(255,255,255,.78); line-height:1.75; margin-bottom:1.5rem;">
-          No es una herramienta genérica traducida. QipuCRM incluye facturación electrónica SUNAT,
-          integración con WhatsApp Business y todo en soles y dólares.
+          {{ __('No es una herramienta genérica traducida. QipuCRM incluye facturación electrónica SUNAT, integración con WhatsApp Business y todo en soles y dólares.') }}
         </p>
         <ul style="list-style:none; display:flex; flex-direction:column; gap:.8rem;">
-          @foreach(['Multi-equipo con roles y permisos','Pipeline visual con etapas personalizadas','WhatsApp Business API integrada','Facturación SUNAT (facturas y boletas)','Asistente IA por conversación','Catálogo de productos reutilizable'] as $item)
+          @foreach([__('Multi-equipo con roles y permisos'),__('Pipeline visual con etapas personalizadas'),__('WhatsApp Business API integrada'),__('Facturación SUNAT (facturas y boletas)'),__('Asistente IA por conversación'),__('Catálogo de productos reutilizable')] as $item)
             <li style="display:flex; align-items:center; gap:.7rem; font-size:.85rem; color:rgba(255,255,255,.85);">
               <svg width="16" height="16" fill="#6ee7b7" viewBox="0 0 24 24" style="flex-shrink:0;">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -478,7 +475,7 @@
       </div>
 
       <div class="grid-2" style="gap:1rem;">
-        @foreach([['Equipos','Multi-usuario con roles'],['Kanban','Pipelines ilimitados'],['WhatsApp','IA integrada'],['SUNAT','Facturación real']] as [$t,$s])
+        @foreach([[__('Equipos'),__('Multi-usuario con roles')],[__('Kanban'),__('Pipelines ilimitados')],[__('WhatsApp'),__('IA integrada')],[__('SUNAT'),__('Facturación real')]] as [$t,$s])
           <div style="background:rgba(255,255,255,.06); border:1px solid rgba(201,169,97,.18); border-radius:1rem; padding:1.2rem;">
             <p style="font-size:1.4rem; font-weight:800; color:var(--gold); margin-bottom:.25rem;">{{ $t }}</p>
             <p style="font-size:.78rem; color:rgba(255,255,255,.7);">{{ $s }}</p>
@@ -493,17 +490,17 @@
 <section id="faq" style="background:var(--slate-50); border-top:1px solid var(--slate-200);">
   <div class="container">
     <div style="text-align:center; max-width:500px; margin:0 auto 3rem;">
-      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Preguntas frecuentes</span>
-      <h2 class="section-title">Respuestas rápidas</h2>
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">{{ __('Preguntas frecuentes') }}</span>
+      <h2 class="section-title">{{ __('Respuestas rápidas') }}</h2>
     </div>
 
     <div style="max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:1rem;">
       @foreach([
-        ['¿Necesito instalar algo?','No. QipuCRM es 100% web. Funciona desde cualquier navegador en PC o celular, sin instalaciones.'],
-        ['¿Puedo tener varios equipos o empresas?','Sí. Puedes crear múltiples equipos dentro de tu cuenta, cada uno con sus propios pipelines, contactos y configuración.'],
-        ['¿La facturación electrónica requiere algo especial?','Solo necesitas tu RUC, usuario SOL y el certificado digital de SUNAT. También puedes activar el modo prueba para testear sin enviar documentos reales.'],
-        ['¿El WhatsApp necesita el número oficial de mi empresa?','Sí, se conecta mediante la API oficial de WhatsApp Business (Meta). Solo funciona con números aprobados por Meta.'],
-        ['¿La IA de WhatsApp responde sola o necesito supervisión?','Puedes activarla o pausarla por conversación. Cuando está activa responde automáticamente; cuando la pausas, toma el control el asesor humano.'],
+        [__('¿Necesito instalar algo?'),__('No. QipuCRM es 100% web. Funciona desde cualquier navegador en PC o celular, sin instalaciones.')],
+        [__('¿Puedo tener varios equipos o empresas?'),__('Sí. Puedes crear múltiples equipos dentro de tu cuenta, cada uno con sus propios pipelines, contactos y configuración.')],
+        [__('¿La facturación electrónica requiere algo especial?'),__('Solo necesitas tu RUC, usuario SOL y el certificado digital de SUNAT. También puedes activar el modo prueba para testear sin enviar documentos reales.')],
+        [__('¿El WhatsApp necesita el número oficial de mi empresa?'),__('Sí, se conecta mediante la API oficial de WhatsApp Business (Meta). Solo funciona con números aprobados por Meta.')],
+        [__('¿La IA de WhatsApp responde sola o necesito supervisión?'),__('Puedes activarla o pausarla por conversación. Cuando está activa responde automáticamente; cuando la pausas, toma el control el asesor humano.')],
       ] as [$q,$a])
         <div class="card" style="padding:1.1rem 1.3rem;">
           <h3 style="font-size:.88rem; font-weight:700; color:var(--slate-900); margin-bottom:.4rem;">{{ $q }}</h3>
@@ -518,11 +515,10 @@
 <section id="demo" style="background:var(--slate-50); border-top:1px solid var(--slate-200);">
   <div class="container">
     <div style="text-align:center; max-width:560px; margin:0 auto 2.5rem;">
-      <span class="badge badge-indigo" style="margin-bottom:.75rem;">Demo gratuita</span>
-      <h2 class="section-title">Agenda una demostración en vivo</h2>
+      <span class="badge badge-indigo" style="margin-bottom:.75rem;">{{ __('Demo gratuita') }}</span>
+      <h2 class="section-title">{{ __('Agenda una demostración en vivo') }}</h2>
       <p class="section-sub">
-        Muéstrate el sistema con tus propios datos. Un especialista te guía en 30 minutos
-        y responde todas tus preguntas sobre QipuCRM.
+        {{ __('Muéstrate el sistema con tus propios datos. Un especialista te guía en 30 minutos y responde todas tus preguntas sobre QipuCRM.') }}
       </p>
     </div>
 
@@ -553,19 +549,18 @@
                 box-shadow:0 20px 50px rgba(30,46,72,.45);">
       <div style="max-width:500px;">
         <h2 style="font-size:clamp(1.4rem,3vw,1.9rem); font-weight:800; color:#fff; margin-bottom:.65rem; line-height:1.2;">
-          Empieza a organizar tus ventas hoy mismo
+          {{ __('Empieza a organizar tus ventas hoy mismo') }}
         </h2>
         <p style="font-size:.9rem; color:rgba(255,255,255,.78); line-height:1.7;">
-          QipuCRM está listo para tu equipo. Pipeline, contactos, WhatsApp con IA y
-          facturación electrónica en un solo sistema.
+          {{ __('QipuCRM está listo para tu equipo. Pipeline, contactos, WhatsApp con IA y facturación electrónica en un solo sistema.') }}
         </p>
       </div>
       <div style="display:flex; flex-direction:column; gap:.7rem; min-width:220px;">
         <a href="{{ Route::has('register') ? route('register') : '#' }}" class="btn-primary" style="width:100%; justify-content:center;">
-          Crear mi cuenta
+          {{ __('Crear mi cuenta') }}
         </a>
         <a href="{{ Route::has('login') ? route('login') : '#' }}" class="btn-ghost" style="width:100%; justify-content:center;">
-          Ya tengo una cuenta
+          {{ __('Ya tengo una cuenta') }}
         </a>
       </div>
     </div>
@@ -579,7 +574,7 @@
       <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:40px; width:auto; display:block;">
       <span style="font-size:.75rem; color:#64748b; margin-left:.4rem;">© {{ date('Y') }}</span>
     </div>
-    <p style="font-size:.75rem; color:#64748b;">Desarrollado por Systems Leads</p>
+    <p style="font-size:.75rem; color:#64748b;">{{ __('Desarrollado por Systems Leads') }}</p>
   </div>
 </footer>
 

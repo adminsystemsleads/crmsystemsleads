@@ -8,10 +8,9 @@
   <div class="max-w-3xl mx-auto py-8 px-4 space-y-6">
 
     <div class="bg-white p-6 rounded-xl shadow border border-gray-100">
-      <h3 class="text-base font-bold text-gray-900 mb-1">¿Necesitas ayuda?</h3>
+      <h3 class="text-base font-bold text-gray-900 mb-1">{{ __('¿Necesitas ayuda?') }}</h3>
       <p class="text-sm text-gray-600">
-        Escríbenos por el chat en vivo (botón flotante en la esquina) o déjanos tus datos en el
-        formulario y nuestro equipo de soporte te contactará.
+        {{ __('Escríbenos por el chat en vivo (botón flotante en la esquina) o déjanos tus datos en el formulario y nuestro equipo de soporte te contactará.') }}
       </p>
     </div>
 

@@ -41,7 +41,7 @@
   <div class="no-print" style="text-align:right; margin-bottom:12px;">
     <button onclick="window.print()"
             style="padding:6px 16px; background:#1d4ed8; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:13px;">
-      Imprimir / Guardar PDF
+      {{ __('Imprimir / Guardar PDF') }}
     </button>
   </div>
 
@@ -53,18 +53,18 @@
         @if($config->nombre_comercial)
           <div style="color:#4b5563; font-size:11px;">{{ $config->nombre_comercial }}</div>
         @endif
-        <div style="color:#6b7280; font-size:11px; margin-top:4px;">RUC: {{ $config->ruc }}</div>
+        <div style="color:#6b7280; font-size:11px; margin-top:4px;">{{ __('RUC:') }} {{ $config->ruc }}</div>
         <div style="color:#6b7280; font-size:11px;">{{ $config->direccion }}</div>
         <div style="color:#6b7280; font-size:11px;">{{ $config->distrito }}, {{ $config->provincia }}</div>
       @endif
     </div>
     <div class="doc-box">
-      <div style="font-size:10px; color:#6b7280; margin-bottom:4px;">COMPROBANTE ELECTRÓNICO</div>
+      <div style="font-size:10px; color:#6b7280; margin-bottom:4px;">{{ __('COMPROBANTE ELECTRÓNICO') }}</div>
       <div class="tipo">{{ strtoupper($invoice->tipo_nombre) }}</div>
       <div class="num">{{ $invoice->numero }}</div>
       <div style="margin-top:8px; font-size:11px;">
         @if($invoice->estado === 'accepted')
-          <span class="badge badge-accepted">ACEPTADO SUNAT</span>
+          <span class="badge badge-accepted">{{ __('ACEPTADO SUNAT') }}</span>
         @else
           <span class="badge badge-draft">{{ strtoupper($invoice->estado_badge) }}</span>
         @endif
@@ -74,29 +74,29 @@
 
   {{-- Dates --}}
   <div style="display:flex; gap:24px; margin-bottom:16px; font-size:12px;">
-    <div><strong>Fecha emisión:</strong> {{ $invoice->fecha_emision->format('d/m/Y') }}</div>
+    <div><strong>{{ __('Fecha emisión:') }}</strong> {{ $invoice->fecha_emision->format('d/m/Y') }}</div>
     @if($invoice->fecha_vencimiento)
-      <div><strong>Vencimiento:</strong> {{ $invoice->fecha_vencimiento->format('d/m/Y') }}</div>
+      <div><strong>{{ __('Vencimiento:') }}</strong> {{ $invoice->fecha_vencimiento->format('d/m/Y') }}</div>
     @endif
-    <div><strong>Moneda:</strong> {{ $invoice->moneda }}</div>
+    <div><strong>{{ __('Moneda:') }}</strong> {{ $invoice->moneda }}</div>
   </div>
 
   {{-- Parties --}}
   <div class="parties">
     <div class="card">
-      <h3>Emisor</h3>
+      <h3>{{ __('Emisor') }}</h3>
       @if($config)
         <div><strong>{{ $config->razon_social }}</strong></div>
-        <div>RUC: {{ $config->ruc }}</div>
+        <div>{{ __('RUC:') }} {{ $config->ruc }}</div>
       @else
         <div>—</div>
       @endif
     </div>
     <div class="card">
-      <h3>Cliente</h3>
+      <h3>{{ __('Cliente') }}</h3>
       <div><strong>{{ $invoice->cliente_razon_social }}</strong></div>
       <div>
-        {{ match($invoice->cliente_tipo_doc) {'1'=>'DNI','6'=>'RUC','4'=>'CE',default=>'Doc'} }}:
+        {{ match($invoice->cliente_tipo_doc) {'1'=>__('DNI'),'6'=>__('RUC'),'4'=>__('CE'),default=>__('Doc')} }}:
         {{ $invoice->cliente_num_doc }}
       </div>
       @if($invoice->cliente_direccion)
@@ -109,11 +109,11 @@
   <table>
     <thead>
       <tr>
-        <th>Descripción</th>
-        <th class="text-center">Unidad</th>
-        <th class="text-right">Cantidad</th>
-        <th class="text-right">P. Unitario</th>
-        <th class="text-right">Total</th>
+        <th>{{ __('Descripción') }}</th>
+        <th class="text-center">{{ __('Unidad') }}</th>
+        <th class="text-right">{{ __('Cantidad') }}</th>
+        <th class="text-right">{{ __('P. Unitario') }}</th>
+        <th class="text-right">{{ __('Total') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -131,25 +131,25 @@
 
   {{-- Totales --}}
   <div class="totals">
-    <div class="row"><span>Op. Gravadas</span><span>{{ $invoice->moneda }} {{ number_format($invoice->op_gravadas, 2) }}</span></div>
+    <div class="row"><span>{{ __('Op. Gravadas') }}</span><span>{{ $invoice->moneda }} {{ number_format($invoice->op_gravadas, 2) }}</span></div>
     @if($invoice->op_exoneradas > 0)
-      <div class="row"><span>Op. Exoneradas</span><span>{{ $invoice->moneda }} {{ number_format($invoice->op_exoneradas, 2) }}</span></div>
+      <div class="row"><span>{{ __('Op. Exoneradas') }}</span><span>{{ $invoice->moneda }} {{ number_format($invoice->op_exoneradas, 2) }}</span></div>
     @endif
     @if($invoice->op_inafectas > 0)
-      <div class="row"><span>Op. Inafectas</span><span>{{ $invoice->moneda }} {{ number_format($invoice->op_inafectas, 2) }}</span></div>
+      <div class="row"><span>{{ __('Op. Inafectas') }}</span><span>{{ $invoice->moneda }} {{ number_format($invoice->op_inafectas, 2) }}</span></div>
     @endif
-    <div class="row"><span>IGV ({{ $invoice->igv_porcentaje }}%)</span><span>{{ $invoice->moneda }} {{ number_format($invoice->igv, 2) }}</span></div>
-    <div class="row total"><span>TOTAL</span><span>{{ $invoice->moneda }} {{ number_format($invoice->total, 2) }}</span></div>
+    <div class="row"><span>{{ __('IGV') }} ({{ $invoice->igv_porcentaje }}%)</span><span>{{ $invoice->moneda }} {{ number_format($invoice->igv, 2) }}</span></div>
+    <div class="row total"><span>{{ __('TOTAL') }}</span><span>{{ $invoice->moneda }} {{ number_format($invoice->total, 2) }}</span></div>
   </div>
 
   @if($invoice->observaciones)
     <div style="margin-top:16px; font-size:11px; color:#374151;">
-      <strong>Observaciones:</strong> {{ $invoice->observaciones }}
+      <strong>{{ __('Observaciones:') }}</strong> {{ $invoice->observaciones }}
     </div>
   @endif
 
   <div class="footer">
-    Representación impresa del comprobante electrónico &bull; {{ $invoice->tipo_nombre }} {{ $invoice->numero }}
+    {{ __('Representación impresa del comprobante electrónico') }} &bull; {{ $invoice->tipo_nombre }} {{ $invoice->numero }}
   </div>
 
 </div>

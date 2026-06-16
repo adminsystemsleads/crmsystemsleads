@@ -116,7 +116,7 @@
       <button @click="$store.sidebar.toggle()"
               class="p-1.5 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition"
               aria-label="Ocultar menú"
-              title="Ocultar menú">
+              title="{{ __('Ocultar menú') }}">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
         </svg>
@@ -128,7 +128,7 @@
 
       {{-- Sección Super Administrador (solo para el Super Admin de plataforma) --}}
       @if (Auth::user()->isSuperAdmin())
-        <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Super Administrador</p>
+        <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Super Administrador') }}</p>
 
         <a href="{{ route('admin.license-codes.index') }}"
            class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
@@ -138,7 +138,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
           </svg>
-          <span class="truncate">Generar Códigos de Licencia</span>
+          <span class="truncate">{{ __('Generar Códigos de Licencia') }}</span>
         </a>
 
         <div class="my-2 border-t border-gray-100"></div>
@@ -146,7 +146,7 @@
 
       {{-- Sección Admin --}}
       @if ($isAdmin)
-        <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Administración</p>
+        <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Administración') }}</p>
 
         {{-- Ocultas temporalmente: funcionalidad no ofrecida por ahora (Importar Reporte). Cambia `false` por la condición para reactivar. --}}
         @if (false && $team->moduleEnabled('gastos_import'))
@@ -157,7 +157,7 @@
                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
-            <span class="truncate">Importar Reporte</span>
+            <span class="truncate">{{ __('Importar Reporte') }}</span>
           </a>
         @endif
 
@@ -171,7 +171,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
             </svg>
-            <span class="truncate">Lista Gastos</span>
+            <span class="truncate">{{ __('Lista Gastos') }}</span>
           </a>
         @endif
 
@@ -186,7 +186,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M4.5 19.5a7.5 7.5 0 0 1 15 0"/>
             </svg>
-            <span class="truncate">Perfiles</span>
+            <span class="truncate">{{ __('Perfiles') }}</span>
           </a>
         @endif
 
@@ -200,7 +200,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
             </svg>
-            <span class="truncate">Categorías de Pago</span>
+            <span class="truncate">{{ __('Categorías de Pago') }}</span>
           </a>
         @endif
 
@@ -213,7 +213,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 18h.01M8 21h8a2 2 0 002-2v-1a5 5 0 00-10 0v1a2 2 0 002 2zM12 3a4 4 0 100 8 4 4 0 000-8z"/>
             </svg>
-            <span class="truncate">WhatsApp Cuentas</span>
+            <span class="truncate">{{ __('WhatsApp Cuentas') }}</span>
           </a>
         @endif
 
@@ -227,7 +227,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 2l8 4v5c0 5.25-3.25 10-8 11-4.75-1-8-5.75-8-11V6l8-4zM9 12l2 2 4-4"/>
             </svg>
-            <span class="truncate">Licencia</span>
+            <span class="truncate">{{ __('Licencia') }}</span>
           </a>
 
           @if (!$licenseBlocked)
@@ -240,14 +240,14 @@
                     d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <span class="truncate">Módulos</span>
+            <span class="truncate">{{ __('Módulos') }}</span>
           </a>
           @endif
         @endif
 
         @if (!$licenseBlocked)
           <div class="my-2 border-t border-gray-100"></div>
-          <p class="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">General</p>
+          <p class="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('General') }}</p>
         @endif
       @endif
 
@@ -326,7 +326,7 @@
     @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
       <div class="px-3 py-2 border-t border-gray-100 shrink-0 relative"
            x-data="{ openTeam: false, openCfg: false }" @click.away="openTeam = false; openCfg = false">
-        <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Cuenta</p>
+        <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Cuenta') }}</p>
 
         <button type="button" @click="openTeam = !openTeam"
                 class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg hover:bg-gray-100 text-gray-700 transition">
@@ -395,13 +395,13 @@
           <div class="relative mt-1">
             <button type="button" @click="openCfg = !openCfg"
                     class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg hover:bg-gray-100 text-gray-700 transition"
-                    title="Configuración">
+                    title="{{ __('Configuración') }}">
               <svg class="size-4 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
                       d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
-              <span class="truncate text-sm">Configuración</span>
+              <span class="truncate text-sm">{{ __('Configuración') }}</span>
               <svg class="size-4 shrink-0 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
               </svg>
@@ -424,7 +424,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round"
                         d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                 </svg>
-                <span>Agregar usuario nuevo</span>
+                <span>{{ __('Agregar usuario nuevo') }}</span>
               </a>
               <div class="border-t border-gray-100 my-1"></div>
               <a href="{{ route('team.crm-roles.index') }}"
@@ -432,7 +432,7 @@
                 <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
-                <span>Permisos de Acceso CRM</span>
+                <span>{{ __('Permisos de Acceso CRM') }}</span>
               </a>
               <div class="border-t border-gray-100 my-1"></div>
               <a href="{{ route('custom-fields.index') }}"
@@ -441,7 +441,7 @@
                 <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M11 5h2m-1 0v14m-7-7h14"/>
                 </svg>
-                <span>Campos personalizados</span>
+                <span>{{ __('Campos personalizados') }}</span>
               </a>
             </div>
           </div>
@@ -452,7 +452,7 @@
     {{-- Tema (oculto si la cuenta está bloqueada) --}}
     @if (!$licenseBlocked)
     <div class="px-3 py-2 border-t border-gray-100 shrink-0">
-      <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">Tema</p>
+      <p class="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Tema') }}</p>
       <x-theme-toggle variant="sidebar" />
     </div>
     @endif
@@ -506,7 +506,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"/>
           </svg>
-          <span>Cerrar sesión</span>
+          <span>{{ __('Cerrar sesión') }}</span>
         </button>
       </form>
     </div>

@@ -1,6 +1,6 @@
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Listado de Gastos</h2>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Listado de Gastos') }}</h2>
   </x-slot>
 
   <div class="py-10">
@@ -12,16 +12,16 @@
 
   {{-- Año --}}
   <div class="flex flex-col">
-    <label class="text-xs text-gray-600 font-medium mb-1">Año</label>
+    <label class="text-xs text-gray-600 font-medium mb-1">{{ __('Año') }}</label>
     <input type="number" name="anio" value="{{ $request->anio }}" placeholder="2025"
            class="w-24 border rounded px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
   </div>
 
   {{-- Mes --}}
   <div class="flex flex-col">
-    <label class="text-xs text-gray-600 font-medium mb-1">Mes</label>
+    <label class="text-xs text-gray-600 font-medium mb-1">{{ __('Mes') }}</label>
     <select name="mes" class="w-32 border rounded px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-      <option value="">Todos</option>
+      <option value="">{{ __('Todos') }}</option>
       @foreach (range(1,12) as $m)
         <option value="{{ $m }}" {{ (string)$request->mes === (string)$m ? 'selected' : '' }}>
           {{ ucfirst(\Carbon\Carbon::create()->month($m)->monthName) }}
@@ -32,9 +32,9 @@
 
   {{-- Categoría --}}
   <div class="flex flex-col">
-    <label class="text-xs text-gray-600 font-medium mb-1">Categoría</label>
+    <label class="text-xs text-gray-600 font-medium mb-1">{{ __('Categoría') }}</label>
     <select name="categoria_id" class="w-48 border rounded px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-      <option value="">Todas</option>
+      <option value="">{{ __('Todas') }}</option>
       @foreach ($categorias as $cat)
         <option value="{{ $cat->id }}" {{ (string)$request->categoria_id === (string)$cat->id ? 'selected' : '' }}>
           {{ $cat->nombre }}
@@ -45,10 +45,10 @@
 
   {{-- Unidad / Perfil --}}
   <div class="flex flex-col">
-    <label class="text-xs text-gray-600 font-medium mb-1">Unidad / Perfil</label>
+    <label class="text-xs text-gray-600 font-medium mb-1">{{ __('Unidad / Perfil') }}</label>
     <select name="perfil" class="w-48 border rounded px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-      <option value="">Todos</option>
-      <option value="general" {{ $request->perfil === 'general' ? 'selected' : '' }}>General (sin unidad)</option>
+      <option value="">{{ __('Todos') }}</option>
+      <option value="general" {{ $request->perfil === 'general' ? 'selected' : '' }}>{{ __('General (sin unidad)') }}</option>
       @foreach ($perfiles as $perfil)
         <option value="{{ $perfil->id }}" {{ (string)$request->perfil === (string)$perfil->id ? 'selected' : '' }}>
           {{ $perfil->unidad }}
@@ -61,7 +61,7 @@
   <div class="flex flex-col">
     <label class="text-xs text-transparent mb-1">.</label>
     <button class="bg-indigo-600 text-white px-4 py-2 rounded text-sm hover:bg-indigo-700 transition">
-      Filtrar
+      {{ __('Filtrar') }}
     </button>
   </div>
 
@@ -79,16 +79,16 @@
           <table class="min-w-full border text-sm">
   <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
     <tr>
-      <th class="border px-3 py-2">Unidad</th>
-      <th class="border px-3 py-2">Mes/Año</th>
-      <th class="border px-3 py-2">Categoría</th>
-      <th class="border px-3 py-2">Código Pago</th>
-      <th class="border px-3 py-2">Monto</th>
-      <th class="border px-3 py-2">Descripción</th>
-      <th class="border px-3 py-2">Día de Pago</th>
-      <th class="border px-3 py-2">Voucher</th>
-      <th class="border px-3 py-2">Verificado</th>
-      <th class="border px-3 py-2 text-center">Acciones</th>
+      <th class="border px-3 py-2">{{ __('Unidad') }}</th>
+      <th class="border px-3 py-2">{{ __('Mes/Año') }}</th>
+      <th class="border px-3 py-2">{{ __('Categoría') }}</th>
+      <th class="border px-3 py-2">{{ __('Código Pago') }}</th>
+      <th class="border px-3 py-2">{{ __('Monto') }}</th>
+      <th class="border px-3 py-2">{{ __('Descripción') }}</th>
+      <th class="border px-3 py-2">{{ __('Día de Pago') }}</th>
+      <th class="border px-3 py-2">{{ __('Voucher') }}</th>
+      <th class="border px-3 py-2">{{ __('Verificado') }}</th>
+      <th class="border px-3 py-2 text-center">{{ __('Acciones') }}</th>
     </tr>
   </thead>
 
@@ -96,7 +96,7 @@
     @forelse ($gastos as $g)
       <tr>
         {{-- Unidad --}}
-        <td class="border px-3 py-2">{{ optional($g->memberProfile)->unidad ?? 'General' }}</td>
+        <td class="border px-3 py-2">{{ optional($g->memberProfile)->unidad ?? __('General') }}</td>
 
         {{-- Mes/Año --}}
         <td class="border px-3 py-2">{{ $g->mes }}/{{ $g->anio }}</td>
@@ -124,7 +124,7 @@
         <td class="border px-3 py-2">
           @if($g->link_vaucher)
             <a href="{{ $g->link_vaucher }}" target="_blank"
-               class="text-indigo-600 hover:underline">Ver</a>
+               class="text-indigo-600 hover:underline">{{ __('Ver') }}</a>
           @else
             -
           @endif
@@ -163,20 +163,20 @@
       })
     "
   >
-    Editar
+    {{ __('Editar') }}
   </button>
 
   {{-- Eliminar (igual que antes) --}}
   <form action="{{ route('gastos.destroy', $g) }}" method="POST" class="inline"
-        onsubmit="return confirm('¿Eliminar este gasto?');">
+        onsubmit="return confirm(@js(__('¿Eliminar este gasto?')));">
     @csrf @method('DELETE')
-    <button class="text-red-600 hover:underline">Eliminar</button>
+    <button class="text-red-600 hover:underline">{{ __('Eliminar') }}</button>
   </form>
 </td>
 
       </tr>
     @empty
-      <tr><td colspan="10" class="text-center py-4 text-gray-500">No hay registros.</td></tr>
+      <tr><td colspan="10" class="text-center py-4 text-gray-500">{{ __('No hay registros.') }}</td></tr>
     @endforelse
   </tbody>
 </table>
@@ -204,7 +204,7 @@
   >
     <div class="w-full max-w-2xl bg-white rounded-xl shadow-xl">
       <div class="flex items-center justify-between px-5 py-4 border-b">
-        <h3 class="text-lg font-semibold">Editar gasto</h3>
+        <h3 class="text-lg font-semibold">{{ __('Editar gasto') }}</h3>
         <button class="p-2 rounded hover:bg-gray-100" @click="close()">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                viewBox="0 0 24 24" stroke="currentColor">
@@ -221,10 +221,10 @@
         {{-- Fila 1: Unidad / Categoría --}}
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Unidad / Perfil</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Unidad / Perfil') }}</label>
             <select name="team_member_profile_id" x-model="form.member_profile_id"
                     class="w-full border rounded px-3 py-2">
-              <option :value="null">General (sin unidad)</option>
+              <option :value="null">{{ __('General (sin unidad)') }}</option>
               @foreach ($perfiles as $perfil)
                 <option value="{{ $perfil->id }}">{{ $perfil->unidad }}</option>
               @endforeach
@@ -232,10 +232,10 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Categoría</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Categoría') }}</label>
             <select name="categoria_id" x-model="form.categoria_id"
                     class="w-full border rounded px-3 py-2" required>
-              <option value="">Seleccione…</option>
+              <option value="">{{ __('Seleccione…') }}</option>
               @foreach ($categorias as $c)
                 <option value="{{ $c->id }}">{{ $c->nombre }}</option>
               @endforeach
@@ -246,7 +246,7 @@
         {{-- Fila 2: Mes / Año --}}
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Mes</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Mes') }}</label>
             <select name="mes" x-model="form.mes" class="w-full border rounded px-3 py-2" required>
               @foreach (range(1,12) as $m)
                 <option value="{{ $m }}">{{ \Carbon\Carbon::create()->month($m)->monthName }}</option>
@@ -254,7 +254,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Año</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Año') }}</label>
             <input type="number" name="anio" x-model="form.anio"
                    class="w-full border rounded px-3 py-2" min="2000" max="2100" required>
           </div>
@@ -263,12 +263,12 @@
         {{-- Fila 3: Monto / Código --}}
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Monto (S/)</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Monto (S/)') }}</label>
             <input type="number" step="0.01" name="monto_pagar" x-model="form.monto_pagar"
                    class="w-full border rounded px-3 py-2 text-right" required>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Código de pago</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Código de pago') }}</label>
             <input type="text" name="codigopago" x-model="form.codigopago"
                    class="w-full border rounded px-3 py-2">
           </div>
@@ -277,12 +277,12 @@
         {{-- Fila 4: Día / Voucher --}}
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Día de pago</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Día de pago') }}</label>
             <input type="date" name="dia_pago" x-model="form.dia_pago"
                    class="w-full border rounded px-3 py-2">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">Link del voucher</label>
+            <label class="block text-sm font-medium mb-1">{{ __('Link del voucher') }}</label>
             <input type="url" name="link_vaucher" x-model="form.link_vaucher"
                    class="w-full border rounded px-3 py-2" placeholder="https://…">
           </div>
@@ -290,10 +290,10 @@
 
         {{-- Descripción --}}
         <div>
-          <label class="block text-sm font-medium mb-1">Descripción</label>
+          <label class="block text-sm font-medium mb-1">{{ __('Descripción') }}</label>
           <textarea name="descripcion" x-model="form.descripcion"
                     class="w-full border rounded px-3 py-2" rows="3"
-                    placeholder="Detalles del gasto (opcional)"></textarea>
+                    placeholder="{{ __('Detalles del gasto (opcional)') }}"></textarea>
         </div>
 
         {{-- Verificado --}}
@@ -307,13 +307,13 @@
          value="1"
          x-model="form.pago_verificado"
          class="rounded border-gray-300">
-  <label for="pago_verificado" class="text-sm">Pago verificado</label>
+  <label for="pago_verificado" class="text-sm">{{ __('Pago verificado') }}</label>
 </div>
 
         <div class="flex items-center justify-end gap-2 pt-2">
-          <button type="button" class="px-4 py-2 rounded border hover:bg-gray-50" @click="close()">Cancelar</button>
+          <button type="button" class="px-4 py-2 rounded border hover:bg-gray-50" @click="close()">{{ __('Cancelar') }}</button>
           <button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">
-            Guardar cambios
+            {{ __('Guardar cambios') }}
           </button>
         </div>
       </form>

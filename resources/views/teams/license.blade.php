@@ -2,7 +2,7 @@
 <x-app-layout>
   <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      Licencia — {{ $team->name }}
+      {{ __('Licencia') }} — {{ $team->name }}
     </h2>
   </x-slot>
 
@@ -31,15 +31,15 @@
 
     // Etiqueta base según el tipo de licencia
     $baseLabel = match ($grant) {
-        'trial'    => 'Modo de Prueba activo',
-        'prorroga' => 'Prórroga activa',
-        'license'  => 'Licencia activa',
-        default    => ($reason === 'trial' ? 'Modo de Prueba activo' : 'Licencia activa'),
+        'trial'    => __('Modo de Prueba activo'),
+        'prorroga' => __('Prórroga activa'),
+        'license'  => __('Licencia activa'),
+        default    => ($reason === 'trial' ? __('Modo de Prueba activo') : __('Licencia activa')),
     };
 
     if (! $isValid) {
         // Vencida / sin licencia -> rojo fuerte
-        $estadoLabel = $license ? 'Licencia vencida' : 'Sin licencia activa';
+        $estadoLabel = $license ? __('Licencia vencida') : __('Sin licencia activa');
         $estadoStyle = 'background-color:#dc2626;color:#ffffff;';
     } else {
         // Color de la píldora según el tipo:
@@ -56,8 +56,8 @@
         // Indicador "por vencer" en el texto (sin cambiar el color del tipo)
         if ($remaining !== null && $remaining <= $soonThreshold) {
             $dias = (int) ceil($remaining);
-            $venceTxt = $dias <= 0 ? 'vence hoy' : 'faltan ' . $dias . ' ' . ($dias === 1 ? 'día' : 'días');
-            $estadoLabel .= ' · Por vencer (' . $venceTxt . ')';
+            $venceTxt = $dias <= 0 ? __('vence hoy') : __('faltan') . ' ' . $dias . ' ' . ($dias === 1 ? __('día') : __('días'));
+            $estadoLabel .= ' · ' . __('Por vencer') . ' (' . $venceTxt . ')';
         }
     }
 
@@ -67,14 +67,14 @@
 
 
     <div class="mb-4 text-sm text-gray-700">
-  <p class="flex items-center gap-2"><b>Estado:</b>
+  <p class="flex items-center gap-2"><b>{{ __('Estado:') }}</b>
     <span class="inline-flex items-center rounded-full font-bold whitespace-nowrap"
           style="{{ $estadoStyle }}padding:5px 14px;font-size:12px;line-height:1;">
       {{ $estadoLabel }}
     </span>
   </p>
 
-  <p class="mt-1"><b>Vence:</b>
+  <p class="mt-1"><b>{{ __('Vence:') }}</b>
     {{ $license?->expires_at ? $license->expires_at->copy()->setTimezone($team->effectiveTimezone())->format('Y-m-d H:i') : '-' }}
     <span class="text-xs text-gray-400">({{ $team->effectiveTimezone() }})</span>
   </p>
@@ -91,14 +91,13 @@
           </svg>
         </div>
         <div class="flex-1">
-          <h3 class="text-sm font-bold text-gray-900 mb-1">Pagar con tarjeta</h3>
+          <h3 class="text-sm font-bold text-gray-900 mb-1">{{ __('Pagar con tarjeta') }}</h3>
           <p class="text-xs text-gray-600 mb-3">
-            Renueva o activa tu licencia pagando directamente con tarjeta Visa, Mastercard, Amex o Diners.
-            Pago seguro vía Culqi.
+            {{ __('Renueva o activa tu licencia pagando directamente con tarjeta Visa, Mastercard, Amex o Diners. Pago seguro vía Culqi.') }}
           </p>
           <a href="{{ route('payments.checkout', $team) }}"
              class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
-            Ir a pagar
+            {{ __('Ir a pagar') }}
             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
             </svg>
@@ -110,20 +109,20 @@
 
     {{-- Activar con código de licencia / prueba --}}
     <div class="p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
-      <h3 class="text-sm font-bold text-gray-900 mb-1">Activar con un código</h3>
+      <h3 class="text-sm font-bold text-gray-900 mb-1">{{ __('Activar con un código') }}</h3>
       <p class="text-xs text-gray-600 mb-3">
-        Ingresa el código que recibiste para activar tu <b>licencia</b> o tu <b>periodo de prueba</b>.
+        {{ __('Ingresa el código que recibiste para activar tu') }} <b>{{ __('licencia') }}</b> {{ __('o tu') }} <b>{{ __('periodo de prueba') }}</b>.
       </p>
 
       <form method="POST" action="{{ route('team.license.activate', $team) }}" class="space-y-3">
         @csrf
-        <label class="block text-sm font-medium text-gray-700">Código de licencia</label>
+        <label class="block text-sm font-medium text-gray-700">{{ __('Código de licencia') }}</label>
         <input type="text" name="license_key"
                class="w-full border border-gray-300 rounded-lg px-3 py-2 font-mono uppercase tracking-wide"
                placeholder="SL-XXXX-XXXX-XXXX" required>
 
         <button class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transition">
-          Activar
+          {{ __('Activar') }}
         </button>
       </form>
     </div>
@@ -132,18 +131,18 @@
   {{-- Reporte de códigos utilizados en esta cuenta --}}
   <div class="max-w-2xl mx-auto mt-6 bg-white rounded-lg shadow overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100">
-      <h3 class="text-sm font-bold text-gray-900">Códigos utilizados</h3>
-      <p class="text-xs text-gray-500">Historial de códigos canjeados en esta cuenta.</p>
+      <h3 class="text-sm font-bold text-gray-900">{{ __('Códigos utilizados') }}</h3>
+      <p class="text-xs text-gray-500">{{ __('Historial de códigos canjeados en esta cuenta.') }}</p>
     </div>
 
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
           <tr>
-            <th class="text-left px-6 py-3 font-semibold">Código</th>
-            <th class="text-left px-6 py-3 font-semibold">Tipo</th>
-            <th class="text-left px-6 py-3 font-semibold">Canjeado</th>
-            <th class="text-left px-6 py-3 font-semibold">Vence</th>
+            <th class="text-left px-6 py-3 font-semibold">{{ __('Código') }}</th>
+            <th class="text-left px-6 py-3 font-semibold">{{ __('Tipo') }}</th>
+            <th class="text-left px-6 py-3 font-semibold">{{ __('Canjeado') }}</th>
+            <th class="text-left px-6 py-3 font-semibold">{{ __('Vence') }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
@@ -162,7 +161,7 @@
           @empty
             <tr>
               <td colspan="4" class="px-6 py-8 text-center text-gray-400 text-sm">
-                Aún no se ha canjeado ningún código en esta cuenta.
+                {{ __('Aún no se ha canjeado ningún código en esta cuenta.') }}
               </td>
             </tr>
           @endforelse

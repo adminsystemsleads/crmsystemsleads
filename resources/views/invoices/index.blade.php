@@ -2,7 +2,7 @@
 <div class="max-w-5xl mx-auto px-4 py-8">
 
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-xl font-bold text-gray-900">Comprobantes electrónicos</h1>
+    <h1 class="text-xl font-bold text-gray-900">{{ __('Comprobantes electrónicos') }}</h1>
     <a href="{{ route('invoice-config.edit') }}"
        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition">
       <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -10,7 +10,7 @@
               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
-      Configurar
+      {{ __('Configurar') }}
     </a>
   </div>
 
@@ -22,12 +22,12 @@
     <table class="w-full text-sm">
       <thead>
         <tr class="bg-gray-50 border-b border-gray-200">
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Número</th>
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Tipo</th>
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Cliente</th>
-          <th class="px-4 py-3 text-left font-semibold text-gray-600">Emisión</th>
-          <th class="px-4 py-3 text-right font-semibold text-gray-600">Total</th>
-          <th class="px-4 py-3 text-center font-semibold text-gray-600">Estado</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Número') }}</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Tipo') }}</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Cliente') }}</th>
+          <th class="px-4 py-3 text-left font-semibold text-gray-600">{{ __('Emisión') }}</th>
+          <th class="px-4 py-3 text-right font-semibold text-gray-600">{{ __('Total') }}</th>
+          <th class="px-4 py-3 text-center font-semibold text-gray-600">{{ __('Estado') }}</th>
           <th class="px-4 py-3"></th>
         </tr>
       </thead>
@@ -61,13 +61,13 @@
             </td>
             <td class="px-4 py-3 text-right">
               <a href="{{ route('invoices.show', $inv) }}"
-                 class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Ver</a>
+                 class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">{{ __('Ver') }}</a>
             </td>
           </tr>
         @empty
           <tr>
             <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">
-              Sin comprobantes. Crea uno desde una negociación.
+              {{ __('Sin comprobantes. Crea uno desde una negociación.') }}
             </td>
           </tr>
         @endforelse

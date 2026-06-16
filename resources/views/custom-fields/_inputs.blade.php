@@ -42,7 +42,7 @@
           @case('select')
             <select name="{{ $name }}" {{ $req }}
                     class="w-full rounded-lg border-gray-200 text-sm py-2">
-              <option value="">— Seleccionar —</option>
+              <option value="">{{ __('— Seleccionar —') }}</option>
               @foreach((array) $cf->options as $opt)
                 <option value="{{ $opt }}" {{ (string) $val === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
               @endforeach

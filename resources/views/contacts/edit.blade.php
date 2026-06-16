@@ -8,7 +8,7 @@
         </svg>
       </a>
       <h2 class="text-lg font-semibold text-gray-800">
-        {{ $contact ? 'Editar contacto' : 'Nuevo contacto' }}
+        {{ $contact ? __('Editar contacto') : __('Nuevo contacto') }}
       </h2>
       @if($contact)
         <span class="text-sm text-gray-400">{{ $contact->name }}</span>
@@ -53,7 +53,7 @@
                   {{ $contact->company ?? '' }}{{ $contact->company && $contact->position ? ' · ' : '' }}{{ $contact->position ?? '' }}
                 </p>
                 @if($contact->owner)
-                  <p class="text-xs text-gray-400 mt-0.5">Creado por {{ $contact->owner->name }}</p>
+                  <p class="text-xs text-gray-400 mt-0.5">{{ __('Creado por') }} {{ $contact->owner->name }}</p>
                 @endif
               </div>
             </div>
@@ -68,26 +68,26 @@
             {{-- Nombre --}}
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Nombre') }} <span class="text-red-500">*</span></label>
                 <input type="text" name="first_name"
                        value="{{ old('first_name', $contact?->first_name) }}"
                        class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
-                       placeholder="Nombre">
+                       placeholder="{{ __('Nombre') }}">
                 @error('first_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Apellido') }}</label>
                 <input type="text" name="last_name"
                        value="{{ old('last_name', $contact?->last_name) }}"
                        class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
-                       placeholder="Apellido">
+                       placeholder="{{ __('Apellido') }}">
               </div>
             </div>
 
             {{-- Email y teléfono --}}
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Email') }}</label>
                 <input type="email" name="email"
                        value="{{ old('email', $contact?->email) }}"
                        class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
@@ -95,7 +95,7 @@
                 @error('email')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Teléfono') }}</label>
                 <input type="text" name="phone"
                        value="{{ old('phone', $contact?->phone) }}"
                        class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
@@ -107,27 +107,27 @@
             {{-- Empresa y cargo --}}
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Empresa') }}</label>
                 <input type="text" name="company"
                        value="{{ old('company', $contact?->company) }}"
                        class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
-                       placeholder="Nombre de la empresa">
+                       placeholder="{{ __('Nombre de la empresa') }}">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Cargo') }}</label>
                 <input type="text" name="position"
                        value="{{ old('position', $contact?->position) }}"
                        class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
-                       placeholder="Ej. Gerente, Director…">
+                       placeholder="{{ __('Ej. Gerente, Director…') }}">
               </div>
             </div>
 
             {{-- Estado y origen --}}
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Estado') }}</label>
                 <select name="status" class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400">
-                  @foreach(['nuevo' => 'Nuevo', 'activo' => 'Activo', 'cliente' => 'Cliente', 'inactivo' => 'Inactivo', 'perdido' => 'Perdido'] as $val => $label)
+                  @foreach(['nuevo' => __('Nuevo'), 'activo' => __('Activo'), 'cliente' => __('Cliente'), 'inactivo' => __('Inactivo'), 'perdido' => __('Perdido')] as $val => $label)
                     <option value="{{ $val }}" {{ old('status', $contact?->status ?? 'nuevo') === $val ? 'selected' : '' }}>
                       {{ $label }}
                     </option>
@@ -135,10 +135,10 @@
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Origen</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Origen') }}</label>
                 <select name="source" class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400">
-                  <option value="">— Sin especificar —</option>
-                  @foreach(['whatsapp' => 'WhatsApp', 'crm' => 'CRM', 'web' => 'Web', 'referido' => 'Referido', 'publicidad' => 'Publicidad', 'otro' => 'Otro'] as $val => $label)
+                  <option value="">{{ __('— Sin especificar —') }}</option>
+                  @foreach(['whatsapp' => 'WhatsApp', 'crm' => 'CRM', 'web' => __('Web'), 'referido' => __('Referido'), 'publicidad' => __('Publicidad'), 'otro' => __('Otro')] as $val => $label)
                     <option value="{{ $val }}" {{ old('source', $contact?->source) === $val ? 'selected' : '' }}>
                       {{ $label }}
                     </option>
@@ -149,10 +149,10 @@
 
             {{-- Notas --}}
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Notas') }}</label>
               <textarea name="notes" rows="3"
                         class="w-full rounded-lg border-gray-200 text-sm focus:ring-indigo-400 focus:border-indigo-400"
-                        placeholder="Información adicional sobre el contacto…">{{ old('notes', $contact?->notes) }}</textarea>
+                        placeholder="{{ __('Información adicional sobre el contacto…') }}">{{ old('notes', $contact?->notes) }}</textarea>
             </div>
 
             {{-- Campos personalizados --}}
@@ -162,7 +162,7 @@
                   <svg class="size-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-7-7h14"/>
                   </svg>
-                  Campos personalizados
+                  {{ __('Campos personalizados') }}
                 </h3>
                 @include('custom-fields._inputs', ['customFields' => $customFields, 'customValues' => $customValues ?? []])
               </div>
@@ -175,13 +175,13 @@
                      del form principal para evitar formularios anidados (HTML inválido que causaba
                      que "Guardar cambios" enviara el form de DELETE y eliminara el contacto). --}}
                 <button type="button"
-                        onclick="if(confirm('¿Eliminar este contacto?')) document.getElementById('deleteContactForm').submit();"
+                        onclick="if(confirm('{{ __('¿Eliminar este contacto?') }}')) document.getElementById('deleteContactForm').submit();"
                         class="text-sm text-red-500 hover:text-red-700 transition flex items-center gap-1.5">
                   <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                   </svg>
-                  Eliminar contacto
+                  {{ __('Eliminar contacto') }}
                 </button>
               @else
                 <div></div>
@@ -192,7 +192,7 @@
                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                {{ $contact ? 'Guardar cambios' : 'Crear contacto' }}
+                {{ $contact ? __('Guardar cambios') : __('Crear contacto') }}
               </button>
             </div>
 
@@ -218,13 +218,13 @@
         @if($contact)
           <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-              <span class="text-sm font-semibold text-gray-800">Negocios</span>
+              <span class="text-sm font-semibold text-gray-800">{{ __('Negocios') }}</span>
               <span class="text-xs text-gray-400">{{ $contact->deals->count() }}</span>
             </div>
 
             @if($contact->deals->isEmpty())
               <div class="px-4 py-6 text-center text-xs text-gray-400">
-                Sin negocios vinculados.
+                {{ __('Sin negocios vinculados.') }}
               </div>
             @else
               <ul class="divide-y divide-gray-50">
@@ -260,7 +260,7 @@
 
           {{-- Acceso rápido --}}
           <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 space-y-2">
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Acciones rápidas</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">{{ __('Acciones rápidas') }}</p>
 
             @if($contact->phone)
               <a href="https://wa.me/{{ preg_replace('/\D/', '', $contact->phone) }}"
@@ -269,7 +269,7 @@
                 <svg class="size-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                 </svg>
-                Enviar WhatsApp
+                {{ __('Enviar WhatsApp') }}
               </a>
             @endif
 
@@ -280,7 +280,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                Enviar email
+                {{ __('Enviar email') }}
               </a>
             @endif
 
@@ -290,7 +290,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
               </svg>
-              Ver conversaciones
+              {{ __('Ver conversaciones') }}
             </a>
           </div>
         @endif

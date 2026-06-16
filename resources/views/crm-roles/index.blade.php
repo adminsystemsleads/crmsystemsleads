@@ -12,10 +12,10 @@
                 </div>
                 <div>
                     <h2 class="font-semibold text-xl text-gray-900 leading-tight">
-                        Configurar Roles y Permisos de CRM
+                        {{ __('Configurar Roles y Permisos de CRM') }}
                     </h2>
                     <p class="text-xs text-gray-500 mt-0.5">
-                        Define qué puede hacer cada miembro del equipo en el CRM.
+                        {{ __('Define qué puede hacer cada miembro del equipo en el CRM.') }}
                     </p>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                     </svg>
-                    Volver a Perfiles
+                    {{ __('Volver a Perfiles') }}
                 </a>
                 <a href="{{ route('team.crm-roles.create') }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2 text-white text-sm font-medium rounded-md transition shadow-sm"
@@ -36,7 +36,7 @@
                     <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                     </svg>
-                    Nuevo rol
+                    {{ __('Nuevo rol') }}
                 </a>
             </div>
         </div>
@@ -67,15 +67,15 @@
             {{-- Stats summary (3 columnas siempre, inline grid para no depender del build de Tailwind) --}}
             <div style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:.75rem;">
                 <div class="bg-white rounded-lg p-4 border border-gray-100">
-                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Total de roles</p>
+                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">{{ __('Total de roles') }}</p>
                     <p class="text-2xl font-bold text-gray-900 mt-1">{{ $roles->count() }}</p>
                 </div>
                 <div class="bg-white rounded-lg p-4 border border-gray-100">
-                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Roles del sistema</p>
+                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">{{ __('Roles del sistema') }}</p>
                     <p class="text-2xl font-bold mt-1" style="color:#A08544;">{{ $roles->where('is_default', true)->count() }}</p>
                 </div>
                 <div class="bg-white rounded-lg p-4 border border-gray-100">
-                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Roles personalizados</p>
+                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-400">{{ __('Roles personalizados') }}</p>
                     <p class="text-2xl font-bold mt-1" style="color:#1E2E48;">{{ $roles->where('is_default', false)->count() }}</p>
                 </div>
             </div>
@@ -83,8 +83,8 @@
             {{-- Roles list --}}
             <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-100">
                 <div class="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-gray-800">Roles disponibles</h3>
-                    <span class="text-xs text-gray-500">{{ $roles->count() }} {{ $roles->count() === 1 ? 'rol' : 'roles' }}</span>
+                    <h3 class="text-sm font-semibold text-gray-800">{{ __('Roles disponibles') }}</h3>
+                    <span class="text-xs text-gray-500">{{ $roles->count() }} {{ $roles->count() === 1 ? __('rol') : __('roles') }}</span>
                 </div>
 
                 @if ($roles->isEmpty())
@@ -96,15 +96,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
                         </div>
-                        <p class="text-sm font-medium text-gray-900">No hay roles creados aún</p>
-                        <p class="text-xs text-gray-500 mt-1 mb-4">Crea tu primer rol para empezar a gestionar accesos del CRM.</p>
+                        <p class="text-sm font-medium text-gray-900">{{ __('No hay roles creados aún') }}</p>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">{{ __('Crea tu primer rol para empezar a gestionar accesos del CRM.') }}</p>
                         <a href="{{ route('team.crm-roles.create') }}"
                            class="inline-flex items-center gap-1.5 px-4 py-2 text-white text-sm font-medium rounded-md transition shadow-sm"
                            style="background-color: #1E2E48;">
                             <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Crear primer rol
+                            {{ __('Crear primer rol') }}
                         </a>
                     </div>
                 @else
@@ -133,14 +133,14 @@
                                                 <svg style="width:10px;height:10px;" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M12 2l2.39 6.95H22l-6.18 4.5 2.36 7.28L12 16.27 5.82 20.73l2.36-7.28L2 8.95h7.61z"/>
                                                 </svg>
-                                                Sistema
+                                                {{ __('Sistema') }}
                                             </span>
                                         @endif
                                     </div>
                                     @if ($role->description)
                                         <p class="text-xs text-gray-500 mt-0.5 truncate">{{ $role->description }}</p>
                                     @else
-                                        <p class="text-xs text-gray-400 italic mt-0.5">Sin descripción</p>
+                                        <p class="text-xs text-gray-400 italic mt-0.5">{{ __('Sin descripción') }}</p>
                                     @endif
                                 </div>
 
@@ -148,7 +148,7 @@
                                 @php $totalPerms = count(\App\Support\CrmPermissions::allKeys()); @endphp
                                 <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full flex-shrink-0"
                                      style="background-color:#E8ECF2; border:1px solid rgba(30,46,72,.10);"
-                                     title="{{ $role->permission_count }} de {{ $totalPerms }} permisos del sistema">
+                                     title="{{ $role->permission_count }} {{ __('de') }} {{ $totalPerms }} {{ __('permisos del sistema') }}">
                                     <svg style="width:13px;height:13px;color:#1E2E48;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -162,7 +162,7 @@
                                 <div class="flex items-center gap-1 flex-shrink-0">
                                     <a href="{{ route('team.crm-roles.edit', $role) }}"
                                        class="inline-flex items-center justify-center w-9 h-9 rounded-md text-gray-500 hover:bg-white hover:text-gray-900 transition border border-transparent hover:border-gray-200"
-                                       title="Editar">
+                                       title="{{ __('Editar') }}">
                                         <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
@@ -171,18 +171,18 @@
                                     @if ($isSystem)
                                         {{-- Botón de eliminar deshabilitado para roles del sistema --}}
                                         <span class="inline-flex items-center justify-center w-9 h-9 rounded-md text-gray-300 cursor-not-allowed"
-                                              title="El rol del sistema no se puede eliminar">
+                                              title="{{ __('El rol del sistema no se puede eliminar') }}">
                                             <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 7h14M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/>
                                             </svg>
                                         </span>
                                     @else
                                         <form action="{{ route('team.crm-roles.destroy', $role) }}" method="POST"
-                                              onsubmit="return confirm('¿Eliminar el rol &quot;{{ $role->name }}&quot;? Los usuarios con este rol quedarán sin rol asignado. Esta acción no se puede deshacer.');">
+                                              onsubmit="return confirm('{{ __('¿Eliminar el rol') }} &quot;{{ $role->name }}&quot;? {{ __('Los usuarios con este rol quedarán sin rol asignado. Esta acción no se puede deshacer.') }}');">
                                             @csrf @method('DELETE')
                                             <button type="submit"
                                                     class="inline-flex items-center justify-center w-9 h-9 rounded-md text-gray-500 hover:bg-red-50 hover:text-red-600 transition border border-transparent hover:border-red-200"
-                                                    title="Eliminar rol">
+                                                    title="{{ __('Eliminar rol') }}">
                                                 <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 7h14M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/>
                                                 </svg>
@@ -203,10 +203,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <div class="text-xs leading-relaxed" style="color:#7a6132;">
-                    El rol <strong>Administrador</strong> es creado por el sistema y siempre conserva todos los permisos.
-                    Puedes editarle la descripción pero no quitarle accesos ni eliminarlo. El rol <strong>Editor</strong>
-                    viene pre-configurado con permisos de lectura, creación y edición (sin eliminar) — puedes modificarlo
-                    o eliminarlo si necesitas.
+                    {{ __('El rol') }} <strong>{{ __('Administrador') }}</strong> {{ __('es creado por el sistema y siempre conserva todos los permisos. Puedes editarle la descripción pero no quitarle accesos ni eliminarlo. El rol') }} <strong>{{ __('Editor') }}</strong>
+                    {{ __('viene pre-configurado con permisos de lectura, creación y edición (sin eliminar) — puedes modificarlo o eliminarlo si necesitas.') }}
                 </div>
             </div>
         </div>

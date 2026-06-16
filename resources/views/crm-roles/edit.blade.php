@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Editar Rol: {{ $role->name }} — Configurar Roles y Permisos de CRM
+            {{ __('Editar Rol:') }} {{ $role->name }} {{ __('— Configurar Roles y Permisos de CRM') }}
         </h2>
     </x-slot>
 

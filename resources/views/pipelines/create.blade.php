@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Nuevo pipeline
+            {{ __('Nuevo pipeline') }}
         </h2>
     </x-slot>
 
@@ -12,7 +12,7 @@
                     @csrf
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Nombre</label>
+                        <label class="block text-sm font-medium text-gray-700">{{ __('Nombre') }}</label>
                         <input type="text" name="name" value="{{ old('name') }}"
                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         @error('name')
@@ -21,18 +21,18 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Descripción</label>
+                        <label class="block text-sm font-medium text-gray-700">{{ __('Descripción') }}</label>
                         <textarea name="description" rows="3"
                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">{{ old('description') }}</textarea>
                     </div>
 
                     <div class="flex justify-end space-x-2">
                         <a href="{{ route('pipelines.index') }}" class="px-4 py-2 border rounded-md text-gray-700">
-                            Cancelar
+                            {{ __('Cancelar') }}
                         </a>
                         <button type="submit"
                                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                            Guardar
+                            {{ __('Guardar') }}
                         </button>
                     </div>
                 </form>

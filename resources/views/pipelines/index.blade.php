@@ -24,9 +24,9 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fases</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Nombre') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Fases') }}</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Estado') }}</th>
                             <th class="px-6 py-3"></th>
                         </tr>
                     </thead>
@@ -37,16 +37,16 @@
                                     {{ $pipeline->name }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
-                                    {{ $pipeline->stages->count() }} fases
+                                    {{ $pipeline->stages->count() }} {{ __('fases') }}
                                 </td>
                                 <td class="px-6 py-4 text-sm">
                                     @if($pipeline->is_active)
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Activo
+                                            {{ __('Activo') }}
                                         </span>
                                     @else
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Inactivo
+                                            {{ __('Inactivo') }}
                                         </span>
                                     @endif
                                 </td>
@@ -57,15 +57,15 @@
                                     </a>
                                     <a href="{{ route('pipelines.edit', $pipeline) }}"
                                        class="text-blue-600 hover:text-blue-900">
-                                        Editar
+                                        {{ __('Editar') }}
                                     </a>
                                     <form action="{{ route('pipelines.destroy', $pipeline) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="text-red-600 hover:text-red-900"
-                                                onclick="return confirm('¿Eliminar este pipeline?');">
-                                            Eliminar
+                                                onclick="return confirm('{{ __('¿Eliminar este pipeline?') }}');">
+                                            {{ __('Eliminar') }}
                                         </button>
                                     </form>
                                 </td>
@@ -73,7 +73,7 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="px-6 py-4 text-sm text-gray-500">
-                                    No hay pipelines creados aún.
+                                    {{ __('No hay pipelines creados aún.') }}
                                 </td>
                             </tr>
                         @endforelse

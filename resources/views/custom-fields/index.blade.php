@@ -3,19 +3,19 @@
 
   {{-- Header --}}
   <div class="mb-6" :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
-    <h1 class="text-xl font-bold text-gray-900">Campos personalizados</h1>
-    <p class="text-sm text-gray-500 mt-1">Define campos extra para Contactos y Negociaciones (texto, número, fecha o lista).</p>
+    <h1 class="text-xl font-bold text-gray-900">{{ __('Campos personalizados') }}</h1>
+    <p class="text-sm text-gray-500 mt-1">{{ __('Define campos extra para Contactos y Negociaciones (texto, número, fecha o lista).') }}</p>
   </div>
 
   {{-- Tabs entity --}}
   <div class="inline-flex rounded-xl border border-gray-200 bg-white p-1 text-sm mb-5 shadow-sm">
     <a href="{{ route('custom-fields.index', ['entity' => 'contact']) }}"
        class="px-4 py-1.5 rounded-lg transition {{ $entity === 'contact' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
-      👥 Contactos
+      👥 {{ __('Contactos') }}
     </a>
     <a href="{{ route('custom-fields.index', ['entity' => 'deal']) }}"
        class="px-4 py-1.5 rounded-lg transition {{ $entity === 'deal' ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50' }}">
-      💼 Negociaciones
+      💼 {{ __('Negociaciones') }}
     </a>
   </div>
 
@@ -29,7 +29,7 @@
   @endif
 
   @php
-    $typeLabels = ['text' => 'Texto', 'number' => 'Número', 'date' => 'Fecha', 'select' => 'Lista'];
+    $typeLabels = ['text' => __('Texto'), 'number' => __('Número'), 'date' => __('Fecha'), 'select' => __('Lista')];
     $typeIcons  = ['text' => '📝', 'number' => '🔢', 'date' => '📅', 'select' => '📋'];
   @endphp
 
@@ -43,10 +43,10 @@
             <p class="font-semibold text-sm text-gray-900 truncate">
               {{ $f->name }}
               @if($f->is_required)
-                <span class="ml-1 text-[10px] font-bold text-red-500 uppercase">Requerido</span>
+                <span class="ml-1 text-[10px] font-bold text-red-500 uppercase">{{ __('Requerido') }}</span>
               @endif
               @if(!$f->is_active)
-                <span class="ml-1 inline-flex items-center rounded-full bg-gray-100 text-gray-500 px-2 py-0.5 text-[10px] font-semibold">Inactivo</span>
+                <span class="ml-1 inline-flex items-center rounded-full bg-gray-100 text-gray-500 px-2 py-0.5 text-[10px] font-semibold">{{ __('Inactivo') }}</span>
               @endif
             </p>
             <p class="text-[11px] text-gray-400 font-mono truncate">{{ $f->slug }} · {{ $typeLabels[$f->field_type] ?? $f->field_type }}</p>
@@ -62,12 +62,12 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div class="sm:col-span-2">
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Nombre') }}</label>
                 <input type="text" name="name" value="{{ $f->name }}" required maxlength="120"
                        class="w-full rounded-lg border-gray-200 text-sm py-1.5">
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Tipo') }}</label>
                 <select name="field_type" class="w-full rounded-lg border-gray-200 text-sm py-1.5">
                   @foreach($typeLabels as $val => $lbl)
                     <option value="{{ $val }}" {{ $f->field_type === $val ? 'selected' : '' }}>{{ $lbl }}</option>
@@ -78,9 +78,9 @@
 
             <div>
               <label class="block text-xs font-semibold text-gray-600 mb-1">
-                Opciones <span class="text-gray-400 font-normal">(solo para tipo Lista — una por línea)</span>
+                {{ __('Opciones') }} <span class="text-gray-400 font-normal">{{ __('(solo para tipo Lista — una por línea)') }}</span>
               </label>
-              <textarea name="options" rows="3" placeholder="Pequeña empresa&#10;Mediana empresa&#10;Grande"
+              <textarea name="options" rows="3" placeholder="{{ __('Pequeña empresa') }}&#10;{{ __('Mediana empresa') }}&#10;{{ __('Grande') }}"
                         class="w-full rounded-lg border-gray-200 text-xs py-1.5 font-mono">{{ is_array($f->options) ? implode("\n", $f->options) : '' }}</textarea>
             </div>
 
@@ -90,26 +90,26 @@
                 <input type="checkbox" name="is_required" value="1"
                        class="rounded border-gray-300 text-indigo-600"
                        {{ $f->is_required ? 'checked' : '' }}>
-                Obligatorio
+                {{ __('Obligatorio') }}
               </label>
               <label class="inline-flex items-center gap-2 text-sm text-gray-700">
                 <input type="hidden" name="is_active" value="0">
                 <input type="checkbox" name="is_active" value="1"
                        class="rounded border-gray-300 text-indigo-600"
                        {{ $f->is_active ? 'checked' : '' }}>
-                Activo
+                {{ __('Activo') }}
               </label>
 
               <div class="ml-auto flex items-center gap-2">
                 <button type="submit" class="px-3 py-1.5 rounded-md bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
-                  Guardar
+                  {{ __('Guardar') }}
                 </button>
           </form>
                 <form method="POST" action="{{ route('custom-fields.destroy', $f) }}" class="inline"
-                      onsubmit="return confirm('¿Eliminar este campo? Se borrarán todos los valores guardados.');">
+                      onsubmit="return confirm('{{ __('¿Eliminar este campo? Se borrarán todos los valores guardados.') }}');">
                   @csrf @method('DELETE')
                   <button type="submit" class="px-3 py-1.5 rounded-md border border-red-200 text-red-500 text-xs font-medium hover:bg-red-50">
-                    Eliminar
+                    {{ __('Eliminar') }}
                   </button>
                 </form>
               </div>
@@ -118,9 +118,9 @@
       </details>
     @empty
       <div class="bg-white rounded-xl shadow-sm border border-dashed border-gray-200 py-10 text-center">
-        <p class="text-sm text-gray-400">Aún no hay campos personalizados para
-          <strong>{{ $entity === 'contact' ? 'contactos' : 'negociaciones' }}</strong>.</p>
-        <p class="text-xs text-gray-400 mt-1">Crea el primero con el formulario de abajo ⬇</p>
+        <p class="text-sm text-gray-400">{{ __('Aún no hay campos personalizados para') }}
+          <strong>{{ $entity === 'contact' ? __('contactos') : __('negociaciones') }}</strong>.</p>
+        <p class="text-xs text-gray-400 mt-1">{{ __('Crea el primero con el formulario de abajo ⬇') }}</p>
       </div>
     @endforelse
   </div>
@@ -131,7 +131,7 @@
       <svg class="size-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
       </svg>
-      Agregar nuevo campo
+      {{ __('Agregar nuevo campo') }}
     </h2>
     <form method="POST" action="{{ route('custom-fields.store') }}" class="space-y-3">
       @csrf
@@ -139,38 +139,38 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre *</label>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Nombre *') }}</label>
           <input type="text" name="name" required maxlength="120"
-                 placeholder="Ej: RUC, Industria, Fecha de seguimiento"
+                 placeholder="{{ __('Ej: RUC, Industria, Fecha de seguimiento') }}"
                  class="w-full rounded-lg border-gray-200 text-sm py-2">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo *</label>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Tipo *') }}</label>
           <select name="field_type" id="newFieldType"
                   onchange="document.getElementById('newOptionsBox').classList.toggle('hidden', this.value !== 'select')"
                   class="w-full rounded-lg border-gray-200 text-sm py-2">
-            <option value="text">📝 Texto</option>
-            <option value="number">🔢 Número</option>
-            <option value="date">📅 Fecha</option>
-            <option value="select">📋 Lista (desplegable)</option>
+            <option value="text">📝 {{ __('Texto') }}</option>
+            <option value="number">🔢 {{ __('Número') }}</option>
+            <option value="date">📅 {{ __('Fecha') }}</option>
+            <option value="select">📋 {{ __('Lista (desplegable)') }}</option>
           </select>
         </div>
       </div>
 
       <div id="newOptionsBox" class="hidden">
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Opciones</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Opciones') }}</label>
         <textarea name="options" rows="3"
-                  placeholder="Una opción por línea, ej:&#10;Pequeña empresa&#10;Mediana empresa&#10;Grande"
+                  placeholder="{{ __('Una opción por línea, ej:') }}&#10;{{ __('Pequeña empresa') }}&#10;{{ __('Mediana empresa') }}&#10;{{ __('Grande') }}"
                   class="w-full rounded-lg border-gray-200 text-xs py-1.5 font-mono"></textarea>
       </div>
 
       <div class="flex items-center justify-between pt-1">
         <label class="inline-flex items-center gap-2 text-sm text-gray-700">
           <input type="checkbox" name="is_required" value="1" class="rounded border-gray-300 text-indigo-600">
-          Obligatorio
+          {{ __('Obligatorio') }}
         </label>
         <button type="submit" class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition shadow-sm">
-          + Agregar campo
+          + {{ __('Agregar campo') }}
         </button>
       </div>
     </form>

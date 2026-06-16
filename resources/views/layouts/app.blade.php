@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>QipuCRM — Gestión comercial inteligente</title>
+    <title>QipuCRM — {{ __('Gestión comercial inteligente') }}</title>
 
     {{-- Favicon --}}
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
@@ -191,15 +191,15 @@
       @if ($licenseBanner)
         @php
           $lbDays   = $licenseBanner['days'];
-          $lbDayTxt = $lbDays === 1 ? '1 día' : "{$lbDays} días";
+          $lbDayTxt = $lbDays === 1 ? __('1 día') : __(':days días', ['days' => $lbDays]);
           if ($licenseBanner['type'] === 'prorroga') {
               $lbBg='#fee2e2'; $lbFg='#991b1b'; $lbBtn='#dc2626'; $lbBorder='#fecaca';
-              $lbTitle='Periodo de prórroga activo';
-              $lbMsg="Tu licencia finalizó y se activó una prórroga de la cual te queda(n) {$lbDayTxt} para que exportes tu data o realices el proceso que desees. Al finalizar la prórroga, tu cuenta quedará bloqueada automáticamente y perderás el acceso. Comunícate con soporte para renovar tu servicio o recibir la ayuda que necesites.";
+              $lbTitle=__('Periodo de prórroga activo');
+              $lbMsg=__('Tu licencia finalizó y se activó una prórroga de la cual te queda(n) :days para que exportes tu data o realices el proceso que desees. Al finalizar la prórroga, tu cuenta quedará bloqueada automáticamente y perderás el acceso. Comunícate con soporte para renovar tu servicio o recibir la ayuda que necesites.', ['days' => $lbDayTxt]);
           } else {
               $lbBg='#fef3c7'; $lbFg='#92400e'; $lbBtn='#d97706'; $lbBorder='#fde68a';
-              $lbTitle='Tu licencia está próxima a vencer';
-              $lbMsg="La licencia de esta cuenta vence pronto: te queda(n) {$lbDayTxt}. Comunícate con soporte para renovar tu servicio y evitar que tu cuenta se bloquee.";
+              $lbTitle=__('Tu licencia está próxima a vencer');
+              $lbMsg=__('La licencia de esta cuenta vence pronto: te queda(n) :days. Comunícate con soporte para renovar tu servicio y evitar que tu cuenta se bloquee.', ['days' => $lbDayTxt]);
           }
         @endphp
         <div x-data="{ show: (function(){ try { return localStorage.getItem('{{ $licenseBanner['key'] }}') !== '1'; } catch(e){ return true; } })() }"
@@ -218,11 +218,11 @@
               <svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v6m-3.536 1.464a5 5 0 107.072 0"/>
               </svg>
-              Comunicarme con soporte
+              {{ __('Comunicarme con soporte') }}
             </a>
             <button type="button"
                     @click="show=false; try{ localStorage.setItem('{{ $licenseBanner['key'] }}','1'); }catch(e){}"
-                    title="Cerrar"
+                    title="{{ __('Cerrar') }}"
                     style="flex-shrink:0;background:transparent;border:none;cursor:pointer;color:{{ $lbFg }};opacity:.65;padding:4px;line-height:0;">
               <svg style="width:18px;height:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -259,7 +259,7 @@
           else document.documentElement.classList.remove('dark');
           // Actualizar label del botón sidebar si existe
           document.querySelectorAll('[data-theme-label]').forEach(el => {
-            el.textContent = t === 'dark' ? 'Tema oscuro' : 'Tema claro';
+            el.textContent = t === 'dark' ? @json(__('Tema oscuro')) : @json(__('Tema claro'));
           });
         }
         try { applyTheme(localStorage.getItem('theme') || 'light'); } catch(e){}

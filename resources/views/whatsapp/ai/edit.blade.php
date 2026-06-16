@@ -7,12 +7,12 @@
         </svg>
       </a>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Asistente IA — {{ $account->name }}
+        {{ __('Asistente IA') }} — {{ $account->name }}
       </h2>
       @if($assistant?->is_active)
         <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold bg-green-100 text-green-700">
           <span class="size-1.5 rounded-full bg-green-500 animate-pulse inline-block"></span>
-          Activo
+          {{ __('Activo') }}
         </span>
       @endif
     </div>
@@ -40,7 +40,7 @@
       @endif
       @if($errors->any())
         <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-          <p class="font-semibold mb-1">Errores de validación:</p>
+          <p class="font-semibold mb-1">{{ __('Errores de validación:') }}</p>
           <ul class="list-disc list-inside space-y-0.5">
             @foreach($errors->all() as $err)
               <li>{{ $err }}</li>
@@ -58,10 +58,10 @@
           </svg>
         </div>
         <div>
-          <p class="text-sm font-semibold text-gray-900">Asistente IA con ChatGPT</p>
+          <p class="text-sm font-semibold text-gray-900">{{ __('Asistente IA con ChatGPT') }}</p>
           <p class="text-xs text-gray-500 mt-1 leading-relaxed">
-            Cuando esté activo, el asistente responderá automáticamente los mensajes de texto entrantes en
-            <strong>{{ $account->name }}</strong> usando tu API Key de OpenAI. Cada cliente usa su propia clave.
+            {{ __('Cuando esté activo, el asistente responderá automáticamente los mensajes de texto entrantes en') }}
+            <strong>{{ $account->name }}</strong> {{ __('usando tu API Key de OpenAI. Cada cliente usa su propia clave.') }}
           </p>
         </div>
       </div>
@@ -75,8 +75,8 @@
         {{-- Activar/desactivar --}}
         <div class="px-6 py-5 flex items-center justify-between gap-4">
           <div>
-            <p class="text-sm font-semibold text-gray-900">Activar asistente</p>
-            <p class="text-xs text-gray-500 mt-0.5">Al activar, el bot responderá mensajes automáticamente.</p>
+            <p class="text-sm font-semibold text-gray-900">{{ __('Activar asistente') }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ __('Al activar, el bot responderá mensajes automáticamente.') }}</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="hidden" name="is_active" value="0">
@@ -93,24 +93,24 @@
         {{-- API Key --}}
         <div class="px-6 py-5">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            API Key de OpenAI
-            <span class="text-gray-400 font-normal">(requerida)</span>
+            {{ __('API Key de OpenAI') }}
+            <span class="text-gray-400 font-normal">({{ __('requerida') }})</span>
           </label>
           <input type="password" name="api_key"
-                 placeholder="{{ $assistant?->api_key ? '••••••••••••••••••••••••••• (ya guardada)' : 'sk-...' }}"
+                 placeholder="{{ $assistant?->api_key ? __('••••••••••••••••••••••••••• (ya guardada)') : 'sk-...' }}"
                  class="w-full border-gray-300 rounded-xl shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500"
                  autocomplete="off">
           @error('api_key')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
           <p class="text-xs text-gray-400 mt-1.5">
-            Obtén tu clave en
+            {{ __('Obtén tu clave en') }}
             <a href="https://platform.openai.com/api-keys" target="_blank" class="text-indigo-600 underline">platform.openai.com/api-keys</a>.
-            Se almacena cifrada. Déjala vacía para no cambiarla.
+            {{ __('Se almacena cifrada. Déjala vacía para no cambiarla.') }}
           </p>
         </div>
 
         {{-- Modelo --}}
         <div class="px-6 py-5">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Modelo de ChatGPT</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Modelo de ChatGPT') }}</label>
           <select name="model" class="w-full border-gray-300 rounded-xl shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
             @foreach($models as $value => $label)
               <option value="{{ $value }}" {{ old('model', $assistant?->model ?? 'gpt-4o-mini') === $value ? 'selected' : '' }}>
@@ -124,14 +124,14 @@
         {{-- System Prompt --}}
         <div class="px-6 py-5">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Instrucciones del asistente
-            <span class="text-gray-400 font-normal">(system prompt)</span>
+            {{ __('Instrucciones del asistente') }}
+            <span class="text-gray-400 font-normal">({{ __('system prompt') }})</span>
           </label>
           <textarea name="system_prompt" rows="5"
                     class="w-full border-gray-300 rounded-xl shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Eres un asistente de ventas amable y profesional. Responde siempre en español. Cuando el cliente quiera hablar con un humano, dile que un agente lo atenderá pronto.">{{ old('system_prompt', $assistant?->system_prompt) }}</textarea>
+                    placeholder="{{ __('Eres un asistente de ventas amable y profesional. Responde siempre en español. Cuando el cliente quiera hablar con un humano, dile que un agente lo atenderá pronto.') }}">{{ old('system_prompt', $assistant?->system_prompt) }}</textarea>
           @error('system_prompt')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-          <p class="text-xs text-gray-400 mt-1">Define el comportamiento, tono y límites del asistente. Máx. 4000 caracteres.</p>
+          <p class="text-xs text-gray-400 mt-1">{{ __('Define el comportamiento, tono y límites del asistente. Máx. 4000 caracteres.') }}</p>
         </div>
 
         {{-- Parámetros avanzados --}}
@@ -141,7 +141,7 @@
             <svg class="size-4 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
-            Parámetros avanzados
+            {{ __('Parámetros avanzados') }}
           </button>
 
           <div x-show="open" x-transition class="mt-4 space-y-5">
@@ -149,16 +149,16 @@
             {{-- Temperatura --}}
             <div x-data="{ val: {{ old('temperature', $assistant?->temperature ?? 0.7) }} }">
               <div class="flex items-center justify-between mb-1">
-                <label class="text-sm font-medium text-gray-700">Temperatura (creatividad)</label>
+                <label class="text-sm font-medium text-gray-700">{{ __('Temperatura (creatividad)') }}</label>
                 <span class="text-sm font-semibold text-indigo-600" x-text="val"></span>
               </div>
               <input type="range" name="temperature" min="0" max="2" step="0.1"
                      x-model="val"
                      class="w-full accent-indigo-600">
               <div class="flex justify-between text-[10px] text-gray-400 mt-0.5">
-                <span>Preciso (0)</span>
-                <span>Balanceado (0.7)</span>
-                <span>Creativo (2)</span>
+                <span>{{ __('Preciso (0)') }}</span>
+                <span>{{ __('Balanceado (0.7)') }}</span>
+                <span>{{ __('Creativo (2)') }}</span>
               </div>
               @error('temperature')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
@@ -166,23 +166,23 @@
             {{-- Max Tokens --}}
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">
-                Longitud máxima de respuesta
-                <span class="text-gray-400 font-normal">(tokens)</span>
+                {{ __('Longitud máxima de respuesta') }}
+                <span class="text-gray-400 font-normal">({{ __('tokens') }})</span>
               </label>
               <input type="number" name="max_tokens" min="50" max="4000" step="50"
                      value="{{ old('max_tokens', $assistant?->max_tokens ?? 500) }}"
                      class="w-full border-gray-300 rounded-xl shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
-              <p class="text-xs text-gray-400 mt-1">~75 palabras por cada 100 tokens. Recomendado: 300-800.</p>
+              <p class="text-xs text-gray-400 mt-1">{{ __('~75 palabras por cada 100 tokens. Recomendado: 300-800.') }}</p>
               @error('max_tokens')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
             {{-- Contexto --}}
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Mensajes de contexto</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Mensajes de contexto') }}</label>
               <input type="number" name="context_messages" min="1" max="50"
                      value="{{ old('context_messages', $assistant?->context_messages ?? 20) }}"
                      class="w-full border-gray-300 rounded-xl shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
-              <p class="text-xs text-gray-400 mt-1">Cuántos mensajes previos de la conversación se envían como contexto al modelo.</p>
+              <p class="text-xs text-gray-400 mt-1">{{ __('Cuántos mensajes previos de la conversación se envían como contexto al modelo.') }}</p>
               @error('context_messages')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
@@ -199,13 +199,13 @@
                 </svg>
               </div>
               <div class="flex-1">
-                <h3 class="text-sm font-bold text-gray-900">Funciones IA personalizadas</h3>
+                <h3 class="text-sm font-bold text-gray-900">{{ __('Funciones IA personalizadas') }}</h3>
                 <p class="text-xs text-gray-600 mt-0.5">
-                  Define acciones que la IA ejecutará cuando detecte cierta situación en la conversación.
-                  Cada función es independiente con su propia descripción de cuándo activarla.
+                  {{ __('Define acciones que la IA ejecutará cuando detecte cierta situación en la conversación.') }}
+                  {{ __('Cada función es independiente con su propia descripción de cuándo activarla.') }}
                 </p>
               </div>
-              <label class="inline-flex items-center cursor-pointer shrink-0" title="Activar function calling">
+              <label class="inline-flex items-center cursor-pointer shrink-0" title="{{ __('Activar function calling') }}">
                 <input type="hidden" name="function_calling_enabled" value="0">
                 <input type="checkbox" name="function_calling_enabled" value="1" class="sr-only peer"
                        {{ old('function_calling_enabled', $assistant?->function_calling_enabled) ? 'checked' : '' }}>
@@ -222,13 +222,13 @@
                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Nueva función
+                {{ __('Nueva función') }}
               </button>
               <p class="text-[11px] text-gray-500 mt-3 italic">
-                💡 Tip: Funciona mejor con GPT-4o / GPT-4o Mini. La IA decide cuándo llamar a cada función leyendo su descripción.
+                💡 {{ __('Tip: Funciona mejor con GPT-4o / GPT-4o Mini. La IA decide cuándo llamar a cada función leyendo su descripción.') }}
               </p>
             @else
-              <p class="text-xs text-gray-500 italic">Guarda primero la configuración del asistente para poder crear funciones.</p>
+              <p class="text-xs text-gray-500 italic">{{ __('Guarda primero la configuración del asistente para poder crear funciones.') }}</p>
             @endif
           </div>
         </div>
@@ -245,10 +245,9 @@
                 </svg>
               </div>
               <div class="flex-1">
-                <h3 class="text-sm font-bold text-gray-900">Base de conocimiento</h3>
+                <h3 class="text-sm font-bold text-gray-900">{{ __('Base de conocimiento') }}</h3>
                 <p class="text-xs text-gray-600 mt-0.5">
-                  Sube archivos (TXT, MD, PDF, DOCX) o pega texto. La IA usará esta información para
-                  responder con datos oficiales de tu empresa.
+                  {{ __('Sube archivos (TXT, MD, PDF, DOCX) o pega texto. La IA usará esta información para responder con datos oficiales de tu empresa.') }}
                 </p>
               </div>
               <span id="kbUsageBadge" class="text-[10px] text-gray-500 shrink-0"></span>
@@ -262,19 +261,19 @@
                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                 </svg>
-                Subir archivo
+                {{ __('Subir archivo') }}
               </button>
               <button type="button" onclick="kbOpenTextModal()"
                       class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 transition">
                 <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-7-7h14"/>
                 </svg>
-                Pegar texto
+                {{ __('Pegar texto') }}
               </button>
             </div>
 
             <p class="text-[11px] text-gray-500 mt-3 italic">
-              💡 La IA recibe esta info en cada respuesta. Mantén textos concisos para mejores resultados.
+              💡 {{ __('La IA recibe esta info en cada respuesta. Mantén textos concisos para mejores resultados.') }}
             </p>
           </div>
         </div>
@@ -286,20 +285,20 @@
             @if($assistant)
               {{-- ⚠ NO anidamos otro <form> dentro del form principal: usamos form="aiAssistantDeleteForm" --}}
               <button type="submit" form="aiAssistantDeleteForm"
-                      onclick="return confirm('¿Eliminar la configuración del asistente IA?')"
+                      onclick="return confirm('{{ __('¿Eliminar la configuración del asistente IA?') }}')"
                       class="text-xs text-red-500 hover:text-red-700 underline">
-                Eliminar configuración
+                {{ __('Eliminar configuración') }}
               </button>
             @endif
           </div>
           <div class="flex gap-2">
             <a href="{{ route('whatsapp.accounts.index') }}"
                class="px-4 py-2 text-sm border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-100 transition">
-              Cancelar
+              {{ __('Cancelar') }}
             </a>
             <button type="submit"
                     class="px-5 py-2 text-sm bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-medium">
-              Guardar cambios
+              {{ __('Guardar cambios') }}
             </button>
           </div>
         </div>
@@ -316,13 +315,13 @@
 
       {{-- Info adicional --}}
       <div class="rounded-xl bg-amber-50 border border-amber-200 px-5 py-4 text-xs text-amber-800 space-y-1.5">
-        <p class="font-semibold text-sm text-amber-900">¿Cómo funciona?</p>
+        <p class="font-semibold text-sm text-amber-900">{{ __('¿Cómo funciona?') }}</p>
         <ul class="space-y-1 list-disc list-inside">
-          <li>El asistente sólo responde mensajes de <strong>texto</strong> entrantes.</li>
-          <li>Si el mensaje es una imagen, audio o video, <strong>no responde</strong> automáticamente.</li>
-          <li>Cada respuesta usa tus créditos de OpenAI — revisa tu uso en platform.openai.com.</li>
-          <li>El asistente ve los últimos <strong>{{ $assistant?->context_messages ?? 20 }} mensajes</strong> de la conversación como contexto.</li>
-          <li>Los mensajes enviados por el asistente aparecen en el inbox sin nombre de agente.</li>
+          <li>{{ __('El asistente sólo responde mensajes de') }} <strong>{{ __('texto') }}</strong> {{ __('entrantes.') }}</li>
+          <li>{{ __('Si el mensaje es una imagen, audio o video,') }} <strong>{{ __('no responde') }}</strong> {{ __('automáticamente.') }}</li>
+          <li>{{ __('Cada respuesta usa tus créditos de OpenAI — revisa tu uso en platform.openai.com.') }}</li>
+          <li>{{ __('El asistente ve los últimos') }} <strong>{{ $assistant?->context_messages ?? 20 }} {{ __('mensajes') }}</strong> {{ __('de la conversación como contexto.') }}</li>
+          <li>{{ __('Los mensajes enviados por el asistente aparecen en el inbox sin nombre de agente.') }}</li>
         </ul>
       </div>
 
@@ -336,7 +335,7 @@
 <div id="aiFunctionModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-      <h3 class="text-base font-bold text-gray-900" id="aiFnModalTitle">Crear función IA</h3>
+      <h3 class="text-base font-bold text-gray-900" id="aiFnModalTitle">{{ __('Crear función IA') }}</h3>
       <button type="button" onclick="closeAiFunctionModal()"
               class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 transition">
         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -352,82 +351,82 @@
 
       {{-- Modo --}}
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Modo *</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Modo') }} *</label>
         <select id="aiFnMode" class="w-full rounded-lg border-gray-200 text-sm py-2"
                 onchange="aiFnUpdateModeUI()">
-          <option value="update_crm">Actualizar CRM (capturar campos)</option>
-          <option value="change_stage">Cambiar fase de la negociación</option>
-          <option value="info">Solo información (responder al cliente)</option>
+          <option value="update_crm">{{ __('Actualizar CRM (capturar campos)') }}</option>
+          <option value="change_stage">{{ __('Cambiar fase de la negociación') }}</option>
+          <option value="info">{{ __('Solo información (responder al cliente)') }}</option>
         </select>
       </div>
 
       {{-- Nombre --}}
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Nombre interno (snake_case) *</label>
-        <input type="text" id="aiFnName" maxlength="60" placeholder="ej: save_lead_data"
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Nombre interno (snake_case)') }} *</label>
+        <input type="text" id="aiFnName" maxlength="60" placeholder="{{ __('ej: save_lead_data') }}"
                class="w-full rounded-lg border-gray-200 text-sm py-2 font-mono">
-        <p class="text-[10px] text-gray-400 mt-1">Solo letras minúsculas, números y guiones bajos. Sin espacios.</p>
+        <p class="text-[10px] text-gray-400 mt-1">{{ __('Solo letras minúsculas, números y guiones bajos. Sin espacios.') }}</p>
       </div>
 
       {{-- Descripción --}}
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">¿Cuándo se activa esta función? *</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('¿Cuándo se activa esta función?') }} *</label>
         <textarea id="aiFnDescription" rows="3" maxlength="2000"
-                  placeholder="Ej: Llama esta función cuando el cliente comparta su nombre completo, RUC o datos de contacto."
+                  placeholder="{{ __('Ej: Llama esta función cuando el cliente comparta su nombre completo, RUC o datos de contacto.') }}"
                   class="w-full rounded-lg border-gray-200 text-sm py-2"></textarea>
-        <p class="text-[10px] text-gray-400 mt-1">La IA leerá este texto para decidir cuándo ejecutar la función.</p>
+        <p class="text-[10px] text-gray-400 mt-1">{{ __('La IA leerá este texto para decidir cuándo ejecutar la función.') }}</p>
       </div>
 
       {{-- Properties (solo update_crm) --}}
       <div id="aiFnPropertiesBox">
         <div class="flex items-center justify-between mb-1">
-          <label class="block text-xs font-semibold text-gray-600">Campos del CRM a capturar</label>
+          <label class="block text-xs font-semibold text-gray-600">{{ __('Campos del CRM a capturar') }}</label>
           <button type="button" onclick="aiFnLoadFields()"
                   class="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold">
-            ↻ Recargar campos
+            ↻ {{ __('Recargar campos') }}
           </button>
         </div>
         <select id="aiFnProperties" multiple size="6"
                 class="w-full rounded-lg border-gray-200 text-sm py-1">
-          <option disabled>Cargando campos…</option>
+          <option disabled>{{ __('Cargando campos…') }}</option>
         </select>
-        <p class="text-[10px] text-gray-400 mt-1">Mantén Ctrl/⌘ para seleccionar varios.</p>
+        <p class="text-[10px] text-gray-400 mt-1">{{ __('Mantén Ctrl/⌘ para seleccionar varios.') }}</p>
       </div>
 
       {{-- Stage (solo change_stage) --}}
       <div id="aiFnStageBox" class="hidden">
         <div class="flex items-center justify-between mb-1">
-          <label class="block text-xs font-semibold text-gray-600">Fase destino</label>
+          <label class="block text-xs font-semibold text-gray-600">{{ __('Fase destino') }}</label>
           <button type="button" onclick="aiFnLoadStages()"
                   class="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold">
-            ↻ Cargar fases
+            ↻ {{ __('Cargar fases') }}
           </button>
         </div>
         <select id="aiFnTargetStage" class="w-full rounded-lg border-gray-200 text-sm py-2">
-          <option value="">Cargando fases…</option>
+          <option value="">{{ __('Cargando fases…') }}</option>
         </select>
       </div>
 
       {{-- Response --}}
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Respuesta del bot al ejecutar (opcional)</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Respuesta del bot al ejecutar (opcional)') }}</label>
         <textarea id="aiFnResponse" rows="2" maxlength="2000"
-                  placeholder="Ej: ¡Gracias! He registrado tus datos. Te contactaré pronto."
+                  placeholder="{{ __('Ej: ¡Gracias! He registrado tus datos. Te contactaré pronto.') }}"
                   class="w-full rounded-lg border-gray-200 text-sm py-2"></textarea>
       </div>
 
       <div class="flex items-center gap-2">
         <input type="checkbox" id="aiFnActive" checked class="rounded border-gray-300 text-indigo-600">
-        <label for="aiFnActive" class="text-sm text-gray-700">Función activa</label>
+        <label for="aiFnActive" class="text-sm text-gray-700">{{ __('Función activa') }}</label>
       </div>
     </div>
 
     <div class="flex gap-2 justify-end px-5 py-3 border-t border-gray-200 bg-gray-50">
       <button type="button" onclick="closeAiFunctionModal()"
-              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">Cancelar</button>
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition">{{ __('Cancelar') }}</button>
       <button type="button" id="aiFnSaveBtn" onclick="aiFnSave()"
               class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition">
-        Guardar
+        {{ __('Guardar') }}
       </button>
     </div>
   </div>
@@ -725,7 +724,7 @@
 <div id="kbFileModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-base font-bold text-gray-900">📚 Subir archivo</h3>
+      <h3 class="text-base font-bold text-gray-900">📚 {{ __('Subir archivo') }}</h3>
       <button type="button" onclick="kbCloseFileModal()" class="text-gray-400 hover:text-red-500">✕</button>
     </div>
     <div id="kbFileError" class="hidden mb-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
@@ -733,23 +732,23 @@
     <form id="kbFileForm" enctype="multipart/form-data" class="space-y-3">
       @csrf
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Título (opcional)</label>
-        <input type="text" name="title" maxlength="200" placeholder="Ej: Catálogo de servicios"
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Título (opcional)') }}</label>
+        <input type="text" name="title" maxlength="200" placeholder="{{ __('Ej: Catálogo de servicios') }}"
                class="w-full rounded-lg border-gray-200 text-sm py-2">
       </div>
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Archivo *</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Archivo') }} *</label>
         <input type="file" name="file" required accept=".txt,.md,.csv,.log,.pdf,.docx,text/plain,application/pdf"
                class="block w-full text-sm text-gray-700 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0
                       file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
-        <p class="text-[10px] text-gray-400 mt-1">Formatos: TXT, MD, CSV, PDF, DOCX. Máx 5 MB.</p>
+        <p class="text-[10px] text-gray-400 mt-1">{{ __('Formatos: TXT, MD, CSV, PDF, DOCX. Máx 5 MB.') }}</p>
       </div>
       <div class="flex gap-2 justify-end pt-2">
         <button type="button" onclick="kbCloseFileModal()"
-                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">Cancelar</button>
+                class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">{{ __('Cancelar') }}</button>
         <button type="submit" id="kbFileSubmit"
                 class="px-5 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
-          Subir
+          {{ __('Subir') }}
         </button>
       </div>
     </form>
@@ -762,7 +761,7 @@
 <div id="kbTextModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-      <h3 class="text-base font-bold text-gray-900" id="kbTextTitle">📝 Pegar texto</h3>
+      <h3 class="text-base font-bold text-gray-900" id="kbTextTitle">📝 {{ __('Pegar texto') }}</h3>
       <button type="button" onclick="kbCloseTextModal()" class="text-gray-400 hover:text-red-500">✕</button>
     </div>
     <div id="kbTextError" class="hidden mx-5 mt-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
@@ -770,30 +769,30 @@
     <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
       <input type="hidden" id="kbTextId" value="">
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Título *</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Título') }} *</label>
         <input type="text" id="kbTextTitleInput" maxlength="200"
-               placeholder="Ej: Política de devoluciones"
+               placeholder="{{ __('Ej: Política de devoluciones') }}"
                class="w-full rounded-lg border-gray-200 text-sm py-2">
       </div>
       <div>
-        <label class="block text-xs font-semibold text-gray-600 mb-1">Contenido *</label>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Contenido') }} *</label>
         <textarea id="kbTextContent" rows="14" maxlength="200000"
-                  placeholder="Pega aquí información de tu empresa, productos, políticas, FAQs…"
+                  placeholder="{{ __('Pega aquí información de tu empresa, productos, políticas, FAQs…') }}"
                   class="w-full rounded-lg border-gray-200 text-sm py-2 font-mono"></textarea>
-        <p class="text-[10px] text-gray-400 mt-1">Caracteres: <span id="kbTextCharCount">0</span></p>
+        <p class="text-[10px] text-gray-400 mt-1">{{ __('Caracteres:') }} <span id="kbTextCharCount">0</span></p>
       </div>
       <div class="flex items-center gap-2">
         <input type="checkbox" id="kbTextActive" checked class="rounded border-gray-300 text-emerald-600">
-        <label for="kbTextActive" class="text-sm text-gray-700">Activo (la IA lo usará)</label>
+        <label for="kbTextActive" class="text-sm text-gray-700">{{ __('Activo (la IA lo usará)') }}</label>
       </div>
     </div>
 
     <div class="flex gap-2 justify-end px-5 py-3 border-t border-gray-200 bg-gray-50">
       <button type="button" onclick="kbCloseTextModal()"
-              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">Cancelar</button>
+              class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">{{ __('Cancelar') }}</button>
       <button type="button" id="kbTextSaveBtn" onclick="kbTextSave()"
               class="px-5 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
-        Guardar
+        {{ __('Guardar') }}
       </button>
     </div>
   </div>

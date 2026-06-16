@@ -6,13 +6,13 @@
       <div class="flex items-center gap-3">
         <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
                 class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
-                title="Mostrar menú" style="display:none;">
+                title="{{ __('Mostrar menú') }}" style="display:none;">
           <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
         <h2 class="page-head-title font-semibold text-xl text-gray-800 leading-tight">
-          Reporte de Cuentas
+          {{ __('Reporte de Cuentas') }}
         </h2>
       </div>
       <div class="page-head-actions flex items-center gap-2">
@@ -22,14 +22,14 @@
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
-          Actualizar lista
+          {{ __('Actualizar lista') }}
         </a>
         <a href="{{ route('admin.license-codes.index') }}"
            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 border border-gray-300 hover:bg-gray-50 transition">
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
           </svg>
-          Volver a códigos
+          {{ __('Volver a códigos') }}
         </a>
       </div>
     </div>
@@ -54,14 +54,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
           </svg>
           <span style="font-weight:800;color:#9a3412;font-size:13.5px;">
-            {{ $deletedAccounts->count() }} cuenta(s) eliminada(s) — se borrarán por completo de la base a los {{ \App\Models\Team::PURGE_AFTER_DAYS }} días de su eliminación.
+            {{ $deletedAccounts->count() }} {{ __('cuenta(s) eliminada(s) — se borrarán por completo de la base a los') }} {{ \App\Models\Team::PURGE_AFTER_DAYS }} {{ __('días de su eliminación.') }}
           </span>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;">
           @foreach ($deletedAccounts as $da)
             @php $dl = $da->daysUntilPurge(); @endphp
             <span style="background:#ffedd5;color:#9a3412;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;">
-              #{{ $da->id }} {{ $da->name }} — quedan {{ $dl }} {{ $dl === 1 ? 'día' : 'días' }}
+              #{{ $da->id }} {{ $da->name }} — {{ __('quedan') }} {{ $dl }} {{ $dl === 1 ? __('día') : __('días') }}
             </span>
           @endforeach
         </div>
@@ -70,35 +70,35 @@
 
     <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="text-sm font-bold text-gray-900">Todas las cuentas ({{ $teams->total() }})</h3>
-        <p class="text-xs text-gray-500">Estado de licencia, fechas y acciones de administración de cada cuenta.</p>
+        <h3 class="text-sm font-bold text-gray-900">{{ __('Todas las cuentas') }} ({{ $teams->total() }})</h3>
+        <p class="text-xs text-gray-500">{{ __('Estado de licencia, fechas y acciones de administración de cada cuenta.') }}</p>
       </div>
 
       {{-- Filtros (por estado y correo del creador) --}}
       <div class="px-6 py-3 border-b border-gray-100 bg-gray-50 flex flex-wrap items-center gap-3">
         <div class="flex items-center gap-2">
-          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</label>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ __('Estado') }}</label>
           <select id="filterEstado" onchange="filterAccounts()" class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs" style="min-width:220px;">
-            <option value="">Todos</option>
-            <option>Licencia activa</option>
-            <option>Modo de prueba</option>
-            <option>Prórroga</option>
-            <option>Vencida</option>
-            <option>Bloqueada</option>
-            <option>Sin licencia</option>
-            <option>Eliminada</option>
-            <option>Eliminada permanentemente</option>
+            <option value="">{{ __('Todos') }}</option>
+            <option>{{ __('Licencia activa') }}</option>
+            <option>{{ __('Modo de prueba') }}</option>
+            <option>{{ __('Prórroga') }}</option>
+            <option>{{ __('Vencida') }}</option>
+            <option>{{ __('Bloqueada') }}</option>
+            <option>{{ __('Sin licencia') }}</option>
+            <option>{{ __('Eliminada') }}</option>
+            <option>{{ __('Eliminada permanentemente') }}</option>
           </select>
         </div>
         <div class="flex items-center gap-2">
-          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Correo</label>
-          <input id="filterEmail" type="text" oninput="filterAccounts()" placeholder="Buscar por correo…"
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ __('Correo') }}</label>
+          <input id="filterEmail" type="text" oninput="filterAccounts()" placeholder="{{ __('Buscar por correo…') }}"
                  class="border border-gray-300 rounded-lg px-2 py-1.5 text-xs" style="width:240px;">
         </div>
         <button type="button"
                 onclick="document.getElementById('filterEstado').value='';document.getElementById('filterEmail').value='';filterAccounts()"
                 class="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
-          Limpiar
+          {{ __('Limpiar') }}
         </button>
         <span id="filterCount" class="text-xs text-gray-400"></span>
       </div>
@@ -107,19 +107,19 @@
         <table class="w-full text-xs text-center">
           <thead class="bg-gray-50 text-gray-500 uppercase tracking-wider">
             <tr>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">ID<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Cuenta<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Correo creador<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Creada<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">1ª licencia<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Inicio actual<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Vence<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Estado<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Última nota<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Fecha eliminada<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Borrado permanente<span class="sort-arrow"></span></th>
-              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">Días p/ borrado<span class="sort-arrow"></span></th>
-              <th class="text-center px-4 py-3 font-semibold">Acciones</th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('ID') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Cuenta') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Correo creador') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Creada') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('1ª licencia') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Inicio actual') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Vence') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Estado') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Última nota') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Fecha eliminada') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Borrado permanente') }}<span class="sort-arrow"></span></th>
+              <th onclick="sortTable(this)" class="text-center px-4 py-3 font-semibold cursor-pointer select-none hover:text-gray-700">{{ __('Días p/ borrado') }}<span class="sort-arrow"></span></th>
+              <th class="text-center px-4 py-3 font-semibold">{{ __('Acciones') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="accountsTbody">
@@ -134,21 +134,21 @@
                 $isPurged  = $team->isPurged();
 
                 if ($isPurged) {
-                    $estadoLabel = 'Eliminada permanentemente'; $estadoStyle = 'background:#111827;color:#ffffff;';
+                    $estadoLabel = __('Eliminada permanentemente'); $estadoStyle = 'background:#111827;color:#ffffff;';
                 } elseif ($isDeleted) {
-                    $estadoLabel = 'Eliminada'; $estadoStyle = 'background:#374151;color:#ffffff;';
+                    $estadoLabel = __('Eliminada'); $estadoStyle = 'background:#374151;color:#ffffff;';
                 } elseif (! $lic) {
-                    $estadoLabel = 'Sin licencia'; $estadoStyle = 'background:#f3f4f6;color:#6b7280;';
+                    $estadoLabel = __('Sin licencia'); $estadoStyle = 'background:#f3f4f6;color:#6b7280;';
                 } elseif (! $lic->is_active) {
-                    $estadoLabel = 'Bloqueada'; $estadoStyle = 'background:#fecaca;color:#7f1d1d;';
+                    $estadoLabel = __('Bloqueada'); $estadoStyle = 'background:#fecaca;color:#7f1d1d;';
                 } elseif ($lic->is_expired) {
-                    $estadoLabel = 'Vencida'; $estadoStyle = 'background:#dc2626;color:#ffffff;';
+                    $estadoLabel = __('Vencida'); $estadoStyle = 'background:#dc2626;color:#ffffff;';
                 } else {
                     $type = $lic->grant_type ?: ($lic->active_until ? 'license' : 'trial');
                     [$estadoLabel, $estadoStyle] = match ($type) {
-                        'trial'    => ['Modo de prueba', 'background:#fef08a;color:#854d0e;'],
-                        'prorroga' => ['Prórroga', 'background:#fee2e2;color:#ef4444;'],
-                        default    => ['Licencia activa', 'background:#dcfce7;color:#15803d;'],
+                        'trial'    => [__('Modo de prueba'), 'background:#fef08a;color:#854d0e;'],
+                        'prorroga' => [__('Prórroga'), 'background:#fee2e2;color:#ef4444;'],
+                        default    => [__('Licencia activa'), 'background:#dcfce7;color:#15803d;'],
                     };
                 }
                 $lastNote = data_get($lic, 'meta.last_note');
@@ -174,12 +174,12 @@
                 <td class="px-4 py-3 text-gray-600">{{ $fmt($team->purged_at) }}</td>
                 <td class="px-4 py-3">
                   @if ($isPurged)
-                    <span class="text-gray-400">borrada</span>
+                    <span class="text-gray-400">{{ __('borrada') }}</span>
                   @elseif ($isDeleted)
                     @php $daysLeft = $team->daysUntilPurge(); @endphp
                     <span class="inline-flex items-center rounded-full font-bold whitespace-nowrap"
                           style="{{ $daysLeft <= 5 ? 'background:#fee2e2;color:#b91c1c;' : 'background:#ffedd5;color:#9a3412;' }}padding:4px 10px;font-size:11px;">
-                      {{ $daysLeft }} / {{ \App\Models\Team::PURGE_AFTER_DAYS }} días
+                      {{ $daysLeft }} / {{ \App\Models\Team::PURGE_AFTER_DAYS }} {{ __('días') }}
                     </span>
                   @else
                     <span class="text-gray-400">—</span>
@@ -187,20 +187,20 @@
                 </td>
                 <td class="px-4 py-3">
                   @if ($isPurged)
-                    <div class="text-xs text-gray-400 italic" style="min-width:210px;">Eliminada permanentemente — sin acciones</div>
+                    <div class="text-xs text-gray-400 italic" style="min-width:210px;">{{ __('Eliminada permanentemente — sin acciones') }}</div>
                   @elseif ($isDeleted)
                     <div class="flex flex-col items-stretch gap-1.5" style="min-width:210px;">
                       <form method="POST" action="{{ route('admin.accounts.restore', $team->id) }}">
                         @csrf
                         <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#16a34a;"
-                                title="Restaurar la cuenta y habilitar 7 días de prórroga">
-                          ↺ Restaurar cuenta
+                                title="{{ __('Restaurar la cuenta y habilitar 7 días de prórroga') }}">
+                          ↺ {{ __('Restaurar cuenta') }}
                         </button>
                       </form>
                       <button type="button"
                               @click="$dispatch('fd-open', { action: @js(route('admin.accounts.force-delete', $team->id)), label: @js('#'.$team->id.' '.$team->name) })"
                               class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#991b1b;">
-                        ✕ Eliminar por completo
+                        ✕ {{ __('Eliminar por completo') }}
                       </button>
                     </div>
                   @else
@@ -208,17 +208,17 @@
                     {{-- Bloquear / Habilitar (nota obligatoria) --}}
                     <form method="POST" class="flex items-center gap-1.5">
                       @csrf
-                      <input type="text" name="note" required placeholder="Nota / motivo"
+                      <input type="text" name="note" required placeholder="{{ __('Nota / motivo') }}"
                              class="flex-1 border border-gray-300 rounded-md px-2 py-1 text-xs">
                       @if ($lic && $lic->is_active)
                         <button type="submit" formaction="{{ route('admin.accounts.block', $team) }}"
                                 class="text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#dc2626;">
-                          Bloquear
+                          {{ __('Bloquear') }}
                         </button>
                       @else
                         <button type="submit" formaction="{{ route('admin.accounts.enable', $team) }}"
                                 class="text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#16a34a;">
-                          Habilitar
+                          {{ __('Habilitar') }}
                         </button>
                       @endif
                     </form>
@@ -228,7 +228,7 @@
                       <input type="hidden" name="team_id" value="{{ $team->id }}">
                       <input type="hidden" name="days" value="7">
                       <button type="submit" class="w-full text-xs px-2.5 py-1 rounded-md text-white" style="background-color:#2563eb;">
-                        + Prórroga 7 días
+                        + {{ __('Prórroga 7 días') }}
                       </button>
                     </form>
                   </div>
@@ -236,7 +236,7 @@
                 </td>
               </tr>
             @empty
-              <tr><td colspan="13" class="px-6 py-10 text-center text-gray-400">No hay cuentas registradas.</td></tr>
+              <tr><td colspan="13" class="px-6 py-10 text-center text-gray-400">{{ __('No hay cuentas registradas.') }}</td></tr>
             @endforelse
           </tbody>
         </table>
@@ -264,21 +264,21 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
         </svg>
       </div>
-      <h3 style="font-size:18px;font-weight:800;color:#111827;margin-bottom:8px;">¿Eliminar permanentemente?</h3>
+      <h3 style="font-size:18px;font-weight:800;color:#111827;margin-bottom:8px;">{{ __('¿Eliminar permanentemente?') }}</h3>
       <p style="font-size:14px;color:#4b5563;line-height:1.5;margin-bottom:6px;">
-        Vas a borrar por completo los datos de la cuenta <b x-text="label"></b>.
+        {{ __('Vas a borrar por completo los datos de la cuenta') }} <b x-text="label"></b>.
       </p>
-      <p style="font-size:13px;color:#b91c1c;font-weight:700;margin-bottom:22px;">Esta acción NO se puede deshacer.</p>
+      <p style="font-size:13px;color:#b91c1c;font-weight:700;margin-bottom:22px;">{{ __('Esta acción NO se puede deshacer.') }}</p>
       <div style="display:flex;gap:10px;">
         <button type="button" @click="open=false"
                 style="flex:1;padding:11px;border-radius:10px;border:1px solid #d1d5db;background:#fff;color:#374151;font-weight:600;cursor:pointer;">
-          Cancelar
+          {{ __('Cancelar') }}
         </button>
         <form :action="action" method="POST" style="flex:1;">
           @csrf @method('DELETE')
           <button type="submit"
                   style="width:100%;padding:11px;border-radius:10px;border:none;background:#991b1b;color:#fff;font-weight:700;cursor:pointer;">
-            Sí, eliminar
+            {{ __('Sí, eliminar') }}
           </button>
         </form>
       </div>
