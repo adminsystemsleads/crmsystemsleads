@@ -2,7 +2,7 @@
   <div class="w-full pt-6 pb-8 px-6 space-y-4">
 
     {{-- Encabezado: botón de despliegue en la misma línea del título --}}
-    <div class="flex items-center justify-between" style="min-height:40px;">
+    <div class="page-head flex items-center justify-between" style="min-height:40px;">
       <div class="flex items-center gap-3">
         <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
                 class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
@@ -11,11 +11,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="page-head-title font-semibold text-xl text-gray-800 leading-tight">
           Reporte de Cuentas
         </h2>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="page-head-actions flex items-center gap-2">
         <a href="{{ route('admin.accounts.index') }}"
            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition"
            style="background-color:#2563eb;">

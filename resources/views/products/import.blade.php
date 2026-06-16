@@ -1,7 +1,8 @@
 <x-app-layout>
 <div class="max-w-3xl mx-auto px-4 py-8">
 
-  <div class="flex items-center gap-3 mb-6">
+  <div class="flex items-center gap-3 mb-6"
+       :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
     <a href="{{ route('products.index') }}" class="text-gray-400 hover:text-gray-600 transition">
       <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>

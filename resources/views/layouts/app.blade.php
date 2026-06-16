@@ -63,6 +63,14 @@
         .menu-toggle-btn svg { width: 1.25rem !important; height: 1.25rem !important; }
       }
 
+      /* Cabeceras de página: en móvil apila el título y los botones de acción
+         para que el título no se comprima, y mantiene todo alineado y simétrico. */
+      @media (max-width: 640px) {
+        .page-head { flex-direction: column; align-items: flex-start !important; gap: .65rem !important; }
+        .page-head .page-head-actions { width: 100%; flex-wrap: wrap; }
+        .page-head .page-head-title { font-size: 1.125rem !important; line-height: 1.4; }
+      }
+
       /* =========================================================
          Paleta navy + gold (override de indigo Tailwind por defecto).
          Estas reglas vienen después de Tailwind, así que ganan en

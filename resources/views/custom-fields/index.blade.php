@@ -2,7 +2,7 @@
 <div class="max-w-3xl mx-auto px-4 py-8">
 
   {{-- Header --}}
-  <div class="mb-6">
+  <div class="mb-6" :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
     <h1 class="text-xl font-bold text-gray-900">Campos personalizados</h1>
     <p class="text-sm text-gray-500 mt-1">Define campos extra para Contactos y Negociaciones (texto, número, fecha o lista).</p>
   </div>

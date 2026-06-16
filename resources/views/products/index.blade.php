@@ -1,7 +1,8 @@
 <x-app-layout>
 <div class="max-w-5xl mx-auto px-4 py-8">
 
-  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6"
+       :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
     <h1 class="text-xl font-bold text-gray-900">Catálogo de productos</h1>
     <div class="flex flex-wrap gap-2">
       <a href="{{ route('products.import.form') }}"

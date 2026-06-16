@@ -1,11 +1,11 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex items-center justify-between">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <div class="page-head flex items-center justify-between">
+      <h2 class="page-head-title font-semibold text-xl text-gray-800 leading-tight">
         Generar Códigos de Licencia
       </h2>
       <a href="{{ route('admin.accounts.index') }}"
-         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition"
+         class="page-head-actions inline-flex justify-center items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition"
          style="background-color:#2563eb;">
         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m4 6V7m4 10v-4M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>

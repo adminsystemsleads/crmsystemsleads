@@ -1,9 +1,9 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex items-center justify-between">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">WhatsApp – Cuentas</h2>
+    <div class="page-head flex items-center justify-between">
+      <h2 class="page-head-title font-semibold text-xl text-gray-800 leading-tight">WhatsApp – Cuentas</h2>
       <a href="{{ route('whatsapp.accounts.create') }}"
-         class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
+         class="page-head-actions text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm">
         + Conectar cuenta
       </a>
     </div>
