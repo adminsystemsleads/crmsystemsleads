@@ -238,6 +238,7 @@
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">En prórroga</span>
             <span class="text-xs text-gray-500">vigentes</span>
           </div>
+          <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead class="text-gray-500 text-xs uppercase tracking-wider">
               <tr>
@@ -261,6 +262,7 @@
               @endforelse
             </tbody>
           </table>
+          </div>
         </div>
 
         {{-- Cuentas con prórroga vencida (bloqueadas) --}}
@@ -269,6 +271,7 @@
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Prórroga vencida</span>
             <span class="text-xs text-gray-500">cuenta bloqueada</span>
           </div>
+          <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead class="text-gray-500 text-xs uppercase tracking-wider">
               <tr>
@@ -304,6 +307,7 @@
               @endforelse
             </tbody>
           </table>
+          </div>
         </div>
 
       </div>
