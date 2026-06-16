@@ -160,13 +160,13 @@
                         @foreach($funnel['stages'] as $stage)
                           <div class="flex-1 flex flex-col items-center min-w-0 text-center">
                             <span class="size-2 rounded-full mb-1 shrink-0" style="background-color: {{ $stage['color'] }};"></span>
-                            <span class="text-[10px] font-medium text-gray-600 truncate w-full leading-tight">
+                            <span class="font-medium text-gray-600 truncate w-full leading-tight" style="font-size:10px;">
                               {{ $stage['name'] }}
                             </span>
                             @if($stage['is_won'])
-                              <span class="text-[8px] font-bold text-green-600 mt-0.5">GANADA</span>
+                              <span class="font-bold text-green-600 mt-0.5 truncate w-full leading-tight" style="font-size:8px;">GANADA</span>
                             @elseif($stage['is_lost'])
-                              <span class="text-[8px] font-bold text-red-600 mt-0.5">PERDIDA</span>
+                              <span class="font-bold text-red-600 mt-0.5 truncate w-full leading-tight" style="font-size:8px;">PERDIDA</span>
                             @endif
                           </div>
                         @endforeach
