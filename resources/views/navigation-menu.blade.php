@@ -33,11 +33,25 @@
 
   $links = [
     [
+      'key'    => 'dashboard',
+      'name'   => __('Panel Principal'),
+      'route'  => 'dashboard',
+      'active' => request()->routeIs('dashboard'),
+      'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>',
+    ],
+    [
       'key'    => 'perfil_unidad',
       'name'   => __('Mi Perfil'),
       'route'  => 'perfil-unidad.edit',
       'active' => request()->routeIs('perfil-unidad.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1118.88 6.196 7 7 0 015.12 17.804zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+    ],
+    [
+      'key'    => 'whatsapp_inbox',
+      'name'   => __('WhatsApp'),
+      'route'  => 'whatsapp.inbox.index',
+      'active' => request()->routeIs('whatsapp.inbox.*'),
+      'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>',
     ],
     /*
      * Ocultas temporalmente: funcionalidades no ofrecidas por ahora
@@ -79,13 +93,6 @@
       'route'  => 'contacts.index',
       'active' => request()->routeIs('contacts.*'),
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
-    ],
-    [
-      'key'    => 'whatsapp_inbox',
-      'name'   => __('WhatsApp'),
-      'route'  => 'whatsapp.inbox.index',
-      'active' => request()->routeIs('whatsapp.inbox.*'),
-      'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>',
     ],
   ];
 @endphp
