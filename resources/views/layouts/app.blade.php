@@ -54,6 +54,13 @@
     <style>
       [x-cloak]{display:none !important}
 
+      /* Botón flotante de despliegue del menú: más pequeño y alineado en móvil.
+         (Media query en vez de variantes sm: para no depender de recompilar CSS.) */
+      @media (max-width: 640px) {
+        .menu-toggle-btn { padding: .4rem !important; top: 1.15rem !important; }
+        .menu-toggle-btn svg { width: 1.25rem !important; height: 1.25rem !important; }
+      }
+
       /* =========================================================
          Paleta navy + gold (override de indigo Tailwind por defecto).
          Estas reglas vienen después de Tailwind, así que ganan en
