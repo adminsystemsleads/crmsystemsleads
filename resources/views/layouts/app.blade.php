@@ -217,7 +217,10 @@
 
       @if (isset($header))
         <header class="bg-white shadow dark:bg-slate-800">
-          <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          {{-- Reserva espacio a la izquierda cuando el menú está minimizado
+               para que el botón flotante de despliegue no tape el título. --}}
+          <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
+               :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
             {{ $header }}
           </div>
         </header>
