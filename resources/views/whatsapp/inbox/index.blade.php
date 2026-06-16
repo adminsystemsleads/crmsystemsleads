@@ -14,7 +14,7 @@
   <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4">
     {{-- Toggle del menú lateral global (solo cuando está minimizado), alineado en la barra --}}
     <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
-            class="shrink-0 p-1.5 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
+            class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
             title="Mostrar menú" style="display:none;">
       <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>

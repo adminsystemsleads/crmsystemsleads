@@ -54,10 +54,12 @@
     <style>
       [x-cloak]{display:none !important}
 
-      /* Botón flotante de despliegue del menú: más pequeño y alineado en móvil.
+      /* Botón de despliegue del menú (flotante e inline): tamaño consistente.
          (Media query en vez de variantes sm: para no depender de recompilar CSS.) */
+      .menu-toggle-btn svg { width: 1.5rem; height: 1.5rem; }
       @media (max-width: 640px) {
-        .menu-toggle-btn { padding: .4rem !important; top: 1.15rem !important; }
+        .menu-toggle-btn { padding: .4rem !important; }
+        .menu-toggle-btn.fixed { top: 1.15rem !important; } /* solo el flotante reajusta su top */
         .menu-toggle-btn svg { width: 1.25rem !important; height: 1.25rem !important; }
       }
 
