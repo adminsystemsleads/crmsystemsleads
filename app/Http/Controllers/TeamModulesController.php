@@ -11,6 +11,7 @@ class TeamModulesController extends Controller
     // 'hidden' => true: funcionalidad no ofrecida por ahora; se omite en la
     // pantalla de Módulos activos. Para reactivar, quita la clave 'hidden'.
     private array $allModules = [
+        ['key' => 'dashboard',        'label' => 'Panel Principal',          'desc' => 'Resumen general y métricas del equipo',  'admin_only' => false],
         ['key' => 'crm',              'label' => 'CRM / Pipelines',          'desc' => 'Gestión de negocios y embudos de venta', 'admin_only' => false],
         ['key' => 'contactos',        'label' => 'Contactos',                'desc' => 'Directorio de contactos y clientes potenciales', 'admin_only' => false],
         ['key' => 'whatsapp_inbox',   'label' => 'WhatsApp',                 'desc' => 'Bandeja de entrada de conversaciones',   'admin_only' => false],
