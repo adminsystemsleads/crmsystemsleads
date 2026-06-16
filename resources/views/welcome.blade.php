@@ -53,6 +53,7 @@
 
     /* Logo de la cabecera: nunca se encoge ni se recorta */
     .brand-logo { height: 52px; width: auto; max-width: none; flex-shrink: 0; display: block; }
+    .btn-auth { white-space: nowrap; }
 
     /* Hero gradient navy con acento dorado sutil */
     .hero-bg {
@@ -174,7 +175,11 @@
       .container { padding: 0 1rem; }
       .grid-4 { grid-template-columns: 1fr 1fr; gap: .6rem; }
       .brand-logo { height: 40px; }
-      .btn-nav, .btn-nav-solid, .btn-nav-gold { padding: .4rem .85rem; font-size: .72rem; }
+      .header-actions { gap: .4rem !important; }
+      /* Idioma más compacto en móvil (solo el botón disparador) */
+      .lang-wrap > div > button { padding: .4rem .5rem !important; gap: .3rem !important; }
+      /* Ingresar y Crear cuenta del mismo tamaño */
+      .btn-auth { min-width: 92px; padding: .42rem .6rem; font-size: .72rem; text-align: center; }
     }
   </style>
 </head>
@@ -199,15 +204,16 @@
 
     {{-- Auth buttons + idioma + tema --}}
     @if (Route::has('login'))
-      <div style="display:flex; align-items:center; gap:.6rem;">
-        <x-theme-toggle variant="compact" />
-        <x-language-switcher variant="compact" />
+      <div class="header-actions" style="display:flex; align-items:center; gap:.6rem;">
+        {{-- Tema: oculto en móvil --}}
+        <span class="hide-mobile"><x-theme-toggle variant="compact" /></span>
+        <span class="lang-wrap"><x-language-switcher variant="compact" /></span>
         @auth
-          <a href="{{ url('/dashboard') }}" class="btn-nav">Dashboard</a>
+          <a href="{{ url('/dashboard') }}" class="btn-nav btn-auth">Dashboard</a>
         @else
-          <a href="{{ route('login') }}" class="btn-nav">Ingresar</a>
+          <a href="{{ route('login') }}" class="btn-nav btn-auth">Ingresar</a>
           @if (Route::has('register'))
-            <a href="{{ route('register') }}" class="btn-nav-solid">Crear cuenta</a>
+            <a href="{{ route('register') }}" class="btn-nav-solid btn-auth">Crear cuenta</a>
           @endif
         @endauth
       </div>
