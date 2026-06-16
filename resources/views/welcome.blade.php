@@ -51,6 +51,9 @@
     .grid-3     { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
     .grid-4     { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
 
+    /* Logo de la cabecera: nunca se encoge ni se recorta */
+    .brand-logo { height: 52px; width: auto; max-width: none; flex-shrink: 0; display: block; }
+
     /* Hero gradient navy con acento dorado sutil */
     .hero-bg {
       background:
@@ -170,6 +173,8 @@
     @media (max-width: 560px) {
       .container { padding: 0 1rem; }
       .grid-4 { grid-template-columns: 1fr 1fr; gap: .6rem; }
+      .brand-logo { height: 40px; }
+      .btn-nav, .btn-nav-solid, .btn-nav-gold { padding: .4rem .85rem; font-size: .72rem; }
     }
   </style>
 </head>
@@ -180,8 +185,8 @@
   <div class="container" style="padding-top:.85rem; padding-bottom:.85rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;">
 
     {{-- Logo --}}
-    <a href="{{ url('/') }}" style="display:flex; align-items:center; gap:.6rem;">
-      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" style="height:52px; width:auto; display:block;">
+    <a href="{{ url('/') }}" style="display:flex; align-items:center; gap:.6rem; flex-shrink:0;">
+      <img src="{{ asset('logo_1.png') }}" alt="QipuCRM" class="brand-logo">
     </a>
 
     {{-- Nav links --}}
