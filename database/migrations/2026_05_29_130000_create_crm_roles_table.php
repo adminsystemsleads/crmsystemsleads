@@ -24,7 +24,9 @@ return new class extends Migration
         });
 
         // Crear el rol "Administrador" por defecto en cada team existente, con todos los permisos.
-        foreach (Team::all() as $team) {
+        // withTrashed(): esta migración corre antes de que se agregue la columna
+        // teams.deleted_at, así que evitamos el scope de SoftDeletes del modelo.
+        foreach (Team::withTrashed()->get() as $team) {
             CrmRole::firstOrCreate(
                 ['team_id' => $team->id, 'name' => 'Administrador'],
                 [

@@ -12,7 +12,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        foreach (Team::all() as $team) {
+        // withTrashed(): evita el scope de SoftDeletes; teams.deleted_at todavía
+        // no existe cuando corre esta migración.
+        foreach (Team::withTrashed()->get() as $team) {
             CrmRole::seedDefaultsForTeam($team);
         }
     }

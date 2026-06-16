@@ -21,7 +21,9 @@ return new class extends Migration
         });
 
         // Backfill: a cada team owner le asignamos el rol "Administrador" por defecto.
-        foreach (Team::all() as $team) {
+        // withTrashed() para evitar el scope de SoftDeletes (la columna teams.deleted_at
+        // aún no existe en este punto de las migraciones).
+        foreach (Team::withTrashed()->get() as $team) {
             $adminRole = CrmRole::where('team_id', $team->id)
                 ->where('is_default', true)
                 ->first();
