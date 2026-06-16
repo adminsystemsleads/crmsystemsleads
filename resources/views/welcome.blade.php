@@ -175,11 +175,12 @@
       .container { padding: 0 1rem; }
       .grid-4 { grid-template-columns: 1fr 1fr; gap: .6rem; }
       .brand-logo { height: 40px; }
-      .header-actions { gap: .4rem !important; }
-      /* Idioma más compacto en móvil (solo el botón disparador) */
-      .lang-wrap > div > button { padding: .4rem .5rem !important; gap: .3rem !important; }
+      .header-actions { gap: .35rem !important; }
+      /* Idioma más compacto en móvil: oculta el globo, deja solo "ES ⌄" */
+      .lang-wrap > div > button { padding: .4rem .4rem !important; gap: .15rem !important; }
+      .lang-wrap > div > button > svg:first-of-type { display: none !important; }
       /* Ingresar y Crear cuenta del mismo tamaño */
-      .btn-auth { min-width: 92px; padding: .42rem .6rem; font-size: .72rem; text-align: center; }
+      .btn-auth { min-width: 84px; padding: .42rem .55rem; font-size: .72rem; text-align: center; }
     }
   </style>
 </head>
