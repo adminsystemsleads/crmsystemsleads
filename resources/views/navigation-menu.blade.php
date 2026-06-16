@@ -512,7 +512,7 @@
   @unless (request()->routeIs('whatsapp.inbox.*', 'pipelines.kanban', 'admin.accounts.index'))
   <button x-show="!$store.sidebar.open"
           @click="$store.sidebar.toggle()"
-          class="fixed top-6 left-4 z-30 p-2 bg-white text-gray-700 rounded-lg border border-gray-300 shadow-md hover:bg-gray-50 transition"
+          class="fixed top-4 left-4 z-30 p-2 bg-white text-gray-700 rounded-lg border border-gray-300 shadow-md hover:bg-gray-50 transition"
           aria-label="Mostrar menú"
           title="Mostrar menú"
           style="display: none;">
