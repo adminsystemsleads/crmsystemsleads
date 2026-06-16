@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div class="flex items-start sm:items-center justify-between gap-3">
+            <h2 class="font-semibold text-base sm:text-xl text-gray-800 leading-tight">
                 Perfiles de Usuarios del CRM
             </h2>
 
             {{-- Botón Configuración (admin del team) --}}
-            <div x-data="{ openCfg: false }" @click.away="openCfg = false" class="relative">
+            <div x-data="{ openCfg: false }" @click.away="openCfg = false" class="relative shrink-0">
                 <button type="button" @click="openCfg = !openCfg"
-                        class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50 transition"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg border border-gray-200 bg-white text-xs sm:text-sm text-gray-700 hover:bg-gray-50 transition"
                         title="Configuración">
                     <svg style="width:18px; height:18px; min-width:18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
