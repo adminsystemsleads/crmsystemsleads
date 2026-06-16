@@ -27,13 +27,13 @@
                 </a>
             </div>
             
-            <div class="mb-4 flex justify-between items-center">
-                
+            <div class="page-head mb-4 flex justify-between items-center gap-3">
+
                 <p class="text-sm text-gray-600">
                     Vista de negociaciones por fases del pipeline.
                 </p>
 
-                <div class="flex items-center gap-2">
+                <div class="page-head-actions flex items-center gap-2">
                     {{-- Botón exportar con dropdown --}}
                     <div class="relative" x-data="{ open: false }" @click.away="open = false">
                         <button type="button" @click="open = !open"
