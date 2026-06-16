@@ -35,11 +35,13 @@
       --slate-900: #0f172a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; max-width: 100%; }
     body {
       font-family: 'Instrument Sans', system-ui, sans-serif;
       background: var(--slate-50);
       color: var(--slate-900);
     }
+    img { max-width: 100%; height: auto; }
     a { text-decoration: none; }
 
     /* Layout helpers */
@@ -47,6 +49,7 @@
     .flex       { display: flex; }
     .grid-2     { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
     .grid-3     { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .grid-4     { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
 
     /* Hero gradient navy con acento dorado sutil */
     .hero-bg {
@@ -160,7 +163,13 @@
 
     @media (max-width: 768px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr 1fr; }
       .hide-mobile { display: none !important; }
+      section { padding: 3rem 0; }
+    }
+    @media (max-width: 560px) {
+      .container { padding: 0 1rem; }
+      .grid-4 { grid-template-columns: 1fr 1fr; gap: .6rem; }
     }
   </style>
 </head>
@@ -256,7 +265,7 @@
             <span style="font-size:.8rem; font-weight:700; color:var(--slate-900);">Pipeline de Ventas — Mayo 2025</span>
             <span style="font-size:.7rem; background:var(--indigo-light); color:var(--indigo); padding:.2rem .6rem; border-radius:9999px; font-weight:600;">12 negociaciones activas</span>
           </div>
-          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem;">
+          <div class="grid-4" style="gap:.6rem;">
             @foreach([['Prospecto','3','#E8ECF2','#1E2E48'],['Propuesta','4','#fef3c7','#d97706'],['Negociación','3','#dbeafe','#1d4ed8'],['Cerrado','2','#dcfce7','#15803d']] as [$col,$n,$bg,$tc])
               <div style="background:{{ $bg }}20; border:1px solid {{ $bg }}; border-radius:.6rem; padding:.6rem;">
                 <p style="font-size:.65rem; font-weight:700; color:{{ $tc }}; margin-bottom:.4rem;">{{ $col }} ({{ $n }})</p>
@@ -406,7 +415,7 @@
       <p class="section-sub">QipuCRM cubre todo el ciclo de ventas en un flujo continuo.</p>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; position:relative;">
+    <div class="grid-4" style="gap:1.5rem; position:relative;">
       @php
         $steps = [
           ['01','Captura el lead','El prospecto llega por WhatsApp o lo creas manualmente. Se vincula al pipeline.','#dbeafe','#1d4ed8'],
@@ -456,7 +465,7 @@
         </ul>
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div class="grid-2" style="gap:1rem;">
         @foreach([['Equipos','Multi-usuario con roles'],['Kanban','Pipelines ilimitados'],['WhatsApp','IA integrada'],['SUNAT','Facturación real']] as [$t,$s])
           <div style="background:rgba(255,255,255,.06); border:1px solid rgba(201,169,97,.18); border-radius:1rem; padding:1.2rem;">
             <p style="font-size:1.4rem; font-weight:800; color:var(--gold); margin-bottom:.25rem;">{{ $t }}</p>
