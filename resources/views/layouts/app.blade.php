@@ -183,7 +183,11 @@
       .app-sidebar .text-indigo-700,
       .app-sidebar .text-indigo-600,
       .app-sidebar .text-indigo-500 { color: var(--brand-gold) !important; }
-      .app-sidebar .bg-indigo-50 { background: rgba(201,169,97,.15) !important; }
+      /* Fondo dorado translúcido + barra vertical dorada en el borde izquierdo del activo */
+      .app-sidebar .bg-indigo-50 {
+        background: rgba(201,169,97,.15) !important;
+        box-shadow: inset 3px 0 0 0 var(--brand-gold) !important;
+      }
 
       /* Popups blancos del sidebar (drop-up de Cuenta / Configuración): mantener legibles */
       .app-sidebar .bg-white { background: #fff !important; }
@@ -195,7 +199,7 @@
       .app-sidebar .bg-white .text-gray-400 { color: #9ca3af !important; }
       .app-sidebar .bg-white .text-indigo-700,
       .app-sidebar .bg-white .text-indigo-600 { color: var(--brand-navy) !important; }
-      .app-sidebar .bg-white .bg-indigo-50 { background: var(--brand-navy-light) !important; }
+      .app-sidebar .bg-white .bg-indigo-50 { background: var(--brand-navy-light) !important; box-shadow: none !important; }
       .app-sidebar .bg-white .border-gray-100,
       .app-sidebar .bg-white .border-gray-200 { border-color: #e5e7eb !important; }
       .app-sidebar .bg-white .hover\:bg-gray-100:hover { background: #f3f4f6 !important; }
