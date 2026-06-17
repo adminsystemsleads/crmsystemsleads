@@ -395,7 +395,11 @@
       </div>
 
       {{-- 6 --}}
-      <div class="card">
+      <div class="card" style="position:relative;">
+        <span style="position:absolute; top:.9rem; right:.9rem; display:inline-flex; align-items:center; gap:.3rem; background:#fff7ed; color:#b45309; border:1px solid #fed7aa; border-radius:999px; padding:.2rem .55rem; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em;">
+          <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          {{ __('Próximamente') }}
+        </span>
         <div class="card-icon">
           <svg width="20" height="20" fill="none" stroke="#1E2E48" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/>
