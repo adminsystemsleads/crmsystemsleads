@@ -156,6 +156,56 @@
       .dark .bg-amber-50, .dark .bg-yellow-50 { background-color: rgba(245,158,11,.12) !important; }
       .dark .bg-blue-50    { background-color: rgba(59,130,246,.12) !important; }
       .dark .bg-purple-50  { background-color: rgba(168,85,247,.12) !important; }
+
+      /* =========================================================
+         Barra lateral (sidebar) y cabecera en azul navy, con texto
+         blanco y la opción seleccionada en dorado. (Diseño de marca.)
+         ========================================================= */
+      .app-sidebar { background: var(--brand-navy) !important; border-right-color: rgba(255,255,255,.08) !important; }
+      .app-sidebar .border-gray-100,
+      .app-sidebar .border-gray-200,
+      .app-sidebar .border-b,
+      .app-sidebar .border-t { border-color: rgba(255,255,255,.08) !important; }
+
+      /* Texto general del menú -> blanco */
+      .app-sidebar .text-gray-900,
+      .app-sidebar .text-gray-800,
+      .app-sidebar .text-gray-700,
+      .app-sidebar .text-gray-600 { color: #fff !important; }
+      .app-sidebar .text-gray-500,
+      .app-sidebar .text-gray-400 { color: rgba(255,255,255,.55) !important; }
+
+      /* Hover de los enlaces del menú */
+      .app-sidebar .hover\:bg-gray-100:hover,
+      .app-sidebar .hover\:bg-gray-50:hover { background: rgba(255,255,255,.08) !important; }
+
+      /* Opción SELECCIONADA -> dorado (activo usa bg-indigo-50 / text-indigo-700 / text-indigo-500) */
+      .app-sidebar .text-indigo-700,
+      .app-sidebar .text-indigo-600,
+      .app-sidebar .text-indigo-500 { color: var(--brand-gold) !important; }
+      .app-sidebar .bg-indigo-50 { background: rgba(201,169,97,.15) !important; }
+
+      /* Popups blancos del sidebar (drop-up de Cuenta / Configuración): mantener legibles */
+      .app-sidebar .bg-white { background: #fff !important; }
+      .app-sidebar .bg-white .text-gray-900,
+      .app-sidebar .bg-white .text-gray-800,
+      .app-sidebar .bg-white .text-gray-700,
+      .app-sidebar .bg-white .text-gray-600 { color: #374151 !important; }
+      .app-sidebar .bg-white .text-gray-500,
+      .app-sidebar .bg-white .text-gray-400 { color: #9ca3af !important; }
+      .app-sidebar .bg-white .text-indigo-700,
+      .app-sidebar .bg-white .text-indigo-600 { color: var(--brand-navy) !important; }
+      .app-sidebar .bg-white .bg-indigo-50 { background: var(--brand-navy-light) !important; }
+      .app-sidebar .bg-white .border-gray-100,
+      .app-sidebar .bg-white .border-gray-200 { border-color: #e5e7eb !important; }
+      .app-sidebar .bg-white .hover\:bg-gray-100:hover { background: #f3f4f6 !important; }
+
+      /* Cabecera (header) en navy con título blanco */
+      .app-header { background: var(--brand-navy) !important; box-shadow: 0 1px 3px rgba(0,0,0,.25) !important; }
+      .app-header h1, .app-header h2, .app-header h3 { color: #fff !important; }
+      .app-header .page-head-title { color: #fff !important; }
+      .app-header .menu-toggle-btn { color: #fff !important; border-color: rgba(255,255,255,.3) !important; }
+      .app-header .menu-toggle-btn:hover { background: rgba(255,255,255,.1) !important; }
     </style>
   </head>
 
@@ -233,7 +283,7 @@
       @endif
 
       @if (isset($header))
-        <header class="bg-white shadow dark:bg-slate-800">
+        <header class="app-header shadow">
           {{-- Reserva espacio a la izquierda cuando el menú está minimizado
                para que el botón flotante de despliegue no tape el título. --}}
           <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"

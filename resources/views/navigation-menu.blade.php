@@ -101,12 +101,12 @@
 
   {{-- Sidebar --}}
   <aside :class="$store.sidebar.open ? 'translate-x-0' : '-translate-x-full'"
-         class="fixed inset-y-0 left-0 z-50 w-64 flex flex-col
-                bg-white border-r border-gray-200 shadow-lg
+         class="app-sidebar fixed inset-y-0 left-0 z-50 w-64 flex flex-col
+                border-r border-gray-200 shadow-lg
                 transition-transform duration-200 ease-in-out">
 
     {{-- Cabecera --}}
-    <div class="h-16 px-4 flex items-center justify-between border-b border-gray-200 bg-white shrink-0">
+    <div class="h-16 px-4 flex items-center justify-between border-b border-gray-200 shrink-0">
       <a href="{{ route('dashboard') }}"
          class="flex items-center gap-3 min-w-0"
          title="{{ $teamName }}">
