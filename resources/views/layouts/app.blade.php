@@ -204,6 +204,16 @@
       .app-sidebar .bg-white .border-gray-200 { border-color: #e5e7eb !important; }
       .app-sidebar .bg-white .hover\:bg-gray-100:hover { background: #f3f4f6 !important; }
 
+      /* Empuje del contenido SOLO en escritorio: en móvil el menú se superpone
+         (overlay) en vez de comprimir la vista de la derecha. */
+      .main-wrap { transition: margin-left 200ms ease; }
+      @media (min-width: 768px) {
+        .main-wrap.sidebar-open { margin-left: 16rem; }
+      }
+      /* Fondo oscuro detrás del menú en móvil (cierra al tocar). Oculto en escritorio. */
+      .sidebar-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.45); }
+      @media (min-width: 768px) { .sidebar-backdrop { display: none !important; } }
+
       /* Cabecera (header) en navy con título blanco */
       .app-header { background: var(--brand-navy) !important; box-shadow: 0 1px 3px rgba(0,0,0,.25) !important; }
       .app-header h1, .app-header h2, .app-header h3 { color: #fff !important; }
@@ -237,8 +247,8 @@
     @endphp
 
     <div x-data
-         class="min-h-screen bg-gray-100 dark:bg-slate-900"
-         :style="$store.sidebar.open ? 'margin-left: 16rem; transition: margin-left 200ms ease;' : 'margin-left: 0; transition: margin-left 200ms ease;'">
+         class="main-wrap min-h-screen bg-gray-100 dark:bg-slate-900"
+         :class="$store.sidebar.open ? 'sidebar-open' : ''">
       @livewire('navigation-menu')
 
       {{-- Aviso elegante de licencia (próxima a vencer / prórroga), cerrable por día --}}

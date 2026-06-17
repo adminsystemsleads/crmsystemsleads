@@ -99,6 +99,14 @@
 
 <div x-data>
 
+  {{-- Fondo oscuro (solo móvil): cierra el menú al tocar fuera --}}
+  <div x-show="$store.sidebar.open" x-cloak @click="$store.sidebar.toggle()"
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+       class="sidebar-backdrop"></div>
+
   {{-- Sidebar --}}
   <aside :class="$store.sidebar.open ? 'translate-x-0' : '-translate-x-full'"
          class="app-sidebar fixed inset-y-0 left-0 z-50 w-64 flex flex-col
