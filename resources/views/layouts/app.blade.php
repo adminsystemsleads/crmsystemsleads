@@ -237,7 +237,7 @@
       .wa-topbar { padding-right: 3.5rem !important; } /* reserva espacio para la campana */
 
       /* ===== Campana de notificaciones (fija arriba a la derecha) ===== */
-      .notif-bell { position: fixed; top: 1rem; right: 1rem; z-index: 40; }
+      .notif-bell { position: fixed !important; top: 1rem; right: 1rem; z-index: 40; }
       .notif-bell-btn { position: relative; display: inline-flex; align-items: center; justify-content: center;
         padding: .5rem; border-radius: .6rem; color: #fff; background: transparent; border: none; cursor: pointer; transition: background .15s; }
       .notif-bell-btn:hover { background: rgba(255,255,255,.14); }
