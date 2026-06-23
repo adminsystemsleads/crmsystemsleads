@@ -58,7 +58,8 @@ class NotificationController extends Controller
         $pipelines = $team
             ? Pipeline::where('team_id', $team->id)
                 ->orderBy('name')
-                ->get(['id', 'name'])
+                // team_id es necesario para que canViewPipeline() pueda resolver $pipeline->team.
+                ->get(['id', 'name', 'team_id'])
                 ->filter(fn ($p) => $user->canViewPipeline($p))
                 ->map(fn ($p) => ['id' => $p->id, 'name' => $p->name])
                 ->values()
@@ -74,23 +75,23 @@ class NotificationController extends Controller
     public function savePrefs(Request $request)
     {
         $data = $request->validate([
-            'enabled'       => 'boolean',
-            'sound'         => 'boolean',
-            'deal_assigned' => 'boolean',
-            'activity_due'  => 'boolean',
-            'pipelines'     => 'nullable|array',
-            'pipelines.*'   => 'integer',
+            'enabled'              => 'boolean',
+            'sound'               => 'boolean',
+            'deal_assigned'       => 'boolean',
+            'activity_due'        => 'boolean',
+            'pipelines_excluded'  => 'nullable|array',
+            'pipelines_excluded.*' => 'integer',
         ]);
 
         $user = Auth::user();
 
         $prefs = array_merge($user->notifPrefs(), [
-            'enabled'       => (bool) ($data['enabled'] ?? true),
-            'sound'         => (bool) ($data['sound'] ?? true),
-            'deal_assigned' => (bool) ($data['deal_assigned'] ?? true),
-            'activity_due'  => (bool) ($data['activity_due'] ?? true),
-            // null = todos los embudos (incluye los futuros); array = solo esos.
-            'pipelines'     => array_key_exists('pipelines', $data) ? $data['pipelines'] : null,
+            'enabled'             => (bool) ($data['enabled'] ?? true),
+            'sound'              => (bool) ($data['sound'] ?? true),
+            'deal_assigned'      => (bool) ($data['deal_assigned'] ?? true),
+            'activity_due'       => (bool) ($data['activity_due'] ?? true),
+            // Embudos excluidos (no notificar). Los nuevos, al no estar aquí, se notifican.
+            'pipelines_excluded' => array_values($data['pipelines_excluded'] ?? []),
         ]);
 
         $user->notification_prefs = $prefs;

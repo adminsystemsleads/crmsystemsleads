@@ -122,9 +122,9 @@
             items: [],
             prevCount: null,
             loaded: false,
-            prefs: { enabled: true, sound: true, deal_assigned: true, activity_due: true, pipelines: null },
+            prefs: { enabled: true, sound: true, deal_assigned: true, activity_due: true, pipelines_excluded: [] },
             pipelines: [],
-            selectedPipes: [],
+            excludedPipes: [],
 
             init() {
                 this.loadPrefs();
@@ -155,11 +155,7 @@
                     const d = await r.json();
                     this.prefs = Object.assign(this.prefs, d.prefs || {});
                     this.pipelines = d.pipelines || [];
-                    if (this.prefs.pipelines === null || this.prefs.pipelines === undefined) {
-                        this.selectedPipes = this.pipelines.map(p => p.id);
-                    } else {
-                        this.selectedPipes = this.prefs.pipelines.slice();
-                    }
+                    this.excludedPipes = (this.prefs.pipelines_excluded || []).slice();
                 } catch (e) {}
             },
 
@@ -183,15 +179,16 @@
                 return n.data.client || '';
             },
 
-            isPipeOn(id) { return this.selectedPipes.includes(id); },
+            isPipeOn(id) { return !this.excludedPipes.includes(id); },
             togglePipe(id) {
-                const i = this.selectedPipes.indexOf(id);
-                if (i >= 0) this.selectedPipes.splice(i, 1);
-                else this.selectedPipes.push(id);
+                const i = this.excludedPipes.indexOf(id);
+                if (i >= 0) this.excludedPipes.splice(i, 1);  // estaba excluido -> activar
+                else this.excludedPipes.push(id);             // estaba activo -> excluir
             },
-            allPipesOn() { return this.pipelines.length > 0 && this.selectedPipes.length === this.pipelines.length; },
+            allPipesOn() { return this.excludedPipes.length === 0; },
             toggleAllPipes() {
-                this.selectedPipes = this.allPipesOn() ? [] : this.pipelines.map(p => p.id);
+                // Si están todos activos -> excluir todos; si no -> activar todos.
+                this.excludedPipes = this.allPipesOn() ? this.pipelines.map(p => p.id) : [];
             },
 
             async toggleSound() {
@@ -205,15 +202,14 @@
             },
 
             async persist() {
-                const allOn = this.pipelines.length > 0 && this.selectedPipes.length === this.pipelines.length;
                 const payload = {
                     enabled: !!this.prefs.enabled,
                     sound: !!this.prefs.sound,
                     deal_assigned: !!this.prefs.deal_assigned,
                     activity_due: !!this.prefs.activity_due,
-                    pipelines: allOn ? null : this.selectedPipes,
+                    pipelines_excluded: this.excludedPipes,
                 };
-                this.prefs.pipelines = payload.pipelines;
+                this.prefs.pipelines_excluded = this.excludedPipes.slice();
                 try {
                     await fetch('{{ route('notifications.savePrefs') }}', {
                         method: 'POST',

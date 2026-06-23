@@ -145,13 +145,14 @@ class User extends Authenticatable
         ];
     }
 
-    /** Preferencias de notificación por defecto. */
+    /** Preferencias de notificación por defecto (todo activo). */
     public const NOTIF_DEFAULTS = [
-        'enabled'       => true,   // interruptor maestro
-        'sound'         => true,   // alerta de sonido
-        'deal_assigned' => true,   // notificar negociaciones asignadas
-        'activity_due'  => true,   // notificar actividades por vencer
-        'pipelines'     => null,   // null = todos los embudos; array de ids = solo esos
+        'enabled'             => true,   // interruptor maestro
+        'sound'              => true,   // alerta de sonido
+        'deal_assigned'      => true,   // notificar negociaciones asignadas
+        'activity_due'       => true,   // notificar actividades por vencer
+        // Embudos EXCLUIDOS (no notificar). Vacío = notificar todos, incluidos los futuros.
+        'pipelines_excluded' => [],
     ];
 
     /** Preferencias de notificación mezcladas con los valores por defecto. */
@@ -174,8 +175,9 @@ class User extends Authenticatable
         if (array_key_exists($type, $p) && empty($p[$type])) {
             return false;
         }
-        $pipes = $p['pipelines'] ?? null;
-        if (is_array($pipes) && $pipelineId !== null && !in_array($pipelineId, $pipes)) {
+        // Embudos excluidos: si este embudo está excluido, no notificar.
+        $excluded = $p['pipelines_excluded'] ?? [];
+        if ($pipelineId !== null && is_array($excluded) && in_array($pipelineId, $excluded)) {
             return false;
         }
         return true;
