@@ -57,8 +57,9 @@
       /* Botón de despliegue del menú (flotante e inline): tamaño consistente.
          (Media query en vez de variantes sm: para no depender de recompilar CSS.) */
       .menu-toggle-btn svg { width: 1.5rem; height: 1.5rem; }
-      /* Botón flotante: un poco más abajo para que no quede pegado al borde superior. */
-      .menu-toggle-btn.fixed { top: 1.5rem !important; }
+      /* Botón flotante centrado verticalmente a la altura del título de la cabecera
+         (top = centro del header ~73px/2; translateY centra sin importar su tamaño). */
+      .menu-toggle-btn.fixed { top: 2.25rem !important; transform: translateY(-50%) !important; }
       @media (max-width: 640px) {
         .menu-toggle-btn { padding: .4rem !important; }
         .menu-toggle-btn svg { width: 1.25rem !important; height: 1.25rem !important; }
