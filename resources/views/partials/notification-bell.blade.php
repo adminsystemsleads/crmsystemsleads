@@ -259,4 +259,25 @@
             },
         }
     }
+
+    // Alinea la campana al centro vertical de la cabecera (app-header o barra de WhatsApp),
+    // que tienen distinta altura. Se recalcula al cargar, al hacer scroll y al redimensionar.
+    (function () {
+        function alignBell() {
+            var b = document.querySelector('.notif-bell');
+            if (!b) return;
+            var h = document.querySelector('.app-header') || document.querySelector('.wa-topbar');
+            if (!h) { b.style.top = '1rem'; return; }
+            var r = h.getBoundingClientRect();
+            var bh = b.offsetHeight || 38;
+            var top = r.top + (r.height / 2) - (bh / 2);
+            if (top < 4) top = 4;
+            b.style.top = top + 'px';
+        }
+        window.addEventListener('scroll', alignBell, true);
+        window.addEventListener('resize', alignBell);
+        document.addEventListener('DOMContentLoaded', alignBell);
+        // Reintenta tras el render inicial (por si la cabecera mide distinto al cargar).
+        setTimeout(alignBell, 200);
+    })();
 </script>
