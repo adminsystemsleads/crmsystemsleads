@@ -281,11 +281,15 @@
                     <input id="fMes" type="month" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Fecha de creación') }}</label>
-                    <input id="fFecha" type="date" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creada desde') }}</label>
+                    <input id="fDesde" type="date" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creada hasta') }}</label>
+                    <input id="fHasta" type="date" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
                 </div>
                 <button type="button"
-                        onclick="document.getElementById('fEstado').value='';document.getElementById('fResp').value='';document.getElementById('fMes').value='';document.getElementById('fFecha').value='';actFilter()"
+                        onclick="document.getElementById('fEstado').value='';document.getElementById('fResp').value='';document.getElementById('fMes').value='';document.getElementById('fDesde').value='';document.getElementById('fHasta').value='';actFilter()"
                         class="px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-600 hover:bg-gray-50">{{ __('Limpiar') }}</button>
                 <span class="text-[11px] text-gray-400"><span id="actCount">{{ $activities->count() }}</span> {{ __('actividades') }}</span>
             </div>
@@ -368,15 +372,18 @@
                 const est = document.getElementById('fEstado').value;
                 const resp = document.getElementById('fResp').value;
                 const mes = document.getElementById('fMes').value;
-                const fecha = document.getElementById('fFecha').value;
+                const desde = document.getElementById('fDesde').value;
+                const hasta = document.getElementById('fHasta').value;
                 let visible = 0;
                 document.querySelectorAll('#actTable tbody tr').forEach(function (tr) {
                     if (tr.querySelector('[colspan]')) return;
                     let ok = true;
+                    const cr = tr.dataset.created || '';
                     if (est && tr.dataset.estado !== est) ok = false;
                     if (resp && tr.dataset.resp !== resp) ok = false;
-                    if (mes && !(tr.dataset.created || '').startsWith(mes)) ok = false;
-                    if (fecha && tr.dataset.created !== fecha) ok = false;
+                    if (mes && !cr.startsWith(mes)) ok = false;
+                    if (desde && (!cr || cr < desde)) ok = false;
+                    if (hasta && (!cr || cr > hasta)) ok = false;
                     tr.style.display = ok ? '' : 'none';
                     if (ok) visible++;
                 });

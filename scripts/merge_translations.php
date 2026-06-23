@@ -90,6 +90,8 @@ $TRANSLATIONS = [
     'Vence'                       => ['Due', 'Vence'],
     'Tipo'                        => ['Type', 'Tipo'],
     'Aún no hay actividades.'     => ['No activities yet.', 'Ainda não há atividades.'],
+    'Creada desde'                => ['Created from', 'Criada desde'],
+    'Creada hasta'                => ['Created until', 'Criada até'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

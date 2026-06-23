@@ -1220,5 +1220,7 @@
     "Mes de creación": "Creation month",
     "Fecha de creación": "Creation date",
     "actividades": "activities",
-    "Aún no hay actividades.": "No activities yet."
+    "Aún no hay actividades.": "No activities yet.",
+    "Creada desde": "Created from",
+    "Creada hasta": "Created until"
 }
