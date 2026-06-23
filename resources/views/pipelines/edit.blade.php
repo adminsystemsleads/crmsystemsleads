@@ -174,41 +174,43 @@
 
                 {{-- Nueva fase --}}
                 <h4 class="text-sm font-semibold mb-2">{{ __('Agregar nueva fase') }}</h4>
-                <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="space-y-4">
                     @csrf
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700">{{ __('Nombre') }}</label>
-                        <input type="text" name="name"
-                               class="mt-1 block w-full border-gray-300 rounded-md text-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700">{{ __('Nombre') }}</label>
+                            <input type="text" name="name"
+                                   class="mt-1 block w-full border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700">{{ __('Slug (opcional)') }}</label>
+                            <input type="text" name="slug"
+                                   class="mt-1 block w-full border-gray-300 rounded-md text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700">{{ __('Color') }}</label>
+                            <input type="color" name="color" value="#6366f1"
+                                   class="mt-1 block w-full h-9 border border-gray-300 rounded-md cursor-pointer p-0">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700">{{ __('Probabilidad %') }}</label>
+                            <input type="number" name="probability" min="0" max="100"
+                                   class="mt-1 block w-full border-gray-300 rounded-md text-sm">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700">{{ __('Slug (opcional)') }}</label>
-                        <input type="text" name="slug"
-                               class="mt-1 block w-full border-gray-300 rounded-md text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700">{{ __('Color') }}</label>
-                        <input type="color" name="color" value="#6366f1"
-                               class="mt-1 block w-full h-9 border border-gray-300 rounded-md cursor-pointer p-0">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700">{{ __('Probabilidad %') }}</label>
-                        <input type="number" name="probability" min="0" max="100"
-                               class="mt-1 block w-full border-gray-300 rounded-md text-sm">
-                    </div>
-                    <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                    <div class="flex flex-wrap items-center gap-4">
                         <label class="inline-flex items-center text-xs">
                             <input type="checkbox" name="is_won" value="1"
                                    class="rounded border-gray-300">
-                            <span class="ml-1">{{ __('Ganada') }}</span>
+                            <span class="ml-1.5">{{ __('Ganada') }}</span>
                         </label>
                         <label class="inline-flex items-center text-xs">
                             <input type="checkbox" name="is_lost" value="1"
                                    class="rounded border-gray-300">
-                            <span class="ml-1">{{ __('Perdida') }}</span>
+                            <span class="ml-1.5">{{ __('Perdida') }}</span>
                         </label>
                         <button type="submit"
-                                class="px-3 py-2 bg-indigo-600 text-white rounded-md text-xs hover:bg-indigo-700 whitespace-nowrap">
+                                class="ml-auto px-4 py-2 bg-indigo-600 text-white rounded-md text-xs font-medium hover:bg-indigo-700 whitespace-nowrap">
                             {{ __('Añadir') }}
                         </button>
                     </div>
