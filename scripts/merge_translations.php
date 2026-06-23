@@ -80,6 +80,16 @@ $TRANSLATIONS = [
     'puedes elegir varios'        => ['you can choose several', 'você pode escolher vários'],
     'Perdida'                     => ['Missed', 'Perdida'],
     'Completar'                   => ['Complete', 'Concluir'],
+    'Reporte de Actividades'      => ['Activities Report', 'Relatório de Atividades'],
+    'Exportar CSV'                => ['Export CSV', 'Exportar CSV'],
+    'Mes de creación'             => ['Creation month', 'Mês de criação'],
+    'Fecha de creación'           => ['Creation date', 'Data de criação'],
+    'actividades'                 => ['activities', 'atividades'],
+    'Negociación'                 => ['Deal', 'Negociação'],
+    'Creada'                      => ['Created', 'Criada'],
+    'Vence'                       => ['Due', 'Vence'],
+    'Tipo'                        => ['Type', 'Tipo'],
+    'Aún no hay actividades.'     => ['No activities yet.', 'Ainda não há atividades.'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

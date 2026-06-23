@@ -241,6 +241,165 @@
           </div>
         </div>
 
+        {{-- ========= REPORTE DE ACTIVIDADES ========= --}}
+        @php
+            $respList = $activities->map(fn ($a) => $a->user->name ?? '—')->unique()->filter()->sort()->values();
+        @endphp
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <h3 class="text-base font-bold text-gray-900">🗂️ {{ __('Reporte de Actividades') }}</h3>
+                <button type="button" onclick="actExport()"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white"
+                        style="background:#1E2E48;">
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    {{ __('Exportar CSV') }}
+                </button>
+            </div>
+
+            {{-- Filtros --}}
+            <div class="flex flex-wrap items-end gap-3 mb-4">
+                <div>
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Estado') }}</label>
+                    <select id="fEstado" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:150px;">
+                        <option value="">{{ __('Todos') }}</option>
+                        <option value="open">{{ __('Pendiente') }}</option>
+                        <option value="done">{{ __('Completada') }}</option>
+                        <option value="lost">{{ __('Perdida') }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Responsable') }}</label>
+                    <select id="fResp" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:160px;">
+                        <option value="">{{ __('Todos') }}</option>
+                        @foreach($respList as $r)
+                            <option value="{{ $r }}">{{ $r }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Mes de creación') }}</label>
+                    <input id="fMes" type="month" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Fecha de creación') }}</label>
+                    <input id="fFecha" type="date" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
+                </div>
+                <button type="button"
+                        onclick="document.getElementById('fEstado').value='';document.getElementById('fResp').value='';document.getElementById('fMes').value='';document.getElementById('fFecha').value='';actFilter()"
+                        class="px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-600 hover:bg-gray-50">{{ __('Limpiar') }}</button>
+                <span class="text-[11px] text-gray-400"><span id="actCount">{{ $activities->count() }}</span> {{ __('actividades') }}</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="actTable" class="w-full text-xs">
+                    <thead class="text-left text-gray-500 border-b">
+                        <tr>
+                            @php
+                                $cols = [__('Asunto'), __('Responsable'), __('Negociación'), __('Tipo'), __('Creada'), __('Vence'), __('Estado')];
+                            @endphp
+                            @foreach($cols as $col)
+                                <th onclick="actSort(this)" data-sortable
+                                    class="px-3 py-2 font-semibold cursor-pointer select-none whitespace-nowrap hover:text-gray-700">
+                                    {{ $col }}<span class="sa"></span>
+                                </th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($activities as $a)
+                            @php
+                                $st = $a->status;
+                                $stLabel = $st === 'done' ? __('Completada') : ($st === 'lost' ? __('Perdida') : __('Pendiente'));
+                                $stStyle = $st === 'done' ? 'background:#dcfce7;color:#15803d;'
+                                          : ($st === 'lost' ? 'background:#fee2e2;color:#b91c1c;' : 'background:#f3f4f6;color:#4b5563;');
+                                $created = $a->created_at?->copy()->setTimezone($teamTz);
+                                $due = $a->due_at?->copy()->setTimezone($teamTz);
+                                $resp = $a->user->name ?? '—';
+                            @endphp
+                            <tr data-estado="{{ $st }}" data-resp="{{ $resp }}" data-created="{{ $created?->format('Y-m-d') }}">
+                                <td class="px-3 py-2 text-gray-800">{{ $a->subject }}</td>
+                                <td class="px-3 py-2 text-gray-600 whitespace-nowrap">{{ $resp }}</td>
+                                <td class="px-3 py-2">
+                                    @if($a->deal)
+                                        <a href="{{ route('deals.edit', [$a->deal->pipeline_id, $a->deal_id]) }}"
+                                           class="text-indigo-600 hover:underline">{{ $a->deal->title }}</a>
+                                    @else — @endif
+                                </td>
+                                <td class="px-3 py-2 text-gray-500 whitespace-nowrap">{{ strtoupper($a->type) }}</td>
+                                <td class="px-3 py-2 text-gray-600 whitespace-nowrap" data-sort="{{ $created?->timestamp ?? 0 }}">{{ $created?->format('d/m/Y H:i') ?? '—' }}</td>
+                                <td class="px-3 py-2 text-gray-600 whitespace-nowrap" data-sort="{{ $due?->timestamp ?? 0 }}">{{ $due?->format('d/m/Y H:i') ?? '—' }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" style="{{ $stStyle }}">{{ $stLabel }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="7" class="px-3 py-6 text-center text-gray-400">{{ __('Aún no hay actividades.') }}</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            function actSort(th) {
+                const table = document.getElementById('actTable');
+                const tbody = table.querySelector('tbody');
+                const idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+                const asc = th.dataset.asc !== 'true';
+                table.querySelectorAll('th[data-sortable]').forEach(h => { h.dataset.asc = ''; const s = h.querySelector('.sa'); if (s) s.textContent = ''; });
+                th.dataset.asc = asc ? 'true' : 'false';
+                const s = th.querySelector('.sa'); if (s) s.textContent = asc ? ' ▲' : ' ▼';
+                const rows = Array.prototype.slice.call(tbody.querySelectorAll('tr')).filter(r => !r.querySelector('[colspan]'));
+                rows.sort(function (r1, r2) {
+                    const c1 = r1.children[idx], c2 = r2.children[idx];
+                    let v1 = c1.dataset.sort !== undefined ? c1.dataset.sort : c1.textContent.trim();
+                    let v2 = c2.dataset.sort !== undefined ? c2.dataset.sort : c2.textContent.trim();
+                    const n1 = parseFloat(v1), n2 = parseFloat(v2);
+                    if (!isNaN(n1) && !isNaN(n2)) { v1 = n1; v2 = n2; }
+                    else { v1 = String(v1).toLowerCase(); v2 = String(v2).toLowerCase(); }
+                    if (v1 < v2) return asc ? -1 : 1;
+                    if (v1 > v2) return asc ? 1 : -1;
+                    return 0;
+                });
+                rows.forEach(r => tbody.appendChild(r));
+            }
+
+            function actFilter() {
+                const est = document.getElementById('fEstado').value;
+                const resp = document.getElementById('fResp').value;
+                const mes = document.getElementById('fMes').value;
+                const fecha = document.getElementById('fFecha').value;
+                let visible = 0;
+                document.querySelectorAll('#actTable tbody tr').forEach(function (tr) {
+                    if (tr.querySelector('[colspan]')) return;
+                    let ok = true;
+                    if (est && tr.dataset.estado !== est) ok = false;
+                    if (resp && tr.dataset.resp !== resp) ok = false;
+                    if (mes && !(tr.dataset.created || '').startsWith(mes)) ok = false;
+                    if (fecha && tr.dataset.created !== fecha) ok = false;
+                    tr.style.display = ok ? '' : 'none';
+                    if (ok) visible++;
+                });
+                const c = document.getElementById('actCount'); if (c) c.textContent = visible;
+            }
+
+            function actExport() {
+                const header = ['{{ __('Asunto') }}', '{{ __('Responsable') }}', '{{ __('Negociación') }}', '{{ __('Tipo') }}', '{{ __('Creada') }}', '{{ __('Vence') }}', '{{ __('Estado') }}'];
+                const rows = [header];
+                document.querySelectorAll('#actTable tbody tr').forEach(function (tr) {
+                    if (tr.querySelector('[colspan]') || tr.style.display === 'none') return;
+                    const c = tr.children;
+                    rows.push([c[0], c[1], c[2], c[3], c[4], c[5], c[6]].map(td => td.textContent.trim()));
+                });
+                const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+                const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'actividades.csv';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            }
+        </script>
+
       @endif
     </div>
   </div>

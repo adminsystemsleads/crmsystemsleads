@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\Deal;
+use App\Models\DealActivity;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\WhatsappConversation;
@@ -103,6 +104,15 @@ class DashboardController extends Controller
             ->limit(8)
             ->get();
 
+        /* ===== Reporte de actividades del equipo ===== */
+        $activities = DealActivity::whereHas('deal', fn ($q) => $q->where('team_id', $teamId))
+            ->with(['user:id,name', 'deal:id,title,pipeline_id'])
+            ->latest()
+            ->limit(1000)
+            ->get();
+
+        $teamTz = $team->effectiveTimezone();
+
         $metrics = [
             'contacts' => [
                 'total' => $contactsTotal,
@@ -125,6 +135,6 @@ class DashboardController extends Controller
             'recent_deals' => $recentDeals,
         ];
 
-        return view('dashboard', compact('metrics'));
+        return view('dashboard', compact('metrics', 'activities', 'teamTz'));
     }
 }
