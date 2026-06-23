@@ -1222,5 +1222,6 @@
     "actividades": "activities",
     "Aún no hay actividades.": "No activities yet.",
     "Creada desde": "Created from",
-    "Creada hasta": "Created until"
+    "Creada hasta": "Created until",
+    "Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.": "Status, Owner and Month allow multiple: Ctrl/Cmd + click."
 }

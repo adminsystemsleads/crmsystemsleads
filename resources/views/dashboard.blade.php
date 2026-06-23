@@ -244,6 +244,9 @@
         {{-- ========= REPORTE DE ACTIVIDADES ========= --}}
         @php
             $respList = $activities->map(fn ($a) => $a->user->name ?? '—')->unique()->filter()->sort()->values();
+            $monthsList = $activities
+                ->map(fn ($a) => $a->created_at?->copy()->setTimezone($teamTz)?->format('Y-m'))
+                ->filter()->unique()->sortDesc()->values();
         @endphp
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -260,8 +263,7 @@
             <div class="flex flex-wrap items-end gap-3 mb-4">
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Estado') }}</label>
-                    <select id="fEstado" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:150px;">
-                        <option value="">{{ __('Todos') }}</option>
+                    <select id="fEstado" multiple size="3" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:150px;">
                         <option value="open">{{ __('Pendiente') }}</option>
                         <option value="done">{{ __('Completada') }}</option>
                         <option value="lost">{{ __('Perdida') }}</option>
@@ -269,8 +271,7 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Responsable') }}</label>
-                    <select id="fResp" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:160px;">
-                        <option value="">{{ __('Todos') }}</option>
+                    <select id="fResp" multiple size="4" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:160px;">
                         @foreach($respList as $r)
                             <option value="{{ $r }}">{{ $r }}</option>
                         @endforeach
@@ -278,7 +279,11 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Mes de creación') }}</label>
-                    <input id="fMes" type="month" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
+                    <select id="fMes" multiple size="4" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:150px;">
+                        @foreach($monthsList as $m)
+                            <option value="{{ $m }}">{{ \Carbon\Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y') }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creada desde') }}</label>
@@ -288,11 +293,11 @@
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creada hasta') }}</label>
                     <input id="fHasta" type="date" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs">
                 </div>
-                <button type="button"
-                        onclick="document.getElementById('fEstado').value='';document.getElementById('fResp').value='';document.getElementById('fMes').value='';document.getElementById('fDesde').value='';document.getElementById('fHasta').value='';actFilter()"
+                <button type="button" onclick="actClear()"
                         class="px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-600 hover:bg-gray-50">{{ __('Limpiar') }}</button>
                 <span class="text-[11px] text-gray-400"><span id="actCount">{{ $activities->count() }}</span> {{ __('actividades') }}</span>
             </div>
+            <p class="text-[10px] text-gray-400 -mt-2 mb-3">{{ __('Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.') }}</p>
 
             <div class="overflow-x-auto">
                 <table id="actTable" class="w-full text-xs">
@@ -368,10 +373,22 @@
                 rows.forEach(r => tbody.appendChild(r));
             }
 
+            function actMulti(id) {
+                const el = document.getElementById(id);
+                return Array.prototype.map.call(el.selectedOptions, function (o) { return o.value; }).filter(Boolean);
+            }
+            function actClear() {
+                ['fEstado', 'fResp', 'fMes'].forEach(function (id) {
+                    Array.prototype.forEach.call(document.getElementById(id).options, function (o) { o.selected = false; });
+                });
+                document.getElementById('fDesde').value = '';
+                document.getElementById('fHasta').value = '';
+                actFilter();
+            }
             function actFilter() {
-                const est = document.getElementById('fEstado').value;
-                const resp = document.getElementById('fResp').value;
-                const mes = document.getElementById('fMes').value;
+                const ests = actMulti('fEstado');
+                const resps = actMulti('fResp');
+                const meses = actMulti('fMes');
                 const desde = document.getElementById('fDesde').value;
                 const hasta = document.getElementById('fHasta').value;
                 let visible = 0;
@@ -379,9 +396,9 @@
                     if (tr.querySelector('[colspan]')) return;
                     let ok = true;
                     const cr = tr.dataset.created || '';
-                    if (est && tr.dataset.estado !== est) ok = false;
-                    if (resp && tr.dataset.resp !== resp) ok = false;
-                    if (mes && !cr.startsWith(mes)) ok = false;
+                    if (ests.length && ests.indexOf(tr.dataset.estado) === -1) ok = false;
+                    if (resps.length && resps.indexOf(tr.dataset.resp) === -1) ok = false;
+                    if (meses.length && meses.indexOf(cr.slice(0, 7)) === -1) ok = false;
                     if (desde && (!cr || cr < desde)) ok = false;
                     if (hasta && (!cr || cr > hasta)) ok = false;
                     tr.style.display = ok ? '' : 'none';

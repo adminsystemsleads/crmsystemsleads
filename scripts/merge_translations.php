@@ -92,6 +92,7 @@ $TRANSLATIONS = [
     'Aún no hay actividades.'     => ['No activities yet.', 'Ainda não há atividades.'],
     'Creada desde'                => ['Created from', 'Criada desde'],
     'Creada hasta'                => ['Created until', 'Criada até'],
+    'Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.' => ['Status, Owner and Month allow multiple: Ctrl/Cmd + click.', 'Status, Responsável e Mês permitem vários: Ctrl/Cmd + clique.'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void
