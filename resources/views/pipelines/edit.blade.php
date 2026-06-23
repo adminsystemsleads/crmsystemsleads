@@ -176,42 +176,41 @@
                 <h4 class="text-sm font-semibold mb-2">{{ __('Agregar nueva fase') }}</h4>
                 <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="space-y-4">
                     @csrf
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
-                        <div>
+                    <div class="flex flex-wrap items-end gap-3">
+                        <div style="flex:1 1 140px; min-width:120px;">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Nombre') }}</label>
                             <input type="text" name="name"
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                         </div>
-                        <div>
+                        <div style="flex:1 1 140px; min-width:120px;">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Slug (opcional)') }}</label>
                             <input type="text" name="slug"
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                         </div>
-                        <div>
+                        <div style="flex:0 0 auto;">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Color') }}</label>
                             <input type="color" name="color" value="#6366f1"
                                    class="mt-1 block h-9 border border-gray-300 rounded-md cursor-pointer p-0"
                                    style="width:3.5rem;">
                         </div>
-                        <div>
+                        <div style="flex:0 0 auto; width:6rem;">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Probabilidad %') }}</label>
                             <input type="number" name="probability" min="0" max="100"
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                         </div>
-                    </div>
-                    <div class="flex items-center gap-5">
-                        <label class="inline-flex items-center text-xs whitespace-nowrap">
+                        <label class="inline-flex items-center text-xs whitespace-nowrap" style="height:38px;">
                             <input type="checkbox" name="is_won" value="1"
                                    class="h-4 w-4 rounded border-gray-300" style="margin-right:.4rem;">
                             <span>{{ __('Ganada') }}</span>
                         </label>
-                        <label class="inline-flex items-center text-xs whitespace-nowrap">
+                        <label class="inline-flex items-center text-xs whitespace-nowrap" style="height:38px;">
                             <input type="checkbox" name="is_lost" value="1"
                                    class="h-4 w-4 rounded border-gray-300" style="margin-right:.4rem;">
                             <span>{{ __('Perdida') }}</span>
                         </label>
                         <button type="submit"
-                                class="ml-auto px-4 py-2 bg-indigo-600 text-white rounded-md text-xs font-medium hover:bg-indigo-700 whitespace-nowrap">
+                                class="px-4 bg-indigo-600 text-white rounded-md text-xs font-medium hover:bg-indigo-700 whitespace-nowrap"
+                                style="height:38px;">
                             {{ __('Añadir') }}
                         </button>
                     </div>
