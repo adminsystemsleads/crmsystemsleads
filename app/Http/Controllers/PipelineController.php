@@ -6,6 +6,7 @@ use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Deal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -254,23 +255,94 @@ class PipelineController extends Controller
      *   KANBAN
      * ============*/
 
-    public function kanban(Pipeline $pipeline)
+    public function kanban(Pipeline $pipeline, Request $request)
     {
         $pipeline = $this->pipelineForTeam($pipeline->id);
 
         $pipeline->load(['stages' => function ($q) {
-        $q->orderBy('sort_order');
-    }]);
+            $q->orderBy('sort_order');
+        }]);
 
-    $stages = $pipeline->stages;
+        $stages = $pipeline->stages;
 
-    $dealsByStage = Deal::where('pipeline_id', $pipeline->id)
-        ->with('contact')
-        ->get()
-        ->groupBy('stage_id');
+        $team   = Auth::user()->currentTeam;
+        $teamId = $team->id;
+        $teamTz = $team->effectiveTimezone();
 
-    $viewMode = request('view', 'kanban'); // 👈 kanban | table
+        $q            = $request->query('q');
+        $createdFrom  = $request->query('created_from');
+        $createdTo    = $request->query('created_to');
+        $months       = array_values(array_filter((array) $request->query('months', [])));
+        $responsibles = array_values(array_filter((array) $request->query('responsibles', [])));
+        $stageFilter  = array_values(array_filter((array) $request->query('stages', [])));
+        $cf           = (array) $request->query('cf', []);
 
-    return view('pipelines.kanban', compact('pipeline', 'stages', 'dealsByStage', 'viewMode'));
+        $dealFields = \App\Support\CustomFieldsHelper::fieldsFor($teamId, 'deal');
+
+        $dealsQuery = Deal::where('pipeline_id', $pipeline->id)
+            ->with('contact')
+            ->when($q, fn($query) => $query->where(function ($s) use ($q) {
+                $s->where('title', 'like', "%{$q}%")
+                  ->orWhereHas('contact', fn($c) => $c->where('name', 'like', "%{$q}%")
+                      ->orWhere('phone', 'like', "%{$q}%")
+                      ->orWhere('email', 'like', "%{$q}%"));
+            }))
+            ->when($createdFrom, fn($query) => $query->where('created_at', '>=', Carbon::parse($createdFrom, $teamTz)->startOfDay()->utc()))
+            ->when($createdTo, fn($query) => $query->where('created_at', '<=', Carbon::parse($createdTo, $teamTz)->endOfDay()->utc()))
+            ->when($months, fn($query) => $query->where(function ($w) use ($months, $teamTz) {
+                foreach ($months as $m) {
+                    try { $start = Carbon::createFromFormat('Y-m-d', $m . '-01', $teamTz)->startOfMonth(); }
+                    catch (\Throwable $e) { continue; }
+                    $w->orWhereBetween('created_at', [$start->copy()->utc(), $start->copy()->endOfMonth()->utc()]);
+                }
+            }))
+            ->when($responsibles, fn($query) => $query->whereIn('responsible_id', $responsibles))
+            ->when($stageFilter, fn($query) => $query->whereIn('stage_id', $stageFilter));
+
+        foreach ($dealFields as $field) {
+            $val  = $cf[$field->id] ?? null;
+            $vals = array_values(array_filter(is_array($val) ? $val : [$val], fn($v) => $v !== null && $v !== ''));
+            if (empty($vals)) continue;
+
+            $dealsQuery->whereHas('customFieldValues', function ($v) use ($field, $vals) {
+                $v->where('custom_field_id', $field->id)
+                  ->where(function ($w) use ($field, $vals) {
+                      foreach ($vals as $vv) {
+                          if ($field->field_type === 'multiselect') {
+                              $w->orWhere('value', 'like', '%"' . $vv . '"%');
+                          } elseif ($field->field_type === 'select') {
+                              $w->orWhere('value', $vv);
+                          } else {
+                              $w->orWhere('value', 'like', '%' . $vv . '%');
+                          }
+                      }
+                  });
+            });
+        }
+
+        $dealsByStage = $dealsQuery->get()->groupBy('stage_id');
+
+        $viewMode = $request->query('view', 'kanban'); // kanban | table
+
+        // Opciones para los filtros.
+        $teamMembers = $team->allUsers()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
+        $monthsList  = Deal::where('pipeline_id', $pipeline->id)
+            ->orderByDesc('created_at')->pluck('created_at')
+            ->map(fn($d) => $d?->copy()->setTimezone($teamTz)->format('Y-m'))
+            ->filter()->unique()->values();
+
+        $filters = [
+            'createdFrom'  => $createdFrom,
+            'createdTo'    => $createdTo,
+            'months'       => $months,
+            'responsibles' => $responsibles,
+            'stages'       => $stageFilter,
+            'cf'           => $cf,
+        ];
+
+        return view('pipelines.kanban', compact(
+            'pipeline', 'stages', 'dealsByStage', 'viewMode',
+            'q', 'filters', 'teamMembers', 'monthsList', 'dealFields'
+        ));
     }
 }

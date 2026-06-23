@@ -108,6 +108,8 @@ $TRANSLATIONS = [
     'Etapa'                       => ['Stage', 'Etapa'],
     'Aplicar'                     => ['Apply', 'Aplicar'],
     'Limpiar filtros'             => ['Clear filters', 'Limpar filtros'],
+    'Buscar por negociación, contacto, email, teléfono…' => ['Search by deal, contact, email, phone…', 'Buscar por negociação, contato, e-mail, telefone…'],
+    'Todas'                       => ['All', 'Todas'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void
