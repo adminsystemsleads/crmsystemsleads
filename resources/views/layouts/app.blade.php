@@ -237,7 +237,7 @@
       .wa-topbar { padding-right: 3.5rem !important; } /* reserva espacio para la campana */
 
       /* ===== Campana de notificaciones (fija arriba a la derecha) ===== */
-      .notif-bell { position: fixed; top: 2.25rem; right: 1rem; z-index: 40; transform: translateY(-50%); }
+      .notif-bell { position: fixed; top: 1rem; right: 1rem; z-index: 40; }
       .notif-bell-btn { position: relative; display: inline-flex; align-items: center; justify-content: center;
         padding: .5rem; border-radius: .6rem; color: #fff; background: transparent; border: none; cursor: pointer; transition: background .15s; }
       .notif-bell-btn:hover { background: rgba(255,255,255,.14); }
@@ -283,6 +283,9 @@
   <body class="font-sans antialiased dark:bg-slate-900 dark:text-slate-100">
     <x-banner />
 
+    {{-- Campana de notificaciones: a nivel de body para que quede siempre fija. --}}
+    @include('partials.notification-bell')
+
     @php
       // Aviso de licencia próxima a vencer / prórroga activa (cuenta del cliente).
       $licenseBanner = null;
@@ -307,8 +310,6 @@
          class="main-wrap min-h-screen bg-gray-100 dark:bg-slate-900"
          :class="$store.sidebar.open ? 'sidebar-open' : ''">
       @livewire('navigation-menu')
-
-      @include('partials.notification-bell')
 
       {{-- Aviso elegante de licencia (próxima a vencer / prórroga), cerrable por día --}}
       @if ($licenseBanner)
