@@ -340,6 +340,21 @@
 
                             <div>
                                 <label class="block text-xs font-medium text-gray-700">
+                                    {{ __('Responsable') }}
+                                </label>
+                                <select name="user_id"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                    @foreach($teamMembers as $member)
+                                        <option value="{{ $member->id }}"
+                                            {{ old('user_id', $deal->responsible_id ?? auth()->id()) == $member->id ? 'selected' : '' }}>
+                                            {{ $member->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">
                                     {{ __('Asunto') }}
                                 </label>
                                 <input type="text" name="subject"
