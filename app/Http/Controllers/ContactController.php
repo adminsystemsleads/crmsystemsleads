@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\Pipeline;
+use App\Models\PipelineStage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
@@ -16,22 +19,90 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         $team   = $this->currentTeam();
-        $q      = $request->query('q');
-        $status = $request->query('status');
+        $teamId = $team->id;
+        $teamTz = $team->effectiveTimezone();
 
-        $contacts = Contact::where('team_id', $team->id)
+        $q            = $request->query('q');
+        $status       = $request->query('status');
+        $createdFrom  = $request->query('created_from');
+        $createdTo    = $request->query('created_to');
+        $months       = array_values(array_filter((array) $request->query('months', [])));
+        $responsibles = array_values(array_filter((array) $request->query('responsibles', [])));
+        $stages       = array_values(array_filter((array) $request->query('stages', [])));
+        $pipelines    = array_values(array_filter((array) $request->query('pipelines', [])));
+        $cf           = (array) $request->query('cf', []);
+
+        // Campos personalizados de contacto (para filtros).
+        $contactFields = \App\Support\CustomFieldsHelper::fieldsFor($teamId, 'contact');
+
+        $query = Contact::where('team_id', $teamId)
+            // Texto: nombre, email, teléfono, empresa o título de negociación.
             ->when($q, fn($query) => $query->where(function ($sq) use ($q) {
                 $sq->where('name', 'like', "%{$q}%")
                    ->orWhere('email', 'like', "%{$q}%")
                    ->orWhere('phone', 'like', "%{$q}%")
-                   ->orWhere('company', 'like', "%{$q}%");
+                   ->orWhere('company', 'like', "%{$q}%")
+                   ->orWhereHas('deals', fn($d) => $d->where('title', 'like', "%{$q}%"));
             }))
             ->when($status, fn($query) => $query->where('status', $status))
-            ->withCount('deals')
-            ->orderBy('name')
-            ->paginate(25);
+            // Fecha de creación (exacta/rango), interpretada en la zona del equipo.
+            ->when($createdFrom, fn($query) => $query->where('created_at', '>=', Carbon::parse($createdFrom, $teamTz)->startOfDay()->utc()))
+            ->when($createdTo, fn($query) => $query->where('created_at', '<=', Carbon::parse($createdTo, $teamTz)->endOfDay()->utc()))
+            // Meses de creación (múltiple).
+            ->when($months, fn($query) => $query->where(function ($w) use ($months, $teamTz) {
+                foreach ($months as $m) {
+                    try { $start = Carbon::createFromFormat('Y-m-d', $m . '-01', $teamTz)->startOfMonth(); }
+                    catch (\Throwable $e) { continue; }
+                    $w->orWhereBetween('created_at', [$start->copy()->utc(), $start->copy()->endOfMonth()->utc()]);
+                }
+            }))
+            // Filtros por negociación relacionada (múltiple).
+            ->when($responsibles, fn($query) => $query->whereHas('deals', fn($d) => $d->whereIn('responsible_id', $responsibles)))
+            ->when($stages, fn($query) => $query->whereHas('deals', fn($d) => $d->whereIn('stage_id', $stages)))
+            ->when($pipelines, fn($query) => $query->whereHas('deals', fn($d) => $d->whereIn('pipeline_id', $pipelines)));
 
-        return view('contacts.index', compact('contacts', 'q', 'status'));
+        // Filtros por campos personalizados.
+        foreach ($contactFields as $field) {
+            $val  = $cf[$field->id] ?? null;
+            $vals = array_values(array_filter(is_array($val) ? $val : [$val], fn($v) => $v !== null && $v !== ''));
+            if (empty($vals)) continue;
+
+            $query->whereHas('customFieldValues', function ($v) use ($field, $vals) {
+                $v->where('custom_field_id', $field->id)
+                  ->where(function ($w) use ($field, $vals) {
+                      foreach ($vals as $vv) {
+                          if ($field->field_type === 'multiselect') {
+                              $w->orWhere('value', 'like', '%"' . $vv . '"%');
+                          } elseif ($field->field_type === 'select') {
+                              $w->orWhere('value', $vv);
+                          } else {
+                              $w->orWhere('value', 'like', '%' . $vv . '%');
+                          }
+                      }
+                  });
+            });
+        }
+
+        $contacts = $query->withCount('deals')->orderBy('name')->paginate(25)->withQueryString();
+
+        // Opciones para los filtros.
+        $teamMembers   = $team->allUsers()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
+        $pipelinesList = Pipeline::where('team_id', $teamId)->orderBy('name')->get(['id', 'name']);
+        $stagesList    = PipelineStage::whereIn('pipeline_id', $pipelinesList->pluck('id'))
+            ->orderBy('pipeline_id')->orderBy('sort_order')->get(['id', 'name', 'pipeline_id']);
+
+        // Meses con contactos creados (para el filtro de mes).
+        $monthsList = Contact::where('team_id', $teamId)
+            ->orderByDesc('created_at')->pluck('created_at')
+            ->map(fn($d) => $d?->copy()->setTimezone($teamTz)->format('Y-m'))
+            ->filter()->unique()->values();
+
+        $filters = compact('createdFrom', 'createdTo', 'months', 'responsibles', 'stages', 'pipelines', 'cf');
+
+        return view('contacts.index', compact(
+            'contacts', 'q', 'status', 'filters',
+            'teamMembers', 'pipelinesList', 'stagesList', 'monthsList', 'contactFields'
+        ));
     }
 
     public function create()

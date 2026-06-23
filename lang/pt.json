@@ -1233,5 +1233,12 @@
     "Lista (múltiple)": "Lista (múltipla)",
     "Sin opciones": "Sem opções",
     "seleccionados": "selecionados",
-    "campos": "campos"
+    "campos": "campos",
+    "Buscar por nombre, negociación, email, teléfono…": "Buscar por nome, negociação, e-mail, telefone…",
+    "Filtros": "Filtros",
+    "Creado desde": "Criado desde",
+    "Creado hasta": "Criado até",
+    "Embudo": "Funil",
+    "Etapa": "Etapa",
+    "Aplicar": "Aplicar"
 }

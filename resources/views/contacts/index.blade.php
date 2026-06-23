@@ -39,33 +39,162 @@
       </div>
     @endif
 
-    {{-- Barra de búsqueda y filtros --}}
-    <div class="mb-5 flex flex-wrap items-center gap-3">
-      <form method="GET" action="{{ route('contacts.index') }}" class="flex flex-1 items-center gap-2 min-w-0">
-        <div class="relative flex-1 min-w-0 max-w-sm">
-          <svg class="absolute size-4 text-gray-400" style="left: 12px; top: 50%; transform: translateY(-50%);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input type="text" name="q" value="{{ $q }}"
-                 placeholder="{{ __('Buscar por nombre, email, teléfono…') }}"
-                 class="w-full py-2 text-sm border border-gray-200 rounded-lg bg-white focus:ring-indigo-400 focus:border-indigo-400"
-                 style="padding-left: 38px; padding-right: 12px;">
+    {{-- Barra de búsqueda y filtros avanzados --}}
+    @php
+      $caret = '<svg class="ms-dd-caret" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>';
+      $hasAdv = $filters['createdFrom'] || $filters['createdTo'] || $filters['months'] || $filters['responsibles']
+                || $filters['stages'] || $filters['pipelines'] || collect($filters['cf'])->flatten()->filter()->isNotEmpty();
+      $anyFilter = $q || $status || $hasAdv;
+    @endphp
+    <div class="mb-5" x-data="{ adv: {{ $hasAdv ? 'true' : 'false' }} }">
+      <form method="GET" action="{{ route('contacts.index') }}">
+        {{-- Línea principal --}}
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="relative flex-1 min-w-0" style="max-width:30rem;">
+            <svg class="absolute size-4 text-gray-400" style="left:12px;top:50%;transform:translateY(-50%);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" name="q" value="{{ $q }}"
+                   placeholder="{{ __('Buscar por nombre, negociación, email, teléfono…') }}"
+                   class="w-full py-2 text-sm border border-gray-200 rounded-lg bg-white focus:ring-indigo-400 focus:border-indigo-400"
+                   style="padding-left:38px;padding-right:12px;">
+          </div>
+          <select name="status" class="text-sm border border-gray-200 rounded-lg py-2 bg-white text-gray-700" style="padding-left:12px;padding-right:32px;">
+            <option value="">{{ __('Todos los estados') }}</option>
+            @foreach(['nuevo' => __('Nuevo'), 'activo' => __('Activo'), 'cliente' => __('Cliente'), 'inactivo' => __('Inactivo'), 'perdido' => __('Perdido')] as $val => $label)
+              <option value="{{ $val }}" {{ $status === $val ? 'selected' : '' }}>{{ $label }}</option>
+            @endforeach
+          </select>
+          <button type="button" @click="adv = !adv"
+                  class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50">
+            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18M6 12h12M10 20h4"/></svg>
+            {{ __('Filtros') }}@if($hasAdv)<span class="ml-0.5 inline-block size-2 rounded-full bg-indigo-500"></span>@endif
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm hover:bg-gray-700 transition">{{ __('Buscar') }}</button>
+          @if($anyFilter)
+            <a href="{{ route('contacts.index') }}" class="text-sm text-gray-500 hover:text-gray-700">{{ __('Limpiar') }}</a>
+          @endif
         </div>
-        <select name="status" onchange="this.form.submit()"
-                class="text-sm border border-gray-200 rounded-lg py-2 bg-white text-gray-700"
-                style="padding-left: 12px; padding-right: 32px;">
-          <option value="">{{ __('Todos los estados') }}</option>
-          @foreach(['nuevo' => __('Nuevo'), 'activo' => __('Activo'), 'cliente' => __('Cliente'), 'inactivo' => __('Inactivo'), 'perdido' => __('Perdido')] as $val => $label)
-            <option value="{{ $val }}" {{ $status === $val ? 'selected' : '' }}>{{ $label }}</option>
-          @endforeach
-        </select>
-        <button type="submit"
-                class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm hover:bg-gray-700 transition">
-          {{ __('Buscar') }}
-        </button>
-        @if($q || $status)
-          <a href="{{ route('contacts.index') }}" class="text-sm text-gray-500 hover:text-gray-700">{{ __('Limpiar') }}</a>
-        @endif
+
+        {{-- Panel avanzado --}}
+        <div x-show="adv" x-cloak class="mt-3 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div class="flex flex-wrap gap-4">
+            <div style="width:11rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creado desde') }}</label>
+              <input type="date" name="created_from" value="{{ $filters['createdFrom'] }}" class="w-full border-gray-300 rounded-lg text-xs">
+            </div>
+            <div style="width:11rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creado hasta') }}</label>
+              <input type="date" name="created_to" value="{{ $filters['createdTo'] }}" class="w-full border-gray-300 rounded-lg text-xs">
+            </div>
+
+            {{-- Mes de creación (múltiple) --}}
+            <div style="width:12rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Mes de creación') }}</label>
+              <div class="ms-dd" id="ddMonths">
+                <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                  <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>{!! $caret !!}
+                </button>
+                <div class="ms-dd-panel">
+                  @forelse($monthsList as $m)
+                    <label class="ms-dd-opt"><input type="checkbox" name="months[]" value="{{ $m }}" onchange="msChanged(this)" {{ in_array($m, $filters['months']) ? 'checked' : '' }}><span>{{ \Carbon\Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y') }}</span></label>
+                  @empty
+                    <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+                  @endforelse
+                </div>
+              </div>
+            </div>
+
+            {{-- Responsable (múltiple) --}}
+            <div style="width:12rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Responsable') }}</label>
+              <div class="ms-dd" id="ddResp">
+                <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                  <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>{!! $caret !!}
+                </button>
+                <div class="ms-dd-panel">
+                  @forelse($teamMembers as $m)
+                    <label class="ms-dd-opt"><input type="checkbox" name="responsibles[]" value="{{ $m['id'] }}" onchange="msChanged(this)" {{ in_array((string)$m['id'], array_map('strval', $filters['responsibles'])) ? 'checked' : '' }}><span>{{ $m['name'] }}</span></label>
+                  @empty
+                    <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+                  @endforelse
+                </div>
+              </div>
+            </div>
+
+            {{-- Embudo (múltiple) --}}
+            <div style="width:12rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Embudo') }}</label>
+              <div class="ms-dd" id="ddPipes">
+                <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                  <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>{!! $caret !!}
+                </button>
+                <div class="ms-dd-panel">
+                  @forelse($pipelinesList as $p)
+                    <label class="ms-dd-opt"><input type="checkbox" name="pipelines[]" value="{{ $p->id }}" onchange="msChanged(this)" {{ in_array((string)$p->id, array_map('strval', $filters['pipelines'])) ? 'checked' : '' }}><span>{{ $p->name }}</span></label>
+                  @empty
+                    <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+                  @endforelse
+                </div>
+              </div>
+            </div>
+
+            {{-- Etapa (múltiple) --}}
+            <div style="width:12rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Etapa') }}</label>
+              <div class="ms-dd" id="ddStages">
+                <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                  <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>{!! $caret !!}
+                </button>
+                <div class="ms-dd-panel">
+                  @forelse($stagesList as $s)
+                    <label class="ms-dd-opt"><input type="checkbox" name="stages[]" value="{{ $s->id }}" onchange="msChanged(this)" {{ in_array((string)$s->id, array_map('strval', $filters['stages'])) ? 'checked' : '' }}><span>{{ $s->name }}</span></label>
+                  @empty
+                    <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+                  @endforelse
+                </div>
+              </div>
+            </div>
+
+            {{-- Campos personalizados --}}
+            @foreach($contactFields as $field)
+              @php $cfVal = $filters['cf'][$field->id] ?? null; @endphp
+              <div style="width:12rem;">
+                <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ $field->name }}</label>
+                @if($field->field_type === 'multiselect')
+                  <div class="ms-dd" id="ddcf{{ $field->id }}">
+                    <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                      <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>{!! $caret !!}
+                    </button>
+                    <div class="ms-dd-panel">
+                      @foreach((array) $field->options as $opt)
+                        <label class="ms-dd-opt"><input type="checkbox" name="cf[{{ $field->id }}][]" value="{{ $opt }}" onchange="msChanged(this)" {{ in_array($opt, (array) $cfVal) ? 'checked' : '' }}><span>{{ $opt }}</span></label>
+                      @endforeach
+                    </div>
+                  </div>
+                @elseif($field->field_type === 'select')
+                  <select name="cf[{{ $field->id }}]" class="w-full border-gray-300 rounded-lg text-xs py-2">
+                    <option value="">{{ __('Todos') }}</option>
+                    @foreach((array) $field->options as $opt)
+                      <option value="{{ $opt }}" {{ (string) $cfVal === (string) $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
+                  </select>
+                @elseif($field->field_type === 'date')
+                  <input type="date" name="cf[{{ $field->id }}]" value="{{ is_array($cfVal) ? '' : $cfVal }}" class="w-full border-gray-300 rounded-lg text-xs">
+                @elseif($field->field_type === 'number')
+                  <input type="number" step="any" name="cf[{{ $field->id }}]" value="{{ is_array($cfVal) ? '' : $cfVal }}" class="w-full border-gray-300 rounded-lg text-xs py-2">
+                @else
+                  <input type="text" name="cf[{{ $field->id }}]" value="{{ is_array($cfVal) ? '' : $cfVal }}" class="w-full border-gray-300 rounded-lg text-xs py-2">
+                @endif
+              </div>
+            @endforeach
+          </div>
+
+          <div class="mt-4 flex justify-end gap-2">
+            <a href="{{ route('contacts.index') }}" class="px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-600 hover:bg-gray-50">{{ __('Limpiar filtros') }}</a>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700">{{ __('Aplicar') }}</button>
+          </div>
+        </div>
       </form>
     </div>
 

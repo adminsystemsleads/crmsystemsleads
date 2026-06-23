@@ -100,6 +100,14 @@ $TRANSLATIONS = [
     'Sin opciones'                => ['No options', 'Sem opções'],
     'seleccionados'               => ['selected', 'selecionados'],
     'campos'                      => ['fields', 'campos'],
+    'Buscar por nombre, negociación, email, teléfono…' => ['Search by name, deal, email, phone…', 'Buscar por nome, negociação, e-mail, telefone…'],
+    'Filtros'                     => ['Filters', 'Filtros'],
+    'Creado desde'                => ['Created from', 'Criado desde'],
+    'Creado hasta'                => ['Created until', 'Criado até'],
+    'Embudo'                      => ['Pipeline', 'Funil'],
+    'Etapa'                       => ['Stage', 'Etapa'],
+    'Aplicar'                     => ['Apply', 'Aplicar'],
+    'Limpiar filtros'             => ['Clear filters', 'Limpar filtros'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void
