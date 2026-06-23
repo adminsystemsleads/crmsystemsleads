@@ -246,10 +246,10 @@
         padding: 0 .25rem; border-radius: 999px; background: #dc2626; color: #fff; font-size: .62rem;
         font-weight: 700; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
         box-shadow: 0 0 0 2px var(--brand-navy); }
-      .notif-panel { position: absolute; top: calc(100% + .5rem); right: 0; width: 27rem; max-width: calc(100vw - 1.5rem);
-        max-height: 34rem; overflow-y: auto; background: #fff; color: #374151; border: 1px solid #e5e7eb;
+      .notif-panel { position: absolute; top: calc(100% + .5rem); right: 0; width: 34rem; max-width: calc(100vw - 1.5rem);
+        max-height: 42rem; overflow-y: auto; background: #fff; color: #374151; border: 1px solid #e5e7eb;
         border-radius: .75rem; box-shadow: 0 12px 28px rgba(15,23,42,.18); }
-      .notif-empty { min-height: 8rem; display: flex; align-items: center; justify-content: center; }
+      .notif-empty { min-height: 11rem; display: flex; align-items: center; justify-content: center; }
       .notif-head { position: sticky; top: 0; background: #fff; display: flex; align-items: center; justify-content: space-between;
         gap: .5rem; padding: .65rem .85rem; border-bottom: 1px solid #f3f4f6; font-size: .82rem; font-weight: 700; color: var(--brand-navy); }
       .notif-head button { font-size: .68rem; font-weight: 600; color: var(--brand-gold-dark); background: none; border: none; cursor: pointer; white-space: nowrap; }

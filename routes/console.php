@@ -11,5 +11,6 @@ Artisan::command('inspire', function () {
 // Borra por completo las cuentas eliminadas con más de 45 días (retención).
 Schedule::command('accounts:purge-deleted')->dailyAt('03:00');
 
-// Recordatorios de actividades próximas a su fecha/hora límite.
-Schedule::command('notifications:activity-reminders')->everyFifteenMinutes();
+// Recordatorios de actividades según su recordatorio (X min antes del vencimiento).
+// Cada minuto para respetar opciones cortas como "5 minutos antes".
+Schedule::command('notifications:activity-reminders')->everyMinute()->withoutOverlapping();

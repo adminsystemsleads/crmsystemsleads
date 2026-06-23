@@ -18,11 +18,13 @@ class DealActivity extends Model
         'status',
         'notes',
         'reminded_at',
+        'notify_before',
     ];
 
     protected $casts = [
         'due_at' => 'datetime',
         'reminded_at' => 'datetime',
+        'notify_before' => 'integer',
     ];
 
     public function deal()

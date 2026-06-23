@@ -355,6 +355,32 @@
 
                             <div>
                                 <label class="block text-xs font-medium text-gray-700">
+                                    {{ __('Recordatorio') }}
+                                </label>
+                                @php
+                                    $notifyOptions = [
+                                        ''   => __('Sin notificación'),
+                                        '5'  => __('5 minutos antes'),
+                                        '15' => __('15 minutos antes'),
+                                        '30' => __('30 minutos antes'),
+                                        '60' => __('1 hora antes'),
+                                        '120'=> __('2 horas antes'),
+                                        '180'=> __('3 horas antes'),
+                                    ];
+                                @endphp
+                                <select name="notify_before"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
+                                    @foreach($notifyOptions as $val => $label)
+                                        <option value="{{ $val }}"
+                                            {{ (string) old('notify_before', '60') === (string) $val ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">
                                     {{ __('Asunto') }}
                                 </label>
                                 <input type="text" name="subject"

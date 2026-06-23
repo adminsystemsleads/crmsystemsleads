@@ -18,6 +18,7 @@ class DealActivityController extends Controller
             'due_at'  => 'nullable|date',
             'notes'   => 'nullable|string|max:5000',
             'user_id' => 'nullable|exists:users,id',
+            'notify_before' => 'nullable|integer|in:5,15,30,60,120,180',
         ]);
 
         DealActivity::create([
@@ -29,6 +30,8 @@ class DealActivityController extends Controller
             'due_at'  => $data['due_at'] ?? null,
             'status'  => 'open',
             'notes'   => $data['notes'] ?? null,
+            // Minutos antes del vencimiento para notificar (null = sin notificación).
+            'notify_before' => ($data['due_at'] ?? null) ? ($data['notify_before'] ?? null) : null,
         ]);
 
         return back()->with('status', 'Actividad creada.');

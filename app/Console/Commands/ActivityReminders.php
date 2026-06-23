@@ -9,27 +9,33 @@ use Illuminate\Console\Command;
 
 class ActivityReminders extends Command
 {
-    protected $signature = 'notifications:activity-reminders {--window=60 : Minutos de anticipación}';
+    protected $signature = 'notifications:activity-reminders';
 
-    protected $description = 'Notifica a los responsables las actividades de negociaciones próximas a su fecha/hora límite';
+    protected $description = 'Notifica a los responsables las actividades de negociaciones según su recordatorio (X min antes del vencimiento)';
 
     public function handle(): int
     {
-        $window = (int) $this->option('window');
-        $now    = now();
-        $until  = $now->copy()->addMinutes($window);
-        $floor  = $now->copy()->subMinutes($window); // no recordar actividades muy vencidas
+        $now = now();
 
+        // Candidatas: con recordatorio configurado, no avisadas, no vencidas hace más de 1 día.
         $activities = DealActivity::with(['deal.contact'])
             ->whereNull('reminded_at')
             ->whereNotNull('due_at')
-            ->whereBetween('due_at', [$floor, $until])
+            ->whereNotNull('notify_before')
+            ->where('notify_before', '>', 0)
+            ->where('due_at', '>=', $now->copy()->subDay())
             ->whereNotIn('status', ['done', 'completed', 'cancelled'])
             ->get();
 
         $sent = 0;
 
         foreach ($activities as $act) {
+            // ¿Ya llegó el momento de recordar? (due_at - notify_before <= ahora)
+            $remindAt = $act->due_at->copy()->subMinutes((int) $act->notify_before);
+            if ($now->lt($remindAt)) {
+                continue; // aún no toca; se evaluará en la próxima corrida
+            }
+
             $deal = $act->deal;
 
             if ($deal) {

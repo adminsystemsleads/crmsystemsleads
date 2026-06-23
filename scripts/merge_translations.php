@@ -62,6 +62,14 @@ $TRANSLATIONS = [
     'Desmarcar todos'             => ['Unselect all', 'Desmarcar todos'],
     'No hay embudos disponibles.' => ['No pipelines available.', 'Não há funis disponíveis.'],
     'Guardar'                     => ['Save', 'Salvar'],
+    'Recordatorio'                => ['Reminder', 'Lembrete'],
+    'Sin notificación'            => ['No notification', 'Sem notificação'],
+    '5 minutos antes'             => ['5 minutes before', '5 minutos antes'],
+    '15 minutos antes'            => ['15 minutes before', '15 minutos antes'],
+    '30 minutos antes'            => ['30 minutes before', '30 minutos antes'],
+    '1 hora antes'                => ['1 hour before', '1 hora antes'],
+    '2 horas antes'               => ['2 hours before', '2 horas antes'],
+    '3 horas antes'               => ['3 hours before', '3 horas antes'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void
