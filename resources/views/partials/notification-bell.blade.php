@@ -259,4 +259,20 @@
             },
         }
     }
+
+    // La campana queda fija arriba; se oculta al desplazar hacia abajo y reaparece al volver arriba.
+    (function () {
+        function onScroll() {
+            var b = document.querySelector('.notif-bell');
+            if (!b) return;
+            var y = window.scrollY
+                || document.documentElement.scrollTop
+                || (document.scrollingElement ? document.scrollingElement.scrollTop : 0)
+                || 0;
+            if (y > 40) b.classList.add('notif-hidden');
+            else b.classList.remove('notif-hidden');
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        document.addEventListener('DOMContentLoaded', onScroll);
+    })();
 </script>
