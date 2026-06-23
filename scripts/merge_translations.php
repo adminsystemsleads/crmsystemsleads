@@ -70,6 +70,12 @@ $TRANSLATIONS = [
     '1 hora antes'                => ['1 hour before', '1 hora antes'],
     '2 horas antes'               => ['2 hours before', '2 horas antes'],
     '3 horas antes'               => ['3 hours before', '3 horas antes'],
+    'Editar'                      => ['Edit', 'Editar'],
+    'Eliminar'                    => ['Delete', 'Excluir'],
+    'Cancelar'                    => ['Cancel', 'Cancelar'],
+    'Pendiente'                   => ['Pending', 'Pendente'],
+    'Completada'                  => ['Completed', 'Concluída'],
+    '¿Eliminar esta actividad?'   => ['Delete this activity?', 'Excluir esta atividade?'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

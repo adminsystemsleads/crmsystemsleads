@@ -507,33 +507,104 @@
                                     </div>
                                 @else
                                     @php $activity = $entry['item']; @endphp
-                                    {{-- Tarjeta de actividad --}}
-                                    <div class="border border-gray-100 rounded-md p-2 bg-gray-50">
-                                        <div class="flex justify-between mb-1">
-                                            <div class="flex items-center space-x-2">
-                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                                    @if($activity->type === 'call') bg-blue-100 text-blue-700
-                                                    @elseif($activity->type === 'meeting') bg-purple-100 text-purple-700
-                                                    @else bg-amber-100 text-amber-700 @endif">
-                                                    {{ strtoupper($activity->type) }}
-                                                </span>
-                                                <span class="font-semibold text-gray-800">
-                                                    {{ $activity->subject }}
+                                    {{-- Tarjeta de actividad (con editar / eliminar) --}}
+                                    <div x-data="{ editing: false }" class="border border-gray-100 rounded-md p-2 bg-gray-50">
+
+                                        {{-- VISTA --}}
+                                        <div x-show="!editing">
+                                            <div class="flex justify-between mb-1">
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold
+                                                        @if($activity->type === 'call') bg-blue-100 text-blue-700
+                                                        @elseif($activity->type === 'meeting') bg-purple-100 text-purple-700
+                                                        @else bg-amber-100 text-amber-700 @endif">
+                                                        {{ strtoupper($activity->type) }}
+                                                    </span>
+                                                    <span class="font-semibold text-gray-800">
+                                                        {{ $activity->subject }}
+                                                    </span>
+                                                </div>
+                                                <span class="text-[10px] text-gray-500">
+                                                    {{ $entry['date']->format('d/m/Y H:i') }}
                                                 </span>
                                             </div>
-                                            <span class="text-[10px] text-gray-500">
-                                                {{ $entry['date']->format('d/m/Y H:i') }}
-                                            </span>
-                                        </div>
-                                        @if($activity->notes)
-                                            <div class="text-gray-700 whitespace-pre-line">
-                                                {{ $activity->notes }}
+                                            @if($activity->notes)
+                                                <div class="text-gray-700 whitespace-pre-line">
+                                                    {{ $activity->notes }}
+                                                </div>
+                                            @endif
+                                            <div class="mt-1 flex items-center justify-between gap-2">
+                                                <span class="text-[10px] text-gray-500">
+                                                    {{ __('Creado por') }} {{ $activity->user->name ?? __('Usuario') }}
+                                                    • {{ __('Estado:') }} {{ $activity->status === 'done' ? __('Completada') : __('Pendiente') }}
+                                                    @if($activity->due_at)
+                                                        • {{ $activity->due_at->format('d/m/Y H:i') }}
+                                                    @endif
+                                                </span>
+                                                <span class="flex items-center gap-2 shrink-0">
+                                                    <button type="button" @click="editing = true"
+                                                            class="text-[10px] font-semibold text-indigo-600 hover:text-indigo-800">
+                                                        {{ __('Editar') }}
+                                                    </button>
+                                                    <form method="POST"
+                                                          action="{{ route('deals.activities.destroy', [$pipeline, $deal, $activity]) }}"
+                                                          onsubmit="return confirm('{{ __('¿Eliminar esta actividad?') }}');">
+                                                        @csrf @method('DELETE')
+                                                        <button type="submit" class="text-[10px] font-semibold text-red-600 hover:text-red-800">
+                                                            {{ __('Eliminar') }}
+                                                        </button>
+                                                    </form>
+                                                </span>
                                             </div>
-                                        @endif
-                                        <div class="mt-1 text-[10px] text-gray-500">
-                                            {{ __('Creado por') }} {{ $activity->user->name ?? __('Usuario') }}
-                                            • {{ __('Estado:') }} {{ $activity->status }}
                                         </div>
+
+                                        {{-- EDICIÓN --}}
+                                        <form x-show="editing" x-cloak method="POST"
+                                              action="{{ route('deals.activities.update', [$pipeline, $deal, $activity]) }}"
+                                              class="space-y-2">
+                                            @csrf @method('PUT')
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <select name="type" class="block w-full border-gray-300 rounded-md text-xs">
+                                                    <option value="call"    {{ $activity->type === 'call' ? 'selected' : '' }}>{{ __('Llamada') }}</option>
+                                                    <option value="meeting" {{ $activity->type === 'meeting' ? 'selected' : '' }}>{{ __('Reunión') }}</option>
+                                                    <option value="task"    {{ $activity->type === 'task' ? 'selected' : '' }}>{{ __('Tarea') }}</option>
+                                                </select>
+                                                <input type="datetime-local" name="due_at"
+                                                       value="{{ $activity->due_at?->format('Y-m-d\TH:i') }}"
+                                                       class="block w-full border-gray-300 rounded-md text-xs">
+                                            </div>
+                                            <input type="text" name="subject" value="{{ $activity->subject }}"
+                                                   class="block w-full border-gray-300 rounded-md text-xs" placeholder="{{ __('Asunto') }}">
+                                            <textarea name="notes" rows="2"
+                                                      class="block w-full border-gray-300 rounded-md text-xs"
+                                                      placeholder="{{ __('Notas') }}">{{ $activity->notes }}</textarea>
+                                            <div class="grid grid-cols-3 gap-2">
+                                                <select name="user_id" class="block w-full border-gray-300 rounded-md text-xs">
+                                                    @foreach($teamMembers as $member)
+                                                        <option value="{{ $member->id }}" {{ $activity->user_id == $member->id ? 'selected' : '' }}>{{ $member->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <select name="notify_before" class="block w-full border-gray-300 rounded-md text-xs">
+                                                    @foreach($notifyOptions as $val => $label)
+                                                        <option value="{{ $val }}" {{ (string) $activity->notify_before === (string) $val ? 'selected' : '' }}>{{ $label }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <select name="status" class="block w-full border-gray-300 rounded-md text-xs">
+                                                    <option value="open" {{ $activity->status !== 'done' ? 'selected' : '' }}>{{ __('Pendiente') }}</option>
+                                                    <option value="done" {{ $activity->status === 'done' ? 'selected' : '' }}>{{ __('Completada') }}</option>
+                                                </select>
+                                            </div>
+                                            <div class="flex justify-end gap-2">
+                                                <button type="button" @click="editing = false"
+                                                        class="px-2 py-1 text-[11px] rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
+                                                    {{ __('Cancelar') }}
+                                                </button>
+                                                <button type="submit"
+                                                        class="px-2 py-1 text-[11px] rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                                                    {{ __('Guardar') }}
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 @endif
                             @empty

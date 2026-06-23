@@ -73,6 +73,10 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/comments', [DealCommentControlle
 
 Route::post('/pipelines/{pipeline}/deals/{deal}/activities', [DealActivityController::class, 'store'])
     ->name('deals.activities.store');
+Route::put('/pipelines/{pipeline}/deals/{deal}/activities/{activity}', [DealActivityController::class, 'update'])
+    ->name('deals.activities.update');
+Route::delete('/pipelines/{pipeline}/deals/{deal}/activities/{activity}', [DealActivityController::class, 'destroy'])
+    ->name('deals.activities.destroy');
     Route::get('/pipelines/{pipeline}/deals/create', [DealController::class, 'create'])->name('deals.create');
     Route::post('/pipelines/{pipeline}/deals',        [DealController::class, 'store'])->name('deals.store');
     Route::get('/pipelines/{pipeline}/deals/{deal}/edit', [DealController::class, 'edit'])->name('deals.edit');
