@@ -289,7 +289,7 @@
       .ms-dd-caret { width: 1rem; height: 1rem; color: #6b7280; flex-shrink: 0; transition: transform .15s; }
       .ms-dd.open .ms-dd-caret { transform: rotate(180deg); }
       .ms-dd-panel { display: none; position: absolute; z-index: 1000; top: calc(100% + .25rem); left: 0; right: 0;
-        min-width: 100%; max-height: 15rem; overflow-y: auto; background: #fff; border: 1px solid #e5e7eb;
+        max-height: 15rem; overflow-y: auto; background: #fff; border: 1px solid #e5e7eb;
         border-radius: .5rem; box-shadow: 0 10px 24px rgba(15,23,42,.15); padding: .25rem; }
       .ms-dd.open .ms-dd-panel { display: block; }
       .ms-dd-opt { display: flex; align-items: center; gap: .5rem; padding: .4rem .5rem; border-radius: .375rem;
@@ -435,6 +435,8 @@
         panel.style.left = r.left + 'px';
         panel.style.right = 'auto';
         panel.style.width = r.width + 'px';
+        panel.style.minWidth = r.width + 'px';
+        panel.style.maxWidth = r.width + 'px';
         const content = Math.min(panel.scrollHeight, 240);
         const spaceBelow = window.innerHeight - r.bottom - 8;
         const spaceAbove = r.top - 8;
