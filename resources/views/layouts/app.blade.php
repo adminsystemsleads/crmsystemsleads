@@ -234,6 +234,31 @@
       .wa-topbar .text-gray-400 { color: rgba(255,255,255,.6) !important; }
       .wa-topbar .menu-toggle-btn { color: #fff !important; border-color: rgba(255,255,255,.3) !important; }
       .wa-topbar .hover\:text-gray-600:hover { color: #fff !important; }
+      .wa-topbar { padding-right: 3.5rem !important; } /* reserva espacio para la campana */
+
+      /* ===== Campana de notificaciones (fija arriba a la derecha) ===== */
+      .notif-bell { position: fixed; top: 2.25rem; right: 1rem; z-index: 40; transform: translateY(-50%); }
+      .notif-bell-btn { position: relative; display: inline-flex; align-items: center; justify-content: center;
+        padding: .5rem; border-radius: .6rem; color: #fff; background: transparent; border: none; cursor: pointer; transition: background .15s; }
+      .notif-bell-btn:hover { background: rgba(255,255,255,.14); }
+      .notif-bell-btn svg { width: 1.4rem; height: 1.4rem; }
+      .notif-badge { position: absolute; top: 1px; right: 1px; min-width: 1.05rem; height: 1.05rem;
+        padding: 0 .25rem; border-radius: 999px; background: #dc2626; color: #fff; font-size: .62rem;
+        font-weight: 700; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 0 2px var(--brand-navy); }
+      .notif-panel { position: absolute; top: calc(100% + .5rem); right: 0; width: 20rem; max-width: calc(100vw - 1.5rem);
+        max-height: 24rem; overflow-y: auto; background: #fff; color: #374151; border: 1px solid #e5e7eb;
+        border-radius: .75rem; box-shadow: 0 12px 28px rgba(15,23,42,.18); }
+      .notif-head { position: sticky; top: 0; background: #fff; display: flex; align-items: center; justify-content: space-between;
+        gap: .5rem; padding: .65rem .85rem; border-bottom: 1px solid #f3f4f6; font-size: .82rem; font-weight: 700; color: var(--brand-navy); }
+      .notif-head button { font-size: .68rem; font-weight: 600; color: var(--brand-gold-dark); background: none; border: none; cursor: pointer; white-space: nowrap; }
+      .notif-empty { padding: 1.75rem 1rem; text-align: center; font-size: .8rem; color: #9ca3af; }
+      .notif-item { display: block; padding: .6rem .85rem; border-bottom: 1px solid #f3f4f6; text-decoration: none; transition: background .12s; }
+      .notif-item:hover { background: #f9fafb; }
+      .notif-unread { background: var(--brand-gold-light); }
+      .notif-title { font-size: .8rem; font-weight: 600; color: var(--brand-navy); }
+      .notif-sub { font-size: .7rem; color: #6b7280; margin-top: .12rem; }
+      .notif-client { font-weight: 600; color: #4b5563; }
     </style>
   </head>
 
@@ -264,6 +289,8 @@
          class="main-wrap min-h-screen bg-gray-100 dark:bg-slate-900"
          :class="$store.sidebar.open ? 'sidebar-open' : ''">
       @livewire('navigation-menu')
+
+      @include('partials.notification-bell')
 
       {{-- Aviso elegante de licencia (próxima a vencer / prórroga), cerrable por día --}}
       @if ($licenseBanner)
@@ -315,7 +342,7 @@
           {{-- Reserva espacio a la izquierda cuando el menú está minimizado
                para que el botón flotante de despliegue no tape el título. --}}
           <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
-               :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
+               :style="(!$store.sidebar.open ? 'padding-left:3.75rem;' : '') + 'padding-right:3.5rem;'">
             {{ $header }}
           </div>
         </header>

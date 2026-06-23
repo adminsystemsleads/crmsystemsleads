@@ -1184,5 +1184,10 @@
     "Consultar": "Search",
     "Respuesta IA:": "AI answer:",
     "SQL ejecutado:": "Executed SQL:",
-    "Sin resultados.": "No results."
+    "Sin resultados.": "No results.",
+    "Notificaciones": "Notifications",
+    "Marcar todas como leídas": "Mark all as read",
+    "No tienes notificaciones": "You have no notifications",
+    "Nueva negociación asignada": "New deal assigned",
+    "Se te asignó una negociación": "A deal was assigned to you"
 }

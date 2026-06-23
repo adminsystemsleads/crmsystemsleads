@@ -61,6 +61,11 @@ Route::middleware([
 Route::get('/whatsapp/messages/{message}', [\App\Http\Controllers\WhatsappInboxController::class, 'messageJson'])
     ->name('whatsapp.messages.json');
 
+// Notificaciones (campana superior derecha)
+Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'readAll'])->name('notifications.readAll');
+Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
+
 Route::post('/pipelines/{pipeline}/deals/{deal}/comments', [DealCommentController::class, 'store'])
     ->name('deals.comments.store');
 

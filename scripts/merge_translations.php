@@ -39,6 +39,13 @@ $TRANSLATIONS = [
     'Ocultar menú'                => ['Hide menu', 'Ocultar menu'],
     'Mostrar menú'                => ['Show menu', 'Mostrar menu'],
     'Soporte'                     => ['Support', 'Suporte'],
+
+    // --- Campana de notificaciones ---
+    'Notificaciones'              => ['Notifications', 'Notificações'],
+    'Marcar todas como leídas'    => ['Mark all as read', 'Marcar todas como lidas'],
+    'No tienes notificaciones'    => ['You have no notifications', 'Você não tem notificações'],
+    'Nueva negociación asignada'  => ['New deal assigned', 'Nova negociação atribuída'],
+    'Se te asignó una negociación'=> ['A deal was assigned to you', 'Uma negociação foi atribuída a você'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void
