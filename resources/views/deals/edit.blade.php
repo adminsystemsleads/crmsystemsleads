@@ -431,21 +431,24 @@
 
                     {{-- ====== HISTORIAL COMBINADO (COMENTARIOS + ACTIVIDADES) ====== --}}
                     @php
-                        $timeline = $comments->map(function ($c) {
-                            return [
-                                'kind' => 'comment',
-                                'date' => $c->created_at,
-                                'item' => $c,
-                            ];
-                        })->merge(
-                            $activities->map(function ($a) {
+                        // collect() arranca una colección base (Support), evitando que
+                        // merge() de una colección Eloquent vacía llame getKey() sobre arrays.
+                        $timeline = collect()
+                            ->merge($comments->map(function ($c) {
+                                return [
+                                    'kind' => 'comment',
+                                    'date' => $c->created_at,
+                                    'item' => $c,
+                                ];
+                            }))
+                            ->merge($activities->map(function ($a) {
                                 return [
                                     'kind' => 'activity',
                                     'date' => $a->created_at, // o $a->due_at si prefieres
                                     'item' => $a,
                                 ];
-                            })
-                        )->sortByDesc('date');
+                            }))
+                            ->sortByDesc('date');
                     @endphp
 
                     <div class="mt-6 pt-4 border-t">
