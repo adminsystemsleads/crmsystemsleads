@@ -477,6 +477,9 @@
                                 ];
                             }))
                             ->sortByDesc('date');
+
+                        // Zona horaria del equipo para mostrar fechas (se guardan en UTC).
+                        $teamTz = optional($deal->team)->effectiveTimezone() ?? config('app.timezone');
                     @endphp
 
                     <div class="mt-6 pt-4 border-t">
@@ -500,7 +503,7 @@
                                                 </span>
                                             </div>
                                             <span class="text-[10px] text-gray-500">
-                                                {{ $entry['date']->format('d/m/Y H:i') }}
+                                                {{ $entry['date']->copy()->setTimezone($teamTz)->format('d/m/Y H:i') }}
                                             </span>
                                         </div>
                                         <div class="text-gray-700 whitespace-pre-line">
@@ -527,7 +530,7 @@
                                                     </span>
                                                 </div>
                                                 <span class="text-[10px] text-gray-500">
-                                                    {{ $entry['date']->format('d/m/Y H:i') }}
+                                                    {{ $entry['date']->copy()->setTimezone($teamTz)->format('d/m/Y H:i') }}
                                                 </span>
                                             </div>
                                             @if($activity->notes)
@@ -548,7 +551,7 @@
                                                     <span>{{ __('Creado por') }} {{ $activity->user->name ?? __('Usuario') }}</span>
                                                     <span class="px-1.5 py-0.5 rounded-full text-[9px] font-semibold {{ $st['cls'] }}">{{ $st['label'] }}</span>
                                                     @if($activity->due_at)
-                                                        <span>• {{ $activity->due_at->format('d/m/Y H:i') }}</span>
+                                                        <span>• {{ $activity->due_at->copy()->setTimezone($teamTz)->format('d/m/Y H:i') }}</span>
                                                     @endif
                                                 </span>
                                                 <span class="flex items-center gap-2 shrink-0">
@@ -594,7 +597,7 @@
                                                     <option value="task"    {{ $activity->type === 'task' ? 'selected' : '' }}>{{ __('Tarea') }}</option>
                                                 </select>
                                                 <input type="datetime-local" name="due_at"
-                                                       value="{{ $activity->due_at?->format('Y-m-d\TH:i') }}"
+                                                       value="{{ $activity->due_at?->copy()->setTimezone($teamTz)->format('Y-m-d\TH:i') }}"
                                                        class="block w-full border-gray-300 rounded-md text-xs">
                                             </div>
                                             <input type="text" name="subject" value="{{ $activity->subject }}"

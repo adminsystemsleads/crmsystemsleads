@@ -26,13 +26,14 @@ class DealActivityController extends Controller
         ]);
 
         $minutes = $this->cleanMinutes($data['notify_minutes'] ?? [], $data['due_at'] ?? null);
+        $dueAt   = $this->dueAtForStorage($data['due_at'] ?? null, $deal);
 
         DealActivity::create([
             'deal_id' => $deal->id,
             'user_id' => $data['user_id'] ?? $deal->responsible_id ?? Auth::id(),
             'type'    => $data['type'],
             'subject' => $data['subject'],
-            'due_at'  => $data['due_at'] ?? null,
+            'due_at'  => $dueAt,
             'status'  => 'open',
             'notes'   => $data['notes'] ?? null,
             'notify_minutes'   => $minutes ?: null,
@@ -58,11 +59,12 @@ class DealActivityController extends Controller
         ]);
 
         $minutes = $this->cleanMinutes($data['notify_minutes'] ?? [], $data['due_at'] ?? null);
+        $dueAt   = $this->dueAtForStorage($data['due_at'] ?? null, $deal);
 
         $activity->fill([
             'type'    => $data['type'],
             'subject' => $data['subject'],
-            'due_at'  => $data['due_at'] ?? null,
+            'due_at'  => $dueAt,
             'notes'   => $data['notes'] ?? null,
             'user_id' => $data['user_id'] ?? $activity->user_id,
             'notify_minutes' => $minutes ?: null,
@@ -103,6 +105,20 @@ class DealActivityController extends Controller
         $activity->delete();
 
         return back()->with('status', 'Actividad eliminada.');
+    }
+
+    /**
+     * Convierte la fecha/hora del formulario (en la zona horaria del equipo)
+     * a la zona de almacenamiento (config('app.timezone'), normalmente UTC).
+     */
+    private function dueAtForStorage(?string $input, Deal $deal): ?\Carbon\Carbon
+    {
+        if (empty($input)) {
+            return null;
+        }
+        $tz = $deal->team?->effectiveTimezone() ?? config('app.timezone');
+
+        return \Carbon\Carbon::parse($input, $tz)->setTimezone(config('app.timezone'));
     }
 
     /** Normaliza la lista de minutos: únicos, válidos y solo si hay fecha límite. */
