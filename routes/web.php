@@ -77,6 +77,8 @@ Route::put('/pipelines/{pipeline}/deals/{deal}/activities/{activity}', [DealActi
     ->name('deals.activities.update');
 Route::delete('/pipelines/{pipeline}/deals/{deal}/activities/{activity}', [DealActivityController::class, 'destroy'])
     ->name('deals.activities.destroy');
+Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete', [DealActivityController::class, 'complete'])
+    ->name('deals.activities.complete');
     Route::get('/pipelines/{pipeline}/deals/create', [DealController::class, 'create'])->name('deals.create');
     Route::post('/pipelines/{pipeline}/deals',        [DealController::class, 'store'])->name('deals.store');
     Route::get('/pipelines/{pipeline}/deals/{deal}/edit', [DealController::class, 'edit'])->name('deals.edit');

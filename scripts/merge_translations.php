@@ -76,6 +76,10 @@ $TRANSLATIONS = [
     'Pendiente'                   => ['Pending', 'Pendente'],
     'Completada'                  => ['Completed', 'Concluída'],
     '¿Eliminar esta actividad?'   => ['Delete this activity?', 'Excluir esta atividade?'],
+    'Recordatorios'               => ['Reminders', 'Lembretes'],
+    'puedes elegir varios'        => ['you can choose several', 'você pode escolher vários'],
+    'Perdida'                     => ['Missed', 'Perdida'],
+    'Completar'                   => ['Complete', 'Concluir'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

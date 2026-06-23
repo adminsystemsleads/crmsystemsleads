@@ -11,65 +11,81 @@ class ActivityReminders extends Command
 {
     protected $signature = 'notifications:activity-reminders';
 
-    protected $description = 'Notifica a los responsables las actividades de negociaciones según su recordatorio (X min antes del vencimiento)';
+    protected $description = 'Notifica recordatorios de actividades (varios por actividad) y marca como Perdida las vencidas';
 
     public function handle(): int
     {
         $now = now();
 
-        // Candidatas: con recordatorio configurado, no avisadas, no vencidas hace más de 1 día.
-        $activities = DealActivity::with(['deal.contact'])
-            ->whereNull('reminded_at')
+        // 1) Auto-marcar como Perdida las actividades abiertas cuyo vencimiento ya pasó.
+        $lost = DealActivity::where('status', 'open')
             ->whereNotNull('due_at')
-            ->whereNotNull('notify_before')
-            ->where('notify_before', '>', 0)
+            ->where('due_at', '<', $now)
+            ->update(['status' => 'lost']);
+
+        // 2) Recordatorios: cada actividad puede tener varios umbrales (ej. [60,15,5]).
+        $activities = DealActivity::with(['deal.contact'])
+            ->whereNotNull('due_at')
+            ->whereNotNull('notify_minutes')
+            ->whereNotIn('status', ['done', 'cancelled'])
             ->where('due_at', '>=', $now->copy()->subDay())
-            ->whereNotIn('status', ['done', 'completed', 'cancelled'])
             ->get();
 
         $sent = 0;
 
         foreach ($activities as $act) {
-            // ¿Ya llegó el momento de recordar? (due_at - notify_before <= ahora)
-            $remindAt = $act->due_at->copy()->subMinutes((int) $act->notify_before);
-            if ($now->lt($remindAt)) {
-                continue; // aún no toca; se evaluará en la próxima corrida
+            $minutes = (array) ($act->notify_minutes ?? []);
+            if (empty($minutes)) {
+                continue;
             }
-
+            $alreadySent = (array) ($act->reminded_minutes ?? []);
             $deal = $act->deal;
+            $changed = false;
 
-            if ($deal) {
-                // Avisar tanto al responsable de la ACTIVIDAD como al de la NEGOCIACIÓN
-                // (sin duplicar; cada uno según sus propias preferencias).
-                $recipientIds = array_unique(array_filter([
-                    $act->user_id,
-                    $deal->responsible_id,
-                ]));
+            foreach ($minutes as $m) {
+                $m = (int) $m;
+                if (in_array($m, $alreadySent, true)) {
+                    continue; // ese umbral ya se avisó
+                }
+                $remindAt = $act->due_at->copy()->subMinutes($m);
+                if ($now->lt($remindAt)) {
+                    continue; // aún no toca este umbral
+                }
 
-                $client = optional($deal->contact)->name ?: ($deal->title ?: 'Negociación');
-                $url    = route('deals.edit', [$deal->pipeline_id, $deal->id]);
+                if ($deal) {
+                    $recipientIds = array_unique(array_filter([
+                        $act->user_id,
+                        $deal->responsible_id,
+                    ]));
+                    $client = optional($deal->contact)->name ?: ($deal->title ?: 'Negociación');
+                    $url    = route('deals.edit', [$deal->pipeline_id, $deal->id]);
 
-                foreach ($recipientIds as $rid) {
-                    $user = User::find($rid);
-                    if ($user && $user->wantsNotification('activity_due', $deal->pipeline_id)) {
-                        $user->notify(new ActivityDue(
-                            $deal->id,
-                            (int) $deal->pipeline_id,
-                            (string) ($act->subject ?: 'Actividad'),
-                            $client,
-                            $url,
-                            optional($act->due_at)->toIso8601String()
-                        ));
-                        $sent++;
+                    foreach ($recipientIds as $rid) {
+                        $user = User::find($rid);
+                        if ($user && $user->wantsNotification('activity_due', $deal->pipeline_id)) {
+                            $user->notify(new ActivityDue(
+                                $deal->id,
+                                (int) $deal->pipeline_id,
+                                (string) ($act->subject ?: 'Actividad'),
+                                $client,
+                                $url,
+                                optional($act->due_at)->toIso8601String()
+                            ));
+                            $sent++;
+                        }
                     }
                 }
+
+                $alreadySent[] = $m;
+                $changed = true;
             }
 
-            // Marca como recordada para no repetir (aunque no se haya enviado por prefs).
-            $act->forceFill(['reminded_at' => now()])->saveQuietly();
+            if ($changed) {
+                $act->forceFill(['reminded_minutes' => array_values(array_unique($alreadySent))])->saveQuietly();
+            }
         }
 
-        $this->info("Actividades revisadas: {$activities->count()} · recordatorios enviados: {$sent}");
+        $this->info("Vencidas marcadas Perdida: {$lost} · recordatorios enviados: {$sent}");
 
         return self::SUCCESS;
     }

@@ -355,28 +355,30 @@
 
                             <div>
                                 <label class="block text-xs font-medium text-gray-700">
-                                    {{ __('Recordatorio') }}
+                                    {{ __('Recordatorios') }}
+                                    <span class="text-gray-400 font-normal">({{ __('puedes elegir varios') }})</span>
                                 </label>
                                 @php
-                                    $notifyOptions = [
-                                        ''   => __('Sin notificación'),
-                                        '5'  => __('5 minutos antes'),
-                                        '15' => __('15 minutos antes'),
-                                        '30' => __('30 minutos antes'),
-                                        '60' => __('1 hora antes'),
-                                        '120'=> __('2 horas antes'),
-                                        '180'=> __('3 horas antes'),
+                                    $notifyMinuteOptions = [
+                                        5   => __('5 minutos antes'),
+                                        15  => __('15 minutos antes'),
+                                        30  => __('30 minutos antes'),
+                                        60  => __('1 hora antes'),
+                                        120 => __('2 horas antes'),
+                                        180 => __('3 horas antes'),
                                     ];
+                                    $defaultNotify = old('notify_minutes', [60]);
                                 @endphp
-                                <select name="notify_before"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm text-sm">
-                                    @foreach($notifyOptions as $val => $label)
-                                        <option value="{{ $val }}"
-                                            {{ (string) old('notify_before', '60') === (string) $val ? 'selected' : '' }}>
-                                            {{ $label }}
-                                        </option>
+                                <div class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                                    @foreach($notifyMinuteOptions as $val => $label)
+                                        <label class="inline-flex items-center text-xs gap-1">
+                                            <input type="checkbox" name="notify_minutes[]" value="{{ $val }}"
+                                                   class="h-3.5 w-3.5 rounded border-gray-300"
+                                                   {{ in_array($val, $defaultNotify) ? 'checked' : '' }}>
+                                            <span>{{ $label }}</span>
+                                        </label>
                                     @endforeach
-                                </select>
+                                </div>
                             </div>
 
                             <div>
@@ -533,15 +535,34 @@
                                                     {{ $activity->notes }}
                                                 </div>
                                             @endif
-                                            <div class="mt-1 flex items-center justify-between gap-2">
-                                                <span class="text-[10px] text-gray-500">
-                                                    {{ __('Creado por') }} {{ $activity->user->name ?? __('Usuario') }}
-                                                    • {{ __('Estado:') }} {{ $activity->status === 'done' ? __('Completada') : __('Pendiente') }}
+                                            @php
+                                                $canComplete = $activity->completableBy(auth()->user(), $deal->team);
+                                                $statusMap = [
+                                                    'done' => ['label' => __('Completada'), 'cls' => 'bg-green-100 text-green-700'],
+                                                    'lost' => ['label' => __('Perdida'),    'cls' => 'bg-red-100 text-red-700'],
+                                                ];
+                                                $st = $statusMap[$activity->status] ?? ['label' => __('Pendiente'), 'cls' => 'bg-gray-100 text-gray-600'];
+                                            @endphp
+                                            <div class="mt-1 flex items-center justify-between gap-2 flex-wrap">
+                                                <span class="text-[10px] text-gray-500 flex items-center gap-1.5 flex-wrap">
+                                                    <span>{{ __('Creado por') }} {{ $activity->user->name ?? __('Usuario') }}</span>
+                                                    <span class="px-1.5 py-0.5 rounded-full text-[9px] font-semibold {{ $st['cls'] }}">{{ $st['label'] }}</span>
                                                     @if($activity->due_at)
-                                                        • {{ $activity->due_at->format('d/m/Y H:i') }}
+                                                        <span>• {{ $activity->due_at->format('d/m/Y H:i') }}</span>
                                                     @endif
                                                 </span>
                                                 <span class="flex items-center gap-2 shrink-0">
+                                                    @if($canComplete)
+                                                        <form method="POST"
+                                                              action="{{ route('deals.activities.complete', [$pipeline, $deal, $activity]) }}">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                    class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-green-600 text-white hover:bg-green-700">
+                                                                <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                                                {{ __('Completar') }}
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                     <button type="button" @click="editing = true"
                                                             class="text-[10px] font-semibold text-indigo-600 hover:text-indigo-800">
                                                         {{ __('Editar') }}
@@ -578,21 +599,30 @@
                                             <textarea name="notes" rows="2"
                                                       class="block w-full border-gray-300 rounded-md text-xs"
                                                       placeholder="{{ __('Notas') }}">{{ $activity->notes }}</textarea>
-                                            <div class="grid grid-cols-3 gap-2">
+                                            <div class="grid grid-cols-2 gap-2">
                                                 <select name="user_id" class="block w-full border-gray-300 rounded-md text-xs">
                                                     @foreach($teamMembers as $member)
                                                         <option value="{{ $member->id }}" {{ $activity->user_id == $member->id ? 'selected' : '' }}>{{ $member->name }}</option>
                                                     @endforeach
                                                 </select>
-                                                <select name="notify_before" class="block w-full border-gray-300 rounded-md text-xs">
-                                                    @foreach($notifyOptions as $val => $label)
-                                                        <option value="{{ $val }}" {{ (string) $activity->notify_before === (string) $val ? 'selected' : '' }}>{{ $label }}</option>
-                                                    @endforeach
-                                                </select>
                                                 <select name="status" class="block w-full border-gray-300 rounded-md text-xs">
-                                                    <option value="open" {{ $activity->status !== 'done' ? 'selected' : '' }}>{{ __('Pendiente') }}</option>
+                                                    <option value="open" {{ $activity->status === 'open' ? 'selected' : '' }}>{{ __('Pendiente') }}</option>
                                                     <option value="done" {{ $activity->status === 'done' ? 'selected' : '' }}>{{ __('Completada') }}</option>
+                                                    <option value="lost" {{ $activity->status === 'lost' ? 'selected' : '' }}>{{ __('Perdida') }}</option>
                                                 </select>
+                                            </div>
+                                            <div>
+                                                <span class="block text-[10px] font-medium text-gray-500 mb-1">{{ __('Recordatorios') }}</span>
+                                                <div class="flex flex-wrap gap-x-2 gap-y-1">
+                                                    @foreach($notifyMinuteOptions as $val => $label)
+                                                        <label class="inline-flex items-center text-[11px] gap-1">
+                                                            <input type="checkbox" name="notify_minutes[]" value="{{ $val }}"
+                                                                   class="h-3 w-3 rounded border-gray-300"
+                                                                   {{ in_array($val, (array) ($activity->notify_minutes ?? [])) ? 'checked' : '' }}>
+                                                            <span>{{ $label }}</span>
+                                                        </label>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                             <div class="flex justify-end gap-2">
                                                 <button type="button" @click="editing = false"

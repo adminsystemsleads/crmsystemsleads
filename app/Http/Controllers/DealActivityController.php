@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class DealActivityController extends Controller
 {
+    /** Minutos válidos para los recordatorios. */
+    private const VALID_MINUTES = [5, 15, 30, 60, 120, 180];
+
     public function store(Request $request, Pipeline $pipeline, Deal $deal)
     {
         $data = $request->validate([
@@ -18,20 +21,22 @@ class DealActivityController extends Controller
             'due_at'  => 'nullable|date',
             'notes'   => 'nullable|string|max:5000',
             'user_id' => 'nullable|exists:users,id',
-            'notify_before' => 'nullable|integer|in:5,15,30,60,120,180',
+            'notify_minutes'   => 'nullable|array',
+            'notify_minutes.*' => 'integer|in:'.implode(',', self::VALID_MINUTES),
         ]);
+
+        $minutes = $this->cleanMinutes($data['notify_minutes'] ?? [], $data['due_at'] ?? null);
 
         DealActivity::create([
             'deal_id' => $deal->id,
-            // Responsable elegido; si no se indica, el de la negociación o quien la crea.
             'user_id' => $data['user_id'] ?? $deal->responsible_id ?? Auth::id(),
             'type'    => $data['type'],
             'subject' => $data['subject'],
             'due_at'  => $data['due_at'] ?? null,
             'status'  => 'open',
             'notes'   => $data['notes'] ?? null,
-            // Minutos antes del vencimiento para notificar (null = sin notificación).
-            'notify_before' => ($data['due_at'] ?? null) ? ($data['notify_before'] ?? null) : null,
+            'notify_minutes'   => $minutes ?: null,
+            'reminded_minutes' => [],
         ]);
 
         return back()->with('status', 'Actividad creada.');
@@ -47,9 +52,12 @@ class DealActivityController extends Controller
             'due_at'  => 'nullable|date',
             'notes'   => 'nullable|string|max:5000',
             'user_id' => 'nullable|exists:users,id',
-            'notify_before' => 'nullable|integer|in:5,15,30,60,120,180',
-            'status'  => 'nullable|string|in:open,done',
+            'notify_minutes'   => 'nullable|array',
+            'notify_minutes.*' => 'integer|in:'.implode(',', self::VALID_MINUTES),
+            'status'  => 'nullable|string|in:open,done,lost',
         ]);
+
+        $minutes = $this->cleanMinutes($data['notify_minutes'] ?? [], $data['due_at'] ?? null);
 
         $activity->fill([
             'type'    => $data['type'],
@@ -57,18 +65,35 @@ class DealActivityController extends Controller
             'due_at'  => $data['due_at'] ?? null,
             'notes'   => $data['notes'] ?? null,
             'user_id' => $data['user_id'] ?? $activity->user_id,
-            'notify_before' => ($data['due_at'] ?? null) ? ($data['notify_before'] ?? null) : null,
+            'notify_minutes' => $minutes ?: null,
             'status'  => $data['status'] ?? $activity->status,
         ]);
 
-        // Si cambió la fecha o el recordatorio, vuelve a habilitar el aviso.
-        if ($activity->isDirty('due_at') || $activity->isDirty('notify_before')) {
-            $activity->reminded_at = null;
+        // Si cambió la fecha o los recordatorios, reinicia los avisos enviados.
+        if ($activity->isDirty('due_at') || $activity->isDirty('notify_minutes')) {
+            $activity->reminded_minutes = [];
         }
 
         $activity->save();
 
         return back()->with('status', 'Actividad actualizada.');
+    }
+
+    /** Marca como completada (respetando la ventana de 3h salvo admin). */
+    public function complete(Pipeline $pipeline, Deal $deal, DealActivity $activity)
+    {
+        abort_unless((int) $activity->deal_id === (int) $deal->id, 404);
+
+        if (! $activity->completableBy(Auth::user(), $deal->team)) {
+            return back()
+                ->with('flash.banner', 'Ya no se puede marcar como completada: pasaron más de '
+                    .DealActivity::GRACE_HOURS.' horas del vencimiento. Solo un administrador puede hacerlo.')
+                ->with('flash.bannerStyle', 'danger');
+        }
+
+        $activity->update(['status' => 'done']);
+
+        return back()->with('status', 'Actividad marcada como completada.');
     }
 
     public function destroy(Pipeline $pipeline, Deal $deal, DealActivity $activity)
@@ -78,5 +103,17 @@ class DealActivityController extends Controller
         $activity->delete();
 
         return back()->with('status', 'Actividad eliminada.');
+    }
+
+    /** Normaliza la lista de minutos: únicos, válidos y solo si hay fecha límite. */
+    private function cleanMinutes(array $minutes, ?string $dueAt): array
+    {
+        if (!$dueAt) {
+            return [];
+        }
+        $minutes = array_values(array_unique(array_map('intval', $minutes)));
+        $minutes = array_values(array_filter($minutes, fn ($m) => in_array($m, self::VALID_MINUTES, true)));
+        sort($minutes);
+        return $minutes;
     }
 }
