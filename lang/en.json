@@ -1200,5 +1200,7 @@
     "Notificar actividades por vencer": "Notify upcoming activities",
     "Embudos a notificar": "Pipelines to notify",
     "Ninguno": "None",
-    "No hay embudos disponibles.": "No pipelines available."
+    "No hay embudos disponibles.": "No pipelines available.",
+    "Marcar todos": "Select all",
+    "Desmarcar todos": "Unselect all"
 }

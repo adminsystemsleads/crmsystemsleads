@@ -94,7 +94,7 @@
             <div class="notif-row" style="cursor:default;">
                 <span style="font-weight:700;">{{ __('Embudos a notificar') }}</span>
                 <button type="button" @click="toggleAllPipes()" class="notif-link"
-                        x-text="allPipesOn() ? '{{ __('Ninguno') }}' : '{{ __('Todos') }}'"></button>
+                        x-text="allPipesOn() ? '{{ __('Desmarcar todos') }}' : '{{ __('Marcar todos') }}'"></button>
             </div>
             <template x-if="pipelines.length === 0">
                 <div style="padding:.25rem .9rem .5rem;font-size:.72rem;color:#9ca3af;">{{ __('No hay embudos disponibles.') }}</div>

@@ -58,6 +58,8 @@ $TRANSLATIONS = [
     'Embudos a notificar'         => ['Pipelines to notify', 'Funis a notificar'],
     'Ninguno'                     => ['None', 'Nenhum'],
     'Todos'                       => ['All', 'Todos'],
+    'Marcar todos'                => ['Select all', 'Marcar todos'],
+    'Desmarcar todos'             => ['Unselect all', 'Desmarcar todos'],
     'No hay embudos disponibles.' => ['No pipelines available.', 'Não há funis disponíveis.'],
     'Guardar'                     => ['Save', 'Salvar'],
 ];
