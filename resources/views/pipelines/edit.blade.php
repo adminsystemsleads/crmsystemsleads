@@ -176,23 +176,23 @@
                 <h4 class="text-sm font-semibold mb-2">{{ __('Agregar nueva fase') }}</h4>
                 <form method="POST" action="{{ route('pipelines.stages.store', $pipeline) }}" class="space-y-4">
                     @csrf
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
+                    <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+                        <div class="flex-1 min-w-0">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Nombre') }}</label>
                             <input type="text" name="name"
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-0">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Slug (opcional)') }}</label>
                             <input type="text" name="slug"
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                         </div>
-                        <div>
+                        <div class="w-full sm:w-16 shrink-0">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Color') }}</label>
                             <input type="color" name="color" value="#6366f1"
                                    class="mt-1 block w-full h-9 border border-gray-300 rounded-md cursor-pointer p-0">
                         </div>
-                        <div>
+                        <div class="w-full sm:w-28 shrink-0">
                             <label class="block text-xs font-medium text-gray-700">{{ __('Probabilidad %') }}</label>
                             <input type="number" name="probability" min="0" max="100"
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
