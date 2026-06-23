@@ -33,22 +33,29 @@ class ActivityReminders extends Command
             $deal = $act->deal;
 
             if ($deal) {
-                $userId = $act->user_id ?: $deal->responsible_id;
-                $user   = $userId ? User::find($userId) : null;
+                // Avisar tanto al responsable de la ACTIVIDAD como al de la NEGOCIACIÓN
+                // (sin duplicar; cada uno según sus propias preferencias).
+                $recipientIds = array_unique(array_filter([
+                    $act->user_id,
+                    $deal->responsible_id,
+                ]));
 
-                if ($user && $user->wantsNotification('activity_due', $deal->pipeline_id)) {
-                    $client = optional($deal->contact)->name ?: ($deal->title ?: 'Negociación');
-                    $url    = route('deals.edit', [$deal->pipeline_id, $deal->id]);
+                $client = optional($deal->contact)->name ?: ($deal->title ?: 'Negociación');
+                $url    = route('deals.edit', [$deal->pipeline_id, $deal->id]);
 
-                    $user->notify(new ActivityDue(
-                        $deal->id,
-                        (int) $deal->pipeline_id,
-                        (string) ($act->subject ?: 'Actividad'),
-                        $client,
-                        $url,
-                        optional($act->due_at)->toIso8601String()
-                    ));
-                    $sent++;
+                foreach ($recipientIds as $rid) {
+                    $user = User::find($rid);
+                    if ($user && $user->wantsNotification('activity_due', $deal->pipeline_id)) {
+                        $user->notify(new ActivityDue(
+                            $deal->id,
+                            (int) $deal->pipeline_id,
+                            (string) ($act->subject ?: 'Actividad'),
+                            $client,
+                            $url,
+                            optional($act->due_at)->toIso8601String()
+                        ));
+                        $sent++;
+                    }
                 }
             }
 
