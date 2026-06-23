@@ -93,6 +93,11 @@ $TRANSLATIONS = [
     'Creada desde'                => ['Created from', 'Criada desde'],
     'Creada hasta'                => ['Created until', 'Criada até'],
     'Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.' => ['Status, Owner and Month allow multiple: Ctrl/Cmd + click.', 'Status, Responsável e Mês permitem vários: Ctrl/Cmd + clique.'],
+    'Modo de selección'           => ['Selection mode', 'Modo de seleção'],
+    'Selección única'             => ['Single selection', 'Seleção única'],
+    'Selección múltiple'          => ['Multiple selection', 'Seleção múltipla'],
+    'Lista (múltiple)'            => ['List (multiple)', 'Lista (múltipla)'],
+    'Sin opciones'                => ['No options', 'Sem opções'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

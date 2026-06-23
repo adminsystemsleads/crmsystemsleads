@@ -29,8 +29,8 @@
   @endif
 
   @php
-    $typeLabels = ['text' => __('Texto'), 'number' => __('Número'), 'date' => __('Fecha'), 'select' => __('Lista')];
-    $typeIcons  = ['text' => '📝', 'number' => '🔢', 'date' => '📅', 'select' => '📋'];
+    $typeLabels = ['text' => __('Texto'), 'number' => __('Número'), 'date' => __('Fecha'), 'select' => __('Lista'), 'multiselect' => __('Lista (múltiple)')];
+    $typeIcons  = ['text' => '📝', 'number' => '🔢', 'date' => '📅', 'select' => '📋', 'multiselect' => '☑️'];
   @endphp
 
   {{-- Lista de campos como cards --}}
@@ -66,13 +66,22 @@
                 <input type="text" name="name" value="{{ $f->name }}" required maxlength="120"
                        class="w-full rounded-lg border-gray-200 text-sm py-1.5">
               </div>
-              <div>
+              <div x-data="{ ft: '{{ in_array($f->field_type, ['select','multiselect']) ? 'select' : $f->field_type }}' }">
                 <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Tipo') }}</label>
-                <select name="field_type" class="w-full rounded-lg border-gray-200 text-sm py-1.5">
-                  @foreach($typeLabels as $val => $lbl)
-                    <option value="{{ $val }}" {{ $f->field_type === $val ? 'selected' : '' }}>{{ $lbl }}</option>
-                  @endforeach
+                @php $isList = in_array($f->field_type, ['select', 'multiselect']); @endphp
+                <select name="field_type" x-model="ft" class="w-full rounded-lg border-gray-200 text-sm py-1.5">
+                  <option value="text"   {{ $f->field_type === 'text' ? 'selected' : '' }}>{{ __('Texto') }}</option>
+                  <option value="number" {{ $f->field_type === 'number' ? 'selected' : '' }}>{{ __('Número') }}</option>
+                  <option value="date"   {{ $f->field_type === 'date' ? 'selected' : '' }}>{{ __('Fecha') }}</option>
+                  <option value="select" {{ $isList ? 'selected' : '' }}>{{ __('Lista (desplegable)') }}</option>
                 </select>
+                <div x-show="ft === 'select'" class="mt-2">
+                  <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Modo de selección') }}</label>
+                  <select name="list_mode" class="w-full rounded-lg border-gray-200 text-xs py-1.5">
+                    <option value="single"   {{ $f->field_type !== 'multiselect' ? 'selected' : '' }}>{{ __('Selección única') }}</option>
+                    <option value="multiple" {{ $f->field_type === 'multiselect' ? 'selected' : '' }}>{{ __('Selección múltiple') }}</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -157,7 +166,14 @@
         </div>
       </div>
 
-      <div id="newOptionsBox" class="hidden">
+      <div id="newOptionsBox" class="hidden space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Modo de selección') }}</label>
+          <select name="list_mode" class="w-full rounded-lg border-gray-200 text-sm py-2">
+            <option value="single">{{ __('Selección única') }}</option>
+            <option value="multiple">{{ __('Selección múltiple') }}</option>
+          </select>
+        </div>
         <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Opciones') }}</label>
         <textarea name="options" rows="3"
                   placeholder="{{ __('Una opción por línea, ej:') }}&#10;{{ __('Pequeña empresa') }}&#10;{{ __('Mediana empresa') }}&#10;{{ __('Grande') }}"

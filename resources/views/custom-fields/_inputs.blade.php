@@ -49,6 +49,26 @@
             </select>
             @break
 
+          @case('multiselect')
+            @php
+              $selected = is_array($val)
+                  ? $val
+                  : (is_string($val) && $val !== '' ? (json_decode($val, true) ?: [$val]) : []);
+            @endphp
+            <div class="space-y-1.5 rounded-lg border border-gray-200 p-2">
+              @forelse((array) $cf->options as $opt)
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                  <input type="checkbox" name="{{ $name }}[]" value="{{ $opt }}"
+                         class="rounded border-gray-300 text-indigo-600"
+                         {{ in_array($opt, $selected) ? 'checked' : '' }}>
+                  <span>{{ $opt }}</span>
+                </label>
+              @empty
+                <span class="text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+              @endforelse
+            </div>
+            @break
+
           @default
             <input type="text" name="{{ $name }}" value="{{ $val }}" {{ $req }}
                    class="w-full rounded-lg border-gray-200 text-sm py-2">

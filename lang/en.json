@@ -1223,5 +1223,10 @@
     "Aún no hay actividades.": "No activities yet.",
     "Creada desde": "Created from",
     "Creada hasta": "Created until",
-    "Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.": "Status, Owner and Month allow multiple: Ctrl/Cmd + click."
+    "Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.": "Status, Owner and Month allow multiple: Ctrl/Cmd + click.",
+    "Modo de selección": "Selection mode",
+    "Selección única": "Single selection",
+    "Selección múltiple": "Multiple selection",
+    "Lista (múltiple)": "List (multiple)",
+    "Sin opciones": "No options"
 }

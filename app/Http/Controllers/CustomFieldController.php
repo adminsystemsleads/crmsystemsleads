@@ -39,11 +39,13 @@ class CustomFieldController extends Controller
             'entity_type' => ['required', 'string', \Illuminate\Validation\Rule::in(self::ALLOWED_ENTITIES)],
             'name'        => 'required|string|max:120',
             'field_type'  => ['required', 'string', \Illuminate\Validation\Rule::in(self::ALLOWED_FIELD_TYPES)],
+            'list_mode'   => 'nullable|in:single,multiple',
             'options'     => 'nullable|string|max:2000', // texto multilínea con una opción por línea
             'is_required' => 'nullable|boolean',
             'sort_order'  => 'nullable|integer',
         ]);
 
+        $fieldType = $this->effectiveType($data['field_type'], $request->input('list_mode'));
         $slug = $this->uniqueSlug($data['name'], $data['entity_type']);
 
         CustomField::create([
@@ -51,8 +53,8 @@ class CustomFieldController extends Controller
             'entity_type' => $data['entity_type'],
             'name'        => $data['name'],
             'slug'        => $slug,
-            'field_type'  => $data['field_type'],
-            'options'     => $this->normalizeOptions($data['options'] ?? null, $data['field_type']),
+            'field_type'  => $fieldType,
+            'options'     => $this->normalizeOptions($data['options'] ?? null, $fieldType),
             'is_required' => $request->boolean('is_required'),
             'is_active'   => true,
             'sort_order'  => $data['sort_order'] ?? 0,
@@ -68,16 +70,19 @@ class CustomFieldController extends Controller
         $data = $request->validate([
             'name'        => 'required|string|max:120',
             'field_type'  => ['required', 'string', \Illuminate\Validation\Rule::in(self::ALLOWED_FIELD_TYPES)],
+            'list_mode'   => 'nullable|in:single,multiple',
             'options'     => 'nullable|string|max:2000',
             'is_required' => 'nullable|boolean',
             'is_active'   => 'nullable|boolean',
             'sort_order'  => 'nullable|integer',
         ]);
 
+        $fieldType = $this->effectiveType($data['field_type'], $request->input('list_mode'));
+
         $customField->update([
             'name'        => $data['name'],
-            'field_type'  => $data['field_type'],
-            'options'     => $this->normalizeOptions($data['options'] ?? null, $data['field_type']),
+            'field_type'  => $fieldType,
+            'options'     => $this->normalizeOptions($data['options'] ?? null, $fieldType),
             'is_required' => $request->boolean('is_required'),
             'is_active'   => $request->boolean('is_active', $customField->is_active),
             'sort_order'  => $data['sort_order'] ?? $customField->sort_order,
@@ -109,9 +114,18 @@ class CustomFieldController extends Controller
         return $slug;
     }
 
+    /** 'select' + modo múltiple => 'multiselect'. */
+    private function effectiveType(string $fieldType, ?string $listMode): string
+    {
+        if ($fieldType === 'select' && $listMode === 'multiple') {
+            return 'multiselect';
+        }
+        return $fieldType;
+    }
+
     private function normalizeOptions(?string $rawOptions, string $type): ?array
     {
-        if ($type !== 'select') return null;
+        if (!in_array($type, ['select', 'multiselect'], true)) return null;
         if (!$rawOptions) return [];
 
         return collect(preg_split('/\r\n|\r|\n/', $rawOptions))
