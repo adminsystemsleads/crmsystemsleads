@@ -557,7 +557,10 @@
                                                               action="{{ route('deals.activities.complete', [$pipeline, $deal, $activity]) }}">
                                                             @csrf
                                                             <button type="submit"
-                                                                    class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-green-600 text-white hover:bg-green-700">
+                                                                    class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md"
+                                                                    style="background:#16a34a;color:#fff;"
+                                                                    onmouseover="this.style.background='#15803d'"
+                                                                    onmouseout="this.style.background='#16a34a'">
                                                                 <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                                                 {{ __('Completar') }}
                                                             </button>
