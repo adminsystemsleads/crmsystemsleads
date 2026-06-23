@@ -216,8 +216,9 @@
       .sidebar-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.45); }
       @media (min-width: 768px) { .sidebar-backdrop { display: none !important; } }
 
-      /* Cabecera (header) en navy con título blanco */
-      .app-header { background: var(--brand-navy) !important; box-shadow: 0 1px 3px rgba(0,0,0,.25) !important; }
+      /* Cabecera (header) en navy con título blanco, fija arriba al hacer scroll */
+      .app-header { background: var(--brand-navy) !important; box-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
+        position: sticky; top: 0; z-index: 20; }
       .app-header h1, .app-header h2, .app-header h3 { color: #fff !important; }
       .app-header .page-head-title { color: #fff !important; }
       /* Subtítulos / texto gris secundario del header -> blanco translúcido */
@@ -229,7 +230,7 @@
       .app-header .menu-toggle-btn:hover { background: rgba(255,255,255,.1) !important; }
 
       /* Barra superior del inbox de WhatsApp (layout propio de pantalla completa) en navy */
-      .wa-topbar { background: var(--brand-navy) !important; border-bottom-color: rgba(255,255,255,.1) !important; }
+      .wa-topbar { background: var(--brand-navy) !important; border-bottom-color: rgba(255,255,255,.1) !important; position: sticky; top: 0; z-index: 20; }
       .wa-topbar .text-gray-900 { color: #fff !important; }
       .wa-topbar .text-gray-400 { color: rgba(255,255,255,.6) !important; }
       .wa-topbar .menu-toggle-btn { color: #fff !important; border-color: rgba(255,255,255,.3) !important; }

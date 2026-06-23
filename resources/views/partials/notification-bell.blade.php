@@ -261,18 +261,21 @@
     }
 
     // La campana queda fija arriba; se oculta al desplazar hacia abajo y reaparece al volver arriba.
+    // Capta el scroll de la ventana y de cualquier contenedor interno (modo captura).
     (function () {
-        function onScroll() {
+        function onScroll(e) {
             var b = document.querySelector('.notif-bell');
             if (!b) return;
-            var y = window.scrollY
-                || document.documentElement.scrollTop
-                || (document.scrollingElement ? document.scrollingElement.scrollTop : 0)
-                || 0;
+            var y = window.scrollY || document.documentElement.scrollTop
+                || (document.scrollingElement ? document.scrollingElement.scrollTop : 0) || 0;
+            var t = e && e.target;
+            if (t && t !== document && t !== window && typeof t.scrollTop === 'number') {
+                y = Math.max(y, t.scrollTop);
+            }
             if (y > 40) b.classList.add('notif-hidden');
             else b.classList.remove('notif-hidden');
         }
-        window.addEventListener('scroll', onScroll, { passive: true });
-        document.addEventListener('DOMContentLoaded', onScroll);
+        window.addEventListener('scroll', onScroll, true);
+        document.addEventListener('DOMContentLoaded', function () { onScroll(); });
     })();
 </script>
