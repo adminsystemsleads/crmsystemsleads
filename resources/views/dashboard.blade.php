@@ -294,18 +294,12 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Mes de creación') }}</label>
-                    <div class="ms-dd" id="ddMes" data-onchange="actFilter" style="width:190px;">
+                    <div class="ms-dd month-dd" id="ddMes" data-onchange="actFilter" data-field="months[]" data-selected="[]" style="width:190px;">
                         <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
-                            <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>
+                            <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('meses') }}">{{ __('Todos') }}</span>
                             {!! $caret !!}
                         </button>
-                        <div class="ms-dd-panel">
-                            @forelse($monthsList as $m)
-                                <label class="ms-dd-opt"><input type="checkbox" value="{{ $m }}" onchange="msChanged(this)"><span>{{ \Carbon\Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y') }}</span></label>
-                            @empty
-                                <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
-                            @endforelse
-                        </div>
+                        <div class="ms-dd-panel"></div>
                     </div>
                 </div>
                 <div>

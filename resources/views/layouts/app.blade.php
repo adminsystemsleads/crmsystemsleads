@@ -296,6 +296,16 @@
         font-size: .8rem; color: #374151; cursor: pointer; }
       .ms-dd-opt:hover { background: #f3f4f6; }
       .ms-dd-opt input { width: 1rem; height: 1rem; border-radius: .25rem; accent-color: var(--brand-navy); flex-shrink: 0; }
+      /* Selector de mes tipo calendario (solo meses + año) */
+      .month-grid-head { display: flex; align-items: center; justify-content: space-between; padding: .35rem .5rem; border-bottom: 1px solid #f3f4f6; }
+      .month-grid-head button { background: none; border: none; cursor: pointer; color: #374151; padding: .15rem .45rem; border-radius: .35rem; font-size: 1rem; line-height: 1; }
+      .month-grid-head button:hover { background: #f3f4f6; }
+      .month-grid-year { font-size: .82rem; font-weight: 700; color: var(--brand-navy); }
+      .month-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; padding: .45rem; }
+      .month-cell { padding: .4rem .2rem; text-align: center; font-size: .72rem; border-radius: .4rem; cursor: pointer;
+        color: #374151; text-transform: capitalize; user-select: none; }
+      .month-cell:hover { background: #f3f4f6; }
+      .month-cell.sel { background: var(--brand-navy); color: #fff; font-weight: 600; }
     </style>
   </head>
 
@@ -486,8 +496,65 @@
       document.addEventListener('click', function (e) {
         if (!e.target.closest('.ms-dd')) msCloseAll();
       });
+
+      /* ===== Selector de mes tipo calendario (.month-dd) ===== */
+      function msMonthLocale() { return document.documentElement.lang || 'es'; }
+      function msMonthName(key, style) {
+        const p = key.split('-');
+        const d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, 1);
+        return d.toLocaleString(msMonthLocale(), { month: style }) + (style === 'long' ? ' ' + p[0] : '');
+      }
+      function msMonthLabel(dd) {
+        const lbl = dd.querySelector('.ms-dd-label');
+        if (!lbl) return;
+        const n = dd._sel.size;
+        const ph = lbl.dataset.placeholder || 'Todos';
+        if (n === 0) { lbl.textContent = ph; lbl.classList.add('placeholder'); }
+        else if (n === 1) { lbl.textContent = msMonthName(Array.from(dd._sel)[0], 'long'); lbl.classList.remove('placeholder'); }
+        else { lbl.textContent = n + ' ' + (lbl.dataset.countLabel || 'meses'); lbl.classList.remove('placeholder'); }
+      }
+      function msMonthRender(dd) {
+        const panel = dd.querySelector('.ms-dd-panel');
+        const sel = dd._sel, year = dd._year;
+        let html = '<div class="month-grid-head"><button type="button" data-y="-1">‹</button>'
+                 + '<span class="month-grid-year">' + year + '</span>'
+                 + '<button type="button" data-y="1">›</button></div><div class="month-grid">';
+        for (let i = 0; i < 12; i++) {
+          const key = year + '-' + String(i + 1).padStart(2, '0');
+          html += '<div class="month-cell' + (sel.has(key) ? ' sel' : '') + '" data-key="' + key + '">'
+               + msMonthName(key, 'short') + '</div>';
+        }
+        html += '</div><div class="month-hidden" style="display:none">';
+        sel.forEach(function (k) { html += '<input type="checkbox" name="' + dd.dataset.field + '" value="' + k + '" checked>'; });
+        html += '</div>';
+        panel.innerHTML = html;
+        panel.querySelectorAll('.month-grid-head button').forEach(function (b) {
+          b.addEventListener('click', function (e) { e.stopPropagation(); dd._year += parseInt(b.dataset.y, 10); msMonthRender(dd); });
+        });
+        panel.querySelectorAll('.month-cell').forEach(function (c) {
+          c.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const k = c.dataset.key;
+            if (sel.has(k)) sel.delete(k); else sel.add(k);
+            msMonthRender(dd);
+            msMonthLabel(dd);
+            const fn = dd.dataset.onchange;
+            if (fn && typeof window[fn] === 'function') { try { window[fn](); } catch (e2) {} }
+          });
+        });
+        msMonthLabel(dd);
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.ms-dd').forEach(msUpdateLabel);
+        document.querySelectorAll('.ms-dd:not(.month-dd)').forEach(msUpdateLabel);
+        document.querySelectorAll('.month-dd').forEach(function (dd) {
+          let init = [];
+          try { init = JSON.parse(dd.dataset.selected || '[]'); } catch (e) {}
+          dd._sel = new Set(init);
+          dd._year = init.length ? parseInt(init[0].split('-')[0], 10) : (new Date()).getFullYear();
+          if (!dd.dataset.field) dd.dataset.field = 'months[]';
+          msMonthRender(dd);
+        });
       });
     </script>
   </body>

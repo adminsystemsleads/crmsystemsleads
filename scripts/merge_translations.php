@@ -110,6 +110,7 @@ $TRANSLATIONS = [
     'Limpiar filtros'             => ['Clear filters', 'Limpar filtros'],
     'Buscar por negociación, contacto, email, teléfono…' => ['Search by deal, contact, email, phone…', 'Buscar por negociação, contato, e-mail, telefone…'],
     'Todas'                       => ['All', 'Todas'],
+    'meses'                       => ['months', 'meses'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void
