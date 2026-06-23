@@ -386,11 +386,15 @@
             ↻ {{ __('Recargar campos') }}
           </button>
         </div>
-        <select id="aiFnProperties" multiple size="6"
-                class="w-full rounded-lg border-gray-200 text-sm py-1">
-          <option disabled>{{ __('Cargando campos…') }}</option>
-        </select>
-        <p class="text-[10px] text-gray-400 mt-1">{{ __('Mantén Ctrl/⌘ para seleccionar varios.') }}</p>
+        <div class="ms-dd" id="aiFnPropertiesDD">
+          <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+            <span class="ms-dd-label placeholder" data-placeholder="{{ __('— Seleccionar —') }}" data-count-label="{{ __('campos') }}">{{ __('— Seleccionar —') }}</span>
+            <svg class="ms-dd-caret" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="ms-dd-panel" id="aiFnProperties">
+            <span class="px-2 py-1 text-xs text-gray-400">{{ __('Cargando campos…') }}</span>
+          </div>
+        </div>
       </div>
 
       {{-- Stage (solo change_stage) --}}
@@ -514,22 +518,22 @@
 
   function renderPropertiesSelect(selected) {
     selected = selected || [];
-    const sel = document.getElementById('aiFnProperties');
+    const panel = document.getElementById('aiFnProperties');
     if (!availableFieldGroups) {
-      sel.innerHTML = '<option disabled>Cargando…</option>';
+      panel.innerHTML = '<span class="px-2 py-1 text-xs text-gray-400">Cargando…</span>';
       return;
     }
     let html = '';
     availableFieldGroups.forEach(g => {
       if (!g.options || !g.options.length) return;
-      html += `<optgroup label="${escapeHtml(g.label)}">`;
+      html += `<div class="px-2 pt-1 pb-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">${escapeHtml(g.label)}</div>`;
       g.options.forEach(o => {
-        const sel = selected.includes(o.key) ? 'selected' : '';
-        html += `<option value="${escapeHtml(o.key)}" ${sel}>${escapeHtml(o.label)}</option>`;
+        const ck = selected.includes(o.key) ? 'checked' : '';
+        html += `<label class="ms-dd-opt"><input type="checkbox" value="${escapeHtml(o.key)}" ${ck} onchange="msChanged(this)"><span>${escapeHtml(o.label)}</span></label>`;
       });
-      html += '</optgroup>';
     });
-    sel.innerHTML = html || '<option disabled>Sin campos disponibles</option>';
+    panel.innerHTML = html || '<span class="px-2 py-1 text-xs text-gray-400">Sin campos disponibles</span>';
+    if (window.msUpdateLabel) msUpdateLabel(document.getElementById('aiFnPropertiesDD'));
   }
 
   function renderStagesSelect(selectedId) {
@@ -655,8 +659,8 @@
     let target_stage_id = null;
 
     if (mode === 'update_crm') {
-      const sel = document.getElementById('aiFnProperties');
-      properties = Array.from(sel.selectedOptions).map(o => o.value);
+      const panel = document.getElementById('aiFnProperties');
+      properties = Array.from(panel.querySelectorAll('input[type=checkbox]:checked')).map(c => c.value);
     } else if (mode === 'change_stage') {
       target_stage_id = document.getElementById('aiFnTargetStage').value || null;
       if (!target_stage_id) {

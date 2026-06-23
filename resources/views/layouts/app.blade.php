@@ -288,7 +288,7 @@
       .ms-dd-label.placeholder { color: #9ca3af; }
       .ms-dd-caret { width: 1rem; height: 1rem; color: #6b7280; flex-shrink: 0; transition: transform .15s; }
       .ms-dd.open .ms-dd-caret { transform: rotate(180deg); }
-      .ms-dd-panel { display: none; position: absolute; z-index: 50; top: calc(100% + .25rem); left: 0; right: 0;
+      .ms-dd-panel { display: none; position: absolute; z-index: 1000; top: calc(100% + .25rem); left: 0; right: 0;
         min-width: 100%; max-height: 15rem; overflow-y: auto; background: #fff; border: 1px solid #e5e7eb;
         border-radius: .5rem; box-shadow: 0 10px 24px rgba(15,23,42,.15); padding: .25rem; }
       .ms-dd.open .ms-dd-panel { display: block; }
@@ -421,12 +421,45 @@
 
     {{-- Multiselect desplegable reutilizable (filtros del reporte + campos personalizados) --}}
     <script>
+      var msOpenDd = null;
+      function msCloseAll() {
+        document.querySelectorAll('.ms-dd.open').forEach(function (d) { d.classList.remove('open'); });
+        msOpenDd = null;
+      }
+      function msPosition(dd) {
+        const btn = dd.querySelector('.ms-dd-btn');
+        const panel = dd.querySelector('.ms-dd-panel');
+        if (!btn || !panel) return;
+        const r = btn.getBoundingClientRect();
+        panel.style.position = 'fixed';
+        panel.style.left = r.left + 'px';
+        panel.style.right = 'auto';
+        panel.style.width = r.width + 'px';
+        const content = Math.min(panel.scrollHeight, 240);
+        const spaceBelow = window.innerHeight - r.bottom - 8;
+        const spaceAbove = r.top - 8;
+        if (spaceBelow < content && spaceAbove > spaceBelow) {
+          panel.style.top = 'auto';
+          panel.style.bottom = (window.innerHeight - r.top + 4) + 'px';
+          panel.style.maxHeight = Math.min(240, spaceAbove) + 'px';
+        } else {
+          panel.style.bottom = 'auto';
+          panel.style.top = (r.bottom + 4) + 'px';
+          panel.style.maxHeight = Math.min(240, spaceBelow) + 'px';
+        }
+      }
       function msToggle(btn) {
         const dd = btn.closest('.ms-dd');
         const wasOpen = dd.classList.contains('open');
-        document.querySelectorAll('.ms-dd.open').forEach(function (d) { d.classList.remove('open'); });
-        if (!wasOpen) dd.classList.add('open');
+        msCloseAll();
+        if (!wasOpen) { dd.classList.add('open'); msOpenDd = dd; msPosition(dd); }
       }
+      window.addEventListener('scroll', function (e) {
+        if (!msOpenDd) return;
+        if (e.target && e.target.closest && e.target.closest('.ms-dd-panel')) return;
+        msPosition(msOpenDd);
+      }, true);
+      window.addEventListener('resize', function () { if (msOpenDd) msPosition(msOpenDd); });
       function msUpdateLabel(dd) {
         const lbl = dd.querySelector('.ms-dd-label');
         if (!lbl) return;
@@ -449,9 +482,7 @@
         if (fn && typeof window[fn] === 'function') { try { window[fn](); } catch (e) {} }
       }
       document.addEventListener('click', function (e) {
-        if (!e.target.closest('.ms-dd')) {
-          document.querySelectorAll('.ms-dd.open').forEach(function (d) { d.classList.remove('open'); });
-        }
+        if (!e.target.closest('.ms-dd')) msCloseAll();
       });
       document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.ms-dd').forEach(msUpdateLabel);
