@@ -218,8 +218,20 @@
       .app-header { background: var(--brand-navy) !important; box-shadow: 0 1px 3px rgba(0,0,0,.25) !important; }
       .app-header h1, .app-header h2, .app-header h3 { color: #fff !important; }
       .app-header .page-head-title { color: #fff !important; }
+      /* Subtítulos / texto gris secundario del header -> blanco translúcido */
+      .app-header p,
+      .app-header .text-gray-400,
+      .app-header .text-gray-500,
+      .app-header .text-gray-600 { color: rgba(255,255,255,.72) !important; }
       .app-header .menu-toggle-btn { color: #fff !important; border-color: rgba(255,255,255,.3) !important; }
       .app-header .menu-toggle-btn:hover { background: rgba(255,255,255,.1) !important; }
+
+      /* Barra superior del inbox de WhatsApp (layout propio de pantalla completa) en navy */
+      .wa-topbar { background: var(--brand-navy) !important; border-bottom-color: rgba(255,255,255,.1) !important; }
+      .wa-topbar .text-gray-900 { color: #fff !important; }
+      .wa-topbar .text-gray-400 { color: rgba(255,255,255,.6) !important; }
+      .wa-topbar .menu-toggle-btn { color: #fff !important; border-color: rgba(255,255,255,.3) !important; }
+      .wa-topbar .hover\:text-gray-600:hover { color: #fff !important; }
     </style>
   </head>
 

@@ -524,7 +524,7 @@
   {{-- Botón flotante mostrar menú (visible cuando el sidebar está oculto).
        En el inbox de WhatsApp NO se renderiza: ahí el toggle va dentro de su
        barra superior para que quede bien alineado y no se superponga. --}}
-  @unless (request()->routeIs('whatsapp.inbox.*', 'pipelines.kanban', 'admin.accounts.index'))
+  @unless (request()->routeIs('whatsapp.inbox.*'))
   <button x-show="!$store.sidebar.open"
           @click="$store.sidebar.toggle()"
           class="menu-toggle-btn fixed top-4 left-4 z-30 p-2 bg-white text-gray-700 rounded-lg border border-gray-300 shadow-md hover:bg-gray-50 transition"

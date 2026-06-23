@@ -196,19 +196,19 @@
                         <input type="number" name="probability" min="0" max="100"
                                class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                     </div>
-                    <div class="flex space-x-2">
-                        <label class="inline-flex items-center text-xs mt-5">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                        <label class="inline-flex items-center text-xs">
                             <input type="checkbox" name="is_won" value="1"
                                    class="rounded border-gray-300">
                             <span class="ml-1">{{ __('Ganada') }}</span>
                         </label>
-                        <label class="inline-flex items-center text-xs mt-5">
+                        <label class="inline-flex items-center text-xs">
                             <input type="checkbox" name="is_lost" value="1"
                                    class="rounded border-gray-300">
                             <span class="ml-1">{{ __('Perdida') }}</span>
                         </label>
                         <button type="submit"
-                                class="ml-auto mt-4 px-3 py-2 bg-indigo-600 text-white rounded-md text-xs hover:bg-indigo-700">
+                                class="px-3 py-2 bg-indigo-600 text-white rounded-md text-xs hover:bg-indigo-700 whitespace-nowrap">
                             {{ __('Añadir') }}
                         </button>
                     </div>

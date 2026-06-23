@@ -1,19 +1,9 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Kanban') }} – {{ $pipeline->name }}</h2>
+    </x-slot>
     <div class="pt-6 pb-6">
         <div class="w-full px-4 sm:px-6">
-            {{-- Título con el botón de despliegue en la misma línea (cuando el menú está minimizado) --}}
-            <div class="flex items-center gap-3 mb-5" style="min-height:40px;">
-                <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
-                        class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"
-                        title="{{ __('Mostrar menú') }}" style="display:none;">
-                    <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Kanban') }} – {{ $pipeline->name }}
-                </h2>
-            </div>
 
             {{-- Toggle de vista --}}
             <div class="inline-flex rounded-xl border border-gray-200 bg-white p-1 text-sm">

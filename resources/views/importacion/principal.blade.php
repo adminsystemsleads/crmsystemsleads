@@ -1,6 +1,8 @@
  <x-app-layout>
+  <x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Importar Reporte Mensual') }}</h2>
+  </x-slot>
   <div class="p-6">
-    <h1 class="text-xl sm:text-2xl font-bold mb-4" :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">{{ __('Importar Reporte Mensual') }}</h1>
     <p>{{ __('Solo visible y accesible para administradores.') }}</p>
     {{-- Aquí tu formulario de importación --}}
   </div>

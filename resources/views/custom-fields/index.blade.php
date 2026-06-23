@@ -1,11 +1,11 @@
 <x-app-layout>
+  <x-slot name="header">
+    <div>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Campos personalizados') }}</h2>
+      <p class="text-sm text-gray-500 mt-1">{{ __('Define campos extra para Contactos y Negociaciones (texto, número, fecha o lista).') }}</p>
+    </div>
+  </x-slot>
 <div class="max-w-3xl mx-auto px-4 py-8">
-
-  {{-- Header --}}
-  <div class="mb-6" :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
-    <h1 class="text-xl font-bold text-gray-900">{{ __('Campos personalizados') }}</h1>
-    <p class="text-sm text-gray-500 mt-1">{{ __('Define campos extra para Contactos y Negociaciones (texto, número, fecha o lista).') }}</p>
-  </div>
 
   {{-- Tabs entity --}}
   <div class="inline-flex rounded-xl border border-gray-200 bg-white p-1 text-sm mb-5 shadow-sm">

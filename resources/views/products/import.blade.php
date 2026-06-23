@@ -1,15 +1,15 @@
 <x-app-layout>
+  <x-slot name="header">
+    <div class="flex items-center gap-3">
+      <a href="{{ route('products.index') }}" class="text-gray-400 hover:text-gray-600 transition">
+        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Importar productos desde CSV') }}</h2>
+    </div>
+  </x-slot>
 <div class="max-w-3xl mx-auto px-4 py-8">
-
-  <div class="flex items-center gap-3 mb-6"
-       :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
-    <a href="{{ route('products.index') }}" class="text-gray-400 hover:text-gray-600 transition">
-      <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-    </a>
-    <h1 class="text-xl font-bold text-gray-900">{{ __('Importar productos desde CSV') }}</h1>
-  </div>
 
   @if(session('success'))
     <div class="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">{{ session('success') }}</div>

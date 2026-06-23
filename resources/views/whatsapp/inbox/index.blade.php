@@ -11,7 +11,7 @@
 <div class="flex flex-col bg-white" style="height:100vh;">
 
   {{-- BARRA SUPERIOR --}}
-  <div class="h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 bg-white px-4">
+  <div class="wa-topbar h-14 shrink-0 flex items-center gap-3 border-b border-gray-200 px-4">
     {{-- Toggle del menú lateral global (solo cuando está minimizado), alineado en la barra --}}
     <button x-show="!$store.sidebar.open" @click="$store.sidebar.toggle()"
             class="menu-toggle-btn shrink-0 p-2 rounded-lg text-gray-600 border border-gray-300 hover:bg-gray-100 transition"

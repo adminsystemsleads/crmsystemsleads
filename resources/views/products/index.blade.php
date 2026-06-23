@@ -1,10 +1,10 @@
 <x-app-layout>
+  <x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Catálogo de productos') }}</h2>
+  </x-slot>
 <div class="max-w-5xl mx-auto px-4 py-8">
 
-  <div class="flex flex-wrap items-center justify-between gap-3 mb-6"
-       :style="!$store.sidebar.open ? 'padding-left:3.75rem;' : ''">
-    <h1 class="text-xl font-bold text-gray-900">{{ __('Catálogo de productos') }}</h1>
-    <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap items-center justify-end gap-2 mb-6">
       <a href="{{ route('products.import.form') }}"
          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
         <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -19,7 +19,6 @@
         </svg>
         {{ __('Nuevo producto') }}
       </button>
-    </div>
   </div>
 
   @if(session('success'))
