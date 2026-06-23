@@ -261,29 +261,52 @@
 
             {{-- Filtros --}}
             <div class="flex flex-wrap items-end gap-3 mb-4">
+                @php $caret = '<svg class="ms-dd-caret" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>'; @endphp
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Estado') }}</label>
-                    <select id="fEstado" multiple size="3" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:150px;">
-                        <option value="open">{{ __('Pendiente') }}</option>
-                        <option value="done">{{ __('Completada') }}</option>
-                        <option value="lost">{{ __('Perdida') }}</option>
-                    </select>
+                    <div class="ms-dd" id="ddEstado" data-onchange="actFilter" style="width:170px;">
+                        <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                            <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>
+                            {!! $caret !!}
+                        </button>
+                        <div class="ms-dd-panel">
+                            <label class="ms-dd-opt"><input type="checkbox" value="open" onchange="msChanged(this)"><span>{{ __('Pendiente') }}</span></label>
+                            <label class="ms-dd-opt"><input type="checkbox" value="done" onchange="msChanged(this)"><span>{{ __('Completada') }}</span></label>
+                            <label class="ms-dd-opt"><input type="checkbox" value="lost" onchange="msChanged(this)"><span>{{ __('Perdida') }}</span></label>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Responsable') }}</label>
-                    <select id="fResp" multiple size="4" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:160px;">
-                        @foreach($respList as $r)
-                            <option value="{{ $r }}">{{ $r }}</option>
-                        @endforeach
-                    </select>
+                    <div class="ms-dd" id="ddResp" data-onchange="actFilter" style="width:190px;">
+                        <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                            <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>
+                            {!! $caret !!}
+                        </button>
+                        <div class="ms-dd-panel">
+                            @forelse($respList as $r)
+                                <label class="ms-dd-opt"><input type="checkbox" value="{{ $r }}" onchange="msChanged(this)"><span>{{ $r }}</span></label>
+                            @empty
+                                <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Mes de creación') }}</label>
-                    <select id="fMes" multiple size="4" onchange="actFilter()" class="border-gray-300 rounded-lg text-xs" style="min-width:150px;">
-                        @foreach($monthsList as $m)
-                            <option value="{{ $m }}">{{ \Carbon\Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y') }}</option>
-                        @endforeach
-                    </select>
+                    <div class="ms-dd" id="ddMes" data-onchange="actFilter" style="width:190px;">
+                        <button type="button" class="ms-dd-btn" onclick="msToggle(this)">
+                            <span class="ms-dd-label placeholder" data-placeholder="{{ __('Todos') }}" data-count-label="{{ __('seleccionados') }}">{{ __('Todos') }}</span>
+                            {!! $caret !!}
+                        </button>
+                        <div class="ms-dd-panel">
+                            @forelse($monthsList as $m)
+                                <label class="ms-dd-opt"><input type="checkbox" value="{{ $m }}" onchange="msChanged(this)"><span>{{ \Carbon\Carbon::createFromFormat('Y-m', $m)->translatedFormat('F Y') }}</span></label>
+                            @empty
+                                <span class="px-2 py-1 text-xs text-gray-400">{{ __('Sin opciones') }}</span>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Creada desde') }}</label>
@@ -297,7 +320,6 @@
                         class="px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-600 hover:bg-gray-50">{{ __('Limpiar') }}</button>
                 <span class="text-[11px] text-gray-400"><span id="actCount">{{ $activities->count() }}</span> {{ __('actividades') }}</span>
             </div>
-            <p class="text-[10px] text-gray-400 -mt-2 mb-3">{{ __('Estado, Responsable y Mes permiten varios: Ctrl/Cmd + clic.') }}</p>
 
             <div class="overflow-x-auto">
                 <table id="actTable" class="w-full text-xs">
@@ -374,21 +396,25 @@
             }
 
             function actMulti(id) {
-                const el = document.getElementById(id);
-                return Array.prototype.map.call(el.selectedOptions, function (o) { return o.value; }).filter(Boolean);
+                return Array.prototype.map.call(
+                    document.querySelectorAll('#' + id + ' .ms-dd-panel input[type=checkbox]:checked'),
+                    function (c) { return c.value; }
+                );
             }
             function actClear() {
-                ['fEstado', 'fResp', 'fMes'].forEach(function (id) {
-                    Array.prototype.forEach.call(document.getElementById(id).options, function (o) { o.selected = false; });
+                ['ddEstado', 'ddResp', 'ddMes'].forEach(function (id) {
+                    const dd = document.getElementById(id);
+                    dd.querySelectorAll('input[type=checkbox]').forEach(function (c) { c.checked = false; });
+                    if (window.msUpdateLabel) msUpdateLabel(dd);
                 });
                 document.getElementById('fDesde').value = '';
                 document.getElementById('fHasta').value = '';
                 actFilter();
             }
             function actFilter() {
-                const ests = actMulti('fEstado');
-                const resps = actMulti('fResp');
-                const meses = actMulti('fMes');
+                const ests = actMulti('ddEstado');
+                const resps = actMulti('ddResp');
+                const meses = actMulti('ddMes');
                 const desde = document.getElementById('fDesde').value;
                 const hasta = document.getElementById('fHasta').value;
                 let visible = 0;

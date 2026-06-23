@@ -98,6 +98,7 @@ $TRANSLATIONS = [
     'Selección múltiple'          => ['Multiple selection', 'Seleção múltipla'],
     'Lista (múltiple)'            => ['List (multiple)', 'Lista (múltipla)'],
     'Sin opciones'                => ['No options', 'Sem opções'],
+    'seleccionados'               => ['selected', 'selecionados'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

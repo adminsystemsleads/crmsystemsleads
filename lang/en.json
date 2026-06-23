@@ -1228,5 +1228,6 @@
     "Selección única": "Single selection",
     "Selección múltiple": "Multiple selection",
     "Lista (múltiple)": "List (multiple)",
-    "Sin opciones": "No options"
+    "Sin opciones": "No options",
+    "seleccionados": "selected"
 }

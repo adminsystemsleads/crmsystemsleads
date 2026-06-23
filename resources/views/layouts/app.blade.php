@@ -277,6 +277,25 @@
       .notif-save { width: 100%; padding: .5rem; border: none; border-radius: .5rem; background: var(--brand-navy);
         color: #fff; font-size: .78rem; font-weight: 600; cursor: pointer; }
       .notif-save:hover { background: var(--brand-navy-dark); }
+
+      /* ===== Multiselect desplegable (filtros + campos personalizados) ===== */
+      .ms-dd { position: relative; }
+      .ms-dd-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+        border: 1px solid #d1d5db; border-radius: .5rem; background: #fff; padding: .5rem .65rem;
+        font-size: .8rem; color: #374151; cursor: pointer; text-align: left; }
+      .ms-dd-btn:hover { border-color: #9ca3af; }
+      .ms-dd-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+      .ms-dd-label.placeholder { color: #9ca3af; }
+      .ms-dd-caret { width: 1rem; height: 1rem; color: #6b7280; flex-shrink: 0; transition: transform .15s; }
+      .ms-dd.open .ms-dd-caret { transform: rotate(180deg); }
+      .ms-dd-panel { display: none; position: absolute; z-index: 50; top: calc(100% + .25rem); left: 0; right: 0;
+        min-width: 100%; max-height: 15rem; overflow-y: auto; background: #fff; border: 1px solid #e5e7eb;
+        border-radius: .5rem; box-shadow: 0 10px 24px rgba(15,23,42,.15); padding: .25rem; }
+      .ms-dd.open .ms-dd-panel { display: block; }
+      .ms-dd-opt { display: flex; align-items: center; gap: .5rem; padding: .4rem .5rem; border-radius: .375rem;
+        font-size: .8rem; color: #374151; cursor: pointer; }
+      .ms-dd-opt:hover { background: #f3f4f6; }
+      .ms-dd-opt input { width: 1rem; height: 1rem; border-radius: .25rem; accent-color: var(--brand-navy); flex-shrink: 0; }
     </style>
   </head>
 
@@ -398,6 +417,45 @@
           applyTheme(next);
         });
       })();
+    </script>
+
+    {{-- Multiselect desplegable reutilizable (filtros del reporte + campos personalizados) --}}
+    <script>
+      function msToggle(btn) {
+        const dd = btn.closest('.ms-dd');
+        const wasOpen = dd.classList.contains('open');
+        document.querySelectorAll('.ms-dd.open').forEach(function (d) { d.classList.remove('open'); });
+        if (!wasOpen) dd.classList.add('open');
+      }
+      function msUpdateLabel(dd) {
+        const lbl = dd.querySelector('.ms-dd-label');
+        if (!lbl) return;
+        const sel = Array.prototype.slice.call(dd.querySelectorAll('.ms-dd-panel input[type=checkbox]')).filter(function (c) { return c.checked; });
+        const ph = lbl.dataset.placeholder || 'Seleccionar...';
+        if (sel.length === 0) { lbl.textContent = ph; lbl.classList.add('placeholder'); }
+        else if (sel.length === 1) {
+          const s = sel[0].parentNode.querySelector('span');
+          lbl.textContent = s ? s.textContent.trim() : sel[0].value;
+          lbl.classList.remove('placeholder');
+        } else {
+          lbl.textContent = sel.length + ' ' + (lbl.dataset.countLabel || 'seleccionados');
+          lbl.classList.remove('placeholder');
+        }
+      }
+      function msChanged(cb) {
+        const dd = cb.closest('.ms-dd');
+        msUpdateLabel(dd);
+        const fn = dd.dataset.onchange;
+        if (fn && typeof window[fn] === 'function') { try { window[fn](); } catch (e) {} }
+      }
+      document.addEventListener('click', function (e) {
+        if (!e.target.closest('.ms-dd')) {
+          document.querySelectorAll('.ms-dd.open').forEach(function (d) { d.classList.remove('open'); });
+        }
+      });
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.ms-dd').forEach(msUpdateLabel);
+      });
     </script>
   </body>
 </html>
