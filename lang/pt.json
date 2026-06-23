@@ -1192,5 +1192,16 @@
     "Marcar todas como leídas": "Marcar todas como lidas",
     "No tienes notificaciones": "Você não tem notificações",
     "Nueva negociación asignada": "Nova negociação atribuída",
-    "Se te asignó una negociación": "Uma negociação foi atribuída a você"
+    "Se te asignó una negociación": "Uma negociação foi atribuída a você",
+    "Actividad por vencer": "Atividade a vencer",
+    "Configurar notificaciones": "Configurações de notificações",
+    "Silenciar": "Silenciar",
+    "Activar sonido": "Ativar som",
+    "Activar notificaciones": "Ativar notificações",
+    "Sonido": "Som",
+    "Notificar negociaciones asignadas": "Notificar negociações atribuídas",
+    "Notificar actividades por vencer": "Notificar atividades a vencer",
+    "Embudos a notificar": "Funis a notificar",
+    "Ninguno": "Nenhum",
+    "No hay embudos disponibles.": "Não há funis disponíveis."
 }

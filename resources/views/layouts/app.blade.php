@@ -259,6 +259,23 @@
       .notif-title { font-size: .8rem; font-weight: 600; color: var(--brand-navy); }
       .notif-sub { font-size: .7rem; color: #6b7280; margin-top: .12rem; }
       .notif-client { font-weight: 600; color: #4b5563; }
+      .notif-head-actions { display: inline-flex; align-items: center; gap: .25rem; }
+      .notif-icon-btn { display: inline-flex; align-items: center; justify-content: center; padding: .25rem; border-radius: .35rem; background: none; border: none; cursor: pointer; color: #64748b; }
+      .notif-icon-btn:hover { background: #f3f4f6; color: var(--brand-navy); }
+      .notif-icon-btn svg { width: 1.05rem; height: 1.05rem; }
+      .notif-link { background: none; border: none; cursor: pointer; font-size: .7rem; font-weight: 600; color: var(--brand-gold-dark); white-space: nowrap; }
+      .notif-subhead { padding: .4rem .85rem; border-bottom: 1px solid #f3f4f6; text-align: right; }
+      .notif-settings { padding: .35rem 0 .5rem; }
+      .notif-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+        padding: .5rem .9rem; font-size: .78rem; color: #374151; cursor: pointer; }
+      .notif-row:hover { background: #f9fafb; }
+      .notif-row input[type="checkbox"] { width: 1rem; height: 1rem; flex-shrink: 0; accent-color: var(--brand-navy); cursor: pointer; }
+      .notif-pipe { padding: .35rem .9rem .35rem 1.4rem; font-size: .76rem; color: #4b5563; }
+      .notif-sep { height: 1px; background: #f3f4f6; margin: .25rem 0; }
+      .notif-settings-foot { padding: .6rem .9rem .25rem; }
+      .notif-save { width: 100%; padding: .5rem; border: none; border-radius: .5rem; background: var(--brand-navy);
+        color: #fff; font-size: .78rem; font-weight: 600; cursor: pointer; }
+      .notif-save:hover { background: var(--brand-navy-dark); }
     </style>
   </head>
 

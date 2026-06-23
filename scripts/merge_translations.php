@@ -46,6 +46,20 @@ $TRANSLATIONS = [
     'No tienes notificaciones'    => ['You have no notifications', 'Você não tem notificações'],
     'Nueva negociación asignada'  => ['New deal assigned', 'Nova negociação atribuída'],
     'Se te asignó una negociación'=> ['A deal was assigned to you', 'Uma negociação foi atribuída a você'],
+    'Actividad por vencer'        => ['Upcoming activity', 'Atividade a vencer'],
+    'Configurar notificaciones'   => ['Notification settings', 'Configurações de notificações'],
+    'Silenciar'                   => ['Mute', 'Silenciar'],
+    'Activar sonido'              => ['Enable sound', 'Ativar som'],
+    'Volver'                      => ['Back', 'Voltar'],
+    'Activar notificaciones'      => ['Enable notifications', 'Ativar notificações'],
+    'Sonido'                      => ['Sound', 'Som'],
+    'Notificar negociaciones asignadas' => ['Notify assigned deals', 'Notificar negociações atribuídas'],
+    'Notificar actividades por vencer'  => ['Notify upcoming activities', 'Notificar atividades a vencer'],
+    'Embudos a notificar'         => ['Pipelines to notify', 'Funis a notificar'],
+    'Ninguno'                     => ['None', 'Nenhum'],
+    'Todos'                       => ['All', 'Todos'],
+    'No hay embudos disponibles.' => ['No pipelines available.', 'Não há funis disponíveis.'],
+    'Guardar'                     => ['Save', 'Salvar'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

@@ -17,10 +17,12 @@ class DealActivity extends Model
         'due_at',
         'status',
         'notes',
+        'reminded_at',
     ];
 
     protected $casts = [
         'due_at' => 'datetime',
+        'reminded_at' => 'datetime',
     ];
 
     public function deal()

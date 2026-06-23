@@ -34,6 +34,7 @@ class User extends Authenticatable
         'country_code',
         'phone',
         'is_super_admin',
+        'notification_prefs',
     ];
 
     /**
@@ -140,6 +141,43 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'notification_prefs' => 'array',
         ];
+    }
+
+    /** Preferencias de notificación por defecto. */
+    public const NOTIF_DEFAULTS = [
+        'enabled'       => true,   // interruptor maestro
+        'sound'         => true,   // alerta de sonido
+        'deal_assigned' => true,   // notificar negociaciones asignadas
+        'activity_due'  => true,   // notificar actividades por vencer
+        'pipelines'     => null,   // null = todos los embudos; array de ids = solo esos
+    ];
+
+    /** Preferencias de notificación mezcladas con los valores por defecto. */
+    public function notifPrefs(): array
+    {
+        return array_merge(self::NOTIF_DEFAULTS, (array) ($this->notification_prefs ?? []));
+    }
+
+    /**
+     * ¿El usuario quiere este tipo de notificación? (respeta maestro, tipo y embudo).
+     *
+     * @param  string  $type  'deal_assigned' | 'activity_due'
+     */
+    public function wantsNotification(string $type, ?int $pipelineId = null): bool
+    {
+        $p = $this->notifPrefs();
+        if (empty($p['enabled'])) {
+            return false;
+        }
+        if (array_key_exists($type, $p) && empty($p[$type])) {
+            return false;
+        }
+        $pipes = $p['pipelines'] ?? null;
+        if (is_array($pipes) && $pipelineId !== null && !in_array($pipelineId, $pipes)) {
+            return false;
+        }
+        return true;
     }
 }

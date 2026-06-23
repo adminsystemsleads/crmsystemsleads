@@ -63,6 +63,8 @@ Route::get('/whatsapp/messages/{message}', [\App\Http\Controllers\WhatsappInboxC
 
 // Notificaciones (campana superior derecha)
 Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+Route::get('/notifications/prefs', [\App\Http\Controllers\NotificationController::class, 'prefs'])->name('notifications.prefs');
+Route::post('/notifications/prefs', [\App\Http\Controllers\NotificationController::class, 'savePrefs'])->name('notifications.savePrefs');
 Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'readAll'])->name('notifications.readAll');
 Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
 

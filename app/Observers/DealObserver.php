@@ -42,6 +42,11 @@ class DealObserver
                 return;
             }
 
+            // Respeta las preferencias del usuario (maestro, tipo y embudo).
+            if (!$user->wantsNotification('deal_assigned', $deal->pipeline_id)) {
+                return;
+            }
+
             $client = optional($deal->contact)->name
                 ?: ($deal->title ?: 'Negociación');
 

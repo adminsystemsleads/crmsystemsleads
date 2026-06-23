@@ -1189,5 +1189,16 @@
     "Marcar todas como leídas": "Mark all as read",
     "No tienes notificaciones": "You have no notifications",
     "Nueva negociación asignada": "New deal assigned",
-    "Se te asignó una negociación": "A deal was assigned to you"
+    "Se te asignó una negociación": "A deal was assigned to you",
+    "Actividad por vencer": "Upcoming activity",
+    "Configurar notificaciones": "Notification settings",
+    "Silenciar": "Mute",
+    "Activar sonido": "Enable sound",
+    "Activar notificaciones": "Enable notifications",
+    "Sonido": "Sound",
+    "Notificar negociaciones asignadas": "Notify assigned deals",
+    "Notificar actividades por vencer": "Notify upcoming activities",
+    "Embudos a notificar": "Pipelines to notify",
+    "Ninguno": "None",
+    "No hay embudos disponibles.": "No pipelines available."
 }
