@@ -199,16 +199,16 @@
                                    class="mt-1 block w-full border-gray-300 rounded-md text-sm">
                         </div>
                     </div>
-                    <div class="flex flex-wrap items-center gap-4">
-                        <label class="inline-flex items-center text-xs">
+                    <div class="flex items-center gap-5">
+                        <label class="inline-flex items-center text-xs whitespace-nowrap">
                             <input type="checkbox" name="is_won" value="1"
-                                   class="rounded border-gray-300">
-                            <span class="ml-1.5">{{ __('Ganada') }}</span>
+                                   class="h-4 w-4 rounded border-gray-300" style="margin-right:.4rem;">
+                            <span>{{ __('Ganada') }}</span>
                         </label>
-                        <label class="inline-flex items-center text-xs">
+                        <label class="inline-flex items-center text-xs whitespace-nowrap">
                             <input type="checkbox" name="is_lost" value="1"
-                                   class="rounded border-gray-300">
-                            <span class="ml-1.5">{{ __('Perdida') }}</span>
+                                   class="h-4 w-4 rounded border-gray-300" style="margin-right:.4rem;">
+                            <span>{{ __('Perdida') }}</span>
                         </label>
                         <button type="submit"
                                 class="ml-auto px-4 py-2 bg-indigo-600 text-white rounded-md text-xs font-medium hover:bg-indigo-700 whitespace-nowrap">
