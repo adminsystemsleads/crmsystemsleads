@@ -178,14 +178,18 @@
            get titleDisabled(){ return this.headerType !== 'NONE'; },
            get vars(){ var s=new Set(); (this.body.match(/\{\{\s*(\d+)\s*\}\}/g)||[]).forEach(function(x){ s.add(parseInt(x.replace(/[^0-9]/g,''),10)); }); return Array.from(s).sort(function(a,b){return a-b;}); },
            addButton(t){ if(this.buttons.length<3) this.buttons.push({type:t,text:'',value:''}); },
-           removeButton(i){ this.buttons.splice(i,1); }
+           removeButton(i){ this.buttons.splice(i,1); },
+           expanded: {{ ($errors->any() || old('name') || old('body')) ? 'true' : 'false' }}
          }">
-      <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <svg class="size-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        {{ __('Crear nueva plantilla') }}
-      </h3>
+      <button type="button" @click="expanded = !expanded"
+              class="w-full text-left text-sm font-bold text-gray-800 flex items-center gap-2"
+              :class="expanded ? 'mb-4' : ''">
+        <svg class="size-4 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span class="flex-1">{{ __('Crear nueva plantilla') }}</span>
+        <svg class="size-4 text-gray-400 transition-transform shrink-0" :class="expanded ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div x-show="expanded" x-cloak class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Formulario --}}
         <form method="POST" action="{{ route('whatsapp.templates.store', $account) }}" class="space-y-3" enctype="multipart/form-data" @submit="submitting = true">
           @csrf
