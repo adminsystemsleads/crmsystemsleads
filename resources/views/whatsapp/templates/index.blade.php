@@ -163,7 +163,7 @@
            name:'{{ old('name') }}', category:'{{ old('category','MARKETING') }}', language:'{{ old('language','es') }}',
            headerType:'{{ old('header_type','NONE') }}',
            header:{{ \Illuminate\Support\Js::from(old('header_text','')) }}, body:{{ \Illuminate\Support\Js::from(old('body','')) }},
-           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[], sampleName:'', sampleUrl:'',
+           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[], sampleName:'', sampleUrl:'', submitting:false,
            onSample(e){ var f = e.target.files[0]; if(this.sampleUrl){ URL.revokeObjectURL(this.sampleUrl); } if(f){ this.sampleName=f.name; this.sampleUrl=URL.createObjectURL(f); } else { this.sampleName=''; this.sampleUrl=''; } },
            sanitizeName(){ this.name = (this.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''); },
            get titleDisabled(){ return this.headerType !== 'NONE'; },
@@ -178,7 +178,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Formulario --}}
-        <form method="POST" action="{{ route('whatsapp.templates.store', $account) }}" class="space-y-3" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('whatsapp.templates.store', $account) }}" class="space-y-3" enctype="multipart/form-data" @submit="submitting = true">
           @csrf
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -305,9 +305,13 @@
                 </div>
               </template>
             </div>
-            <div class="mt-2 relative" x-data="{ open: false }" @click.away="open = false" x-show="buttons.length < 3">
-              <button type="button" @click="open = !open" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800">+ {{ __('Añadir botón') }}</button>
-              <div x-show="open" x-cloak class="absolute z-10 mt-1 w-56 bg-white rounded-lg shadow-xl ring-1 ring-black/5 py-1 text-xs">
+            <div class="mt-3 relative" x-data="{ open: false }" @click.away="open = false" x-show="buttons.length < 3">
+              <button type="button" @click="open = !open"
+                      class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-indigo-300 text-indigo-600 hover:border-indigo-400 hover:bg-indigo-50 text-sm font-bold transition">
+                <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                {{ __('Añadir botón') }}
+              </button>
+              <div x-show="open" x-cloak class="absolute z-10 mt-1 w-full bg-white rounded-lg shadow-xl ring-1 ring-black/5 py-1 text-sm">
                 <button type="button" @click="addButton('QUICK_REPLY'); open = false" class="block w-full text-left px-3 py-1.5 hover:bg-gray-100">{{ __('Respuesta rápida') }}</button>
                 <button type="button" @click="addButton('URL'); open = false" class="block w-full text-left px-3 py-1.5 hover:bg-gray-100">{{ __('Ir al sitio web (enlace)') }}</button>
                 <button type="button" @click="addButton('PHONE_NUMBER'); open = false" class="block w-full text-left px-3 py-1.5 hover:bg-gray-100">{{ __('Llamar al número de teléfono') }}</button>
@@ -315,9 +319,15 @@
             </div>
           </div>
 
-          <div class="pt-1">
-            <button type="submit" class="px-5 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition shadow-sm">
-              {{ __('Enviar a Meta para revisión') }}
+          <div class="pt-1 flex justify-end">
+            <button type="submit" :disabled="submitting"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition shadow-sm disabled:opacity-70 disabled:cursor-wait">
+              <svg x-show="submitting" x-cloak class="animate-spin size-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"></path>
+              </svg>
+              <span x-show="!submitting">{{ __('Enviar a Meta para revisión') }}</span>
+              <span x-show="submitting" x-cloak>{{ __('Enviando a Meta…') }}</span>
             </button>
           </div>
         </form>
