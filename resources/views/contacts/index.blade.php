@@ -46,7 +46,7 @@
                 || $filters['stages'] || $filters['pipelines'] || collect($filters['cf'])->flatten()->filter()->isNotEmpty();
       $anyFilter = $q || $status || $hasAdv;
     @endphp
-    <div class="mb-8" x-data="{ adv: {{ $hasAdv ? 'true' : 'false' }} }">
+    <div class="mb-8" x-data="contactsPage({{ $hasAdv ? 'true' : 'false' }})">
       <form method="GET" action="{{ route('contacts.index') }}">
         {{-- Línea principal --}}
         <div class="flex flex-wrap items-center gap-2">
@@ -73,6 +73,14 @@
           <button type="submit" class="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm hover:bg-gray-700 transition">{{ __('Buscar') }}</button>
           @if($anyFilter)
             <a href="{{ route('contacts.index') }}" class="text-sm text-gray-500 hover:text-gray-700">{{ __('Limpiar') }}</a>
+          @endif
+          @if($waAccounts->isNotEmpty())
+            <button type="button" @click="waOpen = !waOpen"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-white text-sm font-medium transition"
+                    style="background:#16a34a;">
+              <svg class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.4.7-1.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.3s1 2.7 1.1 2.8c.1.2 2 3 4.8 4.2 1.8.7 2.5.8 3.3.7.5-.1 1.7-.7 1.9-1.4.2-.6.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2z"/></svg>
+              {{ __('Enviar plantilla WhatsApp') }}
+            </button>
           @endif
         </div>
 
@@ -190,6 +198,87 @@
           </div>
         </div>
       </form>
+
+      {{-- ===== Panel: enviar plantilla de WhatsApp masiva ===== --}}
+      @if($waAccounts->isNotEmpty())
+      <div x-show="waOpen" x-cloak class="mt-3 p-4 bg-white border-2 border-green-200 rounded-xl shadow-sm">
+        <h4 class="text-sm font-bold text-gray-800 mb-1 flex items-center gap-2">
+          <svg class="size-4 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.4.7-1.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.3s1 2.7 1.1 2.8c.1.2 2 3 4.8 4.2 1.8.7 2.5.8 3.3.7.5-.1 1.7-.7 1.9-1.4.2-.6.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2z"/></svg>
+          {{ __('Enviar plantilla de WhatsApp masiva') }}
+        </h4>
+        <p class="text-[11px] text-gray-500 mb-3">{{ __('Se enviará a los contactos del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.') }}</p>
+
+        <div class="flex flex-wrap gap-4">
+          {{-- Número --}}
+          <div style="width:15rem;">
+            <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Número (cuenta de WhatsApp)') }}</label>
+            <select x-model="accountId" @change="loadTemplates()" class="w-full border-gray-300 rounded-lg text-sm py-2">
+              <option value="">{{ __('Selecciona un número…') }}</option>
+              @foreach($waAccounts as $acc)
+                <option value="{{ $acc->id }}">{{ $acc->name }}</option>
+              @endforeach
+            </select>
+          </div>
+
+          {{-- Plantilla --}}
+          <div style="width:20rem;">
+            <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Plantilla') }}</label>
+            <select x-model="selectedTpl" @change="onTplChange()" :disabled="loadingTpl || !templates.length"
+                    class="w-full border-gray-300 rounded-lg text-sm py-2 disabled:bg-gray-100">
+              <option value="">{{ __('Selecciona una plantilla…') }}</option>
+              <template x-for="t in templates" :key="t.name + '|' + t.language">
+                <option :value="t.name + '|' + t.language" x-text="t.name + ' (' + t.language + ')'"></option>
+              </template>
+            </select>
+            <p x-show="loadingTpl" x-cloak class="text-[11px] text-gray-400 mt-1">{{ __('Cargando plantillas…') }}</p>
+            <p x-show="tplError" x-cloak class="text-[11px] text-red-600 mt-1" x-text="tplError"></p>
+            <p x-show="!loadingTpl && accountId && !templates.length && !tplError" x-cloak class="text-[11px] text-gray-400 mt-1">{{ __('Este número no tiene plantillas aprobadas.') }}</p>
+          </div>
+        </div>
+
+        {{-- Variables del cuerpo --}}
+        <div x-show="varCount > 0" x-cloak class="mt-3">
+          <p class="text-[11px] font-medium text-gray-500 mb-1">{{ __('Valores de las variables del cuerpo (escribe {nombre} para insertar el nombre del contacto)') }}</p>
+          <div class="flex flex-wrap gap-2">
+            <template x-for="(v, idx) in vars" :key="idx">
+              <input type="text" x-model="vars[idx]" :placeholder="'{{ __('Valor variable') }} ' + (idx + 1)"
+                     class="border-gray-300 rounded-lg text-xs py-1.5" style="width:12rem;">
+            </template>
+          </div>
+        </div>
+
+        {{-- Enviar + progreso --}}
+        <div class="mt-4 flex items-center gap-3">
+          <button type="button" @click="send()" :disabled="sending || !selectedTpl"
+                  class="px-4 py-2 rounded-lg text-white text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  style="background:#16a34a;">
+            <span x-show="!sending">{{ __('Enviar plantilla') }}</span>
+            <span x-show="sending" x-cloak>{{ __('Enviando…') }}</span>
+          </button>
+        </div>
+
+        <div x-show="sending || finished" x-cloak class="mt-3" style="max-width:32rem;">
+          <div style="height:10px;background:#e5e7eb;border-radius:9999px;overflow:hidden;">
+            <div :style="'width:' + progress + '%'" style="height:100%;background:#16a34a;transition:width .3s;"></div>
+          </div>
+          <p class="text-[11px] text-gray-600 mt-1">
+            <span x-text="progress"></span>% —
+            <span x-text="sentCount"></span> {{ __('enviados') }},
+            <span x-text="failedCount"></span> {{ __('fallidos') }}
+            <span x-show="totalCount"> {{ __('de') }} <span x-text="totalCount"></span></span>
+          </p>
+          <p x-show="finished" x-cloak class="text-[11px] mt-1" :class="failedCount ? 'text-amber-600' : 'text-green-600'">
+            <span x-show="!failedCount">{{ __('¡Envío completado!') }}</span>
+            <span x-show="failedCount" x-cloak>{{ __('Envío finalizado con algunos fallos.') }}</span>
+          </p>
+          <template x-if="resultErrors.length">
+            <ul class="text-[11px] text-red-500 mt-1 list-disc pl-4">
+              <template x-for="(er, i) in resultErrors" :key="i"><li x-text="er"></li></template>
+            </ul>
+          </template>
+        </div>
+      </div>
+      @endif
     </div>
 
     {{-- Tabla --}}
@@ -298,9 +387,99 @@
       </table>
     </div>
 
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+      <span>
+        {{ __('Total de contactos') }}:
+        <span class="font-semibold text-gray-800">{{ number_format($total) }}</span>
+        @if($anyFilter || $q || $status)
+          <span class="text-gray-400">· {{ __('con búsqueda/filtros aplicados') }}</span>
+        @endif
+      </span>
+      @if($contacts->hasPages())
+        <span class="text-gray-400">{{ __('Página') }} {{ $contacts->currentPage() }} / {{ $contacts->lastPage() }}</span>
+      @endif
+    </div>
+
     @if($contacts->hasPages())
-      <div class="mt-4">{{ $contacts->withQueryString()->links() }}</div>
+      <div class="mt-3">{{ $contacts->withQueryString()->links() }}</div>
     @endif
 
   </div>
+
+  <script>
+    function contactsPage(adv) {
+      return {
+        adv: adv,
+        waOpen: false,
+        accountId: '',
+        templates: [],
+        loadingTpl: false,
+        tplError: '',
+        selectedTpl: '',
+        vars: [],
+        sending: false,
+        finished: false,
+        progress: 0,
+        sentCount: 0,
+        failedCount: 0,
+        totalCount: 0,
+        resultErrors: [],
+        get currentTpl() {
+          return this.templates.find(t => (t.name + '|' + t.language) === this.selectedTpl) || null;
+        },
+        get varCount() {
+          return this.currentTpl ? (this.currentTpl.var_count || 0) : 0;
+        },
+        async loadTemplates() {
+          this.templates = []; this.selectedTpl = ''; this.vars = []; this.tplError = '';
+          this.finished = false; this.progress = 0;
+          if (!this.accountId) return;
+          this.loadingTpl = true;
+          try {
+            const res = await fetch('{{ url('/whatsapp/accounts') }}/' + this.accountId + '/templates/list', { headers: { 'Accept': 'application/json' } });
+            const data = await res.json();
+            if (data.ok) { this.templates = data.templates || []; }
+            else { this.tplError = data.message || '{{ __('No se pudieron cargar las plantillas.') }}'; }
+          } catch (e) { this.tplError = e.message; }
+          this.loadingTpl = false;
+        },
+        onTplChange() {
+          this.vars = Array.from({ length: this.varCount }, () => '');
+          this.finished = false; this.progress = 0;
+        },
+        async send() {
+          const tpl = this.currentTpl;
+          if (!this.accountId || !tpl) return;
+          if (!confirm('{{ __('¿Enviar esta plantilla a todos los contactos filtrados?') }}')) return;
+
+          this.sending = true; this.finished = false;
+          this.sentCount = 0; this.failedCount = 0; this.progress = 0;
+          this.totalCount = 0; this.resultErrors = []; this.tplError = '';
+
+          const url = '{{ route('contacts.bulk-template') }}' + window.location.search;
+          let offset = 0; const limit = 20; let total = 0;
+
+          try {
+            do {
+              const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ account_id: this.accountId, template: tpl.name, language: tpl.language, vars: this.vars, offset: offset, limit: limit }),
+              });
+              const data = await res.json();
+              if (!data.ok) { this.tplError = data.message || 'Error'; break; }
+              total = data.total; this.totalCount = total;
+              this.sentCount += data.sent; this.failedCount += data.failed;
+              if (data.errors && data.errors.length) { this.resultErrors.push(...data.errors); }
+              offset = data.processed;
+              this.progress = total > 0 ? Math.round(offset / total * 100) : 100;
+              if (data.done) break;
+            } while (offset < total);
+          } catch (e) { this.tplError = e.message; }
+
+          this.sending = false; this.finished = true;
+        },
+      };
+    }
+  </script>
 </x-app-layout>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
+use App\Models\WhatsappAccount;
+use App\Services\WhatsappTemplateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -35,8 +37,55 @@ class ContactController extends Controller
         // Campos personalizados de contacto (para filtros).
         $contactFields = \App\Support\CustomFieldsHelper::fieldsFor($teamId, 'contact');
 
+        $query = $this->buildFilteredQuery($request, $teamId, $teamTz, $contactFields);
+
+        $contacts = $query->withCount('deals')->orderBy('name')->paginate(25)->withQueryString();
+        $total    = $contacts->total();
+
+        // Cuentas de WhatsApp activas (para el envío masivo de plantillas).
+        $waAccounts = WhatsappAccount::where('team_id', $teamId)
+            ->where('is_active', true)
+            ->orderBy('name')->get(['id', 'name']);
+
+        // Opciones para los filtros.
+        $teamMembers   = $team->allUsers()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
+        $pipelinesList = Pipeline::where('team_id', $teamId)->orderBy('name')->get(['id', 'name']);
+        $stagesList    = PipelineStage::whereIn('pipeline_id', $pipelinesList->pluck('id'))
+            ->orderBy('pipeline_id')->orderBy('sort_order')->get(['id', 'name', 'pipeline_id']);
+
+        // Meses con contactos creados (para el filtro de mes).
+        $monthsList = Contact::where('team_id', $teamId)
+            ->orderByDesc('created_at')->pluck('created_at')
+            ->map(fn($d) => $d?->copy()->setTimezone($teamTz)->format('Y-m'))
+            ->filter()->unique()->values();
+
+        $filters = compact('createdFrom', 'createdTo', 'months', 'responsibles', 'stages', 'pipelines', 'cf');
+
+        return view('contacts.index', compact(
+            'contacts', 'q', 'status', 'filters', 'total', 'waAccounts',
+            'teamMembers', 'pipelinesList', 'stagesList', 'monthsList', 'contactFields'
+        ));
+    }
+
+    /**
+     * Construye la query de contactos aplicando búsqueda + filtros del request.
+     * Reutilizada por index() y por el envío masivo de plantillas.
+     */
+    protected function buildFilteredQuery(Request $request, int $teamId, $teamTz, $contactFields = null)
+    {
+        $contactFields = $contactFields ?? \App\Support\CustomFieldsHelper::fieldsFor($teamId, 'contact');
+
+        $q            = $request->query('q');
+        $status       = $request->query('status');
+        $createdFrom  = $request->query('created_from');
+        $createdTo    = $request->query('created_to');
+        $months       = array_values(array_filter((array) $request->query('months', [])));
+        $responsibles = array_values(array_filter((array) $request->query('responsibles', [])));
+        $stages       = array_values(array_filter((array) $request->query('stages', [])));
+        $pipelines    = array_values(array_filter((array) $request->query('pipelines', [])));
+        $cf           = (array) $request->query('cf', []);
+
         $query = Contact::where('team_id', $teamId)
-            // Texto: nombre, email, teléfono, empresa o título de negociación.
             ->when($q, fn($query) => $query->where(function ($sq) use ($q) {
                 $sq->where('name', 'like', "%{$q}%")
                    ->orWhere('email', 'like', "%{$q}%")
@@ -45,10 +94,8 @@ class ContactController extends Controller
                    ->orWhereHas('deals', fn($d) => $d->where('title', 'like', "%{$q}%"));
             }))
             ->when($status, fn($query) => $query->where('status', $status))
-            // Fecha de creación (exacta/rango), interpretada en la zona del equipo.
             ->when($createdFrom, fn($query) => $query->where('created_at', '>=', Carbon::parse($createdFrom, $teamTz)->startOfDay()->utc()))
             ->when($createdTo, fn($query) => $query->where('created_at', '<=', Carbon::parse($createdTo, $teamTz)->endOfDay()->utc()))
-            // Meses de creación (múltiple).
             ->when($months, fn($query) => $query->where(function ($w) use ($months, $teamTz) {
                 foreach ($months as $m) {
                     try { $start = Carbon::createFromFormat('Y-m-d', $m . '-01', $teamTz)->startOfMonth(); }
@@ -56,12 +103,10 @@ class ContactController extends Controller
                     $w->orWhereBetween('created_at', [$start->copy()->utc(), $start->copy()->endOfMonth()->utc()]);
                 }
             }))
-            // Filtros por negociación relacionada (múltiple).
             ->when($responsibles, fn($query) => $query->whereHas('deals', fn($d) => $d->whereIn('responsible_id', $responsibles)))
             ->when($stages, fn($query) => $query->whereHas('deals', fn($d) => $d->whereIn('stage_id', $stages)))
             ->when($pipelines, fn($query) => $query->whereHas('deals', fn($d) => $d->whereIn('pipeline_id', $pipelines)));
 
-        // Filtros por campos personalizados.
         foreach ($contactFields as $field) {
             $val  = $cf[$field->id] ?? null;
             $vals = array_values(array_filter(is_array($val) ? $val : [$val], fn($v) => $v !== null && $v !== ''));
@@ -83,26 +128,77 @@ class ContactController extends Controller
             });
         }
 
-        $contacts = $query->withCount('deals')->orderBy('name')->paginate(25)->withQueryString();
+        return $query;
+    }
 
-        // Opciones para los filtros.
-        $teamMembers   = $team->allUsers()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
-        $pipelinesList = Pipeline::where('team_id', $teamId)->orderBy('name')->get(['id', 'name']);
-        $stagesList    = PipelineStage::whereIn('pipeline_id', $pipelinesList->pluck('id'))
-            ->orderBy('pipeline_id')->orderBy('sort_order')->get(['id', 'name', 'pipeline_id']);
+    /**
+     * Envío masivo de una plantilla de WhatsApp a los contactos filtrados.
+     * Procesa por lotes (offset/limit) para reportar progreso desde el frontend.
+     */
+    public function bulkSendTemplate(Request $request, WhatsappTemplateService $service)
+    {
+        $team   = $this->currentTeam();
+        $teamId = $team->id;
+        $teamTz = $team->effectiveTimezone();
 
-        // Meses con contactos creados (para el filtro de mes).
-        $monthsList = Contact::where('team_id', $teamId)
-            ->orderByDesc('created_at')->pluck('created_at')
-            ->map(fn($d) => $d?->copy()->setTimezone($teamTz)->format('Y-m'))
-            ->filter()->unique()->values();
+        $data = $request->validate([
+            'account_id' => 'required|integer',
+            'template'   => 'required|string|max:512',
+            'language'   => 'required|string|max:10',
+            'vars'       => 'nullable|array',
+            'vars.*'     => 'nullable|string|max:1000',
+            'offset'     => 'required|integer|min:0',
+            'limit'      => 'required|integer|min:1|max:50',
+        ]);
 
-        $filters = compact('createdFrom', 'createdTo', 'months', 'responsibles', 'stages', 'pipelines', 'cf');
+        $account = WhatsappAccount::where('team_id', $teamId)->findOrFail($data['account_id']);
 
-        return view('contacts.index', compact(
-            'contacts', 'q', 'status', 'filters',
-            'teamMembers', 'pipelinesList', 'stagesList', 'monthsList', 'contactFields'
-        ));
+        // Solo contactos con teléfono, orden estable por id.
+        $base = $this->buildFilteredQuery($request, $teamId, $teamTz)
+            ->whereNotNull('phone')->where('phone', '!=', '')
+            ->orderBy('id');
+
+        $total = (clone $base)->count();
+
+        $batch = $base->offset($data['offset'])->limit($data['limit'])->get(['id', 'name', 'phone']);
+
+        $vars   = array_values($data['vars'] ?? []);
+        $sent   = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($batch as $c) {
+            $phone = preg_replace('/\D+/', '', (string) $c->phone);
+            if ($phone === '') { $failed++; continue; }
+
+            // Variables del cuerpo: {nombre} → nombre del contacto.
+            $bodyParams = array_map(function ($v) use ($c) {
+                return str_ireplace('{nombre}', (string) $c->name, (string) $v);
+            }, $vars);
+
+            $res = $service->sendTemplate($account, $phone, $data['template'], $data['language'], $bodyParams);
+
+            if ($res['ok'] ?? false) {
+                $sent++;
+            } else {
+                $failed++;
+                if (count($errors) < 3) {
+                    $errors[] = $c->name . ': ' . ($res['message'] ?? 'error');
+                }
+            }
+        }
+
+        $processed = $data['offset'] + $batch->count();
+
+        return response()->json([
+            'ok'        => true,
+            'total'     => $total,
+            'processed' => $processed,
+            'sent'      => $sent,
+            'failed'    => $failed,
+            'done'      => $processed >= $total || $batch->count() === 0,
+            'errors'    => $errors,
+        ]);
     }
 
     public function create()

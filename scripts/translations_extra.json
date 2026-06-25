@@ -1,4 +1,84 @@
 {
+    "Enviar plantilla WhatsApp": {
+        "en": "Send WhatsApp template",
+        "pt": "Enviar modelo do WhatsApp"
+    },
+    "Enviar plantilla de WhatsApp masiva": {
+        "en": "Send bulk WhatsApp template",
+        "pt": "Enviar modelo do WhatsApp em massa"
+    },
+    "Se enviará a los contactos del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": {
+        "en": "It will be sent to the contacts in the current result (with the search and filters applied) that have a phone number.",
+        "pt": "Será enviado aos contatos do resultado atual (com a busca e filtros aplicados) que tenham telefone."
+    },
+    "Número (cuenta de WhatsApp)": {
+        "en": "Number (WhatsApp account)",
+        "pt": "Número (conta do WhatsApp)"
+    },
+    "Selecciona un número…": {
+        "en": "Select a number…",
+        "pt": "Selecione um número…"
+    },
+    "Selecciona una plantilla…": {
+        "en": "Select a template…",
+        "pt": "Selecione um modelo…"
+    },
+    "Cargando plantillas…": {
+        "en": "Loading templates…",
+        "pt": "Carregando modelos…"
+    },
+    "Este número no tiene plantillas aprobadas.": {
+        "en": "This number has no approved templates.",
+        "pt": "Este número não tem modelos aprovados."
+    },
+    "Valores de las variables del cuerpo (escribe {nombre} para insertar el nombre del contacto)": {
+        "en": "Body variable values (type {nombre} to insert the contact's name)",
+        "pt": "Valores das variáveis do corpo (escreva {nombre} para inserir o nome do contato)"
+    },
+    "Valor variable": {
+        "en": "Variable value",
+        "pt": "Valor da variável"
+    },
+    "Enviar plantilla": {
+        "en": "Send template",
+        "pt": "Enviar modelo"
+    },
+    "¿Enviar esta plantilla a todos los contactos filtrados?": {
+        "en": "Send this template to all filtered contacts?",
+        "pt": "Enviar este modelo a todos os contatos filtrados?"
+    },
+    "No se pudieron cargar las plantillas.": {
+        "en": "Templates could not be loaded.",
+        "pt": "Não foi possível carregar os modelos."
+    },
+    "enviados": {
+        "en": "sent",
+        "pt": "enviados"
+    },
+    "fallidos": {
+        "en": "failed",
+        "pt": "falhados"
+    },
+    "¡Envío completado!": {
+        "en": "Sending complete!",
+        "pt": "Envio concluído!"
+    },
+    "Envío finalizado con algunos fallos.": {
+        "en": "Sending finished with some failures.",
+        "pt": "Envio finalizado com algumas falhas."
+    },
+    "Total de contactos": {
+        "en": "Total contacts",
+        "pt": "Total de contatos"
+    },
+    "con búsqueda/filtros aplicados": {
+        "en": "with search/filters applied",
+        "pt": "com busca/filtros aplicados"
+    },
+    "Página": {
+        "en": "Page",
+        "pt": "Página"
+    },
     "Ver documento": {
         "en": "View document",
         "pt": "Ver documento"

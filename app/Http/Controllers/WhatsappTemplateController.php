@@ -28,6 +28,35 @@ class WhatsappTemplateController extends Controller
         return view('whatsapp.templates.index', compact('account', 'templates', 'error'));
     }
 
+    /** Devuelve (JSON) las plantillas APROBADAS de una cuenta para el selector de envío masivo. */
+    public function forAccount(WhatsappAccount $account)
+    {
+        $this->guard($account);
+
+        $result = $this->service->listTemplates($account, true);
+        if (!($result['ok'] ?? false)) {
+            return response()->json(['ok' => false, 'message' => $result['message'] ?? 'Error', 'templates' => []], 200);
+        }
+
+        $templates = array_map(function ($t) {
+            $comps = collect($t['components'] ?? []);
+            $body  = $comps->firstWhere('type', 'BODY');
+            $bodyText = $body['text'] ?? '';
+            preg_match_all('/\{\{\s*(\d+)\s*\}\}/', $bodyText, $m);
+            $varCount = count(array_unique($m[1] ?? []));
+
+            return [
+                'name'      => $t['name'] ?? '',
+                'language'  => $t['language'] ?? '',
+                'category'  => $t['category'] ?? '',
+                'body'      => $bodyText,
+                'var_count' => $varCount,
+            ];
+        }, $result['templates'] ?? []);
+
+        return response()->json(['ok' => true, 'templates' => array_values($templates)]);
+    }
+
     /** Crea una plantilla en Meta. */
     public function store(Request $request, WhatsappAccount $account)
     {

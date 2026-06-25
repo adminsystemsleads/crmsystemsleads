@@ -109,6 +109,8 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
     Route::post('/contacts/import',         [ContactController::class, 'importStore'])->name('contacts.import.store');
     // Export CSV de contactos
     Route::get('/contacts/export',          [ContactController::class, 'export'])->name('contacts.export');
+    // Envío masivo de plantilla de WhatsApp a contactos filtrados
+    Route::post('/contacts/bulk-template',  [ContactController::class, 'bulkSendTemplate'])->name('contacts.bulk-template');
 
     // Export CSV de negociaciones
     Route::get('/pipelines/{pipeline}/deals/export', [DealController::class, 'export'])->name('deals.export');
@@ -226,6 +228,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
         Route::post('/whatsapp/accounts/detect-waba',  [WhatsappAccountController::class, 'detectWabaId'])->name('whatsapp.accounts.detect-waba');
 
         // Plantillas de Meta por cuenta de WhatsApp
+        Route::get('/whatsapp/accounts/{account}/templates/list', [\App\Http\Controllers\WhatsappTemplateController::class, 'forAccount'])->name('whatsapp.templates.list');
         Route::get('/whatsapp/accounts/{account}/templates', [\App\Http\Controllers\WhatsappTemplateController::class, 'index'])->name('whatsapp.templates.index');
         Route::post('/whatsapp/accounts/{account}/templates', [\App\Http\Controllers\WhatsappTemplateController::class, 'store'])->name('whatsapp.templates.store');
         Route::delete('/whatsapp/accounts/{account}/templates/{name}', [\App\Http\Controllers\WhatsappTemplateController::class, 'destroy'])->name('whatsapp.templates.destroy')->where('name', '[A-Za-z0-9_]+');
