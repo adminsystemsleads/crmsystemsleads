@@ -39,8 +39,12 @@ class WhatsappTemplateController extends Controller
         }
 
         $templates = array_map(function ($t) {
-            $comps = collect($t['components'] ?? []);
-            $body  = $comps->firstWhere('type', 'BODY');
+            $comps  = collect($t['components'] ?? []);
+            $header = $comps->firstWhere('type', 'HEADER');
+            $body   = $comps->firstWhere('type', 'BODY');
+            $footer = $comps->firstWhere('type', 'FOOTER');
+            $btns   = $comps->firstWhere('type', 'BUTTONS');
+
             $bodyText = $body['text'] ?? '';
             preg_match_all('/\{\{\s*(\d+)\s*\}\}/', $bodyText, $m);
             $varCount = count(array_unique($m[1] ?? []));
@@ -51,6 +55,13 @@ class WhatsappTemplateController extends Controller
                 'category'  => $t['category'] ?? '',
                 'body'      => $bodyText,
                 'var_count' => $varCount,
+                'header'    => $header ? [
+                    'format'    => strtoupper($header['format'] ?? 'TEXT'),
+                    'text'      => $header['text'] ?? '',
+                    'media_url' => $header['example']['header_handle'][0] ?? null,
+                ] : null,
+                'footer'    => $footer['text'] ?? '',
+                'buttons'   => array_map(fn($b) => ['text' => $b['text'] ?? ''], $btns['buttons'] ?? []),
             ];
         }, $result['templates'] ?? []);
 

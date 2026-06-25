@@ -208,31 +208,70 @@
         </h4>
         <p class="text-[11px] text-gray-500 mb-3">{{ __('Se enviará a los contactos del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.') }}</p>
 
-        <div class="flex flex-wrap gap-4">
-          {{-- Número --}}
-          <div style="width:15rem;">
-            <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Número (cuenta de WhatsApp)') }}</label>
-            <select x-model="accountId" @change="loadTemplates()" class="w-full border-gray-300 rounded-lg text-sm py-2">
-              <option value="">{{ __('Selecciona un número…') }}</option>
-              @foreach($waAccounts as $acc)
-                <option value="{{ $acc->id }}">{{ $acc->name }}</option>
-              @endforeach
-            </select>
+        <div class="flex flex-wrap gap-6">
+          <div class="flex flex-wrap gap-4">
+            {{-- Número --}}
+            <div style="width:15rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Número (cuenta de WhatsApp)') }}</label>
+              <select x-model="accountId" @change="loadTemplates()" class="w-full border-gray-300 rounded-lg text-sm py-2">
+                <option value="">{{ __('Selecciona un número…') }}</option>
+                @foreach($waAccounts as $acc)
+                  <option value="{{ $acc->id }}">{{ $acc->name }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            {{-- Plantilla --}}
+            <div style="width:20rem;">
+              <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Plantilla') }}</label>
+              <select x-model="selectedTpl" @change="onTplChange()" :disabled="loadingTpl || !templates.length"
+                      class="w-full border-gray-300 rounded-lg text-sm py-2 disabled:bg-gray-100">
+                <option value="">{{ __('Selecciona una plantilla…') }}</option>
+                <template x-for="t in templates" :key="t.name + '|' + t.language">
+                  <option :value="t.name + '|' + t.language" x-text="t.name + ' (' + t.language + ')'"></option>
+                </template>
+              </select>
+              <p x-show="loadingTpl" x-cloak class="text-[11px] text-gray-400 mt-1">{{ __('Cargando plantillas…') }}</p>
+              <p x-show="tplError" x-cloak class="text-[11px] text-red-600 mt-1" x-text="tplError"></p>
+              <p x-show="!loadingTpl && accountId && !templates.length && !tplError" x-cloak class="text-[11px] text-gray-400 mt-1">{{ __('Este número no tiene plantillas aprobadas.') }}</p>
+            </div>
           </div>
 
-          {{-- Plantilla --}}
-          <div style="width:20rem;">
-            <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Plantilla') }}</label>
-            <select x-model="selectedTpl" @change="onTplChange()" :disabled="loadingTpl || !templates.length"
-                    class="w-full border-gray-300 rounded-lg text-sm py-2 disabled:bg-gray-100">
-              <option value="">{{ __('Selecciona una plantilla…') }}</option>
-              <template x-for="t in templates" :key="t.name + '|' + t.language">
-                <option :value="t.name + '|' + t.language" x-text="t.name + ' (' + t.language + ')'"></option>
+          {{-- Previsualización de la plantilla seleccionada --}}
+          <div x-show="currentTpl" x-cloak style="width:18rem;">
+            <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('Vista previa') }}</label>
+            <div style="background:#e5ddd5;border-radius:.6rem;padding:.6rem;">
+              <div style="background:#fff;border-radius:.55rem;padding:.55rem .65rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:12.5px;color:#111;">
+                {{-- Encabezado --}}
+                <template x-if="currentTpl && currentTpl.header && currentTpl.header.format === 'TEXT' && currentTpl.header.text">
+                  <div style="font-weight:700;margin-bottom:.25rem;" x-text="currentTpl.header.text"></div>
+                </template>
+                <template x-if="currentTpl && currentTpl.header && currentTpl.header.format === 'IMAGE' && currentTpl.header.media_url">
+                  <img :src="currentTpl.header.media_url" alt="" style="width:100%;max-height:130px;object-fit:cover;border-radius:.4rem;display:block;margin-bottom:.4rem;">
+                </template>
+                <template x-if="currentTpl && currentTpl.header && currentTpl.header.format === 'VIDEO' && currentTpl.header.media_url">
+                  <video :src="currentTpl.header.media_url" controls style="width:100%;max-height:150px;border-radius:.4rem;display:block;background:#000;margin-bottom:.4rem;"></video>
+                </template>
+                <template x-if="currentTpl && currentTpl.header && ['IMAGE','VIDEO','DOCUMENT','LOCATION'].includes(currentTpl.header.format) && !currentTpl.header.media_url">
+                  <div style="background:#cfd8dc;border-radius:.4rem;height:90px;display:flex;align-items:center;justify-content:center;color:#607d8b;font-size:24px;margin-bottom:.4rem;"
+                       x-text="currentTpl.header.format === 'IMAGE' ? '🖼️' : (currentTpl.header.format === 'VIDEO' ? '🎬' : (currentTpl.header.format === 'DOCUMENT' ? '📄' : '📍'))"></div>
+                </template>
+                {{-- Cuerpo --}}
+                <div style="white-space:pre-line;" x-text="currentTpl ? currentTpl.body : ''"></div>
+                {{-- Pie --}}
+                <template x-if="currentTpl && currentTpl.footer">
+                  <div style="color:#667781;font-size:11px;margin-top:.3rem;" x-text="currentTpl.footer"></div>
+                </template>
+              </div>
+              {{-- Botones --}}
+              <template x-if="currentTpl && currentTpl.buttons && currentTpl.buttons.length">
+                <div style="margin-top:.35rem;display:flex;flex-direction:column;gap:.3rem;">
+                  <template x-for="(b, bi) in currentTpl.buttons" :key="bi">
+                    <div style="background:#fff;border-radius:.55rem;text-align:center;padding:.4rem;color:#1ea0e6;font-size:12.5px;font-weight:600;" x-text="b.text"></div>
+                  </template>
+                </div>
               </template>
-            </select>
-            <p x-show="loadingTpl" x-cloak class="text-[11px] text-gray-400 mt-1">{{ __('Cargando plantillas…') }}</p>
-            <p x-show="tplError" x-cloak class="text-[11px] text-red-600 mt-1" x-text="tplError"></p>
-            <p x-show="!loadingTpl && accountId && !templates.length && !tplError" x-cloak class="text-[11px] text-gray-400 mt-1">{{ __('Este número no tiene plantillas aprobadas.') }}</p>
+            </div>
           </div>
         </div>
 
