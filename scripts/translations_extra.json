@@ -1,4 +1,60 @@
 {
+    "Nombre de la plantilla": {
+        "en": "Template name",
+        "pt": "Nome do modelo"
+    },
+    "Servicio": {
+        "en": "Utility",
+        "pt": "Utilidade"
+    },
+    "Autenticación": {
+        "en": "Authentication",
+        "pt": "Autenticação"
+    },
+    "Aprobada": {
+        "en": "Approved",
+        "pt": "Aprovada"
+    },
+    "Pendiente": {
+        "en": "Pending",
+        "pt": "Pendente"
+    },
+    "En apelación": {
+        "en": "In appeal",
+        "pt": "Em apelação"
+    },
+    "Pend. eliminación": {
+        "en": "Pending deletion",
+        "pt": "Pend. exclusão"
+    },
+    "Rechazada": {
+        "en": "Rejected",
+        "pt": "Rejeitada"
+    },
+    "Deshabilitada": {
+        "en": "Disabled",
+        "pt": "Desabilitada"
+    },
+    "Pausada": {
+        "en": "Paused",
+        "pt": "Pausada"
+    },
+    "Vista previa": {
+        "en": "Preview",
+        "pt": "Pré-visualização"
+    },
+    "Motivo del rechazo": {
+        "en": "Rejection reason",
+        "pt": "Motivo da rejeição"
+    },
+    "Se muestran": {
+        "en": "Showing",
+        "pt": "Mostrando"
+    },
+    "plantilla(s). Haz clic en el nombre para ver la previsualización.": {
+        "en": "template(s). Click the name to see the preview.",
+        "pt": "modelo(s). Clique no nome para ver a pré-visualização."
+    },
     "Arrastra y suelta para subir el archivo": {
         "en": "Drag and drop to upload the file",
         "pt": "Arraste e solte para enviar o arquivo"

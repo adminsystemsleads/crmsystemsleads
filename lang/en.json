@@ -1288,5 +1288,17 @@
     "Editar cuenta": "Edit account",
     "Por ahora funcionan Ninguno (texto) y Ubicación.": "For now, None (text) and Location work.",
     "App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.": "App ID of your Meta for Developers app. Required to upload Image/Video/Document samples when creating templates.",
-    "Ej: 1234567890123456": "E.g.: 1234567890123456"
+    "Ej: 1234567890123456": "E.g.: 1234567890123456",
+    "Nombre de la plantilla": "Template name",
+    "Servicio": "Utility",
+    "Autenticación": "Authentication",
+    "Aprobada": "Approved",
+    "En apelación": "In appeal",
+    "Pend. eliminación": "Pending deletion",
+    "Rechazada": "Rejected",
+    "Deshabilitada": "Disabled",
+    "Pausada": "Paused",
+    "Motivo del rechazo": "Rejection reason",
+    "Se muestran": "Showing",
+    "plantilla(s). Haz clic en el nombre para ver la previsualización.": "template(s). Click the name to see the preview."
 }

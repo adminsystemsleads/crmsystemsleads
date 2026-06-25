@@ -1291,5 +1291,17 @@
     "Editar cuenta": "Editar conta",
     "Por ahora funcionan Ninguno (texto) y Ubicación.": "Por enquanto funcionam Nenhum (texto) e Localização.",
     "App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.": "App ID do seu app do Meta para Desenvolvedores. Necessário para enviar amostras de Imagem/Vídeo/Documento ao criar modelos.",
-    "Ej: 1234567890123456": "Ex.: 1234567890123456"
+    "Ej: 1234567890123456": "Ex.: 1234567890123456",
+    "Nombre de la plantilla": "Nome do modelo",
+    "Servicio": "Utilidade",
+    "Autenticación": "Autenticação",
+    "Aprobada": "Aprovada",
+    "En apelación": "Em apelação",
+    "Pend. eliminación": "Pend. exclusão",
+    "Rechazada": "Rejeitada",
+    "Deshabilitada": "Desabilitada",
+    "Pausada": "Pausada",
+    "Motivo del rechazo": "Motivo da rejeição",
+    "Se muestran": "Mostrando",
+    "plantilla(s). Haz clic en el nombre para ver la previsualización.": "modelo(s). Clique no nome para ver a pré-visualização."
 }

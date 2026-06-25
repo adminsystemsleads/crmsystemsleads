@@ -68,34 +68,92 @@ class WhatsappTemplateService
     }
 
     /**
-     * Resuelve el WABA ID real a partir del Phone Number ID y lo persiste en la cuenta.
-     * Retorna el WABA ID resuelto o null.
+     * Descubre los WABA IDs accesibles con un token:
+     *  A) Desde los permisos granulares del token (debug_token → granular_scopes).
+     *  B) Desde las WABA propias y de clientes del Business (Portfolio) ID.
+     *
+     * @return string[] lista de WABA IDs candidatos (sin duplicados)
+     */
+    public function discoverWabaIds(string $token, ?string $businessId = null): array
+    {
+        $ids = [];
+
+        // A) granular_scopes del token
+        try {
+            $dbg = Http::withToken($token)->acceptJson()->timeout(15)
+                ->get(self::GRAPH . '/debug_token', ['input_token' => $token]);
+            foreach (($dbg->json('data.granular_scopes') ?? []) as $gs) {
+                $scope = $gs['scope'] ?? '';
+                if (in_array($scope, ['whatsapp_business_management', 'whatsapp_business_messaging'], true)) {
+                    foreach (($gs['target_ids'] ?? []) as $tid) {
+                        $ids[] = (string) $tid;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('WA discoverWabaIds debug_token: ' . $e->getMessage());
+        }
+
+        // B) WABA del Business ID (propias y de clientes)
+        if ($businessId) {
+            foreach (['owned_whatsapp_business_accounts', 'client_whatsapp_business_accounts'] as $edge) {
+                try {
+                    $r = Http::withToken($token)->acceptJson()->timeout(15)
+                        ->get(self::GRAPH . "/{$businessId}/{$edge}", ['fields' => 'id', 'limit' => 100]);
+                    foreach (($r->json('data') ?? []) as $w) {
+                        if (!empty($w['id'])) $ids[] = (string) $w['id'];
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("WA discoverWabaIds {$edge}: " . $e->getMessage());
+                }
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
+    /** Indica si un WABA contiene el Phone Number ID dado. */
+    public function wabaOwnsPhone(string $token, string $wabaId, string $phoneId): bool
+    {
+        try {
+            $r = Http::withToken($token)->acceptJson()->timeout(15)
+                ->get(self::GRAPH . "/{$wabaId}/phone_numbers", ['fields' => 'id', 'limit' => 100]);
+            foreach (($r->json('data') ?? []) as $p) {
+                if ((string) ($p['id'] ?? '') === (string) $phoneId) return true;
+            }
+        } catch (\Throwable $e) {
+            Log::warning('WA wabaOwnsPhone: ' . $e->getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Resuelve el WABA ID real de una cuenta y lo persiste. Retorna el WABA ID o null.
+     * Si hay varios candidatos, elige el que contiene el Phone Number ID de la cuenta.
      */
     public function resolveWabaId(WhatsappAccount $account): ?string
     {
-        if (!$account->phone_number_id || !$account->access_token) {
-            return null;
-        }
+        if (!$account->access_token) return null;
 
-        try {
-            $res = Http::withToken($account->access_token)
-                ->acceptJson()->timeout(15)
-                ->get(self::GRAPH . "/{$account->phone_number_id}", [
-                    'fields' => 'whatsapp_business_account_id,verified_name,display_phone_number',
-                ]);
+        $candidates = $this->discoverWabaIds($account->access_token, $account->business_id);
+        if (empty($candidates)) return null;
 
-            $wabaId = $res->json('whatsapp_business_account_id');
-            if ($res->successful() && $wabaId) {
-                if ((string) $account->waba_id !== (string) $wabaId) {
-                    $account->forceFill(['waba_id' => $wabaId])->saveQuietly();
+        $chosen = null;
+        if ($account->phone_number_id && count($candidates) > 1) {
+            foreach ($candidates as $c) {
+                if ($this->wabaOwnsPhone($account->access_token, $c, $account->phone_number_id)) {
+                    $chosen = $c;
+                    break;
                 }
-                return (string) $wabaId;
             }
-        } catch (\Throwable $e) {
-            Log::error('WA resolveWabaId error: ' . $e->getMessage());
+        }
+        $chosen = $chosen ?? $candidates[0];
+
+        if ((string) $account->waba_id !== (string) $chosen) {
+            $account->forceFill(['waba_id' => $chosen])->saveQuietly();
         }
 
-        return null;
+        return (string) $chosen;
     }
 
     /** Realiza la consulta cruda de plantillas contra un WABA ID. */

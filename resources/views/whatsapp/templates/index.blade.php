@@ -26,6 +26,21 @@
         'DISABLED' => ['#fee2e2', '#b91c1c'],
         'PAUSED'   => ['#fee2e2', '#b91c1c'],
       ];
+      $langs = [
+        'es'=>'Español','es_AR'=>'Español (Argentina)','es_MX'=>'Español (México)','es_ES'=>'Español (España)',
+        'en'=>'English','en_US'=>'English (US)','en_GB'=>'English (UK)',
+        'pt_BR'=>'Português (Brasil)','pt_PT'=>'Português (Portugal)',
+        'af'=>'Afrikaans','sq'=>'Albanés','ar'=>'Árabe','az'=>'Azerí','bn'=>'Bengalí','bg'=>'Búlgaro',
+        'ca'=>'Catalán','zh_CN'=>'Chino (CHN)','zh_HK'=>'Chino (HKG)','zh_TW'=>'Chino (TAI)','hr'=>'Croata',
+        'cs'=>'Checo','da'=>'Danés','nl'=>'Neerlandés','et'=>'Estonio','fil'=>'Filipino','fi'=>'Finés',
+        'fr'=>'Francés','ka'=>'Georgiano','de'=>'Alemán','el'=>'Griego','gu'=>'Gujarati','ha'=>'Hausa',
+        'he'=>'Hebreo','hi'=>'Hindi','hu'=>'Húngaro','id'=>'Indonesio','ga'=>'Irlandés','it'=>'Italiano',
+        'ja'=>'Japonés','kn'=>'Canarés','kk'=>'Kazajo','ko'=>'Coreano','lo'=>'Lao','lv'=>'Letón',
+        'lt'=>'Lituano','mk'=>'Macedonio','ms'=>'Malayo','ml'=>'Malabar','mr'=>'Maratí','nb'=>'Noruego',
+        'fa'=>'Persa','pl'=>'Polaco','pa'=>'Panyabí','ro'=>'Rumano','ru'=>'Ruso','sr'=>'Serbio',
+        'sk'=>'Eslovaco','sl'=>'Esloveno','sw'=>'Suajili','sv'=>'Sueco','ta'=>'Tamil','te'=>'Telugu',
+        'th'=>'Tailandés','tr'=>'Turco','uk'=>'Ucraniano','ur'=>'Urdu','uz'=>'Uzbeko','vi'=>'Vietnamita','zu'=>'Zulú',
+      ];
     @endphp
 
     {{-- ===== Lista de plantillas ===== --}}
@@ -38,58 +53,106 @@
       @if(empty($templates))
         <div class="px-5 py-10 text-center text-sm text-gray-400">{{ __('Aún no hay plantillas creadas para esta cuenta.') }}</div>
       @else
-        <div class="divide-y divide-gray-100">
-          @foreach($templates as $t)
-            @php
-              $st = strtoupper($t['status'] ?? '');
-              [$bg, $fg] = $statusMap[$st] ?? ['#f3f4f6', '#4b5563'];
-              $comps = collect($t['components'] ?? []);
-              $header = $comps->firstWhere('type', 'HEADER');
-              $body   = $comps->firstWhere('type', 'BODY');
-              $footer = $comps->firstWhere('type', 'FOOTER');
-              $btns   = $comps->firstWhere('type', 'BUTTONS');
-            @endphp
-            <div class="px-5 py-4 flex flex-col md:flex-row md:items-start gap-4">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-semibold text-gray-900 text-sm">{{ $t['name'] ?? '—' }}</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" style="background:{{ $bg }};color:{{ $fg }};">{{ $st }}</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600">{{ $t['category'] ?? '' }}</span>
-                  <span class="text-[10px] text-gray-400">{{ $t['language'] ?? '' }}</span>
-                </div>
-                @if($st === 'REJECTED' && !empty($t['rejected_reason']))
-                  <p class="text-[11px] text-red-500 mt-1">{{ __('Motivo') }}: {{ $t['rejected_reason'] }}</p>
-                @endif
-                <form method="POST" action="{{ route('whatsapp.templates.destroy', [$account, $t['name']]) }}"
-                      onsubmit="return confirm('{{ __('¿Eliminar esta plantilla de Meta?') }}');" class="mt-2">
-                  @csrf @method('DELETE')
-                  <button type="submit" class="text-[11px] font-semibold text-red-600 hover:text-red-800">{{ __('Eliminar') }}</button>
-                </form>
-              </div>
+        @php
+          $catMap = ['UTILITY'=>__('Servicio'),'MARKETING'=>__('Marketing'),'AUTHENTICATION'=>__('Autenticación')];
+          $stLabel = ['APPROVED'=>__('Aprobada'),'PENDING'=>__('Pendiente'),'IN_APPEAL'=>__('En apelación'),'PENDING_DELETION'=>__('Pend. eliminación'),'REJECTED'=>__('Rechazada'),'DISABLED'=>__('Deshabilitada'),'PAUSED'=>__('Pausada')];
+        @endphp
+        <div class="overflow-x-auto" x-data="{ open: null }">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs font-semibold text-gray-500 border-b border-gray-100">
+                <th class="px-5 py-3">{{ __('Nombre de la plantilla') }}</th>
+                <th class="px-5 py-3">{{ __('Categoría') }}</th>
+                <th class="px-5 py-3">{{ __('Idioma') }}</th>
+                <th class="px-5 py-3">{{ __('Estado') }}</th>
+                <th class="px-5 py-3 text-right">{{ __('Acciones') }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @foreach($templates as $i => $t)
+                @php
+                  $st = strtoupper($t['status'] ?? '');
+                  [$bg, $fg] = $statusMap[$st] ?? ['#f3f4f6', '#4b5563'];
+                  $comps  = collect($t['components'] ?? []);
+                  $header = $comps->firstWhere('type', 'HEADER');
+                  $body   = $comps->firstWhere('type', 'BODY');
+                  $footer = $comps->firstWhere('type', 'FOOTER');
+                  $btns   = $comps->firstWhere('type', 'BUTTONS');
+                  $hfmt   = strtoupper($header['format'] ?? '');
+                  $langName = $langs[$t['language'] ?? ''] ?? null;
+                @endphp
+                <tr class="hover:bg-gray-50/60 transition">
+                  <td class="px-5 py-3">
+                    <button type="button" @click="open = open===@js($i) ? null : @js($i)"
+                            class="inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900">
+                      <svg class="size-3.5 transition-transform" :class="open===@js($i) ? 'rotate-90' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                      {{ $t['name'] ?? '—' }}
+                    </button>
+                  </td>
+                  <td class="px-5 py-3 text-gray-600">{{ $catMap[strtoupper($t['category'] ?? '')] ?? ($t['category'] ?? '—') }}</td>
+                  <td class="px-5 py-3 text-gray-600">
+                    {{ $langName ? $langName : ($t['language'] ?? '—') }}
+                    <span class="text-[10px] text-gray-400">{{ $langName ? '('.$t['language'].')' : '' }}</span>
+                  </td>
+                  <td class="px-5 py-3">
+                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold" style="background:{{ $bg }};color:{{ $fg }};">{{ $stLabel[$st] ?? $st }}</span>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <form method="POST" action="{{ route('whatsapp.templates.destroy', [$account, $t['name']]) }}"
+                          onsubmit="return confirm('{{ __('¿Eliminar esta plantilla de Meta?') }}');" class="inline">
+                      @csrf @method('DELETE')
+                      <button type="submit" class="text-[11px] font-semibold text-red-600 hover:text-red-800">{{ __('Eliminar') }}</button>
+                    </form>
+                  </td>
+                </tr>
 
-              {{-- Previsualización --}}
-              <div class="shrink-0" style="width:300px;max-width:100%;">
-                <div style="background:#e5ddd5;border-radius:.6rem;padding:.6rem;">
-                  <div style="background:#fff;border-radius:.55rem;padding:.55rem .65rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:12.5px;color:#111;">
-                    @if($header && ($header['format'] ?? '') === 'TEXT')
-                      <div style="font-weight:700;margin-bottom:.25rem;">{{ $header['text'] ?? '' }}</div>
-                    @endif
-                    <div style="white-space:pre-line;">{{ $body['text'] ?? '' }}</div>
-                    @if($footer)
-                      <div style="color:#667781;font-size:11px;margin-top:.3rem;">{{ $footer['text'] ?? '' }}</div>
-                    @endif
-                  </div>
-                  @if($btns && !empty($btns['buttons']))
-                    <div style="margin-top:.35rem;display:flex;flex-direction:column;gap:.3rem;">
-                      @foreach($btns['buttons'] as $b)
-                        <div style="background:#fff;border-radius:.55rem;text-align:center;padding:.4rem;color:#1ea0e6;font-size:12.5px;font-weight:600;">{{ $b['text'] ?? '' }}</div>
-                      @endforeach
+                {{-- Fila de previsualización (se abre al hacer clic en el nombre) --}}
+                <tr x-show="open===@js($i)" x-cloak>
+                  <td colspan="5" class="px-5 py-5 bg-gray-50/70">
+                    <div class="flex flex-col md:flex-row md:items-start gap-6">
+                      <div class="shrink-0" style="width:300px;max-width:100%;">
+                        <p class="text-[11px] font-semibold text-gray-500 mb-2">{{ __('Vista previa') }}</p>
+                        <div style="background:#e5ddd5;border-radius:.6rem;padding:.6rem;">
+                          <div style="background:#fff;border-radius:.55rem;padding:.55rem .65rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:12.5px;color:#111;">
+                            @if($header && $hfmt === 'TEXT')
+                              <div style="font-weight:700;margin-bottom:.25rem;">{{ $header['text'] ?? '' }}</div>
+                            @elseif($header && in_array($hfmt, ['IMAGE','VIDEO','DOCUMENT','LOCATION']))
+                              <div style="background:#cfd8dc;border-radius:.4rem;height:120px;display:flex;align-items:center;justify-content:center;color:#607d8b;font-size:30px;margin-bottom:.4rem;">
+                                {!! $hfmt==='IMAGE' ? '🖼️' : ($hfmt==='VIDEO' ? '🎬' : ($hfmt==='DOCUMENT' ? '📄' : '📍')) !!}
+                              </div>
+                            @endif
+                            <div style="white-space:pre-line;">{{ $body['text'] ?? '' }}</div>
+                            @if($footer)
+                              <div style="color:#667781;font-size:11px;margin-top:.3rem;">{{ $footer['text'] ?? '' }}</div>
+                            @endif
+                          </div>
+                          @if($btns && !empty($btns['buttons']))
+                            <div style="margin-top:.35rem;display:flex;flex-direction:column;gap:.3rem;">
+                              @foreach($btns['buttons'] as $b)
+                                <div style="background:#fff;border-radius:.55rem;text-align:center;padding:.4rem;color:#1ea0e6;font-size:12.5px;font-weight:600;">{{ $b['text'] ?? '' }}</div>
+                              @endforeach
+                            </div>
+                          @endif
+                        </div>
+                      </div>
+
+                      <div class="flex-1 min-w-0 text-xs text-gray-600 space-y-1">
+                        <div><span class="font-semibold text-gray-500">ID:</span> {{ $t['id'] ?? '—' }}</div>
+                        <div><span class="font-semibold text-gray-500">{{ __('Idioma') }}:</span> {{ $t['language'] ?? '—' }}</div>
+                        <div><span class="font-semibold text-gray-500">{{ __('Categoría') }}:</span> {{ $t['category'] ?? '—' }}</div>
+                        @if($st === 'REJECTED' && !empty($t['rejected_reason']))
+                          <div class="text-red-500"><span class="font-semibold">{{ __('Motivo del rechazo') }}:</span> {{ $t['rejected_reason'] }}</div>
+                        @endif
+                      </div>
                     </div>
-                  @endif
-                </div>
-              </div>
-            </div>
-          @endforeach
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+        <div class="px-5 py-3 text-[11px] text-gray-400 border-t border-gray-100">
+          {{ __('Se muestran') }} {{ count($templates) }} {{ __('plantilla(s). Haz clic en el nombre para ver la previsualización.') }}
         </div>
       @endif
     </div>
@@ -125,23 +188,6 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Idioma') }} *</label>
-              @php
-                $langs = [
-                  'es'=>'Español','es_AR'=>'Español (Argentina)','es_MX'=>'Español (México)','es_ES'=>'Español (España)',
-                  'en'=>'English','en_US'=>'English (US)','en_GB'=>'English (UK)',
-                  'pt_BR'=>'Português (Brasil)','pt_PT'=>'Português (Portugal)',
-                  'af'=>'Afrikaans','sq'=>'Albanés','ar'=>'Árabe','az'=>'Azerí','bn'=>'Bengalí','bg'=>'Búlgaro',
-                  'ca'=>'Catalán','zh_CN'=>'Chino (CHN)','zh_HK'=>'Chino (HKG)','zh_TW'=>'Chino (TAI)','hr'=>'Croata',
-                  'cs'=>'Checo','da'=>'Danés','nl'=>'Neerlandés','et'=>'Estonio','fil'=>'Filipino','fi'=>'Finés',
-                  'fr'=>'Francés','ka'=>'Georgiano','de'=>'Alemán','el'=>'Griego','gu'=>'Gujarati','ha'=>'Hausa',
-                  'he'=>'Hebreo','hi'=>'Hindi','hu'=>'Húngaro','id'=>'Indonesio','ga'=>'Irlandés','it'=>'Italiano',
-                  'ja'=>'Japonés','kn'=>'Canarés','kk'=>'Kazajo','ko'=>'Coreano','lo'=>'Lao','lv'=>'Letón',
-                  'lt'=>'Lituano','mk'=>'Macedonio','ms'=>'Malayo','ml'=>'Malabar','mr'=>'Maratí','nb'=>'Noruego',
-                  'fa'=>'Persa','pl'=>'Polaco','pa'=>'Panyabí','ro'=>'Rumano','ru'=>'Ruso','sr'=>'Serbio',
-                  'sk'=>'Eslovaco','sl'=>'Esloveno','sw'=>'Suajili','sv'=>'Sueco','ta'=>'Tamil','te'=>'Telugu',
-                  'th'=>'Tailandés','tr'=>'Turco','uk'=>'Ucraniano','ur'=>'Urdu','uz'=>'Uzbeko','vi'=>'Vietnamita','zu'=>'Zulú',
-                ];
-              @endphp
               <select name="language" x-model="language" class="w-full rounded-lg border-gray-200 text-sm py-2">
                 @foreach($langs as $code=>$lbl)
                   <option value="{{ $code }}">{{ $lbl }} ({{ $code }})</option>

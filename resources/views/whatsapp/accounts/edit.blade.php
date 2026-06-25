@@ -59,6 +59,7 @@
           document.getElementById('autoDetectWaba')?.addEventListener('click', async function () {
             const phoneId = document.querySelector('[name=phone_number_id]')?.value?.trim();
             const token   = document.querySelector('[name=access_token]')?.value?.trim();
+            const bizId   = document.querySelector('[name=business_id]')?.value?.trim();
             const msgEl   = document.getElementById('autoDetectMsg');
             const wabaInp = document.getElementById('wabaIdInput');
 
@@ -80,7 +81,7 @@
                   'Accept':       'application/json',
                   'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
                 },
-                body: JSON.stringify({ phone_number_id: phoneId, access_token: token }),
+                body: JSON.stringify({ phone_number_id: phoneId, access_token: token, business_id: bizId }),
               });
               const data = await res.json();
               if (data.ok) {

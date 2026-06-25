@@ -142,42 +142,39 @@ class WhatsappAccountController extends Controller
      * Detecta automáticamente el WABA ID desde el Phone Number ID + access token.
      * Se llama por AJAX desde el formulario.
      */
-    public function detectWabaId(Request $request)
+    public function detectWabaId(Request $request, \App\Services\WhatsappTemplateService $service)
     {
         $data = $request->validate([
             'phone_number_id' => 'required|string|max:50',
             'access_token'    => 'required|string',
+            'business_id'     => 'nullable|string|max:50',
         ]);
 
         try {
-            $res = Http::withToken($data['access_token'])
-                ->acceptJson()
-                ->timeout(15)
-                ->get("https://graph.facebook.com/v20.0/{$data['phone_number_id']}", [
-                    'fields' => 'whatsapp_business_account_id,verified_name,display_phone_number',
-                ]);
+            $candidates = $service->discoverWabaIds($data['access_token'], $data['business_id'] ?? null);
 
-            $body = $res->json() ?? [];
-            if (!$res->successful()) {
+            if (empty($candidates)) {
                 return response()->json([
                     'ok'      => false,
-                    'message' => $body['error']['message'] ?? 'Error al consultar Meta',
+                    'message' => 'No se encontró ninguna WhatsApp Business Account. Verifica que el token tenga permiso "whatsapp_business_management" o completa el Business ID.',
                 ], 422);
             }
 
-            $wabaId = $body['whatsapp_business_account_id'] ?? null;
-            if (!$wabaId) {
-                return response()->json([
-                    'ok'      => false,
-                    'message' => 'No se encontró el WABA ID. Verifica que el token tenga permiso whatsapp_business_management.',
-                ], 422);
+            // Si hay varias, elegir la que contiene este Phone Number ID.
+            $chosen = null;
+            if (count($candidates) > 1) {
+                foreach ($candidates as $c) {
+                    if ($service->wabaOwnsPhone($data['access_token'], $c, $data['phone_number_id'])) {
+                        $chosen = $c;
+                        break;
+                    }
+                }
             }
+            $chosen = $chosen ?? $candidates[0];
 
             return response()->json([
-                'ok'                    => true,
-                'waba_id'               => $wabaId,
-                'verified_name'         => $body['verified_name'] ?? null,
-                'display_phone_number'  => $body['display_phone_number'] ?? null,
+                'ok'      => true,
+                'waba_id' => $chosen,
             ]);
         } catch (\Throwable $e) {
             return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
