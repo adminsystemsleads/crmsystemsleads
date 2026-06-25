@@ -47,6 +47,14 @@
             </div>
           </div>
 
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">App ID ({{ __('opcional') }})</label>
+            <input name="app_id" value="{{ old('app_id', $account->app_id) }}" placeholder="{{ __('Ej: 1234567890123456') }}"
+                   class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+            <p class="text-[11px] text-gray-400 mt-1">{{ __('App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.') }}</p>
+            @error('app_id') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+          </div>
+
           <script>
           document.getElementById('autoDetectWaba')?.addEventListener('click', async function () {
             const phoneId = document.querySelector('[name=phone_number_id]')?.value?.trim();

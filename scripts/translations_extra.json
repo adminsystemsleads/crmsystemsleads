@@ -1,4 +1,44 @@
 {
+    "Arrastra y suelta para subir el archivo": {
+        "en": "Drag and drop to upload the file",
+        "pt": "Arraste e solte para enviar o arquivo"
+    },
+    "O elige archivos de tu dispositivo": {
+        "en": "Or choose files from your device",
+        "pt": "Ou escolha arquivos do seu dispositivo"
+    },
+    "Formatos: JPG, PNG (máx. 5 MB).": {
+        "en": "Formats: JPG, PNG (max. 5 MB).",
+        "pt": "Formatos: JPG, PNG (máx. 5 MB)."
+    },
+    "Formato: MP4 (máx. 16 MB).": {
+        "en": "Format: MP4 (max. 16 MB).",
+        "pt": "Formato: MP4 (máx. 16 MB)."
+    },
+    "Formato: PDF (máx. 100 MB).": {
+        "en": "Format: PDF (max. 100 MB).",
+        "pt": "Formato: PDF (máx. 100 MB)."
+    },
+    "Para subir muestras de Imagen/Vídeo/Documento primero configura el App ID de Meta en": {
+        "en": "To upload Image/Video/Document samples, first configure the Meta App ID in",
+        "pt": "Para enviar amostras de Imagem/Vídeo/Documento, primeiro configure o App ID do Meta em"
+    },
+    "Editar cuenta": {
+        "en": "Edit account",
+        "pt": "Editar conta"
+    },
+    "Por ahora funcionan Ninguno (texto) y Ubicación.": {
+        "en": "For now, None (text) and Location work.",
+        "pt": "Por enquanto funcionam Nenhum (texto) e Localização."
+    },
+    "App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.": {
+        "en": "App ID of your Meta for Developers app. Required to upload Image/Video/Document samples when creating templates.",
+        "pt": "App ID do seu app do Meta para Desenvolvedores. Necessário para enviar amostras de Imagem/Vídeo/Documento ao criar modelos."
+    },
+    "Ej: 1234567890123456": {
+        "en": "E.g.: 1234567890123456",
+        "pt": "Ex.: 1234567890123456"
+    },
     "No se pudo cargar el dashboard. Asegúrate de tener un equipo seleccionado.": {
         "en": "Could not load the dashboard. Make sure you have a team selected.",
         "pt": "Não foi possível carregar o painel. Certifique-se de ter uma equipe selecionada."

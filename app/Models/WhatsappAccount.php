@@ -12,6 +12,7 @@ class WhatsappAccount extends Model
         'phone_number_id',
         'waba_id',
         'business_id',   // ✅ OK si existe en DB
+        'app_id',        // Meta App ID — necesario para subir muestras multimedia de plantillas
         'access_token',
         'verify_token',  // ✅ OK si existe en DB
         'pipeline_id',

@@ -129,6 +129,63 @@ class WhatsappTemplateService
         }
     }
 
+    /**
+     * Sube un archivo de muestra (imagen/vídeo/documento) a Meta mediante el
+     * Resumable Upload API y devuelve el "header_handle" para usar en una plantilla.
+     *
+     * @return array ['ok'=>bool, 'handle'=>string|null, 'message'=>string|null]
+     */
+    public function uploadSample(WhatsappAccount $account, string $filePath, string $mime, string $fileName): array
+    {
+        if (empty($account->app_id)) {
+            return ['ok' => false, 'handle' => null, 'message' => 'La cuenta no tiene App ID de Meta configurado (WhatsApp → Cuentas → Editar).'];
+        }
+        if (!is_file($filePath)) {
+            return ['ok' => false, 'handle' => null, 'message' => 'No se pudo leer el archivo subido.'];
+        }
+
+        try {
+            $length = filesize($filePath);
+
+            // 1) Iniciar sesión de carga: /{app-id}/uploads
+            $start = Http::withToken($account->access_token)
+                ->acceptJson()->timeout(30)
+                ->post(self::GRAPH . "/{$account->app_id}/uploads", [
+                    'file_name'   => $fileName,
+                    'file_length' => $length,
+                    'file_type'   => $mime,
+                ]);
+
+            $startBody = $start->json() ?? [];
+            if (!$start->successful() || empty($startBody['id'])) {
+                $msg = $startBody['error']['error_user_msg'] ?? ($startBody['error']['message'] ?? 'No se pudo iniciar la carga del archivo.');
+                return ['ok' => false, 'handle' => null, 'message' => $msg];
+            }
+
+            $uploadId = $startBody['id']; // "upload:XXXXXXXX"
+
+            // 2) Subir los bytes: POST /{upload-id} con header OAuth + file_offset
+            $upload = Http::withHeaders([
+                    'Authorization' => "OAuth {$account->access_token}",
+                    'file_offset'   => '0',
+                ])
+                ->timeout(120)
+                ->withBody(file_get_contents($filePath), $mime)
+                ->post(self::GRAPH . "/{$uploadId}");
+
+            $uploadBody = $upload->json() ?? [];
+            if (!$upload->successful() || empty($uploadBody['h'])) {
+                $msg = $uploadBody['error']['error_user_msg'] ?? ($uploadBody['error']['message'] ?? 'No se pudo subir el archivo a Meta.');
+                return ['ok' => false, 'handle' => null, 'message' => $msg];
+            }
+
+            return ['ok' => true, 'handle' => $uploadBody['h'], 'message' => null];
+        } catch (\Throwable $e) {
+            Log::error('WA uploadSample error: ' . $e->getMessage());
+            return ['ok' => false, 'handle' => null, 'message' => $e->getMessage()];
+        }
+    }
+
     /** Elimina una plantilla por nombre. */
     public function delete(WhatsappAccount $account, string $name): array
     {

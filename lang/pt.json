@@ -1281,5 +1281,15 @@
     "Texto del botón": "Texto do botão",
     "Añadir botón": "Adicionar botão",
     "Ir al sitio web (enlace)": "Ir ao site (link)",
-    "Llamar al número de teléfono": "Ligar para o número"
+    "Llamar al número de teléfono": "Ligar para o número",
+    "Arrastra y suelta para subir el archivo": "Arraste e solte para enviar o arquivo",
+    "O elige archivos de tu dispositivo": "Ou escolha arquivos do seu dispositivo",
+    "Formatos: JPG, PNG (máx. 5 MB).": "Formatos: JPG, PNG (máx. 5 MB).",
+    "Formato: MP4 (máx. 16 MB).": "Formato: MP4 (máx. 16 MB).",
+    "Formato: PDF (máx. 100 MB).": "Formato: PDF (máx. 100 MB).",
+    "Para subir muestras de Imagen/Vídeo/Documento primero configura el App ID de Meta en": "Para enviar amostras de Imagem/Vídeo/Documento, primeiro configure o App ID do Meta em",
+    "Editar cuenta": "Editar conta",
+    "Por ahora funcionan Ninguno (texto) y Ubicación.": "Por enquanto funcionam Nenhum (texto) e Localização.",
+    "App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.": "App ID do seu app do Meta para Desenvolvedores. Necessário para enviar amostras de Imagem/Vídeo/Documento ao criar modelos.",
+    "Ej: 1234567890123456": "Ex.: 1234567890123456"
 }

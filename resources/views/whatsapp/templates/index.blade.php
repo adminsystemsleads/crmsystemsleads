@@ -100,7 +100,7 @@
            name:'{{ old('name') }}', category:'{{ old('category','MARKETING') }}', language:'{{ old('language','es') }}',
            headerType:'{{ old('header_type','NONE') }}',
            header:{{ \Illuminate\Support\Js::from(old('header_text','')) }}, body:{{ \Illuminate\Support\Js::from(old('body','')) }},
-           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[],
+           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[], sampleName:'',
            sanitizeName(){ this.name = (this.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''); },
            get titleDisabled(){ return this.headerType !== 'NONE'; },
            get vars(){ var s=new Set(); (this.body.match(/\{\{\s*(\d+)\s*\}\}/g)||[]).forEach(function(x){ s.add(parseInt(x.replace(/[^0-9]/g,''),10)); }); return Array.from(s).sort(function(a,b){return a-b;}); },
@@ -114,7 +114,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Formulario --}}
-        <form method="POST" action="{{ route('whatsapp.templates.store', $account) }}" class="space-y-3">
+        <form method="POST" action="{{ route('whatsapp.templates.store', $account) }}" class="space-y-3" enctype="multipart/form-data">
           @csrf
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -125,8 +125,25 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Idioma') }} *</label>
+              @php
+                $langs = [
+                  'es'=>'Español','es_AR'=>'Español (Argentina)','es_MX'=>'Español (México)','es_ES'=>'Español (España)',
+                  'en'=>'English','en_US'=>'English (US)','en_GB'=>'English (UK)',
+                  'pt_BR'=>'Português (Brasil)','pt_PT'=>'Português (Portugal)',
+                  'af'=>'Afrikaans','sq'=>'Albanés','ar'=>'Árabe','az'=>'Azerí','bn'=>'Bengalí','bg'=>'Búlgaro',
+                  'ca'=>'Catalán','zh_CN'=>'Chino (CHN)','zh_HK'=>'Chino (HKG)','zh_TW'=>'Chino (TAI)','hr'=>'Croata',
+                  'cs'=>'Checo','da'=>'Danés','nl'=>'Neerlandés','et'=>'Estonio','fil'=>'Filipino','fi'=>'Finés',
+                  'fr'=>'Francés','ka'=>'Georgiano','de'=>'Alemán','el'=>'Griego','gu'=>'Gujarati','ha'=>'Hausa',
+                  'he'=>'Hebreo','hi'=>'Hindi','hu'=>'Húngaro','id'=>'Indonesio','ga'=>'Irlandés','it'=>'Italiano',
+                  'ja'=>'Japonés','kn'=>'Canarés','kk'=>'Kazajo','ko'=>'Coreano','lo'=>'Lao','lv'=>'Letón',
+                  'lt'=>'Lituano','mk'=>'Macedonio','ms'=>'Malayo','ml'=>'Malabar','mr'=>'Maratí','nb'=>'Noruego',
+                  'fa'=>'Persa','pl'=>'Polaco','pa'=>'Panyabí','ro'=>'Rumano','ru'=>'Ruso','sr'=>'Serbio',
+                  'sk'=>'Eslovaco','sl'=>'Esloveno','sw'=>'Suajili','sv'=>'Sueco','ta'=>'Tamil','te'=>'Telugu',
+                  'th'=>'Tailandés','tr'=>'Turco','uk'=>'Ucraniano','ur'=>'Urdu','uz'=>'Uzbeko','vi'=>'Vietnamita','zu'=>'Zulú',
+                ];
+              @endphp
               <select name="language" x-model="language" class="w-full rounded-lg border-gray-200 text-sm py-2">
-                @foreach(['es'=>'Español','es_PE'=>'Español (Perú)','es_MX'=>'Español (México)','es_ES'=>'Español (España)','en'=>'English','en_US'=>'English (US)','pt_BR'=>'Português (Brasil)'] as $code=>$lbl)
+                @foreach($langs as $code=>$lbl)
                   <option value="{{ $code }}">{{ $lbl }} ({{ $code }})</option>
                 @endforeach
               </select>
@@ -151,9 +168,34 @@
               <option value="DOCUMENT">{{ __('Documento') }}</option>
               <option value="LOCATION">{{ __('Ubicación') }}</option>
             </select>
-            <p x-show="headerType==='IMAGE' || headerType==='VIDEO' || headerType==='DOCUMENT'" x-cloak class="text-[10px] text-amber-600 mt-1">
-              {{ __('Imagen/Vídeo/Documento requieren subir una muestra desde Meta; aquí funcionan Ninguno (texto) y Ubicación.') }}
-            </p>
+            {{-- Zona de carga de archivo para Imagen / Vídeo / Documento --}}
+            <div x-show="headerType==='IMAGE' || headerType==='VIDEO' || headerType==='DOCUMENT'" x-cloak class="mt-2">
+              @if($account->app_id)
+                <label class="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-400 bg-gray-50 px-4 py-6 text-center transition">
+                  <input type="file" name="header_sample" class="hidden"
+                         @change="sampleName = $event.target.files.length ? $event.target.files[0].name : ''"
+                         :accept="headerType==='IMAGE' ? 'image/jpeg,image/png' : (headerType==='VIDEO' ? 'video/mp4,video/3gpp' : 'application/pdf')">
+                  <template x-if="!sampleName">
+                    <div class="text-sm text-gray-500">
+                      {{ __('Arrastra y suelta para subir el archivo') }}<br>
+                      <span class="text-indigo-600 font-medium">{{ __('O elige archivos de tu dispositivo') }}</span>
+                    </div>
+                  </template>
+                  <template x-if="sampleName">
+                    <div class="text-sm text-indigo-700 font-medium" x-text="'📎 ' + sampleName"></div>
+                  </template>
+                </label>
+                <p class="text-[10px] text-gray-400 mt-1"
+                   x-text="headerType==='IMAGE' ? '{{ __('Formatos: JPG, PNG (máx. 5 MB).') }}' : (headerType==='VIDEO' ? '{{ __('Formato: MP4 (máx. 16 MB).') }}' : '{{ __('Formato: PDF (máx. 100 MB).') }}')"></p>
+                @error('header_sample') <p class="text-[10px] text-red-600 mt-1">{{ $message }}</p> @enderror
+              @else
+                <p class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                  {{ __('Para subir muestras de Imagen/Vídeo/Documento primero configura el App ID de Meta en') }}
+                  <a href="{{ route('whatsapp.accounts.edit', $account) }}" class="underline font-medium">{{ __('Editar cuenta') }}</a>.
+                  {{ __('Por ahora funcionan Ninguno (texto) y Ubicación.') }}
+                </p>
+              @endif
+            </div>
           </div>
 
           <div>

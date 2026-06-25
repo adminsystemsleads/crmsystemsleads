@@ -37,8 +37,9 @@ class WhatsappTemplateController extends Controller
             'name'        => ['required', 'string', 'max:512', 'regex:/^[a-z0-9_]+$/'],
             'category'    => 'required|in:MARKETING,UTILITY,AUTHENTICATION',
             'language'    => 'required|string|max:10',
-            'header_type' => 'nullable|in:NONE,IMAGE,VIDEO,DOCUMENT,LOCATION',
-            'header_text' => 'nullable|string|max:60',
+            'header_type'   => 'nullable|in:NONE,IMAGE,VIDEO,DOCUMENT,LOCATION',
+            'header_text'   => 'nullable|string|max:60',
+            'header_sample' => 'nullable|file|max:102400',
             'body'        => 'required|string|max:1024',
             'footer_text' => 'nullable|string|max:60',
             'examples'    => 'nullable|array',
@@ -78,8 +79,32 @@ class WhatsappTemplateController extends Controller
         } elseif ($headerType === 'LOCATION') {
             $components[] = ['type' => 'HEADER', 'format' => 'LOCATION'];
         } else {
-            // IMAGE / VIDEO / DOCUMENT (Meta puede requerir una muestra).
-            $components[] = ['type' => 'HEADER', 'format' => $headerType];
+            // IMAGE / VIDEO / DOCUMENT: Meta requiere una muestra subida vía Resumable Upload.
+            $headerComp = ['type' => 'HEADER', 'format' => $headerType];
+
+            if ($request->hasFile('header_sample')) {
+                $file = $request->file('header_sample');
+                $up   = $this->service->uploadSample(
+                    $account,
+                    $file->getRealPath(),
+                    $file->getMimeType() ?: $file->getClientMimeType(),
+                    $file->getClientOriginalName()
+                );
+
+                if (!$up['ok']) {
+                    return back()->withInput()
+                        ->with('flash.banner', 'No se pudo subir la muestra del archivo: ' . ($up['message'] ?? 'error'))
+                        ->with('flash.bannerStyle', 'danger');
+                }
+
+                $headerComp['example'] = ['header_handle' => [$up['handle']]];
+            } else {
+                return back()->withInput()
+                    ->with('flash.banner', 'Para un encabezado de ' . strtolower($headerType) . ' debes subir un archivo de muestra.')
+                    ->with('flash.bannerStyle', 'danger');
+            }
+
+            $components[] = $headerComp;
         }
 
         $bodyComp = ['type' => 'BODY', 'text' => $data['body']];

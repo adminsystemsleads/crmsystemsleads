@@ -1278,5 +1278,15 @@
     "Texto del botón": "Button text",
     "Añadir botón": "Add button",
     "Ir al sitio web (enlace)": "Visit website (link)",
-    "Llamar al número de teléfono": "Call phone number"
+    "Llamar al número de teléfono": "Call phone number",
+    "Arrastra y suelta para subir el archivo": "Drag and drop to upload the file",
+    "O elige archivos de tu dispositivo": "Or choose files from your device",
+    "Formatos: JPG, PNG (máx. 5 MB).": "Formats: JPG, PNG (max. 5 MB).",
+    "Formato: MP4 (máx. 16 MB).": "Format: MP4 (max. 16 MB).",
+    "Formato: PDF (máx. 100 MB).": "Format: PDF (max. 100 MB).",
+    "Para subir muestras de Imagen/Vídeo/Documento primero configura el App ID de Meta en": "To upload Image/Video/Document samples, first configure the Meta App ID in",
+    "Editar cuenta": "Edit account",
+    "Por ahora funcionan Ninguno (texto) y Ubicación.": "For now, None (text) and Location work.",
+    "App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.": "App ID of your Meta for Developers app. Required to upload Image/Video/Document samples when creating templates.",
+    "Ej: 1234567890123456": "E.g.: 1234567890123456"
 }

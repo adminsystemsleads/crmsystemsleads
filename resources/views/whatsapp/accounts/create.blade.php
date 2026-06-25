@@ -34,6 +34,13 @@
           </div>
 
           <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">App ID ({{ __('opcional') }})</label>
+            <input name="app_id" value="{{ old('app_id') }}" placeholder="{{ __('Ej: 1234567890123456') }}"
+                   class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+            <p class="text-[11px] text-gray-400 mt-1">{{ __('App ID de tu app de Meta para Desarrolladores. Necesario para subir muestras de Imagen/Vídeo/Documento al crear plantillas.') }}</p>
+          </div>
+
+          <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Access Token</label>
             <textarea name="access_token" rows="3" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">{{ old('access_token') }}</textarea>
             @error('access_token') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
