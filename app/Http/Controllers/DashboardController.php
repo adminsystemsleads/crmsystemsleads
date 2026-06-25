@@ -47,6 +47,26 @@ class DashboardController extends Controller
             ->get()
             ->mapWithKeys(fn($r) => [$r->currency ?: 'PEN' => (float) $r->total]);
 
+        // Valor de negociaciones ABIERTAS por moneda.
+        $openByCurrency = Deal::where('team_id', $teamId)
+            ->where('status', 'open')
+            ->select('currency', DB::raw('COALESCE(SUM(amount),0) as total'))
+            ->groupBy('currency')
+            ->get()
+            ->mapWithKeys(fn($r) => [$r->currency ?: 'PEN' => (float) $r->total]);
+
+        // Valor total ganado histórico por moneda.
+        $wonAllByCurrency = Deal::where('team_id', $teamId)
+            ->where('status', 'won')
+            ->select('currency', DB::raw('COALESCE(SUM(amount),0) as total'))
+            ->groupBy('currency')
+            ->get()
+            ->mapWithKeys(fn($r) => [$r->currency ?: 'PEN' => (float) $r->total]);
+
+        // Tasa de conversión: ganadas / (ganadas + perdidas).
+        $closed = $dealsWon + $dealsLost;
+        $conversionRate = $closed > 0 ? round($dealsWon / $closed * 100, 1) : 0.0;
+
         $conversationsTotal = WhatsappConversation::where('team_id', $teamId)->count();
         $conversationsOpen  = WhatsappConversation::where('team_id', $teamId)->where('status', 'open')->count();
 
@@ -125,6 +145,9 @@ class DashboardController extends Controller
                 'lost'  => $dealsLost,
                 'month' => $dealsMonth,
                 'won_by_currency' => $wonByCurrency,
+                'open_value_by_currency' => $openByCurrency,
+                'won_all_by_currency'    => $wonAllByCurrency,
+                'conversion_rate'        => $conversionRate,
             ],
             'conversations' => [
                 'total' => $conversationsTotal,

@@ -111,6 +111,14 @@ $TRANSLATIONS = [
     'Buscar por negociación, contacto, email, teléfono…' => ['Search by deal, contact, email, phone…', 'Buscar por negociação, contato, e-mail, telefone…'],
     'Todas'                       => ['All', 'Todas'],
     'meses'                       => ['months', 'meses'],
+    'Oportunidades por estado'    => ['Opportunities by status', 'Oportunidades por status'],
+    'Tasa de conversión'          => ['Conversion rate', 'Taxa de conversão'],
+    'Total'                       => ['Total', 'Total'],
+    'Abiertas'                    => ['Open', 'Abertas'],
+    'Valor de oportunidades'      => ['Opportunity value', 'Valor das oportunidades'],
+    'En negociaciones abiertas'   => ['In open deals', 'Em negociações abertas'],
+    'Ganado (histórico)'          => ['Won (all time)', 'Ganho (histórico)'],
+    'Ganadas / Cerradas'          => ['Won / Closed', 'Ganhas / Fechadas'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

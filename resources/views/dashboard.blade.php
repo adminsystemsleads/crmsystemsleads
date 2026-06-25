@@ -91,6 +91,74 @@
           </a>
         </div>
 
+        {{-- ========= REPORTES: estado, conversión y valor ========= --}}
+        @php
+          $dOpen = $metrics['deals']['open']; $dWon = $metrics['deals']['won']; $dLost = $metrics['deals']['lost'];
+          $realTot = $dOpen + $dWon + $dLost; $tot = max(1, $realTot);
+          $sOpen = round($dOpen / $tot * 100, 2);
+          $sWon  = round(($dOpen + $dWon) / $tot * 100, 2);
+          $conv  = $metrics['deals']['conversion_rate'];
+        @endphp
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          {{-- Oportunidades por estado (dona) --}}
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">{{ __('Oportunidades por estado') }}</h3>
+            <div class="flex items-center gap-4">
+              <div style="position:relative;width:120px;height:120px;border-radius:50%;flex-shrink:0;
+                          background:conic-gradient(#3b82f6 0 {{ $sOpen }}%, #22c55e {{ $sOpen }}% {{ $sWon }}%, #ef4444 {{ $sWon }}% 100%);">
+                <div style="position:absolute;inset:16px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <span class="text-xl font-bold text-gray-900">{{ number_format($realTot) }}</span>
+                  <span class="text-[10px] text-gray-400">{{ __('Total') }}</span>
+                </div>
+              </div>
+              <div class="text-xs space-y-1.5 flex-1">
+                <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#3b82f6;"></span>{{ __('Abiertas') }}</span><span class="font-semibold">{{ number_format($dOpen) }}</span></div>
+                <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#22c55e;"></span>{{ __('Ganadas') }}</span><span class="font-semibold">{{ number_format($dWon) }}</span></div>
+                <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#ef4444;"></span>{{ __('Perdidas') }}</span><span class="font-semibold">{{ number_format($dLost) }}</span></div>
+              </div>
+            </div>
+          </div>
+
+          {{-- Tasa de conversión (anillo) --}}
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">{{ __('Tasa de conversión') }}</h3>
+            <div class="flex-1 flex items-center justify-center">
+              <div style="position:relative;width:130px;height:130px;border-radius:50%;
+                          background:conic-gradient(#16a34a 0 {{ $conv }}%, #e5e7eb {{ $conv }}% 100%);">
+                <div style="position:absolute;inset:15px;background:#fff;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <span class="text-2xl font-bold text-gray-900">{{ $conv }}%</span>
+                  <span class="text-[10px] text-gray-400">{{ __('Ganadas / Cerradas') }}</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-400 text-center mt-2">{{ __('Ganadas') }}: {{ number_format($dWon) }} · {{ __('Perdidas') }}: {{ number_format($dLost) }}</p>
+          </div>
+
+          {{-- Valor de oportunidades --}}
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <h3 class="text-sm font-bold text-gray-900 mb-3">{{ __('Valor de oportunidades') }}</h3>
+            <div class="space-y-3">
+              <div>
+                <p class="text-[11px] text-gray-500 mb-1">{{ __('En negociaciones abiertas') }}</p>
+                @forelse($metrics['deals']['open_value_by_currency'] as $cur => $amt)
+                  <p class="text-base font-bold text-blue-600">{{ $cur }} {{ number_format($amt, 2) }}</p>
+                @empty
+                  <p class="text-base font-bold text-gray-300">—</p>
+                @endforelse
+              </div>
+              <div class="border-t border-gray-100 pt-2">
+                <p class="text-[11px] text-gray-500 mb-1">{{ __('Ganado (histórico)') }}</p>
+                @forelse($metrics['deals']['won_all_by_currency'] as $cur => $amt)
+                  <p class="text-base font-bold text-green-600">{{ $cur }} {{ number_format($amt, 2) }}</p>
+                @empty
+                  <p class="text-base font-bold text-gray-300">—</p>
+                @endforelse
+              </div>
+            </div>
+          </div>
+        </div>
+
         {{-- ========= FUNNELS por pipeline (gráficos de barras) ========= --}}
         @if($metrics['funnels']->isNotEmpty())
           <div class="space-y-4">

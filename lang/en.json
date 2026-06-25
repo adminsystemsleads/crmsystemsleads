@@ -1238,5 +1238,12 @@
     "Embudo": "Pipeline",
     "Etapa": "Stage",
     "Aplicar": "Apply",
-    "Buscar por negociación, contacto, email, teléfono…": "Search by deal, contact, email, phone…"
+    "Buscar por negociación, contacto, email, teléfono…": "Search by deal, contact, email, phone…",
+    "Oportunidades por estado": "Opportunities by status",
+    "Tasa de conversión": "Conversion rate",
+    "Abiertas": "Open",
+    "Valor de oportunidades": "Opportunity value",
+    "En negociaciones abiertas": "In open deals",
+    "Ganado (histórico)": "Won (all time)",
+    "Ganadas / Cerradas": "Won / Closed"
 }
