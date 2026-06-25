@@ -1250,5 +1250,16 @@
     "Restablecer": "Reset",
     "Listo": "Done",
     "Arrastrar": "Drag",
-    "Mostrar / ocultar": "Show / hide"
+    "Mostrar / ocultar": "Show / hide",
+    "Plantillas": "Templates",
+    "Plantillas de WhatsApp": "WhatsApp templates",
+    "Plantillas existentes": "Existing templates",
+    "Crear nueva plantilla": "Create new template",
+    "Idioma": "Language",
+    "Cuerpo del mensaje": "Message body",
+    "Encabezado (opcional)": "Header (optional)",
+    "Pie de página (opcional)": "Footer (optional)",
+    "Previsualización": "Preview",
+    "Enviar a Meta para revisión": "Submit to Meta for review",
+    "Aún no hay plantillas creadas para esta cuenta.": "No templates created for this account yet."
 }

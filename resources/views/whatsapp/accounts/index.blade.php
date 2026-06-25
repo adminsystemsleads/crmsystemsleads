@@ -68,6 +68,11 @@
                         </svg>
                         {{ __('IA') }}
                       </a>
+                      <a href="{{ route('whatsapp.templates.index', $a) }}"
+                         class="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-800 font-medium">
+                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg>
+                        {{ __('Plantillas') }}
+                      </a>
                       <a href="{{ route('whatsapp.accounts.edit', $a) }}"
                          class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">{{ __('Editar') }}</a>
                       <form class="inline" method="POST" action="{{ route('whatsapp.accounts.destroy', $a) }}"

@@ -124,6 +124,18 @@ $TRANSLATIONS = [
     'Listo'                       => ['Done', 'Pronto'],
     'Arrastrar'                   => ['Drag', 'Arrastar'],
     'Mostrar / ocultar'           => ['Show / hide', 'Mostrar / ocultar'],
+    'Plantillas'                  => ['Templates', 'Modelos'],
+    'Plantillas de WhatsApp'      => ['WhatsApp templates', 'Modelos do WhatsApp'],
+    'Plantillas existentes'       => ['Existing templates', 'Modelos existentes'],
+    'Crear nueva plantilla'       => ['Create new template', 'Criar novo modelo'],
+    'Idioma'                      => ['Language', 'Idioma'],
+    'Categoría'                   => ['Category', 'Categoria'],
+    'Cuerpo del mensaje'          => ['Message body', 'Corpo da mensagem'],
+    'Encabezado (opcional)'       => ['Header (optional)', 'Cabeçalho (opcional)'],
+    'Pie de página (opcional)'    => ['Footer (optional)', 'Rodapé (opcional)'],
+    'Previsualización'            => ['Preview', 'Pré-visualização'],
+    'Enviar a Meta para revisión' => ['Submit to Meta for review', 'Enviar à Meta para revisão'],
+    'Aún no hay plantillas creadas para esta cuenta.' => ['No templates created for this account yet.', 'Ainda não há modelos criados para esta conta.'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

@@ -68,6 +68,93 @@ class WhatsappTemplateService
     }
 
     /**
+     * Lista TODAS las plantillas (cualquier estado) para la pantalla de gestión.
+     */
+    public function listAll(WhatsappAccount $account): array
+    {
+        if (!$account->waba_id || !$account->access_token) {
+            return ['ok' => false, 'message' => 'La cuenta no tiene WABA ID o Access Token configurado.', 'templates' => []];
+        }
+
+        try {
+            $res = Http::withToken($account->access_token)
+                ->acceptJson()->timeout(20)
+                ->get(self::GRAPH . "/{$account->waba_id}/message_templates", [
+                    'limit'  => 200,
+                    'fields' => 'name,language,status,category,components,id,rejected_reason',
+                ]);
+
+            if (!$res->successful()) {
+                $body = $res->json() ?? [];
+                return ['ok' => false, 'message' => $body['error']['message'] ?? 'No se pudieron obtener las plantillas.', 'templates' => []];
+            }
+
+            $data = $res->json('data') ?? [];
+            // Orden: pendientes y rechazadas primero, luego aprobadas; por nombre.
+            usort($data, fn($a, $b) => strcasecmp($a['name'] ?? '', $b['name'] ?? ''));
+
+            return ['ok' => true, 'templates' => $data];
+        } catch (\Throwable $e) {
+            Log::error('WA listAll templates error: ' . $e->getMessage());
+            return ['ok' => false, 'message' => $e->getMessage(), 'templates' => []];
+        }
+    }
+
+    /**
+     * Crea una plantilla en Meta. $payload = ['name','language','category','components'].
+     */
+    public function create(WhatsappAccount $account, array $payload): array
+    {
+        if (!$account->waba_id || !$account->access_token) {
+            return ['ok' => false, 'message' => 'La cuenta no tiene WABA ID o Access Token configurado.'];
+        }
+
+        try {
+            $res = Http::withToken($account->access_token)
+                ->acceptJson()->timeout(20)
+                ->post(self::GRAPH . "/{$account->waba_id}/message_templates", $payload);
+
+            $body = $res->json() ?? [];
+
+            if (!$res->successful()) {
+                $msg = $body['error']['error_user_msg'] ?? ($body['error']['message'] ?? 'No se pudo crear la plantilla.');
+                return ['ok' => false, 'message' => $msg, 'raw' => $body];
+            }
+
+            Cache::forget("wa_templates:{$account->id}");
+            return ['ok' => true, 'data' => $body];
+        } catch (\Throwable $e) {
+            Log::error('WA create template error: ' . $e->getMessage());
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /** Elimina una plantilla por nombre. */
+    public function delete(WhatsappAccount $account, string $name): array
+    {
+        if (!$account->waba_id || !$account->access_token) {
+            return ['ok' => false, 'message' => 'La cuenta no tiene WABA ID o Access Token configurado.'];
+        }
+
+        try {
+            $res = Http::withToken($account->access_token)
+                ->acceptJson()->timeout(20)
+                ->delete(self::GRAPH . "/{$account->waba_id}/message_templates", ['name' => $name]);
+
+            $body = $res->json() ?? [];
+            if (!$res->successful()) {
+                return ['ok' => false, 'message' => $body['error']['message'] ?? 'No se pudo eliminar la plantilla.'];
+            }
+
+            Cache::forget("wa_templates:{$account->id}");
+            return ['ok' => true];
+        } catch (\Throwable $e) {
+            Log::error('WA delete template error: ' . $e->getMessage());
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Envía un mensaje template al cliente.
      *
      * @param WhatsappAccount $account

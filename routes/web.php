@@ -224,6 +224,11 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
         Route::put('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'update'])->name('whatsapp.accounts.update');
         Route::delete('/whatsapp/accounts/{account}', [WhatsappAccountController::class, 'destroy'])->name('whatsapp.accounts.destroy');
         Route::post('/whatsapp/accounts/detect-waba',  [WhatsappAccountController::class, 'detectWabaId'])->name('whatsapp.accounts.detect-waba');
+
+        // Plantillas de Meta por cuenta de WhatsApp
+        Route::get('/whatsapp/accounts/{account}/templates', [\App\Http\Controllers\WhatsappTemplateController::class, 'index'])->name('whatsapp.templates.index');
+        Route::post('/whatsapp/accounts/{account}/templates', [\App\Http\Controllers\WhatsappTemplateController::class, 'store'])->name('whatsapp.templates.store');
+        Route::delete('/whatsapp/accounts/{account}/templates/{name}', [\App\Http\Controllers\WhatsappTemplateController::class, 'destroy'])->name('whatsapp.templates.destroy')->where('name', '[A-Za-z0-9_]+');
     });
 
     // AI Assistant per account
