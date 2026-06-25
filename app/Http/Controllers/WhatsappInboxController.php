@@ -513,13 +513,25 @@ class WhatsappInboxController extends Controller
 
         $account = $conversation->account;
 
+        // Si la plantilla tiene encabezado multimedia (imagen/vídeo/documento),
+        // resolvemos el archivo (media id) para que Meta lo entregue correctamente.
+        $headerMedia = null;
+        $list = $tpl->listTemplates($account);
+        foreach (($list['templates'] ?? []) as $t) {
+            if (($t['name'] ?? '') === $data['name'] && ($t['language'] ?? '') === $data['language']) {
+                $headerMedia = $tpl->resolveHeaderMedia($account, $t['components'] ?? []);
+                break;
+            }
+        }
+
         $result = $tpl->sendTemplate(
             account:      $account,
             toPhone:      $conversation->contact_phone,
             name:         $data['name'],
             language:     $data['language'],
             bodyParams:   $data['body_params'] ?? [],
-            headerParams: $data['header_params'] ?? []
+            headerParams: $data['header_params'] ?? [],
+            headerMedia:  $headerMedia
         );
 
         if (!$result['ok']) {

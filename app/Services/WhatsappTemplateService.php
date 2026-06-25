@@ -318,6 +318,101 @@ class WhatsappTemplateService
         }
     }
 
+    /**
+     * Descarga el archivo de muestra de una plantilla (URL) y lo re-sube al endpoint
+     * de medios del número para obtener un "media id" propio que Meta sí entrega.
+     * Cachea el id 20 min (mismo archivo → mismo id reutilizable).
+     *
+     * @return array ['ok'=>bool, 'id'=>string|null, 'message'=>string|null]
+     */
+    public function uploadMediaFromUrl(WhatsappAccount $account, string $url, string $format): array
+    {
+        if (empty($account->phone_number_id) || empty($account->access_token)) {
+            return ['ok' => false, 'id' => null, 'message' => 'La cuenta no tiene Phone Number ID o Access Token.'];
+        }
+
+        $cacheKey = 'wa_media_id:' . $account->id . ':' . md5($url);
+        if ($cached = Cache::get($cacheKey)) {
+            return ['ok' => true, 'id' => $cached, 'message' => null];
+        }
+
+        try {
+            // 1) Descargar el archivo desde la URL de muestra.
+            $dl = Http::withToken($account->access_token)->timeout(60)->get($url);
+            if (!$dl->successful()) {
+                $dl = Http::timeout(60)->get($url); // reintento sin token
+            }
+            if (!$dl->successful()) {
+                return ['ok' => false, 'id' => null, 'message' => 'No se pudo descargar el archivo de muestra de la plantilla.'];
+            }
+
+            $bytes = $dl->body();
+            $mime  = $dl->header('Content-Type');
+            if (!$mime || stripos($mime, 'text/') === 0) {
+                $mime = $this->defaultMimeFor($format);
+            }
+            $mime = trim(explode(';', $mime)[0]);
+            $ext  = $this->extForMime($mime, $format);
+
+            // 2) Subir al endpoint de medios del número.
+            $up = Http::withToken($account->access_token)
+                ->attach('file', $bytes, 'header.' . $ext, ['Content-Type' => $mime])
+                ->post(self::GRAPH . "/{$account->phone_number_id}/media", [
+                    'messaging_product' => 'whatsapp',
+                    'type'              => $mime,
+                ]);
+
+            $body = $up->json() ?? [];
+            if (!$up->successful() || empty($body['id'])) {
+                return ['ok' => false, 'id' => null, 'message' => $body['error']['message'] ?? 'No se pudo subir el archivo a WhatsApp.'];
+            }
+
+            Cache::put($cacheKey, $body['id'], now()->addMinutes(20));
+            return ['ok' => true, 'id' => $body['id'], 'message' => null];
+        } catch (\Throwable $e) {
+            Log::error('WA uploadMediaFromUrl error: ' . $e->getMessage());
+            return ['ok' => false, 'id' => null, 'message' => $e->getMessage()];
+        }
+    }
+
+    private function defaultMimeFor(string $format): string
+    {
+        $m = ['IMAGE' => 'image/jpeg', 'VIDEO' => 'video/mp4', 'DOCUMENT' => 'application/pdf'];
+        return $m[strtoupper($format)] ?? 'application/octet-stream';
+    }
+
+    private function extForMime(string $mime, string $format): string
+    {
+        $m = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'video/mp4' => 'mp4', 'video/3gpp' => '3gp', 'application/pdf' => 'pdf'];
+        if (isset($m[$mime])) return $m[$mime];
+        $f = ['IMAGE' => 'jpg', 'VIDEO' => 'mp4', 'DOCUMENT' => 'pdf'];
+        return $f[strtoupper($format)] ?? 'bin';
+    }
+
+    /**
+     * Resuelve el componente de encabezado multimedia (con media id) a partir de
+     * las componentes de una plantilla. Devuelve ['format'=>..,'id'=>..] o null.
+     */
+    public function resolveHeaderMedia(WhatsappAccount $account, array $components): ?array
+    {
+        foreach ($components as $comp) {
+            if (strtoupper($comp['type'] ?? '') !== 'HEADER') continue;
+            $fmt = strtoupper($comp['format'] ?? '');
+            if (!in_array($fmt, ['IMAGE', 'VIDEO', 'DOCUMENT'], true)) continue;
+
+            $url = $comp['example']['header_handle'][0] ?? null;
+            if (!$url) return null;
+
+            $res = $this->uploadMediaFromUrl($account, $url, $fmt);
+            if ($res['ok']) {
+                return ['format' => $fmt, 'id' => $res['id']];
+            }
+            // Fallback: enviar por link (menos fiable).
+            return ['format' => $fmt, 'link' => $url];
+        }
+        return null;
+    }
+
     /** Elimina una plantilla por nombre. */
     public function delete(WhatsappAccount $account, string $name): array
     {
@@ -365,12 +460,15 @@ class WhatsappTemplateService
         $components = [];
 
         // Encabezado multimedia (imagen/vídeo/documento): debe enviarse el archivo.
-        if (!empty($headerMedia['link']) && !empty($headerMedia['format'])) {
+        if (!empty($headerMedia['format']) && (!empty($headerMedia['id']) || !empty($headerMedia['link']))) {
             $fmt = strtolower($headerMedia['format']); // image | video | document
             if (in_array($fmt, ['image', 'video', 'document'], true)) {
+                $param = !empty($headerMedia['id'])
+                    ? ['id' => $headerMedia['id']]
+                    : ['link' => $headerMedia['link']];
                 $components[] = [
                     'type'       => 'header',
-                    'parameters' => [[ 'type' => $fmt, $fmt => ['link' => $headerMedia['link']] ]],
+                    'parameters' => [[ 'type' => $fmt, $fmt => $param ]],
                 ];
             }
         } elseif (!empty($headerParams)) {

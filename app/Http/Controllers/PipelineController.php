@@ -401,9 +401,13 @@ class PipelineController extends Controller
 
         $account = WhatsappAccount::where('team_id', $teamId)->findOrFail($data['account_id']);
 
-        $headerMedia = (!empty($data['header_format']) && !empty($data['header_media']))
-            ? ['format' => $data['header_format'], 'link' => $data['header_media']]
-            : null;
+        $headerMedia = null;
+        if (!empty($data['header_format']) && !empty($data['header_media'])) {
+            $mid = $service->uploadMediaFromUrl($account, $data['header_media'], $data['header_format']);
+            $headerMedia = $mid['ok']
+                ? ['format' => $data['header_format'], 'id' => $mid['id']]
+                : ['format' => $data['header_format'], 'link' => $data['header_media']];
+        }
 
         // Contactos únicos (con teléfono) de las negociaciones filtradas.
         $contactIdSub = $this->buildDealsQuery($pipeline, $request, $teamTz)
