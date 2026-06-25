@@ -25,7 +25,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <div class="flex items-center justify-between gap-2 mb-1">
+              <div class="flex items-center justify-between gap-2 mb-1 min-h-[28px]">
                 <label class="block text-sm font-medium text-gray-700">WABA ID *</label>
                 <button type="button" id="autoDetectWaba"
                         class="text-xs text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-1">
@@ -42,8 +42,10 @@
               <p class="text-[11px] text-gray-400 mt-1">{{ __('⚠ NO es lo mismo que el Phone Number ID. Click "Auto-detectar" para obtenerlo automáticamente.') }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Business ID ({{ __('opcional') }})</label>
-              <input name="business_id" value="{{ old('business_id', $account->business_id) }}" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+              <div class="flex items-center mb-1 min-h-[28px]">
+                <label class="block text-sm font-medium text-gray-700">Business ID ({{ __('opcional') }})</label>
+              </div>
+              <input name="business_id" value="{{ old('business_id', $account->business_id) }}" class="w-full border-gray-300 rounded-md shadow-sm">
             </div>
           </div>
 
