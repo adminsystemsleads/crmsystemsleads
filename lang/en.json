@@ -1320,5 +1320,7 @@
     "Envío finalizado con algunos fallos.": "Sending finished with some failures.",
     "Total de contactos": "Total contacts",
     "con búsqueda/filtros aplicados": "with search/filters applied",
-    "Página": "Page"
+    "Página": "Page",
+    "Total de negociaciones": "Total deals",
+    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": "It will be sent to the contacts of the deals in the current result (with the search and filters applied) that have a phone number."
 }

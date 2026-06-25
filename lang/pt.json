@@ -1323,5 +1323,7 @@
     "Envío finalizado con algunos fallos.": "Envio finalizado com algumas falhas.",
     "Total de contactos": "Total de contatos",
     "con búsqueda/filtros aplicados": "com busca/filtros aplicados",
-    "Página": "Página"
+    "Página": "Página",
+    "Total de negociaciones": "Total de negociações",
+    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": "Será enviado aos contatos das negociações do resultado atual (com a busca e filtros aplicados) que tenham telefone."
 }

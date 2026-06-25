@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Pipeline;
 use App\Models\PipelineStage;
 use App\Models\Deal;
+use App\Models\Contact;
+use App\Models\WhatsappAccount;
+use App\Services\WhatsappTemplateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -279,8 +282,58 @@ class PipelineController extends Controller
 
         $dealFields = \App\Support\CustomFieldsHelper::fieldsFor($teamId, 'deal');
 
+        $dealsQuery = $this->buildDealsQuery($pipeline, $request, $teamTz, $dealFields)->with('contact');
+
+        $dealsByStage = $dealsQuery->get()->groupBy('stage_id');
+        $total        = $dealsByStage->flatten()->count();
+
+        $viewMode = $request->query('view', 'kanban'); // kanban | table
+
+        // Cuentas de WhatsApp activas (para el envío masivo de plantillas).
+        $waAccounts = WhatsappAccount::where('team_id', $teamId)
+            ->where('is_active', true)
+            ->orderBy('name')->get(['id', 'name']);
+
+        // Opciones para los filtros.
+        $teamMembers = $team->allUsers()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
+        $monthsList  = Deal::where('pipeline_id', $pipeline->id)
+            ->orderByDesc('created_at')->pluck('created_at')
+            ->map(fn($d) => $d?->copy()->setTimezone($teamTz)->format('Y-m'))
+            ->filter()->unique()->values();
+
+        $filters = [
+            'createdFrom'  => $createdFrom,
+            'createdTo'    => $createdTo,
+            'months'       => $months,
+            'responsibles' => $responsibles,
+            'stages'       => $stageFilter,
+            'cf'           => $cf,
+        ];
+
+        return view('pipelines.kanban', compact(
+            'pipeline', 'stages', 'dealsByStage', 'viewMode', 'total', 'waAccounts',
+            'q', 'filters', 'teamMembers', 'monthsList', 'dealFields'
+        ));
+    }
+
+    /**
+     * Construye la query de negociaciones del pipeline aplicando búsqueda + filtros.
+     * Reutilizada por kanban() y el envío masivo de plantillas.
+     */
+    protected function buildDealsQuery(Pipeline $pipeline, Request $request, $teamTz, $dealFields = null)
+    {
+        $teamId = Auth::user()->currentTeam->id;
+        $dealFields = $dealFields ?? \App\Support\CustomFieldsHelper::fieldsFor($teamId, 'deal');
+
+        $q            = $request->query('q');
+        $createdFrom  = $request->query('created_from');
+        $createdTo    = $request->query('created_to');
+        $months       = array_values(array_filter((array) $request->query('months', [])));
+        $responsibles = array_values(array_filter((array) $request->query('responsibles', [])));
+        $stageFilter  = array_values(array_filter((array) $request->query('stages', [])));
+        $cf           = (array) $request->query('cf', []);
+
         $dealsQuery = Deal::where('pipeline_id', $pipeline->id)
-            ->with('contact')
             ->when($q, fn($query) => $query->where(function ($s) use ($q) {
                 $s->where('title', 'like', "%{$q}%")
                   ->orWhereHas('contact', fn($c) => $c->where('name', 'like', "%{$q}%")
@@ -320,29 +373,74 @@ class PipelineController extends Controller
             });
         }
 
-        $dealsByStage = $dealsQuery->get()->groupBy('stage_id');
+        return $dealsQuery;
+    }
 
-        $viewMode = $request->query('view', 'kanban'); // kanban | table
+    /**
+     * Envío masivo de una plantilla de WhatsApp a los contactos de las negociaciones filtradas.
+     * Procesa por lotes (offset/limit) y reporta progreso al frontend.
+     */
+    public function bulkSendTemplate(Pipeline $pipeline, Request $request, WhatsappTemplateService $service)
+    {
+        $pipeline = $this->pipelineForTeam($pipeline->id);
+        $team     = Auth::user()->currentTeam;
+        $teamId   = $team->id;
+        $teamTz   = $team->effectiveTimezone();
 
-        // Opciones para los filtros.
-        $teamMembers = $team->allUsers()->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
-        $monthsList  = Deal::where('pipeline_id', $pipeline->id)
-            ->orderByDesc('created_at')->pluck('created_at')
-            ->map(fn($d) => $d?->copy()->setTimezone($teamTz)->format('Y-m'))
-            ->filter()->unique()->values();
+        $data = $request->validate([
+            'account_id' => 'required|integer',
+            'template'   => 'required|string|max:512',
+            'language'   => 'required|string|max:10',
+            'vars'       => 'nullable|array',
+            'vars.*'     => 'nullable|string|max:1000',
+            'offset'     => 'required|integer|min:0',
+            'limit'      => 'required|integer|min:1|max:50',
+        ]);
 
-        $filters = [
-            'createdFrom'  => $createdFrom,
-            'createdTo'    => $createdTo,
-            'months'       => $months,
-            'responsibles' => $responsibles,
-            'stages'       => $stageFilter,
-            'cf'           => $cf,
-        ];
+        $account = WhatsappAccount::where('team_id', $teamId)->findOrFail($data['account_id']);
 
-        return view('pipelines.kanban', compact(
-            'pipeline', 'stages', 'dealsByStage', 'viewMode',
-            'q', 'filters', 'teamMembers', 'monthsList', 'dealFields'
-        ));
+        // Contactos únicos (con teléfono) de las negociaciones filtradas.
+        $contactIdSub = $this->buildDealsQuery($pipeline, $request, $teamTz)
+            ->whereNotNull('contact_id')->select('contact_id');
+
+        $base = Contact::whereIn('id', $contactIdSub)
+            ->whereNotNull('phone')->where('phone', '!=', '')
+            ->orderBy('id');
+
+        $total = (clone $base)->count();
+        $batch = $base->offset($data['offset'])->limit($data['limit'])->get(['id', 'name', 'phone']);
+
+        $vars   = array_values($data['vars'] ?? []);
+        $sent   = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($batch as $c) {
+            $phone = preg_replace('/\D+/', '', (string) $c->phone);
+            if ($phone === '') { $failed++; continue; }
+
+            $bodyParams = array_map(fn($v) => str_ireplace('{nombre}', (string) $c->name, (string) $v), $vars);
+
+            $res = $service->sendTemplate($account, $phone, $data['template'], $data['language'], $bodyParams);
+
+            if ($res['ok'] ?? false) {
+                $sent++;
+            } else {
+                $failed++;
+                if (count($errors) < 3) $errors[] = $c->name . ': ' . ($res['message'] ?? 'error');
+            }
+        }
+
+        $processed = $data['offset'] + $batch->count();
+
+        return response()->json([
+            'ok'        => true,
+            'total'     => $total,
+            'processed' => $processed,
+            'sent'      => $sent,
+            'failed'    => $failed,
+            'done'      => $processed >= $total || $batch->count() === 0,
+            'errors'    => $errors,
+        ]);
     }
 }

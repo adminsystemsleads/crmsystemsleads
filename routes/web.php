@@ -149,6 +149,7 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
 
     // Kanban de negociaciones por pipeline
     Route::get('/pipelines/{pipeline}/kanban', [PipelineController::class, 'kanban'])->name('pipelines.kanban');
+    Route::post('/pipelines/{pipeline}/bulk-template', [PipelineController::class, 'bulkSendTemplate'])->name('pipelines.bulk-template');
     
     // Módulos activos por equipo (admin only)
     Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit')->middleware('team.admin');

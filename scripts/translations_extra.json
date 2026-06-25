@@ -71,6 +71,14 @@
         "en": "Total contacts",
         "pt": "Total de contatos"
     },
+    "Total de negociaciones": {
+        "en": "Total deals",
+        "pt": "Total de negociações"
+    },
+    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": {
+        "en": "It will be sent to the contacts of the deals in the current result (with the search and filters applied) that have a phone number.",
+        "pt": "Será enviado aos contatos das negociações do resultado atual (com a busca e filtros aplicados) que tenham telefone."
+    },
     "con búsqueda/filtros aplicados": {
         "en": "with search/filters applied",
         "pt": "com busca/filtros aplicados"
