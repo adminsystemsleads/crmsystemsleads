@@ -37,13 +37,16 @@ class WhatsappTemplateController extends Controller
             'name'        => ['required', 'string', 'max:512', 'regex:/^[a-z0-9_]+$/'],
             'category'    => 'required|in:MARKETING,UTILITY,AUTHENTICATION',
             'language'    => 'required|string|max:10',
+            'header_type' => 'nullable|in:NONE,IMAGE,VIDEO,DOCUMENT,LOCATION',
             'header_text' => 'nullable|string|max:60',
             'body'        => 'required|string|max:1024',
             'footer_text' => 'nullable|string|max:60',
             'examples'    => 'nullable|array',
             'examples.*'  => 'nullable|string|max:200',
-            'buttons'     => 'nullable|array|max:3',
-            'buttons.*'   => 'nullable|string|max:25',
+            'buttons'         => 'nullable|array|max:3',
+            'buttons.*.type'  => 'nullable|in:QUICK_REPLY,URL,PHONE_NUMBER',
+            'buttons.*.text'  => 'nullable|string|max:25',
+            'buttons.*.value' => 'nullable|string|max:2000',
         ], [
             'name.regex' => 'El nombre solo puede tener minúsculas, números y guiones bajos (ej: bienvenida_cliente).',
         ]);
@@ -67,8 +70,16 @@ class WhatsappTemplateController extends Controller
         // Componentes para Meta
         $components = [];
 
-        if (!empty($data['header_text'])) {
-            $components[] = ['type' => 'HEADER', 'format' => 'TEXT', 'text' => $data['header_text']];
+        $headerType = $data['header_type'] ?? 'NONE';
+        if ($headerType === 'NONE') {
+            if (!empty($data['header_text'])) {
+                $components[] = ['type' => 'HEADER', 'format' => 'TEXT', 'text' => $data['header_text']];
+            }
+        } elseif ($headerType === 'LOCATION') {
+            $components[] = ['type' => 'HEADER', 'format' => 'LOCATION'];
+        } else {
+            // IMAGE / VIDEO / DOCUMENT (Meta puede requerir una muestra).
+            $components[] = ['type' => 'HEADER', 'format' => $headerType];
         }
 
         $bodyComp = ['type' => 'BODY', 'text' => $data['body']];
@@ -81,12 +92,24 @@ class WhatsappTemplateController extends Controller
             $components[] = ['type' => 'FOOTER', 'text' => $data['footer_text']];
         }
 
-        $buttons = array_values(array_filter($data['buttons'] ?? [], fn($b) => trim((string) $b) !== ''));
-        if (!empty($buttons)) {
-            $components[] = [
-                'type'    => 'BUTTONS',
-                'buttons' => array_map(fn($b) => ['type' => 'QUICK_REPLY', 'text' => $b], $buttons),
-            ];
+        $btns = [];
+        foreach (($data['buttons'] ?? []) as $b) {
+            $type = $b['type'] ?? null;
+            $text = trim((string) ($b['text'] ?? ''));
+            if (!$type || $text === '') continue;
+
+            if ($type === 'QUICK_REPLY') {
+                $btns[] = ['type' => 'QUICK_REPLY', 'text' => $text];
+            } elseif ($type === 'URL') {
+                $url = trim((string) ($b['value'] ?? ''));
+                if ($url !== '') $btns[] = ['type' => 'URL', 'text' => $text, 'url' => $url];
+            } elseif ($type === 'PHONE_NUMBER') {
+                $phone = trim((string) ($b['value'] ?? ''));
+                if ($phone !== '') $btns[] = ['type' => 'PHONE_NUMBER', 'text' => $text, 'phone_number' => $phone];
+            }
+        }
+        if (!empty($btns)) {
+            $components[] = ['type' => 'BUTTONS', 'buttons' => $btns];
         }
 
         $result = $this->service->create($account, [

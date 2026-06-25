@@ -98,9 +98,14 @@
     <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 ring-1 ring-indigo-50 p-5"
          x-data="{
            name:'{{ old('name') }}', category:'{{ old('category','MARKETING') }}', language:'{{ old('language','es') }}',
-           header:'{{ addslashes(old('header_text')) }}', body:{{ \Illuminate\Support\Js::from(old('body','')) }},
-           footer:'{{ addslashes(old('footer_text')) }}', buttons:['','',''],
-           get vars(){ var s=new Set(); (this.body.match(/\{\{\s*(\d+)\s*\}\}/g)||[]).forEach(function(x){ s.add(parseInt(x.replace(/[^0-9]/g,''),10)); }); return Array.from(s).sort(function(a,b){return a-b;}); }
+           headerType:'{{ old('header_type','NONE') }}',
+           header:{{ \Illuminate\Support\Js::from(old('header_text','')) }}, body:{{ \Illuminate\Support\Js::from(old('body','')) }},
+           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[],
+           sanitizeName(){ this.name = (this.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''); },
+           get titleDisabled(){ return this.headerType !== 'NONE'; },
+           get vars(){ var s=new Set(); (this.body.match(/\{\{\s*(\d+)\s*\}\}/g)||[]).forEach(function(x){ s.add(parseInt(x.replace(/[^0-9]/g,''),10)); }); return Array.from(s).sort(function(a,b){return a-b;}); },
+           addButton(t){ if(this.buttons.length<3) this.buttons.push({type:t,text:'',value:''}); },
+           removeButton(i){ this.buttons.splice(i,1); }
          }">
       <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
         <svg class="size-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -114,9 +119,9 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Nombre') }} *</label>
-              <input type="text" name="name" x-model="name" required pattern="[a-z0-9_]+"
+              <input type="text" name="name" x-model="name" @input="sanitizeName()" required pattern="[a-z0-9_]+"
                      placeholder="bienvenida_cliente" class="w-full rounded-lg border-gray-200 text-sm py-2">
-              <p class="text-[10px] text-gray-400 mt-1">{{ __('Solo minúsculas, números y guiones bajos.') }}</p>
+              <p class="text-[10px] text-gray-400 mt-1">{{ __('Los espacios se convierten en guion bajo; sin tildes ni ñ (se reemplaza por n).') }}</p>
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Idioma') }} *</label>
@@ -138,8 +143,25 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Encabezado (opcional)') }}</label>
-            <input type="text" name="header_text" x-model="header" maxlength="60" class="w-full rounded-lg border-gray-200 text-sm py-2">
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Muestra de contenido multimedia') }} <span class="text-gray-400 font-normal">· {{ __('Opcional') }}</span></label>
+            <select name="header_type" x-model="headerType" class="w-full rounded-lg border-gray-200 text-sm py-2">
+              <option value="NONE">{{ __('Ninguno') }}</option>
+              <option value="IMAGE">{{ __('Imagen') }}</option>
+              <option value="VIDEO">{{ __('Vídeo') }}</option>
+              <option value="DOCUMENT">{{ __('Documento') }}</option>
+              <option value="LOCATION">{{ __('Ubicación') }}</option>
+            </select>
+            <p x-show="headerType==='IMAGE' || headerType==='VIDEO' || headerType==='DOCUMENT'" x-cloak class="text-[10px] text-amber-600 mt-1">
+              {{ __('Imagen/Vídeo/Documento requieren subir una muestra desde Meta; aquí funcionan Ninguno (texto) y Ubicación.') }}
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Título (encabezado de texto)') }} <span class="text-gray-400 font-normal">· {{ __('Opcional') }}</span></label>
+            <input type="text" name="header_text" x-model="header" :disabled="titleDisabled" maxlength="60"
+                   class="w-full rounded-lg border-gray-200 text-sm py-2"
+                   :style="titleDisabled ? 'background:#f3f4f6;color:#9ca3af;' : ''"
+                   :placeholder="titleDisabled ? '{{ __('Bloqueado: el encabezado es multimedia') }}' : ''">
           </div>
 
           <div>
@@ -171,12 +193,36 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Botones de respuesta rápida (opcional, hasta 3)') }}</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('Botones') }} <span class="text-gray-400 font-normal">· {{ __('Opcional, hasta 3') }}</span></label>
             <div class="space-y-2">
               <template x-for="(b, i) in buttons" :key="i">
-                <input type="text" :name="'buttons[' + i + ']'" x-model="buttons[i]" maxlength="25"
-                       :placeholder="'{{ __('Botón') }} ' + (i + 1)" class="w-full rounded-lg border-gray-200 text-xs py-1.5">
+                <div class="rounded-lg border border-gray-200 p-2 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-gray-500"
+                          x-text="b.type==='QUICK_REPLY' ? '{{ __('Respuesta rápida') }}' : (b.type==='URL' ? '{{ __('Enlace (URL)') }}' : '{{ __('Teléfono') }}')"></span>
+                    <button type="button" @click="removeButton(i)" class="text-[11px] text-red-500 hover:text-red-700">{{ __('Quitar') }}</button>
+                  </div>
+                  <input type="hidden" :name="'buttons[' + i + '][type]'" :value="b.type">
+                  <input type="text" :name="'buttons[' + i + '][text]'" x-model="b.text" maxlength="25"
+                         placeholder="{{ __('Texto del botón') }}" class="w-full rounded-lg border-gray-200 text-xs py-1.5">
+                  <template x-if="b.type==='URL'">
+                    <input type="url" :name="'buttons[' + i + '][value]'" x-model="b.value"
+                           placeholder="https://..." class="w-full rounded-lg border-gray-200 text-xs py-1.5">
+                  </template>
+                  <template x-if="b.type==='PHONE_NUMBER'">
+                    <input type="text" :name="'buttons[' + i + '][value]'" x-model="b.value"
+                           placeholder="{{ __('Número con código de país, ej. +51999...') }}" class="w-full rounded-lg border-gray-200 text-xs py-1.5">
+                  </template>
+                </div>
               </template>
+            </div>
+            <div class="mt-2 relative" x-data="{ open: false }" @click.away="open = false" x-show="buttons.length < 3">
+              <button type="button" @click="open = !open" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800">+ {{ __('Añadir botón') }}</button>
+              <div x-show="open" x-cloak class="absolute z-10 mt-1 w-56 bg-white rounded-lg shadow-xl ring-1 ring-black/5 py-1 text-xs">
+                <button type="button" @click="addButton('QUICK_REPLY'); open = false" class="block w-full text-left px-3 py-1.5 hover:bg-gray-100">{{ __('Respuesta rápida') }}</button>
+                <button type="button" @click="addButton('URL'); open = false" class="block w-full text-left px-3 py-1.5 hover:bg-gray-100">{{ __('Ir al sitio web (enlace)') }}</button>
+                <button type="button" @click="addButton('PHONE_NUMBER'); open = false" class="block w-full text-left px-3 py-1.5 hover:bg-gray-100">{{ __('Llamar al número de teléfono') }}</button>
+              </div>
             </div>
           </div>
 
@@ -192,13 +238,17 @@
           <p class="text-xs font-semibold text-gray-500 mb-2">{{ __('Previsualización') }}</p>
           <div style="background:#e5ddd5;border-radius:.75rem;padding:1rem;min-height:180px;">
             <div style="background:#fff;border-radius:.6rem;padding:.6rem .7rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:13px;color:#111;max-width:280px;">
-              <div x-show="header" x-cloak style="font-weight:700;margin-bottom:.25rem;" x-text="header"></div>
+              <template x-if="headerType !== 'NONE'">
+                <div style="background:#f0f2f5;border-radius:.4rem;padding:1.1rem;text-align:center;color:#8696a0;font-size:11px;margin-bottom:.4rem;"
+                     x-text="headerType==='IMAGE' ? '🖼️ {{ __('Imagen') }}' : (headerType==='VIDEO' ? '🎬 {{ __('Vídeo') }}' : (headerType==='DOCUMENT' ? '📄 {{ __('Documento') }}' : '📍 {{ __('Ubicación') }}'))"></div>
+              </template>
+              <div x-show="headerType === 'NONE' && header" x-cloak style="font-weight:700;margin-bottom:.25rem;" x-text="header"></div>
               <div style="white-space:pre-line;" x-text="body || '{{ __('Escribe el cuerpo del mensaje…') }}'"></div>
               <div x-show="footer" x-cloak style="color:#667781;font-size:11px;margin-top:.35rem;" x-text="footer"></div>
             </div>
             <div style="margin-top:.4rem;max-width:280px;display:flex;flex-direction:column;gap:.3rem;">
               <template x-for="(b, i) in buttons" :key="i">
-                <div x-show="b" x-cloak style="background:#fff;border-radius:.6rem;text-align:center;padding:.45rem;color:#1ea0e6;font-size:13px;font-weight:600;" x-text="b"></div>
+                <div x-show="b.text" x-cloak style="background:#fff;border-radius:.6rem;text-align:center;padding:.45rem;color:#1ea0e6;font-size:13px;font-weight:600;" x-text="b.text"></div>
               </template>
             </div>
           </div>

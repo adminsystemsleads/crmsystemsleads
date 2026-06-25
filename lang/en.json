@@ -1261,5 +1261,22 @@
     "Pie de página (opcional)": "Footer (optional)",
     "Previsualización": "Preview",
     "Enviar a Meta para revisión": "Submit to Meta for review",
-    "Aún no hay plantillas creadas para esta cuenta.": "No templates created for this account yet."
+    "Aún no hay plantillas creadas para esta cuenta.": "No templates created for this account yet.",
+    "Muestra de contenido multimedia": "Media sample",
+    "Opcional": "Optional",
+    "Imagen": "Image",
+    "Vídeo": "Video",
+    "Documento": "Document",
+    "Ubicación": "Location",
+    "Título (encabezado de texto)": "Title (text header)",
+    "Bloqueado: el encabezado es multimedia": "Locked: the header is media",
+    "Botones": "Buttons",
+    "Opcional, hasta 3": "Optional, up to 3",
+    "Respuesta rápida": "Quick reply",
+    "Enlace (URL)": "Link (URL)",
+    "Quitar": "Remove",
+    "Texto del botón": "Button text",
+    "Añadir botón": "Add button",
+    "Ir al sitio web (enlace)": "Visit website (link)",
+    "Llamar al número de teléfono": "Call phone number"
 }
