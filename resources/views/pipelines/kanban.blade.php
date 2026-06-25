@@ -365,9 +365,10 @@
                                     @endphp
                                     <tr class="hover:bg-gray-50">
                                         <td class="py-2 pr-4">
-                                            <div class="font-semibold text-gray-800">
+                                            <a href="{{ route('deals.edit', [$pipeline, $deal]) }}"
+                                               class="font-semibold text-gray-800 hover:text-indigo-600 hover:underline">
                                                 {{ $deal->title }}
-                                            </div>
+                                            </a>
                                             <div class="text-xs text-gray-500">
                                                 #{{ $deal->id }}
                                             </div>
@@ -375,7 +376,8 @@
 
                                         <td class="py-2 pr-4">
                                             @if($deal->contact)
-                                                <div class="text-indigo-700">{{ $deal->contact->name }}</div>
+                                                <a href="{{ route('contacts.edit', $deal->contact) }}"
+                                                   class="text-indigo-700 hover:text-indigo-900 hover:underline">{{ $deal->contact->name }}</a>
                                                 <div class="text-xs text-gray-500">
                                                     {{ $deal->contact->company ?? '' }}
                                                 </div>
