@@ -13,9 +13,24 @@
           {{ __('No se pudo cargar el dashboard. Asegúrate de tener un equipo seleccionado.') }}
         </div>
       @else
+        {{-- Barra de edición del tablero --}}
+        <div class="flex items-center justify-end gap-2" x-data="{ editing: false }">
+          <button type="button" x-show="!editing" @click="window.dashEdit && window.dashEdit(true); editing = true"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-xs text-gray-700 hover:bg-gray-50">
+            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            {{ __('Editar tablero') }}
+          </button>
+          <span x-show="editing" x-cloak class="flex items-center gap-2">
+            <button type="button" @click="window.dashReset && window.dashReset()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs text-gray-600 hover:bg-gray-50">{{ __('Restablecer') }}</button>
+            <button type="button" @click="window.dashSave && window.dashSave(); editing = false" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700">{{ __('Listo') }}</button>
+          </span>
+        </div>
+
+        <div id="dashGrid" class="space-y-6"
+             data-order="{{ json_encode($dashPrefs['order']) }}" data-hidden="{{ json_encode($dashPrefs['hidden']) }}">
 
         {{-- ========= KPIs principales ========= --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="dash-block grid grid-cols-2 md:grid-cols-4 gap-4" data-block="kpis">
 
           {{-- Contactos --}}
           <a href="{{ route('contacts.index') }}"
@@ -99,7 +114,7 @@
           $sWon  = round(($dOpen + $dWon) / $tot * 100, 2);
           $conv  = $metrics['deals']['conversion_rate'];
         @endphp
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="dash-block grid grid-cols-1 md:grid-cols-3 gap-4" data-block="reports">
 
           {{-- Oportunidades por estado (dona) --}}
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
@@ -161,7 +176,7 @@
 
         {{-- ========= FUNNELS por pipeline (gráficos de barras) ========= --}}
         @if($metrics['funnels']->isNotEmpty())
-          <div class="space-y-4">
+          <div class="dash-block space-y-4" data-block="funnels">
             <div class="flex items-center justify-between">
               <h3 class="text-lg font-bold text-gray-900">{{ __('Negociaciones por embudo') }}</h3>
               <span class="text-xs text-gray-500">{{ __('Solo abiertas, agrupadas por fase') }}</span>
@@ -248,7 +263,7 @@
         @endif
 
         {{-- ========= 2 columnas: top contactos + recientes ========= --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="dash-block grid grid-cols-1 lg:grid-cols-2 gap-4" data-block="toprecent">
 
           {{-- Top contactos con más negociaciones --}}
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
@@ -316,7 +331,7 @@
                 ->map(fn ($a) => $a->created_at?->copy()->setTimezone($teamTz)?->format('Y-m'))
                 ->filter()->unique()->sortDesc()->values();
         @endphp
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+        <div class="dash-block bg-white rounded-2xl shadow-sm border border-gray-100 p-5" data-block="activities">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <h3 class="text-base font-bold text-gray-900">🗂️ {{ __('Reporte de Actividades') }}</h3>
                 <button type="button" onclick="actExport()"
@@ -510,6 +525,107 @@
                 a.download = 'actividades.csv';
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
             }
+        </script>
+
+        </div>{{-- #dashGrid --}}
+
+        <style>
+          .dash-block { position: relative; }
+          .dash-block.dash-dragging { opacity: .45; }
+          body.dash-editing .dash-block { outline: 2px dashed #c7d2fe; outline-offset: 5px; border-radius: .75rem; }
+          .dash-toolbar { position: absolute; top: -12px; right: 10px; z-index: 6; display: none; gap: 4px; }
+          body.dash-editing .dash-block > .dash-toolbar { display: inline-flex; }
+          .dash-toolbar button { background: #1E2E48; color: #fff; border: none; border-radius: 6px; padding: 2px 8px; font-size: 12px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); line-height: 1.4; }
+          .dash-toolbar .dash-handle { cursor: grab; }
+          .dash-block.dash-hidden { display: none; }
+          body.dash-editing .dash-block.dash-hidden { display: block; opacity: .4; }
+        </style>
+        <script>
+          (function () {
+            var SAVE_URL = '{{ route('dashboard.prefs') }}';
+            var CSRF = '{{ csrf_token() }}';
+            var DEFAULT_ORDER = {!! json_encode(\App\Models\User::DASHBOARD_BLOCKS) !!};
+            var grid = document.getElementById('dashGrid');
+            if (!grid) return;
+            var dragEl = null;
+
+            function blocks() { return Array.prototype.slice.call(grid.querySelectorAll('.dash-block')); }
+
+            function dashEdit(on) {
+              document.body.classList.toggle('dash-editing', on);
+              blocks().forEach(function (b) {
+                b.setAttribute('draggable', on ? 'true' : 'false');
+                if (on && !b.querySelector(':scope > .dash-toolbar')) {
+                  var tb = document.createElement('div'); tb.className = 'dash-toolbar';
+                  var h = document.createElement('button'); h.type = 'button'; h.className = 'dash-handle'; h.textContent = '⠿'; h.title = '{{ __('Arrastrar') }}';
+                  var e = document.createElement('button'); e.type = 'button'; e.className = 'dash-hide';
+                  e.textContent = b.classList.contains('dash-hidden') ? '🚫' : '👁';
+                  e.title = '{{ __('Mostrar / ocultar') }}';
+                  e.addEventListener('click', function (ev) {
+                    ev.stopPropagation();
+                    b.classList.toggle('dash-hidden');
+                    e.textContent = b.classList.contains('dash-hidden') ? '🚫' : '👁';
+                  });
+                  tb.appendChild(h); tb.appendChild(e);
+                  b.insertBefore(tb, b.firstChild);
+                }
+              });
+            }
+
+            function afterEl(y) {
+              var els = blocks().filter(function (b) { return !b.classList.contains('dash-dragging'); });
+              var closest = { offset: -Infinity, el: null };
+              els.forEach(function (el) {
+                var box = el.getBoundingClientRect();
+                var offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) closest = { offset: offset, el: el };
+              });
+              return closest.el;
+            }
+
+            grid.addEventListener('dragstart', function (e) {
+              var b = e.target.closest('.dash-block');
+              if (!b || !document.body.classList.contains('dash-editing')) return;
+              dragEl = b; b.classList.add('dash-dragging');
+              e.dataTransfer.effectAllowed = 'move';
+              try { e.dataTransfer.setData('text/plain', ''); } catch (x) {}
+            });
+            grid.addEventListener('dragend', function () { if (dragEl) { dragEl.classList.remove('dash-dragging'); dragEl = null; } });
+            grid.addEventListener('dragover', function (e) {
+              if (!dragEl) return; e.preventDefault();
+              var a = afterEl(e.clientY);
+              if (a == null) grid.appendChild(dragEl); else grid.insertBefore(dragEl, a);
+            });
+
+            function save(payload) {
+              fetch(SAVE_URL, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload)
+              }).catch(function () {});
+            }
+
+            window.dashEdit = dashEdit;
+            window.dashSave = function () {
+              var order = blocks().map(function (b) { return b.dataset.block; });
+              var hidden = blocks().filter(function (b) { return b.classList.contains('dash-hidden'); }).map(function (b) { return b.dataset.block; });
+              dashEdit(false);
+              save({ order: order, hidden: hidden });
+            };
+            window.dashReset = function () {
+              blocks().forEach(function (b) { b.classList.remove('dash-hidden'); });
+              DEFAULT_ORDER.forEach(function (k) { var b = grid.querySelector('.dash-block[data-block="' + k + '"]'); if (b) grid.appendChild(b); });
+              dashEdit(false);
+              save({ order: [], hidden: [] });
+            };
+
+            // Aplicar orden y ocultos guardados al cargar.
+            var order = [], hidden = [];
+            try { order = JSON.parse(grid.dataset.order || '[]'); } catch (e) {}
+            try { hidden = JSON.parse(grid.dataset.hidden || '[]'); } catch (e) {}
+            order.forEach(function (k) { var b = grid.querySelector('.dash-block[data-block="' + k + '"]'); if (b) grid.appendChild(b); });
+            hidden.forEach(function (k) { var b = grid.querySelector('.dash-block[data-block="' + k + '"]'); if (b) b.classList.add('dash-hidden'); });
+          })();
         </script>
 
       @endif

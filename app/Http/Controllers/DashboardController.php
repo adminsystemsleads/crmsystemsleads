@@ -158,6 +158,29 @@ class DashboardController extends Controller
             'recent_deals' => $recentDeals,
         ];
 
-        return view('dashboard', compact('metrics', 'activities', 'teamTz'));
+        $dashPrefs = Auth::user()->dashboardPrefs();
+
+        return view('dashboard', compact('metrics', 'activities', 'teamTz', 'dashPrefs'));
+    }
+
+    /** Guarda el orden y los bloques ocultos del panel (por usuario). */
+    public function savePrefs(\Illuminate\Http\Request $request)
+    {
+        $data = $request->validate([
+            'order'    => 'nullable|array',
+            'order.*'  => 'string',
+            'hidden'   => 'nullable|array',
+            'hidden.*' => 'string',
+        ]);
+
+        $allowed = \App\Models\User::DASHBOARD_BLOCKS;
+        $order   = array_values(array_filter($data['order'] ?? [], fn($b) => in_array($b, $allowed, true)));
+        $hidden  = array_values(array_filter($data['hidden'] ?? [], fn($b) => in_array($b, $allowed, true)));
+
+        $user = Auth::user();
+        $user->dashboard_prefs = ['order' => $order, 'hidden' => $hidden];
+        $user->save();
+
+        return response()->json(['ok' => true]);
     }
 }

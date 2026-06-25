@@ -119,6 +119,11 @@ $TRANSLATIONS = [
     'En negociaciones abiertas'   => ['In open deals', 'Em negociações abertas'],
     'Ganado (histórico)'          => ['Won (all time)', 'Ganho (histórico)'],
     'Ganadas / Cerradas'          => ['Won / Closed', 'Ganhas / Fechadas'],
+    'Editar tablero'              => ['Edit dashboard', 'Editar painel'],
+    'Restablecer'                 => ['Reset', 'Restaurar'],
+    'Listo'                       => ['Done', 'Pronto'],
+    'Arrastrar'                   => ['Drag', 'Arrastar'],
+    'Mostrar / ocultar'           => ['Show / hide', 'Mostrar / ocultar'],
 ];
 
 function merge_lang(string $path, array $translations, int $idx): void

@@ -35,6 +35,7 @@ class User extends Authenticatable
         'phone',
         'is_super_admin',
         'notification_prefs',
+        'dashboard_prefs',
     ];
 
     /**
@@ -142,7 +143,27 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'notification_prefs' => 'array',
+            'dashboard_prefs' => 'array',
         ];
+    }
+
+    /** Orden por defecto de los bloques del panel principal. */
+    public const DASHBOARD_BLOCKS = ['kpis', 'reports', 'funnels', 'toprecent', 'activities'];
+
+    /** Preferencias del panel: orden + ocultos. */
+    public function dashboardPrefs(): array
+    {
+        $p = (array) ($this->dashboard_prefs ?? []);
+        $order  = array_values(array_filter((array) ($p['order'] ?? []), fn($b) => in_array($b, self::DASHBOARD_BLOCKS, true)));
+        // Agrega al final cualquier bloque nuevo que no esté en el orden guardado.
+        foreach (self::DASHBOARD_BLOCKS as $b) {
+            if (!in_array($b, $order, true)) {
+                $order[] = $b;
+            }
+        }
+        $hidden = array_values(array_filter((array) ($p['hidden'] ?? []), fn($b) => in_array($b, self::DASHBOARD_BLOCKS, true)));
+
+        return ['order' => $order, 'hidden' => $hidden];
     }
 
     /** Preferencias de notificación por defecto (todo activo). */
