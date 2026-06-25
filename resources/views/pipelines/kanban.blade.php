@@ -290,6 +290,13 @@
                   </div>
                 </div>
 
+                {{-- URL del archivo del encabezado multimedia --}}
+                <div x-show="needsMedia" x-cloak class="mt-3" style="max-width:34rem;">
+                  <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ __('URL del archivo del encabezado (imagen/vídeo/documento)') }}</label>
+                  <input type="url" x-model="headerMedia" placeholder="https://…" class="w-full border-gray-300 rounded-lg text-xs py-1.5">
+                  <p class="text-[10px] text-gray-400 mt-1">{{ __('Debe ser una URL pública del archivo. Por defecto se usa la muestra de la plantilla.') }}</p>
+                </div>
+
                 {{-- Enviar + progreso --}}
                 <div class="mt-4 flex items-center gap-3">
                   <button type="button" @click="send()" :disabled="sending || !selectedTpl"
@@ -753,6 +760,7 @@
           tplError: '',
           selectedTpl: '',
           vars: [],
+          headerMedia: '',
           sending: false,
           finished: false,
           progress: 0,
@@ -765,6 +773,10 @@
           },
           get varCount() {
             return this.currentTpl ? (this.currentTpl.var_count || 0) : 0;
+          },
+          get needsMedia() {
+            const f = (this.currentTpl && this.currentTpl.header) ? this.currentTpl.header.format : '';
+            return f === 'IMAGE' || f === 'VIDEO' || f === 'DOCUMENT';
           },
           async loadTemplates() {
             this.templates = []; this.selectedTpl = ''; this.vars = []; this.tplError = '';
@@ -781,6 +793,7 @@
           },
           onTplChange() {
             this.vars = Array.from({ length: this.varCount }, () => '');
+            this.headerMedia = (this.currentTpl && this.currentTpl.header && this.currentTpl.header.media_url) ? this.currentTpl.header.media_url : '';
             this.finished = false; this.progress = 0;
           },
           async send() {
@@ -800,7 +813,7 @@
                 const res = await fetch(url, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                  body: JSON.stringify({ account_id: this.accountId, template: tpl.name, language: tpl.language, vars: this.vars, offset: offset, limit: limit }),
+                  body: JSON.stringify({ account_id: this.accountId, template: tpl.name, language: tpl.language, vars: this.vars, header_format: this.needsMedia ? tpl.header.format : null, header_media: this.needsMedia ? this.headerMedia : null, offset: offset, limit: limit }),
                 });
                 const data = await res.json();
                 if (!data.ok) { this.tplError = data.message || 'Error'; break; }

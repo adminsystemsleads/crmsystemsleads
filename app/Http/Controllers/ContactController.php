@@ -145,13 +145,19 @@ class ContactController extends Controller
             'account_id' => 'required|integer',
             'template'   => 'required|string|max:512',
             'language'   => 'required|string|max:10',
-            'vars'       => 'nullable|array',
-            'vars.*'     => 'nullable|string|max:1000',
-            'offset'     => 'required|integer|min:0',
-            'limit'      => 'required|integer|min:1|max:50',
+            'vars'          => 'nullable|array',
+            'vars.*'        => 'nullable|string|max:1000',
+            'header_format' => 'nullable|in:IMAGE,VIDEO,DOCUMENT',
+            'header_media'  => 'nullable|string|max:2000',
+            'offset'        => 'required|integer|min:0',
+            'limit'         => 'required|integer|min:1|max:50',
         ]);
 
         $account = WhatsappAccount::where('team_id', $teamId)->findOrFail($data['account_id']);
+
+        $headerMedia = (!empty($data['header_format']) && !empty($data['header_media']))
+            ? ['format' => $data['header_format'], 'link' => $data['header_media']]
+            : null;
 
         // Solo contactos con teléfono, orden estable por id.
         $base = $this->buildFilteredQuery($request, $teamId, $teamTz)
@@ -176,7 +182,7 @@ class ContactController extends Controller
                 return str_ireplace('{nombre}', (string) $c->name, (string) $v);
             }, $vars);
 
-            $res = $service->sendTemplate($account, $phone, $data['template'], $data['language'], $bodyParams);
+            $res = $service->sendTemplate($account, $phone, $data['template'], $data['language'], $bodyParams, [], $headerMedia);
 
             if ($res['ok'] ?? false) {
                 $sent++;

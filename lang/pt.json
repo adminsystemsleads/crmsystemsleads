@@ -1325,5 +1325,7 @@
     "con búsqueda/filtros aplicados": "com busca/filtros aplicados",
     "Página": "Página",
     "Total de negociaciones": "Total de negociações",
-    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": "Será enviado aos contatos das negociações do resultado atual (com a busca e filtros aplicados) que tenham telefone."
+    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": "Será enviado aos contatos das negociações do resultado atual (com a busca e filtros aplicados) que tenham telefone.",
+    "URL del archivo del encabezado (imagen/vídeo/documento)": "URL do arquivo do cabeçalho (imagem/vídeo/documento)",
+    "Debe ser una URL pública del archivo. Por defecto se usa la muestra de la plantilla.": "Deve ser uma URL pública do arquivo. Por padrão usa-se a amostra do modelo."
 }

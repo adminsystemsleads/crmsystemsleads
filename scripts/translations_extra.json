@@ -67,6 +67,14 @@
         "en": "Sending finished with some failures.",
         "pt": "Envio finalizado com algumas falhas."
     },
+    "URL del archivo del encabezado (imagen/vídeo/documento)": {
+        "en": "Header file URL (image/video/document)",
+        "pt": "URL do arquivo do cabeçalho (imagem/vídeo/documento)"
+    },
+    "Debe ser una URL pública del archivo. Por defecto se usa la muestra de la plantilla.": {
+        "en": "It must be a public URL of the file. By default the template's sample is used.",
+        "pt": "Deve ser uma URL pública do arquivo. Por padrão usa-se a amostra do modelo."
+    },
     "Total de contactos": {
         "en": "Total contacts",
         "pt": "Total de contatos"

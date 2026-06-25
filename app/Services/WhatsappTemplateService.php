@@ -359,11 +359,21 @@ class WhatsappTemplateService
         string $name,
         string $language,
         array  $bodyParams = [],
-        array  $headerParams = []
+        array  $headerParams = [],
+        ?array $headerMedia = null
     ): array {
         $components = [];
 
-        if (!empty($headerParams)) {
+        // Encabezado multimedia (imagen/vídeo/documento): debe enviarse el archivo.
+        if (!empty($headerMedia['link']) && !empty($headerMedia['format'])) {
+            $fmt = strtolower($headerMedia['format']); // image | video | document
+            if (in_array($fmt, ['image', 'video', 'document'], true)) {
+                $components[] = [
+                    'type'       => 'header',
+                    'parameters' => [[ 'type' => $fmt, $fmt => ['link' => $headerMedia['link']] ]],
+                ];
+            }
+        } elseif (!empty($headerParams)) {
             $components[] = [
                 'type'       => 'header',
                 'parameters' => array_map(fn($v) => ['type' => 'text', 'text' => (string) $v], $headerParams),

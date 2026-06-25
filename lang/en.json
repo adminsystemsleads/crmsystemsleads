@@ -1322,5 +1322,7 @@
     "con búsqueda/filtros aplicados": "with search/filters applied",
     "Página": "Page",
     "Total de negociaciones": "Total deals",
-    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": "It will be sent to the contacts of the deals in the current result (with the search and filters applied) that have a phone number."
+    "Se enviará a los contactos de las negociaciones del resultado actual (con la búsqueda y filtros aplicados) que tengan teléfono.": "It will be sent to the contacts of the deals in the current result (with the search and filters applied) that have a phone number.",
+    "URL del archivo del encabezado (imagen/vídeo/documento)": "Header file URL (image/video/document)",
+    "Debe ser una URL pública del archivo. Por defecto se usa la muestra de la plantilla.": "It must be a public URL of the file. By default the template's sample is used."
 }
