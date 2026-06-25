@@ -163,7 +163,8 @@
            name:'{{ old('name') }}', category:'{{ old('category','MARKETING') }}', language:'{{ old('language','es') }}',
            headerType:'{{ old('header_type','NONE') }}',
            header:{{ \Illuminate\Support\Js::from(old('header_text','')) }}, body:{{ \Illuminate\Support\Js::from(old('body','')) }},
-           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[], sampleName:'',
+           footer:{{ \Illuminate\Support\Js::from(old('footer_text','')) }}, buttons:[], sampleName:'', sampleUrl:'',
+           onSample(e){ var f = e.target.files[0]; if(this.sampleUrl){ URL.revokeObjectURL(this.sampleUrl); } if(f){ this.sampleName=f.name; this.sampleUrl=URL.createObjectURL(f); } else { this.sampleName=''; this.sampleUrl=''; } },
            sanitizeName(){ this.name = (this.name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ñ/g,'n').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,''); },
            get titleDisabled(){ return this.headerType !== 'NONE'; },
            get vars(){ var s=new Set(); (this.body.match(/\{\{\s*(\d+)\s*\}\}/g)||[]).forEach(function(x){ s.add(parseInt(x.replace(/[^0-9]/g,''),10)); }); return Array.from(s).sort(function(a,b){return a-b;}); },
@@ -219,7 +220,7 @@
               @if($account->app_id)
                 <label class="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-400 bg-gray-50 px-4 py-6 text-center transition">
                   <input type="file" name="header_sample" class="hidden"
-                         @change="sampleName = $event.target.files.length ? $event.target.files[0].name : ''"
+                         @change="onSample($event)"
                          :accept="headerType==='IMAGE' ? 'image/jpeg,image/png' : (headerType==='VIDEO' ? 'video/mp4,video/3gpp' : 'application/pdf')">
                   <template x-if="!sampleName">
                     <div class="text-sm text-gray-500">
@@ -327,8 +328,28 @@
           <div style="background:#e5ddd5;border-radius:.75rem;padding:1rem;min-height:180px;">
             <div style="background:#fff;border-radius:.6rem;padding:.6rem .7rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:13px;color:#111;max-width:280px;">
               <template x-if="headerType !== 'NONE'">
-                <div style="background:#f0f2f5;border-radius:.4rem;padding:1.1rem;text-align:center;color:#8696a0;font-size:11px;margin-bottom:.4rem;"
-                     x-text="headerType==='IMAGE' ? '🖼️ {{ __('Imagen') }}' : (headerType==='VIDEO' ? '🎬 {{ __('Vídeo') }}' : (headerType==='DOCUMENT' ? '📄 {{ __('Documento') }}' : '📍 {{ __('Ubicación') }}'))"></div>
+                <div style="margin-bottom:.4rem;">
+                  {{-- Imagen real cargada --}}
+                  <template x-if="headerType==='IMAGE' && sampleUrl">
+                    <img :src="sampleUrl" alt="" style="width:100%;max-height:170px;object-fit:cover;border-radius:.4rem;display:block;">
+                  </template>
+                  {{-- Vídeo real cargado --}}
+                  <template x-if="headerType==='VIDEO' && sampleUrl">
+                    <video :src="sampleUrl" controls style="width:100%;max-height:190px;border-radius:.4rem;display:block;background:#000;"></video>
+                  </template>
+                  {{-- Documento real cargado --}}
+                  <template x-if="headerType==='DOCUMENT' && sampleUrl">
+                    <div style="background:#f0f2f5;border-radius:.4rem;padding:.6rem .7rem;display:flex;align-items:center;gap:.5rem;color:#54656f;font-size:12px;">
+                      <span style="font-size:20px;">📄</span>
+                      <span x-text="sampleName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                    </div>
+                  </template>
+                  {{-- Placeholder: sin archivo o ubicación --}}
+                  <template x-if="headerType==='LOCATION' || ((headerType==='IMAGE' || headerType==='VIDEO' || headerType==='DOCUMENT') && !sampleUrl)">
+                    <div style="background:#f0f2f5;border-radius:.4rem;padding:1.1rem;text-align:center;color:#8696a0;font-size:11px;"
+                         x-text="headerType==='IMAGE' ? '🖼️ {{ __('Imagen') }}' : (headerType==='VIDEO' ? '🎬 {{ __('Vídeo') }}' : (headerType==='DOCUMENT' ? '📄 {{ __('Documento') }}' : '📍 {{ __('Ubicación') }}'))"></div>
+                  </template>
+                </div>
               </template>
               <div x-show="headerType === 'NONE' && header" x-cloak style="font-weight:700;margin-bottom:.25rem;" x-text="header"></div>
               <div style="white-space:pre-line;" x-text="body || '{{ __('Escribe el cuerpo del mensaje…') }}'"></div>
