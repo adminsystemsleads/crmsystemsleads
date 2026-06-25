@@ -80,6 +80,7 @@
                   $btns   = $comps->firstWhere('type', 'BUTTONS');
                   $hfmt   = strtoupper($header['format'] ?? '');
                   $langName = $langs[$t['language'] ?? ''] ?? null;
+                  $mediaUrl = $header['example']['header_handle'][0] ?? null;
                 @endphp
                 <tr class="hover:bg-gray-50/60 transition">
                   <td class="px-5 py-3">
@@ -116,6 +117,14 @@
                           <div style="background:#fff;border-radius:.55rem;padding:.55rem .65rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:12.5px;color:#111;">
                             @if($header && $hfmt === 'TEXT')
                               <div style="font-weight:700;margin-bottom:.25rem;">{{ $header['text'] ?? '' }}</div>
+                            @elseif($hfmt === 'IMAGE' && $mediaUrl)
+                              <img src="{{ $mediaUrl }}" alt="" style="width:100%;max-height:160px;object-fit:cover;border-radius:.4rem;display:block;margin-bottom:.4rem;">
+                            @elseif($hfmt === 'VIDEO' && $mediaUrl)
+                              <video src="{{ $mediaUrl }}" controls style="width:100%;max-height:180px;border-radius:.4rem;display:block;background:#000;margin-bottom:.4rem;"></video>
+                            @elseif($hfmt === 'DOCUMENT' && $mediaUrl)
+                              <a href="{{ $mediaUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:.5rem;background:#f0f2f5;border-radius:.4rem;padding:.6rem;color:#54656f;font-size:12px;margin-bottom:.4rem;text-decoration:none;">
+                                <span style="font-size:20px;">📄</span> {{ __('Ver documento') }}
+                              </a>
                             @elseif($header && in_array($hfmt, ['IMAGE','VIDEO','DOCUMENT','LOCATION']))
                               <div style="background:#cfd8dc;border-radius:.4rem;height:120px;display:flex;align-items:center;justify-content:center;color:#607d8b;font-size:30px;margin-bottom:.4rem;">
                                 {!! $hfmt==='IMAGE' ? '🖼️' : ($hfmt==='VIDEO' ? '🎬' : ($hfmt==='DOCUMENT' ? '📄' : '📍')) !!}
