@@ -46,7 +46,7 @@
                 || $filters['stages'] || $filters['pipelines'] || collect($filters['cf'])->flatten()->filter()->isNotEmpty();
       $anyFilter = $q || $status || $hasAdv;
     @endphp
-    <div class="mb-5" x-data="{ adv: {{ $hasAdv ? 'true' : 'false' }} }">
+    <div class="mb-8" x-data="{ adv: {{ $hasAdv ? 'true' : 'false' }} }">
       <form method="GET" action="{{ route('contacts.index') }}">
         {{-- Línea principal --}}
         <div class="flex flex-wrap items-center gap-2">
