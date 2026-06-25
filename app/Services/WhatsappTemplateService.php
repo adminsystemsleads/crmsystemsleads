@@ -68,25 +68,99 @@ class WhatsappTemplateService
     }
 
     /**
-     * Lista TODAS las plantillas (cualquier estado) para la pantalla de gestión.
+     * Resuelve el WABA ID real a partir del Phone Number ID y lo persiste en la cuenta.
+     * Retorna el WABA ID resuelto o null.
      */
-    public function listAll(WhatsappAccount $account): array
+    public function resolveWabaId(WhatsappAccount $account): ?string
     {
-        if (!$account->waba_id || !$account->access_token) {
-            return ['ok' => false, 'message' => 'La cuenta no tiene WABA ID o Access Token configurado.', 'templates' => []];
+        if (!$account->phone_number_id || !$account->access_token) {
+            return null;
         }
 
         try {
             $res = Http::withToken($account->access_token)
-                ->acceptJson()->timeout(20)
-                ->get(self::GRAPH . "/{$account->waba_id}/message_templates", [
-                    'limit'  => 200,
-                    'fields' => 'name,language,status,category,components,id,rejected_reason',
+                ->acceptJson()->timeout(15)
+                ->get(self::GRAPH . "/{$account->phone_number_id}", [
+                    'fields' => 'whatsapp_business_account_id,verified_name,display_phone_number',
                 ]);
 
+            $wabaId = $res->json('whatsapp_business_account_id');
+            if ($res->successful() && $wabaId) {
+                if ((string) $account->waba_id !== (string) $wabaId) {
+                    $account->forceFill(['waba_id' => $wabaId])->saveQuietly();
+                }
+                return (string) $wabaId;
+            }
+        } catch (\Throwable $e) {
+            Log::error('WA resolveWabaId error: ' . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /** Realiza la consulta cruda de plantillas contra un WABA ID. */
+    private function fetchTemplates(WhatsappAccount $account, string $wabaId): array
+    {
+        $res = Http::withToken($account->access_token)
+            ->acceptJson()->timeout(20)
+            ->get(self::GRAPH . "/{$wabaId}/message_templates", [
+                'limit'  => 200,
+                'fields' => 'name,language,status,category,components,id,rejected_reason',
+            ]);
+
+        return ['res' => $res, 'body' => $res->json() ?? []];
+    }
+
+    /**
+     * Lista TODAS las plantillas (cualquier estado) para la pantalla de gestión.
+     * Si el WABA ID configurado es inválido, intenta auto-resolverlo desde el Phone Number ID.
+     */
+    public function listAll(WhatsappAccount $account): array
+    {
+        if (!$account->access_token) {
+            return ['ok' => false, 'message' => 'La cuenta no tiene Access Token configurado.', 'templates' => []];
+        }
+
+        try {
+            $wabaId = $account->waba_id;
+
+            // Si no hay WABA o falla con "nonexisting field", intentamos auto-resolverlo.
+            if (!$wabaId) {
+                $wabaId = $this->resolveWabaId($account);
+                if (!$wabaId) {
+                    return ['ok' => false, 'message' => 'No se pudo determinar el WABA ID. Verifica el Phone Number ID y que el token tenga permiso whatsapp_business_management.', 'templates' => []];
+                }
+            }
+
+            $r    = $this->fetchTemplates($account, $wabaId);
+            $res  = $r['res'];
+            $body = $r['body'];
+
+            // WABA ID inválido → reintentar con el resuelto desde el Phone Number ID.
             if (!$res->successful()) {
-                $body = $res->json() ?? [];
-                return ['ok' => false, 'message' => $body['error']['message'] ?? 'No se pudieron obtener las plantillas.', 'templates' => []];
+                $metaMsg = $body['error']['message'] ?? '';
+                $isBadWaba = str_contains($metaMsg, 'message_templates')
+                    || str_contains($metaMsg, 'nonexisting field')
+                    || str_contains($metaMsg, 'Unsupported get request');
+
+                if ($isBadWaba) {
+                    $resolved = $this->resolveWabaId($account);
+                    if ($resolved && $resolved !== (string) $wabaId) {
+                        $r    = $this->fetchTemplates($account, $resolved);
+                        $res  = $r['res'];
+                        $body = $r['body'];
+                    }
+                }
+            }
+
+            if (!$res->successful()) {
+                $metaMsg = $body['error']['message'] ?? 'No se pudieron obtener las plantillas.';
+                if (str_contains($metaMsg, 'message_templates') || str_contains($metaMsg, 'nonexisting field')) {
+                    $metaMsg = 'El WABA ID no es válido. Ve a "WhatsApp → Cuentas → Editar" y usa "Auto-detectar" para obtener el WABA ID correcto (NO el Phone Number ID).';
+                } elseif (str_contains(strtolower($metaMsg), 'permission')) {
+                    $metaMsg = 'El Access Token no tiene permiso "whatsapp_business_management".';
+                }
+                return ['ok' => false, 'message' => $metaMsg, 'templates' => []];
             }
 
             $data = $res->json('data') ?? [];
