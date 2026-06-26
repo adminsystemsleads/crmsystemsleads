@@ -118,6 +118,19 @@ class WhatsappWebhookController extends Controller
 
             if ($type === 'text') {
                 $textBody = $m['text']['body'] ?? '';
+            } elseif ($type === 'button') {
+                // Respuesta a un botón de plantilla (quick reply): llega el texto del botón.
+                $textBody = $m['button']['text'] ?? ($m['button']['payload'] ?? '[button]');
+            } elseif ($type === 'interactive') {
+                // Respuestas a botones/listas interactivas.
+                $it = $m['interactive'] ?? [];
+                if (($it['type'] ?? '') === 'button_reply') {
+                    $textBody = $it['button_reply']['title'] ?? '[button]';
+                } elseif (($it['type'] ?? '') === 'list_reply') {
+                    $textBody = $it['list_reply']['title'] ?? '[list]';
+                } else {
+                    $textBody = '[interactive]';
+                }
             } else {
                 // WhatsApp Cloud API manda ID de media según tipo
                 if ($type === 'image') {
