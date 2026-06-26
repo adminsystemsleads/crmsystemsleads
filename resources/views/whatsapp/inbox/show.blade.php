@@ -1417,7 +1417,7 @@ function setMobilePanel(panel) {
         <p class="text-xs text-gray-500" id="tplSelectedLang"></p>
       </div>
 
-      <div id="tplPreviewBox" class="bg-white border border-gray-200 rounded-lg p-3 mb-3 text-sm whitespace-pre-line"></div>
+      <div id="tplPreviewBox" class="mb-3"></div>
 
       <div id="tplVariablesBox" class="space-y-2 mb-3"></div>
 
@@ -1542,15 +1542,40 @@ function setMobilePanel(panel) {
     const body = (tpl.components || []).find(c => c.type === 'BODY');
     const header = (tpl.components || []).find(c => c.type === 'HEADER');
     const footer = (tpl.components || []).find(c => c.type === 'FOOTER');
+    const buttonsComp = (tpl.components || []).find(c => c.type === 'BUTTONS');
 
     const bodyVarCount = body ? (body.text.match(/\{\{\d+\}\}/g) || []).length : 0;
     const headerVarCount = (header && header.format === 'TEXT') ? (header.text.match(/\{\{\d+\}\}/g) || []).length : 0;
 
-    let preview = '';
-    if (header && header.format === 'TEXT') preview += '*' + header.text + '*\n\n';
-    if (body) preview += body.text;
-    if (footer) preview += '\n\n_' + footer.text + '_';
-    document.getElementById('tplPreviewBox').textContent = preview || '(sin contenido)';
+    // Previsualización estilo WhatsApp.
+    let pv = '<div style="background:#e5ddd5;border-radius:.6rem;padding:.6rem;">';
+    pv += '<div style="background:#fff;border-radius:.55rem;padding:.55rem .65rem;box-shadow:0 1px 1px rgba(0,0,0,.1);font-size:12.5px;color:#111;">';
+    if (header) {
+      const fmt = (header.format || '').toUpperCase();
+      const mediaUrl = header.example && header.example.header_handle && header.example.header_handle[0];
+      if (fmt === 'TEXT' && header.text) {
+        pv += '<div style="font-weight:700;margin-bottom:.25rem;">' + escapeHtml(header.text) + '</div>';
+      } else if (fmt === 'IMAGE' && mediaUrl) {
+        pv += '<img src="' + mediaUrl + '" alt="" style="width:100%;max-height:150px;object-fit:cover;border-radius:.4rem;display:block;margin-bottom:.4rem;">';
+      } else if (fmt === 'VIDEO' && mediaUrl) {
+        pv += '<video src="' + mediaUrl + '" controls style="width:100%;max-height:170px;border-radius:.4rem;display:block;background:#000;margin-bottom:.4rem;"></video>';
+      } else if (['IMAGE', 'VIDEO', 'DOCUMENT', 'LOCATION'].includes(fmt)) {
+        const ic = fmt === 'IMAGE' ? '🖼️' : (fmt === 'VIDEO' ? '🎬' : (fmt === 'DOCUMENT' ? '📄' : '📍'));
+        pv += '<div style="background:#cfd8dc;border-radius:.4rem;height:90px;display:flex;align-items:center;justify-content:center;color:#607d8b;font-size:24px;margin-bottom:.4rem;">' + ic + '</div>';
+      }
+    }
+    if (body) pv += '<div style="white-space:pre-line;">' + escapeHtml(body.text) + '</div>';
+    if (footer) pv += '<div style="color:#667781;font-size:11px;margin-top:.3rem;">' + escapeHtml(footer.text) + '</div>';
+    pv += '</div>';
+    if (buttonsComp && buttonsComp.buttons && buttonsComp.buttons.length) {
+      pv += '<div style="margin-top:.35rem;display:flex;flex-direction:column;gap:.3rem;">';
+      buttonsComp.buttons.forEach(b => {
+        pv += '<div style="background:#fff;border-radius:.55rem;text-align:center;padding:.4rem;color:#1ea0e6;font-size:12.5px;font-weight:600;">' + escapeHtml(b.text || '') + '</div>';
+      });
+      pv += '</div>';
+    }
+    pv += '</div>';
+    document.getElementById('tplPreviewBox').innerHTML = pv;
 
     const varsBox = document.getElementById('tplVariablesBox');
     varsBox.innerHTML = '';
