@@ -206,6 +206,19 @@
       .app-sidebar .bg-white .border-gray-200 { border-color: #e5e7eb !important; }
       .app-sidebar .bg-white .hover\:bg-gray-100:hover { background: #f3f4f6 !important; }
 
+      /* Scrollbar delgado y acorde al tema navy del menú lateral */
+      .app-sidebar, .app-sidebar * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent; }
+      .app-sidebar::-webkit-scrollbar,
+      .app-sidebar *::-webkit-scrollbar { width: 6px; height: 6px; }
+      .app-sidebar::-webkit-scrollbar-track,
+      .app-sidebar *::-webkit-scrollbar-track { background: transparent; }
+      .app-sidebar::-webkit-scrollbar-thumb,
+      .app-sidebar *::-webkit-scrollbar-thumb { background: rgba(255,255,255,.20); border-radius: 9999px; border: 1px solid transparent; background-clip: padding-box; }
+      .app-sidebar::-webkit-scrollbar-thumb:hover,
+      .app-sidebar *::-webkit-scrollbar-thumb:hover { background: rgba(201,169,97,.55); background-clip: padding-box; }
+      .app-sidebar::-webkit-scrollbar-button,
+      .app-sidebar *::-webkit-scrollbar-button { display: none; height: 0; width: 0; }
+
       /* Empuje del contenido SOLO en escritorio: en móvil el menú se superpone
          (overlay) en vez de comprimir la vista de la derecha. */
       .main-wrap { transition: margin-left 200ms ease; }
