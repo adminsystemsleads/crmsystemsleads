@@ -35,7 +35,7 @@
   // en los bloques <section data-art="...">.
   $hcArticles = [
     ['id' => 'bienvenida',   'cat' => 'inicio',   'title' => __('Bienvenido a Qipu'),                   'kw' => 'inicio empezar panel principal dashboard resumen'],
-    ['id' => 'preferencias', 'cat' => 'inicio',   'title' => __('Idioma, tema y tu perfil'),            'kw' => 'idioma tema oscuro claro perfil foto contraseña preferencias'],
+    ['id' => 'preferencias', 'cat' => 'inicio',   'title' => __('Idioma, tema y tu perfil'),            'kw' => 'idioma tema oscuro claro perfil foto contraseña preferencias seguridad autenticacion dos pasos telefono correo'],
     ['id' => 'crear-contacto','cat'=> 'contactos', 'title' => __('Crear y editar un contacto'),          'kw' => 'contacto cliente crear nuevo editar telefono correo'],
     ['id' => 'importar-contactos','cat'=>'contactos','title'=> __('Importar contactos desde Excel'),     'kw' => 'importar excel csv masivo cargar contactos lista'],
     ['id' => 'kanban',       'cat' => 'crm',      'title' => __('Embudos y etapas (Kanban)'),           'kw' => 'embudo pipeline etapa kanban tablero arrastrar mover'],
@@ -154,12 +154,25 @@
       <section data-art="preferencias" x-show="current === 'preferencias'">
         <h2>{{ __('Idioma, tema y tu perfil') }}</h2>
         <p>{{ __('Personaliza Qipu a tu gusto desde el menú lateral.') }}</p>
+
+        <p><b>{{ __('Tema e idioma') }}</b></p>
         <ol class="hc-steps">
-          <li>{{ __('Abre el menú lateral izquierdo.') }}</li>
-          <li>{{ __('Cerca del final verás las secciones «Tema» e «Idioma». Elige claro/oscuro y el idioma que prefieras.') }}</li>
-          <li>{{ __('Para cambiar tu foto, nombre o contraseña, haz clic en tu nombre (abajo del todo) y entra a tu perfil.') }}</li>
+          <li>{{ __('Abre el menú lateral izquierdo y baja hasta el final.') }}</li>
+          <li>{{ __('En «Tema» eliges entre claro y oscuro.') }}</li>
+          <li>{{ __('En «Idioma» abres el selector y eliges Español, English o Português.') }}</li>
         </ol>
-        {!! $__hcFig('inicio-perfil.png', __('Opciones de tema, idioma y perfil')) !!}
+        {!! $__hcFig('perfil-tema-idioma.png', __('Secciones de Tema e Idioma en el menú')) !!}
+        {!! $__hcFig('perfil-idioma-menu.png', __('Selector de idioma: Español, English, Português')) !!}
+
+        <p><b>{{ __('Tu perfil') }}</b></p>
+        <ol class="hc-steps">
+          <li>{{ __('Haz clic en tu nombre (abajo del todo, junto a «Cerrar sesión»).') }}</li>
+          <li>{{ __('En «Información del perfil» cambias tu foto, nombre, correo y teléfono. Guarda con «GUARDAR».') }}</li>
+          <li>{{ __('En «Actualizar contraseña» cambias tu clave: escribe la actual y la nueva dos veces.') }}</li>
+          <li>{{ __('En «Autenticación en dos pasos» puedes activar un código extra al iniciar sesión, para más seguridad.') }}</li>
+        </ol>
+        {!! $__hcFig('perfil-datos.png', __('Pantalla de perfil: datos, contraseña y seguridad')) !!}
+        <div class="hc-tip">💡 {{ __('La foto debe ser JPG o PNG de máximo 1 MB.') }}</div>
         <a href="{{ route('profile.show') }}" class="hc-cta">{{ __('Ir a mi perfil') }}</a>
       </section>
 
