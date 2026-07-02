@@ -20,6 +20,10 @@
           ['source' => 'core', 'core_key' => 'email', 'label' => null, 'placeholder' => null, 'is_required' => false],
           ['source' => 'core', 'core_key' => 'phone', 'label' => null, 'placeholder' => null, 'is_required' => false],
         ]);
+
+    // Responsables seleccionados (soporta re-poblar tras un error de validación).
+    $initialAssigned = old('assigned_user_ids', $form ? (array) ($form->assigned_user_ids ?? []) : []);
+    $initialAssigned = array_map('strval', (array) $initialAssigned);
   @endphp
 
   <div class="max-w-6xl mx-auto px-4 py-8"
@@ -33,6 +37,7 @@
            stage_id: '{{ $form?->stage_id }}',
            move_stage_id: '{{ $form?->move_stage_id }}',
            deal_dedup_mode: '{{ $form?->deal_dedup_mode ?? 'always_create' }}',
+           assigned_user_ids: @js($initialAssigned),
          }
        })">
 
@@ -219,15 +224,21 @@
                 </select>
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Responsable de las negociaciones') }}</label>
-                <select name="assigned_user_id" x-model="f.assigned_user_id"
-                        x-init="$nextTick(() => { $el.value = f.assigned_user_id })"
-                        class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                  <option value="">{{ __('— Sin asignar —') }}</option>
-                  <template x-for="u in users" :key="u.id">
-                    <option :value="String(u.id)" x-text="u.name"></option>
+                <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Responsables de las negociaciones') }}</label>
+                <p class="text-[11px] text-gray-400 mb-1.5">{{ __('Si marcas más de uno, cada lead se reparte de forma aleatoria y equitativa entre ellos.') }}</p>
+                <div class="rounded-lg border border-gray-300 p-2 space-y-0.5" style="max-height:11rem;overflow-y:auto;">
+                  <template x-if="!users.length">
+                    <p class="text-xs text-gray-400 px-1 py-1">{{ __('No hay usuarios en el equipo.') }}</p>
                   </template>
-                </select>
+                  <template x-for="u in users" :key="u.id">
+                    <label class="flex items-center gap-2 text-sm text-gray-700 px-1 py-1 rounded hover:bg-gray-50 cursor-pointer">
+                      <input type="checkbox" name="assigned_user_ids[]" :value="String(u.id)" x-model="f.assigned_user_ids"
+                             class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                      <span x-text="u.name"></span>
+                    </label>
+                  </template>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-1" x-show="!f.assigned_user_ids.length">{{ __('Sin marcar ninguno, las negociaciones quedan sin asignar.') }}</p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Título de la negociación') }}</label>
@@ -306,8 +317,8 @@
               <div class="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                 <div class="p-6" :style="`background:${f.bg_color}`">
                   <div class="max-w-sm mx-auto rounded-xl shadow-sm p-6" :style="`background:${f.card_color};color:${f.text_color}`">
-                    <h3 class="text-lg font-bold" x-text="f.title || '{{ __('Título del formulario') }}'"></h3>
-                    <p class="text-sm opacity-70 mt-1" x-show="f.subtitle" x-text="f.subtitle"></p>
+                    <h3 class="text-lg font-bold" style="text-align:center;" x-text="f.title || '{{ __('Título del formulario') }}'"></h3>
+                    <p class="text-sm opacity-70 mt-1" style="text-align:center;" x-show="f.subtitle" x-text="f.subtitle"></p>
                     <div class="mt-4 space-y-3">
                       <template x-for="(field, i) in fields" :key="i">
                         <div>
@@ -393,7 +404,7 @@
           pipeline_id: cfg.initial.pipeline_id || '',
           stage_id: cfg.initial.stage_id || '',
           move_stage_id: cfg.initial.move_stage_id || '',
-          assigned_user_id: '{{ old('assigned_user_id', $form?->assigned_user_id ?? '') }}',
+          assigned_user_ids: (cfg.initial.assigned_user_ids || []).map(String),
           deal_dedup_mode: cfg.initial.deal_dedup_mode || 'always_create',
           is_active: {{ old('is_active', $form?->is_active ?? true) ? 'true' : 'false' }},
         },

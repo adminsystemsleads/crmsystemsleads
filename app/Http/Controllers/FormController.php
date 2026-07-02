@@ -174,7 +174,8 @@ class FormController extends Controller
             'pipeline_id'      => ['nullable', Rule::exists('pipelines', 'id')->where('team_id', $team->id)],
             'stage_id'         => ['nullable', 'integer'],
             'move_stage_id'    => ['nullable', 'integer'],
-            'assigned_user_id' => ['nullable', Rule::in($teamUserIds)],
+            'assigned_user_ids'   => ['nullable', 'array'],
+            'assigned_user_ids.*' => [Rule::in($teamUserIds)],
             'deal_title_template' => 'nullable|string|max:255',
             'deal_dedup_mode'  => ['required', Rule::in(['always_create', 'use_active'])],
             'is_active'        => 'nullable|boolean',
@@ -183,6 +184,7 @@ class FormController extends Controller
         // Normaliza booleans / defaults
         $data['button_text'] = $data['button_text'] ?: 'Enviar';
         $data['is_active']   = $request->boolean('is_active');
+        $data['assigned_user_ids'] = array_values(array_map('intval', $data['assigned_user_ids'] ?? []));
         if (empty($data['deal_title_template'])) {
             $data['deal_title_template'] = '{form} - {name}';
         }

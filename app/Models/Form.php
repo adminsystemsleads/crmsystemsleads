@@ -11,12 +11,13 @@ class Form extends Model
         'team_id', 'name', 'slug',
         'title', 'subtitle', 'button_text', 'success_message', 'redirect_url',
         'bg_color', 'card_color', 'text_color', 'primary_color', 'button_text_color',
-        'pipeline_id', 'stage_id', 'assigned_user_id', 'deal_title_template',
+        'pipeline_id', 'stage_id', 'assigned_user_id', 'assigned_user_ids', 'deal_title_template',
         'deal_dedup_mode', 'move_stage_id', 'is_active',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active'         => 'boolean',
+        'assigned_user_ids' => 'array',
     ];
 
     /** Genera un slug corto único para el link público. */

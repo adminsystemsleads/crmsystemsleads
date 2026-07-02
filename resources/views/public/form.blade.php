@@ -19,8 +19,8 @@
       display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:{{ $embed ? '8px' : '32px 16px' }};}
     .card{background:var(--card);width:100%;max-width:460px;border-radius:16px;
       box-shadow:0 10px 30px rgba(15,23,42,.10);padding:28px 26px;}
-    h1{font-size:1.35rem;margin:0 0 6px;font-weight:800;line-height:1.25}
-    .sub{opacity:.72;font-size:.9rem;margin:0 0 18px;line-height:1.5}
+    h1{font-size:1.35rem;margin:0 0 6px;font-weight:800;line-height:1.25;text-align:center}
+    .sub{opacity:.72;font-size:.9rem;margin:0 0 18px;line-height:1.5;text-align:center}
     .field{margin-bottom:14px}
     label{display:block;font-size:.78rem;font-weight:600;margin-bottom:5px}
     .req{color:#dc2626}

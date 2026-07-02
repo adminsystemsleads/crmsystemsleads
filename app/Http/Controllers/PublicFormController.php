@@ -54,8 +54,11 @@ class PublicFormController extends Controller
         $name  = trim((string) $request->input('name'))
               ?: ($email ?: ($phone ?: __('Contacto sin nombre')));
 
-        // Usuario válido para asignar como dueño y autor del comentario del sistema.
-        $ownerUserId = $form->assigned_user_id ?: $team->user_id;
+        // Responsable de la negociación: reparto aleatorio y equitativo entre los
+        // usuarios marcados en el formulario (null si no hay ninguno marcado).
+        $responsibleId = $this->pickResponsible($form, $team);
+        // Usuario válido para dueño y autor del comentario del sistema.
+        $ownerUserId = $responsibleId ?: $team->user_id;
 
         // ---- 1) Deduplicación de CONTACTO por teléfono o correo ----
         $contact = $this->findExistingContact($team->id, $email, $phone);
@@ -85,7 +88,7 @@ class PublicFormController extends Controller
         CustomFieldsHelper::sync($contact, $request->input('custom_fields', []), $team->id, 'contact');
 
         // ---- 2) Negociación ----
-        $deal = $this->handleDeal($form, $team, $contact, $ownerUserId);
+        $deal = $this->handleDeal($form, $team, $contact, $ownerUserId, $responsibleId);
 
         if ($deal) {
             CustomFieldsHelper::sync($deal, $request->input('custom_fields', []), $team->id, 'deal');
@@ -198,7 +201,7 @@ JS;
      * Crea o reutiliza la negociación según la configuración de duplicados del formulario.
      * Deja un comentario de sistema en la negociación.
      */
-    private function handleDeal(Form $form, $team, Contact $contact, int $ownerUserId): ?Deal
+    private function handleDeal(Form $form, $team, Contact $contact, int $ownerUserId, ?int $responsibleId): ?Deal
     {
         // Pipeline destino: el del formulario o, si no hay, el predeterminado del team.
         $pipeline = $form->pipeline
@@ -246,7 +249,7 @@ JS;
             $deal = Deal::create([
                 'team_id'        => $team->id,
                 'owner_id'       => $ownerUserId,
-                'responsible_id' => $form->assigned_user_id,
+                'responsible_id' => $responsibleId,
                 'contact_id'     => $contact->id,
                 'pipeline_id'    => $pipeline->id,
                 'stage_id'       => $targetStage->id,
@@ -267,6 +270,50 @@ JS;
         ]);
 
         return $deal;
+    }
+
+    /**
+     * Elige el responsable para esta negociación entre los usuarios marcados en el
+     * formulario. Reparto ALEATORIO pero EQUITATIVO: escoge entre los que menos
+     * negociaciones de este formulario tienen ya asignadas, con desempate al azar.
+     * Devuelve null si el formulario no tiene responsables marcados.
+     */
+    private function pickResponsible(Form $form, $team): ?int
+    {
+        $candidates = array_values(array_filter(array_map('intval', (array) ($form->assigned_user_ids ?? []))));
+        if (empty($candidates)) return null;
+
+        // Deja solo usuarios que siguen perteneciendo al equipo.
+        $validIds   = $team->allUsers()->pluck('id')->map(fn ($i) => (int) $i)->all();
+        $candidates = array_values(array_intersect($candidates, $validIds));
+
+        if (empty($candidates))   return null;
+        if (count($candidates) === 1) return (int) $candidates[0];
+
+        // Cuántas negociaciones de ESTE formulario tiene ya asignada cada candidato.
+        $counts = FormSubmission::query()
+            ->where('form_submissions.form_id', $form->id)
+            ->join('deals', 'deals.id', '=', 'form_submissions.deal_id')
+            ->whereIn('deals.responsible_id', $candidates)
+            ->groupBy('deals.responsible_id')
+            ->selectRaw('deals.responsible_id as uid, COUNT(*) as c')
+            ->pluck('c', 'uid')
+            ->toArray();
+
+        // Escoge entre los menos cargados; desempate aleatorio.
+        $min = null;
+        $best = [];
+        foreach ($candidates as $uid) {
+            $c = (int) ($counts[$uid] ?? 0);
+            if ($min === null || $c < $min) {
+                $min = $c;
+                $best = [$uid];
+            } elseif ($c === $min) {
+                $best[] = $uid;
+            }
+        }
+
+        return (int) $best[array_rand($best)];
     }
 
     private function buildDealTitle(Form $form, Contact $contact): string
