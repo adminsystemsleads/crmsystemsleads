@@ -49,6 +49,15 @@
                             @enderror
                         </div>
 
+                        {{-- Creado el (solo lectura) --}}
+                        @php $dealTz = auth()->user()->currentTeam?->effectiveTimezone() ?? config('app.timezone'); @endphp
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">{{ __('Creado el') }}</label>
+                            <input type="text" readonly disabled
+                                   value="{{ optional($deal->created_at)->timezone($dealTz)->format('d/m/Y H:i') }}"
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 cursor-not-allowed">
+                        </div>
+
                         {{-- Contacto (Select2) --}}
                         <div class="mb-4">
                             <div class="flex items-center justify-between mb-1" style="gap:8px;">

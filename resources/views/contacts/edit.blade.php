@@ -147,6 +147,17 @@
               </div>
             </div>
 
+            {{-- Creado el (solo lectura) --}}
+            @if($contact)
+              @php $contactTz = auth()->user()->currentTeam?->effectiveTimezone() ?? config('app.timezone'); @endphp
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Creado el') }}</label>
+                <input type="text" readonly disabled
+                       value="{{ optional($contact->created_at)->timezone($contactTz)->format('d/m/Y H:i') }}"
+                       class="w-full rounded-lg border-gray-200 bg-gray-50 text-sm text-gray-500 cursor-not-allowed">
+              </div>
+            @endif
+
             {{-- Notas --}}
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Notas') }}</label>

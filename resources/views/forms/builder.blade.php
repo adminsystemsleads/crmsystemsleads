@@ -226,18 +226,36 @@
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Responsables de las negociaciones') }}</label>
                 <p class="text-[11px] text-gray-400 mb-1.5">{{ __('Si marcas más de uno, cada lead se reparte de forma aleatoria y equitativa entre ellos.') }}</p>
-                <div class="rounded-lg border border-gray-300 p-2 space-y-0.5" style="max-height:11rem;overflow-y:auto;">
-                  <template x-if="!users.length">
-                    <p class="text-xs text-gray-400 px-1 py-1">{{ __('No hay usuarios en el equipo.') }}</p>
-                  </template>
-                  <template x-for="u in users" :key="u.id">
-                    <label class="flex items-center gap-2 text-sm text-gray-700 px-1 py-1 rounded hover:bg-gray-50 cursor-pointer">
-                      <input type="checkbox" name="assigned_user_ids[]" :value="String(u.id)" x-model="f.assigned_user_ids"
-                             class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                      <span x-text="u.name"></span>
-                    </label>
-                  </template>
+
+                {{-- Desplegable con checkboxes --}}
+                <div class="relative" x-data="{ openResp: false }" @click.away="openResp = false">
+                  <button type="button" @click="openResp = !openResp"
+                          class="w-full flex items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-left focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                    <span class="truncate" :class="f.assigned_user_ids.length ? 'text-gray-700' : 'text-gray-400'" x-text="respLabel()"></span>
+                    <svg class="shrink-0 text-gray-400" style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+
+                  <div x-show="openResp" x-cloak
+                       x-transition:enter="transition ease-out duration-100"
+                       x-transition:enter-start="opacity-0 -translate-y-1"
+                       x-transition:enter-end="opacity-100 translate-y-0"
+                       class="absolute z-20 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg py-1"
+                       style="max-height:12rem;overflow-y:auto;">
+                    <template x-if="!users.length">
+                      <p class="text-xs text-gray-400 px-3 py-2">{{ __('No hay usuarios en el equipo.') }}</p>
+                    </template>
+                    <template x-for="u in users" :key="u.id">
+                      <label class="flex items-center gap-2 text-sm text-gray-700 px-3 py-1.5 hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" name="assigned_user_ids[]" :value="String(u.id)" x-model="f.assigned_user_ids"
+                               class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        <span x-text="u.name"></span>
+                      </label>
+                    </template>
+                  </div>
                 </div>
+
                 <p class="text-[11px] text-gray-400 mt-1" x-show="!f.assigned_user_ids.length">{{ __('Sin marcar ninguno, las negociaciones quedan sin asignar.') }}</p>
               </div>
               <div>
@@ -456,6 +474,14 @@
           return '{{ __('Escribe aquí…') }}';
         },
 
+        respLabel() {
+          if (!this.f.assigned_user_ids.length) return '{{ __('Seleccionar responsables') }}';
+          const names = this.users
+            .filter(u => this.f.assigned_user_ids.includes(String(u.id)))
+            .map(u => u.name);
+          if (names.length <= 2) return names.join(', ');
+          return names.slice(0, 2).join(', ') + ' +' + (names.length - 2);
+        },
         selectedPipeline() { return this.pipelines.find(p => String(p.id) === String(this.f.pipeline_id)); },
         currentStages() {
           const p = this.selectedPipeline();

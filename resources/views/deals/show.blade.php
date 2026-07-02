@@ -13,6 +13,8 @@
                 <p><strong>{{ __('Contacto:') }}</strong> {{ optional($deal->contact)->name }}</p>
                 <p><strong>{{ __('Monto:') }}</strong> {{ $deal->currency }} {{ number_format($deal->amount, 2) }}</p>
                 <p><strong>{{ __('Estado:') }}</strong> {{ $deal->status }}</p>
+                @php $dealTz = auth()->user()->currentTeam?->effectiveTimezone() ?? config('app.timezone'); @endphp
+                <p><strong>{{ __('Creado el:') }}</strong> {{ optional($deal->created_at)->timezone($dealTz)->format('d/m/Y H:i') }}</p>
                 <p><strong>{{ __('Fecha cierre:') }}</strong> {{ $deal->close_date }}</p>
                 <p><strong>{{ __('Descripción:') }}</strong></p>
                 <p>{{ $deal->description }}</p>
