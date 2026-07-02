@@ -748,6 +748,11 @@ function setMobilePanel(panel) {
     wrap.appendChild(bubble);
     chatBox.appendChild(wrap);
     if (msg.id && msg.id > lastDbId) lastDbId = msg.id;
+    // Un mensaje ENTRANTE del cliente reabre la ventana de 24h: ocultar el banner.
+    if (!isOut) {
+      const banner = document.getElementById('windowExpiredBanner');
+      if (banner) banner.classList.add('hidden');
+    }
     scrollBottom();
   }
 
