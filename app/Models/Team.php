@@ -103,6 +103,7 @@ class Team extends JetstreamTeam
         'pagos'            => false,
         'transparencia_ia' => false,
         'perfil_unidad'    => true,
+        'formularios'      => true,
         'gastos'           => false,
         'gastos_import'    => false,
         'perfiles'         => false,

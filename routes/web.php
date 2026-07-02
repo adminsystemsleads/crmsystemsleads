@@ -29,6 +29,8 @@ use App\Http\Controllers\ChatTagController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\LicenseCodeController;
 use App\Http\Controllers\TeamSettingsController;
+use App\Http\Controllers\FormController;
+use App\Http\Controllers\PublicFormController;
 
 
 Route::get('/', function () {
@@ -50,6 +52,11 @@ Route::post('/locale', function (Request $request) {
 
 // Webhook público de Culqi (sin auth, sin CSRF — excluido en bootstrap/app.php)
 Route::post('/webhooks/culqi', [PaymentController::class, 'webhook'])->name('webhooks.culqi');
+
+// Formularios PÚBLICOS (sin auth). El submit está excluido de CSRF en bootstrap/app.php
+Route::get('/f/{slug}',           [PublicFormController::class, 'show'])->name('public.form.show');
+Route::post('/f/{slug}',          [PublicFormController::class, 'submit'])->name('public.form.submit');
+Route::get('/f/{slug}/embed.js',  [PublicFormController::class, 'embed'])->name('public.form.embed');
 
 Route::middleware([
     'auth:sanctum',
@@ -120,6 +127,17 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
     Route::post('/custom-fields',                 [CustomFieldController::class, 'store'])->name('custom-fields.store');
     Route::put('/custom-fields/{customField}',    [CustomFieldController::class, 'update'])->name('custom-fields.update');
     Route::delete('/custom-fields/{customField}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
+
+    // Formularios (constructor interno — solo administradores)
+    Route::middleware('team.admin')->group(function () {
+        Route::get('/formularios',                     [FormController::class, 'index'])->name('formularios.index');
+        Route::get('/formularios/crear',               [FormController::class, 'create'])->name('formularios.create');
+        Route::post('/formularios',                    [FormController::class, 'store'])->name('formularios.store');
+        Route::get('/formularios/{form}/editar',       [FormController::class, 'edit'])->name('formularios.edit');
+        Route::put('/formularios/{form}',              [FormController::class, 'update'])->name('formularios.update');
+        Route::delete('/formularios/{form}',           [FormController::class, 'destroy'])->name('formularios.destroy');
+        Route::get('/formularios/{form}/envios',       [FormController::class, 'submissions'])->name('formularios.submissions');
+    });
 
     // Facturación electrónica
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');

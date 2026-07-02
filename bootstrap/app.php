@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'webhooks/culqi',
             'webhooks/whatsapp',
+            'f/*', // envío de formularios públicos (visitantes sin sesión)
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

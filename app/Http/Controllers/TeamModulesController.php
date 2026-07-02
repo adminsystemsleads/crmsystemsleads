@@ -20,6 +20,7 @@ class TeamModulesController extends Controller
         ['key' => 'pagos',            'label' => 'Pagos',                    'desc' => 'Historial y registro de pagos',           'admin_only' => false, 'hidden' => true],
         ['key' => 'transparencia_ia', 'label' => 'Transparencia IA',         'desc' => 'Auditoría de acciones automatizadas por IA', 'admin_only' => false, 'hidden' => true],
         ['key' => 'perfil_unidad',    'label' => 'Mi Perfil de Unidad',      'desc' => 'Datos de la unidad habitacional',         'admin_only' => false],
+        ['key' => 'formularios',      'label' => 'Formularios (Admin)',      'desc' => 'Formularios públicos para captar clientes y crear negociaciones', 'admin_only' => true],
         ['key' => 'gastos',           'label' => 'Lista de Gastos',          'desc' => 'Visualización de gastos mensuales',       'admin_only' => true,  'hidden' => true],
         ['key' => 'gastos_import',    'label' => 'Importar Reporte',         'desc' => 'Carga masiva de reportes de gastos',      'admin_only' => true,  'hidden' => true],
         ['key' => 'perfiles',         'label' => 'Perfiles (Admin)',         'desc' => 'Gestión de perfiles de miembros',         'admin_only' => true],

@@ -212,6 +212,19 @@
           </a>
         @endif
 
+        @if (!$licenseBlocked && $team->moduleEnabled('formularios'))
+          <a href="{{ route('formularios.index') }}"
+             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
+                    {{ request()->routeIs('formularios.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
+            <svg class="size-5 shrink-0 {{ request()->routeIs('formularios.*') ? 'text-indigo-500' : 'text-gray-400' }}"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m-6-8h6M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/>
+            </svg>
+            <span class="truncate">{{ __('Formularios') }}</span>
+          </a>
+        @endif
+
         @if (!$licenseBlocked && $team->moduleEnabled('whatsapp_cuentas'))
           <a href="{{ route('whatsapp.accounts.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
