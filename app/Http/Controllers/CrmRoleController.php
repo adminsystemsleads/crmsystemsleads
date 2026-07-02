@@ -12,13 +12,15 @@ use Illuminate\Validation\Rule;
 class CrmRoleController extends Controller
 {
     /**
-     * Solo admin del team actual puede gestionar roles. Aborta 403 si no.
+     * Acceso al configurador de roles: admin del team o rol con el permiso
+     * "admin.manage_crm_roles". El middleware 'crm.can' ya redirige de forma
+     * amigable si no hay acceso; esto queda como respaldo defensivo.
      */
     protected function authorizeAdmin(): array
     {
         $user = Auth::user();
         $team = $user->currentTeam;
-        abort_unless($team && $user->hasTeamRole($team, 'admin'), 403);
+        abort_unless($team && $user->hasCrmPermission('admin.manage_crm_roles', $team), 403);
         return [$user, $team];
     }
 

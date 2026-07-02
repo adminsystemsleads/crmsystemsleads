@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'team.admin'   => EnsureTeamAdmin::class,
             'super.admin'  => EnsureSuperAdmin::class,
             'forms.access' => \App\Http\Middleware\EnsureFormsAccess::class,
+            'crm.can'      => \App\Http\Middleware\EnsureCrmPermission::class,
         ]);
 
         // Debe ir DENTRO del grupo web para que la sesión esté iniciada

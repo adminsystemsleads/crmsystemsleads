@@ -117,6 +117,8 @@ class CrmPermissions
                 'permissions' => [
                     'admin.manage_crm_roles' => 'Configurar Roles y Permisos de CRM',
                     'admin.manage_team'      => 'Gestionar miembros del equipo',
+                    'admin.manage_profiles'  => 'Gestionar Perfiles del equipo',
+                    'admin.manage_modules'   => 'Configurar Módulos activos',
                 ],
             ],
         ];

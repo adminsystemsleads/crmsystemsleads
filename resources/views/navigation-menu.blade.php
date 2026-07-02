@@ -8,6 +8,12 @@
 
   $isAdmin = $team && Auth::user()->isCrmAdminFor($team);
 
+  // Permisos granulares para secciones de administración (los admins los tienen todos).
+  $navUser = Auth::user();
+  $canManageProfiles = $team && $navUser->hasCrmPermission('admin.manage_profiles', $team);
+  $canManageModules  = $team && $navUser->hasCrmPermission('admin.manage_modules', $team);
+  $canManageCrmRoles = $team && $navUser->hasCrmPermission('admin.manage_crm_roles', $team);
+
   // ¿La cuenta actual está bloqueada por licencia? (mismo criterio que el middleware)
   // Si lo está, el menú se reduce: solo Licencia, selector de cuenta, idioma, soporte y perfil.
   $licenseBlocked = (function () use ($team) {
@@ -159,8 +165,8 @@
         <div class="my-2 border-t border-gray-100"></div>
       @endif
 
-      {{-- Sección Admin --}}
-      @if ($isAdmin)
+      {{-- Sección Admin (visible para admins o roles con algún permiso de administración) --}}
+      @if ($isAdmin || $canManageProfiles || $canManageModules)
         <p class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">{{ __('Administración') }}</p>
 
         {{-- Ocultas temporalmente: funcionalidad no ofrecida por ahora (Importar Reporte). Cambia `false` por la condición para reactivar. --}}
@@ -190,7 +196,7 @@
           </a>
         @endif
 
-        @if (!$licenseBlocked && $team->moduleEnabled('perfiles'))
+        @if (!$licenseBlocked && $team->moduleEnabled('perfiles') && $canManageProfiles)
           <a href="{{ route('team.perfiles.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('team.perfiles.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -219,7 +225,7 @@
           </a>
         @endif
 
-        @if (!$licenseBlocked && $team->moduleEnabled('whatsapp_cuentas'))
+        @if ($isAdmin && !$licenseBlocked && $team->moduleEnabled('whatsapp_cuentas'))
           <a href="{{ route('whatsapp.accounts.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('whatsapp.accounts.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -233,7 +239,7 @@
         @endif
 
         @php $teamId = $team?->id; @endphp
-        @if ($teamId)
+        @if ($teamId && $isAdmin)
           <a href="{{ route('team.license.form', ['team' => $teamId]) }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('team.license.form') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -244,8 +250,9 @@
             </svg>
             <span class="truncate">{{ __('Licencia') }}</span>
           </a>
+        @endif
 
-          @if (!$licenseBlocked)
+        @if ($teamId && !$licenseBlocked && $canManageModules)
           <a href="{{ route('team.modules.edit', ['team' => $teamId]) }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('team.modules.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -257,7 +264,6 @@
             </svg>
             <span class="truncate">{{ __('Módulos') }}</span>
           </a>
-          @endif
         @endif
 
         @if (!$licenseBlocked)
@@ -405,8 +411,8 @@
           @endif
         </div>
 
-        {{-- Botón Configuración de la cuenta (admin del team; oculto si la cuenta está bloqueada) --}}
-        @if ($isAdmin && !$licenseBlocked)
+        {{-- Botón Configuración de la cuenta (admin o rol con permiso de roles CRM; oculto si la cuenta está bloqueada) --}}
+        @if (($isAdmin || $canManageCrmRoles) && !$licenseBlocked)
           <div class="relative mt-1">
             <button type="button" @click="openCfg = !openCfg"
                     class="w-full flex items-center gap-2 px-2 py-2 text-sm rounded-lg hover:bg-gray-100 text-gray-700 transition"
@@ -433,6 +439,7 @@
                  class="bg-white rounded-lg shadow-xl ring-1 ring-black/5 overflow-y-auto py-1"
                  style="display: none; position: absolute; bottom: calc(100% + 4px); left: 0; right: 0; z-index: 60; max-height: 20rem;">
 
+              @if ($isAdmin)
               <a href="{{ route('teams.show', Auth::user()->currentTeam->id) }}"
                  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
                 <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -441,7 +448,10 @@
                 </svg>
                 <span>{{ __('Agregar usuario nuevo') }}</span>
               </a>
-              <div class="border-t border-gray-100 my-1"></div>
+              @endif
+
+              @if ($canManageCrmRoles)
+              @if ($isAdmin)<div class="border-t border-gray-100 my-1"></div>@endif
               <a href="{{ route('team.crm-roles.index') }}"
                  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
                 <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -449,6 +459,9 @@
                 </svg>
                 <span>{{ __('Permisos de Acceso CRM') }}</span>
               </a>
+              @endif
+
+              @if ($isAdmin)
               <div class="border-t border-gray-100 my-1"></div>
               <a href="{{ route('custom-fields.index') }}"
                  class="flex items-center gap-2 px-4 py-2 text-sm transition
@@ -458,6 +471,7 @@
                 </svg>
                 <span>{{ __('Campos personalizados') }}</span>
               </a>
+              @endif
             </div>
           </div>
         @endif

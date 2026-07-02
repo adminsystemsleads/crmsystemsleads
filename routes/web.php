@@ -171,8 +171,8 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
     Route::post('/pipelines/{pipeline}/bulk-template', [PipelineController::class, 'bulkSendTemplate'])->name('pipelines.bulk-template');
     
     // Módulos activos por equipo (admin only)
-    Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit')->middleware('team.admin');
-    Route::put('/teams/{team}/modules', [TeamModulesController::class, 'update'])->name('team.modules.update')->middleware('team.admin');
+    Route::get('/teams/{team}/modules', [TeamModulesController::class, 'edit'])->name('team.modules.edit')->middleware('crm.can:admin.manage_modules');
+    Route::put('/teams/{team}/modules', [TeamModulesController::class, 'update'])->name('team.modules.update')->middleware('crm.can:admin.manage_modules');
 
     // Zona horaria de la cuenta (admin only)
     Route::put('/teams/{team}/timezone', [TeamSettingsController::class, 'updateTimezone'])
@@ -323,26 +323,28 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
     Route::get('/mi-perfil-unidad', [TeamMemberProfileController::class, 'edit'])->name('perfil-unidad.edit');
     Route::post('/mi-perfil-unidad', [TeamMemberProfileController::class, 'update'])->name('perfil-unidad.update');
 
-    // Perfiles, Roles CRM y Gastos — todo sección ADMINISTRACIÓN, solo admin
-    Route::middleware('team.admin')->group(function () {
-        // Listado de perfiles del team
+    // Perfiles del team (admin o rol con permiso "admin.manage_profiles")
+    Route::middleware('crm.can:admin.manage_profiles')->group(function () {
         Route::get('/mi-team/perfiles', [TeamMemberProfileController::class, 'index'])
             ->name('team.perfiles.index');
-
-        // Editar perfil + rol de OTRO miembro del team (solo admin)
         Route::get('/mi-team/perfiles/{member}/edit', [TeamMemberProfileController::class, 'editMember'])
             ->name('team.perfiles.editMember');
         Route::put('/mi-team/perfiles/{member}',      [TeamMemberProfileController::class, 'updateMember'])
             ->name('team.perfiles.updateMember');
+    });
 
-        // Configurador de Roles y Permisos del CRM
+    // Configurador de Roles y Permisos del CRM (admin o rol con permiso "admin.manage_crm_roles")
+    Route::middleware('crm.can:admin.manage_crm_roles')->group(function () {
         Route::get   ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'index'])  ->name('team.crm-roles.index');
         Route::get   ('/mi-team/crm-roles/create',         [\App\Http\Controllers\CrmRoleController::class, 'create']) ->name('team.crm-roles.create');
         Route::post  ('/mi-team/crm-roles',                [\App\Http\Controllers\CrmRoleController::class, 'store'])  ->name('team.crm-roles.store');
         Route::get   ('/mi-team/crm-roles/{role}/edit',    [\App\Http\Controllers\CrmRoleController::class, 'edit'])   ->name('team.crm-roles.edit');
         Route::put   ('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'update']) ->name('team.crm-roles.update');
         Route::delete('/mi-team/crm-roles/{role}',         [\App\Http\Controllers\CrmRoleController::class, 'destroy'])->name('team.crm-roles.destroy');
+    });
 
+    // Gastos — solo administradores
+    Route::middleware('team.admin')->group(function () {
         // Importar Reporte
         Route::get ('/gastos/importar', [GastoImportController::class, 'create'])->name('gastos.import.create');
         Route::post('/gastos/importar', [GastoImportController::class, 'store'])->name('gastos.import.store');

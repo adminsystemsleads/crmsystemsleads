@@ -16,8 +16,9 @@ class TeamMemberProfileController extends Controller
         $user = Auth::user();
         $team = $user->currentTeam;
 
-        // Solo admin del team
-        if (! $user->hasTeamRole($team, 'admin')) {
+        // Admin del team o rol con permiso para gestionar perfiles
+        // (el middleware 'crm.can' ya redirige de forma amigable; esto es respaldo).
+        if (! $user->hasCrmPermission('admin.manage_profiles', $team)) {
             abort(403);
         }
 
@@ -56,7 +57,7 @@ class TeamMemberProfileController extends Controller
         $user = Auth::user();
         $team = $user->currentTeam;
 
-        if (! $user->hasTeamRole($team, 'admin')) {
+        if (! $user->hasCrmPermission('admin.manage_profiles', $team)) {
             abort(403);
         }
 
@@ -86,7 +87,7 @@ class TeamMemberProfileController extends Controller
         $user = Auth::user();
         $team = $user->currentTeam;
 
-        if (! $user->hasTeamRole($team, 'admin')) {
+        if (! $user->hasCrmPermission('admin.manage_profiles', $team)) {
             abort(403);
         }
 

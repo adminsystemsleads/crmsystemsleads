@@ -38,8 +38,7 @@ class TeamModulesController extends Controller
     public function edit(Team $team)
     {
         abort_unless(
-            Auth::user()->ownsTeam($team) ||
-            Auth::user()->hasTeamRole($team, 'admin'),
+            Auth::user()->hasCrmPermission('admin.manage_modules', $team),
             403
         );
 
@@ -60,8 +59,7 @@ class TeamModulesController extends Controller
     public function update(Request $request, Team $team)
     {
         abort_unless(
-            Auth::user()->ownsTeam($team) ||
-            Auth::user()->hasTeamRole($team, 'admin'),
+            Auth::user()->hasCrmPermission('admin.manage_modules', $team),
             403
         );
 
