@@ -199,6 +199,7 @@
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Embudo') }}</label>
                 <select name="pipeline_id" x-model="f.pipeline_id"
+                        x-init="$nextTick(() => { $el.value = f.pipeline_id })"
                         class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                   <option value="">{{ __('— Embudo predeterminado —') }}</option>
                   <template x-for="p in pipelines" :key="p.id">
@@ -209,6 +210,7 @@
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Etapa de ingreso (negociaciones nuevas)') }}</label>
                 <select name="stage_id" x-model="f.stage_id"
+                        x-init="$nextTick(() => { $el.value = f.stage_id })"
                         class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                   <option value="">{{ __('— Primera etapa —') }}</option>
                   <template x-for="s in currentStages()" :key="s.id">
@@ -219,6 +221,7 @@
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Responsable de las negociaciones') }}</label>
                 <select name="assigned_user_id" x-model="f.assigned_user_id"
+                        x-init="$nextTick(() => { $el.value = f.assigned_user_id })"
                         class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                   <option value="">{{ __('— Sin asignar —') }}</option>
                   <template x-for="u in users" :key="u.id">
@@ -262,6 +265,7 @@
             <div x-show="f.deal_dedup_mode==='use_active'" x-cloak class="mt-3 pl-3 border-l-2 border-indigo-200">
               <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('Al reutilizar, mover la negociación a la etapa:') }}</label>
               <select name="move_stage_id" x-model="f.move_stage_id"
+                      x-init="$nextTick(() => { $el.value = f.move_stage_id })"
                       class="w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                 <option value="">{{ __('— No mover (dejar donde está) —') }}</option>
                 <template x-for="s in currentStages()" :key="s.id">
