@@ -248,7 +248,7 @@
       .wa-topbar .text-gray-400 { color: rgba(255,255,255,.6) !important; }
       .wa-topbar .menu-toggle-btn { color: #fff !important; border-color: rgba(255,255,255,.3) !important; }
       .wa-topbar .hover\:text-gray-600:hover { color: #fff !important; }
-      .wa-topbar { padding-right: 3.5rem !important; } /* reserva espacio para la campana */
+      .wa-topbar { padding-right: 6.25rem !important; } /* reserva espacio para ayuda + campana */
 
       /* ===== Campana de notificaciones (fija arriba a la derecha) ===== */
       .notif-bell { position: fixed !important; top: 1rem; right: 1rem; z-index: 40; }
@@ -328,6 +328,9 @@
 
     {{-- Campana de notificaciones: a nivel de body para que quede siempre fija. --}}
     @include('partials.notification-bell')
+
+    {{-- Centro de ayuda Qipu: botón fijo a la izquierda de la campana. --}}
+    @include('partials.help-center')
 
     @php
       // Aviso de licencia próxima a vencer / prórroga activa (cuenta del cliente).
