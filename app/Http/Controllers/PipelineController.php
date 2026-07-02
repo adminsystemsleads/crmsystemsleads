@@ -284,7 +284,12 @@ class PipelineController extends Controller
 
         $dealsQuery = $this->buildDealsQuery($pipeline, $request, $teamTz, $dealFields)->with('contact');
 
-        $dealsByStage = $dealsQuery->get()->groupBy('stage_id');
+        // Orden dentro de cada etapa: la última ingresada a la etapa va arriba.
+        $dealsByStage = $dealsQuery
+            ->orderByDesc('stage_changed_at')
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('stage_id');
         $total        = $dealsByStage->flatten()->count();
 
         $viewMode = $request->query('view', 'kanban'); // kanban | table

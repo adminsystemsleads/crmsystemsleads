@@ -10,9 +10,23 @@ class Deal extends Model
     use HasFactory;
 
     protected $casts = [
-    'close_date' => 'date',
+    'close_date'       => 'date',
+    'stage_changed_at' => 'datetime',
     // otros casts...
 ];
+
+    /**
+     * Marca cuándo la negociación entra a una etapa: al crearla o cada vez que
+     * cambia stage_id. Así el Kanban puede mostrar arriba la última ingresada.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Deal $deal) {
+            if (!$deal->exists || $deal->isDirty('stage_id')) {
+                $deal->stage_changed_at = now();
+            }
+        });
+    }
 
     protected $fillable = [
         'team_id',
