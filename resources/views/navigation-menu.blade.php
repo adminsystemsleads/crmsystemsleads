@@ -47,6 +47,13 @@
       'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A7 7 0 1118.88 6.196 7 7 0 015.12 17.804zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
     ],
     [
+      'key'    => 'formularios',
+      'name'   => __('Formularios'),
+      'route'  => 'formularios.index',
+      'active' => request()->routeIs('formularios.*'),
+      'icon'   => '<svg class="size-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-6-8h6M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/></svg>',
+    ],
+    [
       'key'    => 'whatsapp_inbox',
       'name'   => __('WhatsApp'),
       'route'  => 'whatsapp.inbox.index',
@@ -212,19 +219,6 @@
           </a>
         @endif
 
-        @if (!$licenseBlocked && $team->moduleEnabled('formularios') && \App\Support\FormsFeature::accessibleBy(Auth::user()) && Auth::user()->hasCrmPermission('forms.access', $team))
-          <a href="{{ route('formularios.index') }}"
-             class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
-                    {{ request()->routeIs('formularios.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
-            <svg class="size-5 shrink-0 {{ request()->routeIs('formularios.*') ? 'text-indigo-500' : 'text-gray-400' }}"
-                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m-6-8h6M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/>
-            </svg>
-            <span class="truncate">{{ __('Formularios') }}</span>
-          </a>
-        @endif
-
         @if (!$licenseBlocked && $team->moduleEnabled('whatsapp_cuentas'))
           <a href="{{ route('whatsapp.accounts.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
@@ -275,7 +269,7 @@
       {{-- Menú general (filtrado por módulos) — oculto si la cuenta está bloqueada --}}
       @if (!$licenseBlocked)
       @foreach ($links as $link)
-        @if ($team->moduleEnabled($link['key']))
+        @if ($team->moduleEnabled($link['key']) && ($link['key'] !== 'formularios' || (\App\Support\FormsFeature::accessibleBy(Auth::user()) && Auth::user()->hasCrmPermission('forms.access', $team))))
           <a href="{{ route($link['route']) }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ $link['active'] ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">
