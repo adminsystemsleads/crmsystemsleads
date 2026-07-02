@@ -96,6 +96,13 @@ class CrmPermissions
                     'custom_fields.manage' => 'Crear, editar y eliminar campos personalizados',
                 ],
             ],
+            'forms' => [
+                'label' => 'Formularios',
+                'icon'  => 'M9 12h6m-6 4h6m-6-8h6M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z',
+                'permissions' => [
+                    'forms.access' => 'Acceso a formularios (crear y gestionar)',
+                ],
+            ],
             'reports' => [
                 'label' => 'Reportes',
                 'icon'  => 'M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z',

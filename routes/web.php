@@ -129,7 +129,8 @@ Route::post('/pipelines/{pipeline}/deals/{deal}/activities/{activity}/complete',
     Route::delete('/custom-fields/{customField}', [CustomFieldController::class, 'destroy'])->name('custom-fields.destroy');
 
     // Formularios (constructor interno — solo administradores)
-    Route::middleware('team.admin')->group(function () {
+    // 'forms.access' bloquea el módulo mientras está en desarrollo (ver FormsFeature).
+    Route::middleware(['team.admin', 'forms.access'])->group(function () {
         Route::get('/formularios',                     [FormController::class, 'index'])->name('formularios.index');
         Route::get('/formularios/crear',               [FormController::class, 'create'])->name('formularios.create');
         Route::post('/formularios',                    [FormController::class, 'store'])->name('formularios.store');

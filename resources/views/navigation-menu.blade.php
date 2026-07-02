@@ -212,7 +212,7 @@
           </a>
         @endif
 
-        @if (!$licenseBlocked && $team->moduleEnabled('formularios'))
+        @if (!$licenseBlocked && $team->moduleEnabled('formularios') && \App\Support\FormsFeature::accessibleBy(Auth::user()) && Auth::user()->hasCrmPermission('forms.access', $team))
           <a href="{{ route('formularios.index') }}"
              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition select-none
                     {{ request()->routeIs('formularios.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-100' }}">

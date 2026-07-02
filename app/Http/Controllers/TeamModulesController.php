@@ -45,6 +45,15 @@ class TeamModulesController extends Controller
 
         $modules = $this->visibleModules();
 
+        // Formularios está en desarrollo: para quien no tiene acceso anticipado
+        // se muestra como "Próximamente" y bloqueado.
+        if (!\App\Support\FormsFeature::accessibleBy(Auth::user())) {
+            $modules = array_map(function ($m) {
+                if (($m['key'] ?? null) === 'formularios') $m['coming_soon'] = true;
+                return $m;
+            }, $modules);
+        }
+
         return view('team.modules', compact('team', 'modules'));
     }
 
@@ -62,6 +71,12 @@ class TeamModulesController extends Controller
             array_filter($this->visibleModules(), fn ($m) => empty($m['coming_soon'])),
             'key'
         );
+
+        // Formularios está en desarrollo: si el usuario no tiene acceso anticipado,
+        // no se toca su flag al guardar (se comporta como "próximamente").
+        if (!\App\Support\FormsFeature::accessibleBy(Auth::user())) {
+            $keys = array_values(array_filter($keys, fn ($k) => $k !== 'formularios'));
+        }
 
         $settings = $team->settings ?? [];
         $enabled  = $settings['modules'] ?? [];

@@ -90,6 +90,25 @@ class User extends Authenticatable
     }
 
     /**
+     * ¿Tiene el usuario un permiso de CRM en un team?
+     * Los dueños/administradores del team siempre lo tienen (así el rol
+     * "Administrador" cuenta con todos los permisos, incluidos los nuevos).
+     */
+    public function hasCrmPermission(string $key, $team = null): bool
+    {
+        $team = $team ?: $this->currentTeam;
+        if (! $team) {
+            return false;
+        }
+
+        if ($this->isCrmAdminFor($team)) {
+            return true;
+        }
+
+        return (bool) $this->crmRoleFor($team)?->hasPermission($key);
+    }
+
+    /**
      * ¿Puede ver este embudo?
      *  - Dueño/admin del team y roles con 'pipelines.view_all' (Administrador, Editor)
      *    ven TODOS los embudos (incluidos los nuevos).
